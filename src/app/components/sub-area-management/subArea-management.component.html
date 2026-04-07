@@ -1,0 +1,537 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchDataCountry" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchSubAreaName"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchSubArea()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchSubArea()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearsearchSubArea()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataCountry"
+            aria-expanded="false"
+            aria-controls="allDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th *ngIf="editAccess || deleteAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let subArea of subAreaListData
+                        | paginate
+                          : {
+                              id: 'subAreaListData',
+                              itemsPerPage: subareaitemsPerPage,
+                              currentPage: currentPageSubAreaSlab,
+                              totalItems: subareaTotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ subArea.name }}</td>
+                    <td *ngIf="subArea.status == 'ACTIVE' || subArea.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="subArea.status == 'INACTIVE' || subArea.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td
+                      *ngIf="
+                        subArea.status == 'UNDERDEVELOPMENT' || subArea.status == 'UnderDevelopment'
+                      "
+                    >
+                      <span class="badge badge-info">UnderDevelopment</span>
+                    </td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        *ngIf="editAccess"
+                        (click)="editSubarea(subArea.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        (click)="deleteConfirmonSubarea(subArea)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                      <a
+                        id="upload-button"
+                        href="javascript:void(0)"
+                        (click)="downloadDocument(subArea)"
+                        title="Download"
+                      >
+                        <img src="assets/img/pdf.png" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="subAreaListData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCountryList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="subareaitemsPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isSubAreaEdit ? "Update" : "Create" }} {{ title }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !isSubAreaEdit">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (isSubAreaEdit && editAccess)">
+          <form [formGroup]="subAreaFormGroup">
+            <label>{{ title }} Name*</label>
+            <input
+              id="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter {{ title }} Name"
+              formControlName="name"
+              [ngClass]="{ 'is-invalid': submitted && subAreaFormGroup.controls.name.errors }"
+              maxLength="250"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && subAreaFormGroup.controls.name.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && subAreaFormGroup.controls.name.errors.required"
+              >
+                {{ title }} Name is required.
+              </div>
+              <div
+                class="position"
+                *ngIf="submitted && subAreaFormGroup.controls.name.errors?.cannotContainSpace"
+              >
+                <p class="error">White space are not allowed.</p>
+              </div>
+            </div>
+            <br />
+            <label>Status*</label>
+            <div>
+              <p-dropdown
+                [options]="statusOptions"
+                optionValue="label"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                placeholder="Select a Status"
+                formControlName="status"
+                [ngClass]="{
+                  'is-invalid': submitted && subAreaFormGroup.controls.status.errors
+                }"
+              ></p-dropdown>
+            </div>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && subAreaFormGroup.controls.status.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && subAreaFormGroup.controls.status.errors.required"
+              >
+                {{ title }} Status is required.
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>{{ areaTitle }}*</label>
+              <p-dropdown
+                [options]="areaListData"
+                optionValue="id"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select a Area"
+                formControlName="areaId"
+                (onChange)="onAreaChange($event)"
+                [ngClass]="{
+                  'is-invalid': submitted && subAreaFormGroup.controls.areaId.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && subAreaFormGroup.controls.areaId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && subAreaFormGroup.controls.areaId.errors.required"
+                >
+                  {{ areaTitle }} is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>{{ pincodeTitle }}</label>
+              <input
+                id="name"
+                type="text"
+                class="form-control"
+                [(ngModel)]="pincodeName"
+                [ngModelOptions]="{ standalone: true }"
+                [disabled]="true"
+              />
+            </div>
+            <br />
+            <div>
+              <label>{{ cityTitle }}*</label>
+              <p-dropdown
+                [options]="selectedCityList"
+                optionValue="id"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select a {{ cityTitle }}"
+                formControlName="cityId"
+                [disabled]="isAreaSelected"
+                [ngClass]="{
+                  'is-invalid': submitted && subAreaFormGroup.controls.cityId.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && subAreaFormGroup.controls.cityId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && subAreaFormGroup.controls.cityId.errors.required"
+                >
+                  {{ cityTitle }} is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>{{ stateTitle }}*</label>
+              <p-dropdown
+                [options]="selectedStateList"
+                optionValue="id"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select a {{ stateTitle }}"
+                formControlName="stateId"
+                [disabled]="isAreaSelected"
+                [ngClass]="{
+                  'is-invalid': submitted && subAreaFormGroup.controls.stateId.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && subAreaFormGroup.controls.stateId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && subAreaFormGroup.controls.stateId.errors.required"
+                >
+                  {{ stateTitle }} is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>{{ countryTitle }}*</label>
+              <p-dropdown
+                [options]="selectedCountryList"
+                optionValue="id"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select a {{ countryTitle }}"
+                formControlName="countryId"
+                [disabled]="isAreaSelected"
+                [ngClass]="{
+                  'is-invalid': submitted && subAreaFormGroup.controls.countryId.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && subAreaFormGroup.controls.countryId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && subAreaFormGroup.controls.countryId.errors.required"
+                >
+                  {{ countryTitle }} is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>File</label>
+              <input
+                (change)="onFileChange($event)"
+                class="form-control"
+                #fileInput
+                multiple="multiple"
+                placeholder="Select Attachment"
+                style="padding: 2px; width: 100%"
+                type="file"
+              />
+              <!-- <div *ngIf="submitted && subAreaFormGroup.controls.file.errors"
+                                class="errorWrap text-danger">
+                                <div *ngIf="subAreaFormGroup.controls.file.errors.required" class="error text-danger">
+                                    File is required.
+                                </div>
+                            </div> -->
+              <div *ngFor="let file of selectedFilePreviewd; let i = index">
+                <div
+                  style="
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    padding-top: 4px;
+                    padding-bottom: 4px;
+                    font-size: 10px;
+                  "
+                >
+                  {{ file?.name }}
+                  <button type="button" class="close" (click)="deletSelectedFile(file?.name)">
+                    &times;
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="addUpdateBtn">
+              <button
+                *ngIf="!isSubAreaEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditSubarea('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add {{ title }}
+              </button>
+              <button
+                *ngIf="isSubAreaEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditSubarea(viewCountryListData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update {{ title }}
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="View Document"
+  [(visible)]="downloadDocumentId"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <p-table
+      [value]="subAreaFileData?.fileDetails"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>File Name</th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-filedata>
+        <tr>
+          <td>{{ filedata?.filename }}</td>
+          <td>
+            <button
+              style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 5px"
+              id="download-button"
+              (click)="downloadDoc(filedata.filename, subAreaFileData.id, filedata.uniquename)"
+              [disabled]="!filedata.filename"
+              title="Download Document"
+              class="btn btn-primary"
+            >
+              <img style="width: 25px; height: 25px; border-radius: 3px" src="assets/img/pdf.png" />
+            </button>
+            <button
+              style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 5px"
+              id="view-button"
+              [disabled]="!filedata.filename"
+              title="View Document"
+              class="btn btn-primary"
+              (click)="
+                showticketDocData(filedata.filename, subAreaFileData.id, filedata.uniquename)
+              "
+            >
+              <img
+                style="width: 25px; height: 25px; border-radius: 3px"
+                src="assets/img/eye-icon.png"
+              />
+            </button>
+            <button
+              style="border-radius: 5px; padding: 3px 8px; line-height: 1.5; margin-left: 5px"
+              class="btn btn-primary"
+              [disabled]="!filedata.filename"
+              title="Remove File"
+              id="delete-button"
+              (click)="deleteConfirm(subAreaFileData.id, filedata.uniquename, filedata.filename)"
+            >
+              <img src="assets/img/ioc02.jpg" />
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger btn-sm" (click)="closeDownloadDocumentId()">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Document Preview"
+  [(visible)]="documentPreview"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body" style="height: 600px">
+    <iframe [src]="previewUrl" width="100%" height="100%" allowfullscreen></iframe>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeDocumentPreview()"
+      data-dismiss="modal"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>

@@ -1,0 +1,416 @@
+<!-- <p-confirmDialog
+  [style]="{ width: '40vw' }"
+  [baseZIndex]="10000"
+></p-confirmDialog>
+<div class="childComponent">
+  <ngx-spinner
+    [fullScreen]="false"
+    type="ball-clip-rotate-multiple"
+    size="medium"
+  >
+    <p class="loading">Loading...</p>
+  </ngx-spinner>
+</div> -->
+<div class="row">
+  <div class="col-md-12">
+    <!-- MVNO Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">MVNO Management</h3>
+        <div class="right">
+          <button type="button" class="btn-toggle-collapse">
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="searchForm">
+          <form class="form-auth-small" [formGroup]="searchMvnoForm">
+            <div class="col-md-3" style="padding-right: 0%; text-align: right">
+              <label style="padding: 5px">Name</label>
+            </div>
+            <div class="col-md-5" style="padding-left: 0%">
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Enter Name"
+                formControlName="name"
+                [ngClass]="{
+                  'is-invalid': searchSubmitted && searchMvnoForm.controls.name.errors
+                }"
+              />
+            </div>
+            <div class="col-md-4" style="padding-left: 0%">
+              <button type="submit" class="btn btn-primary" (click)="searchMvno()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              &nbsp;
+              <button type="reset" class="btn btn-default" (click)="clearSearchForm()">
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="panel-body no-padding panel-udata">
+        <div class="col-md-3 pcol">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <!-- <h5>Create</h5>
+                <p>Create MVNO</p> -->
+            </a>
+          </div>
+        </div>
+        <div class="col-md-3 pcol">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <!-- <h5>Search</h5>
+                <p>Search MVNO</p> -->
+            </a>
+          </div>
+        </div>
+        <div class="col-md-3 pcol">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <!-- <h5>User Section</h5>
+                <p>Details Comes Here</p> -->
+            </a>
+          </div>
+        </div>
+        <div class="col-md-3 pcol noborder">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <!-- <h5>User Section</h5>
+                <p>Details Comes Here</p> -->
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 left">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">MVNOs</h3>
+        <div class="right">
+          <button type="button" class="btn-toggle-collapse">
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Organisation</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let mvno of mvnoData.mvnoList
+                  | paginate
+                    : {
+                        id: 'listing_mvnodata',
+                        itemsPerPage: itemsPerPage,
+                        currentPage: currentPage,
+                        totalItems: totalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="detailOnAnchorClick">
+                <a
+                  (click)="findMvnoById(mvno.mvnoId)"
+                  title="Click To See MVNO Detail"
+                  data-toggle="modal"
+                  data-target="#mvnoModal"
+                >
+                  {{ mvno.name }}
+                </a>
+              </td>
+              <td>{{ mvno.username }}</td>
+              <td>{{ mvno.organisation }}</td>
+              <td *ngIf="mvno.status == 'Active'">
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    checked
+                    name="myswitch"
+                    (change)="changeStatusToInActive(mvno.mvnoId)"
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+              <td *ngIf="mvno.status == 'Inactive'">
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    name="myswitch"
+                    (change)="changeStatusToActive(mvno.mvnoId)"
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+              <td class="btnAction">
+                <a type="button" (click)="editMvnoById(mvno.mvnoId, i)">
+                  <img src="assets/img/ioc01.jpg" />
+                </a>
+                <a type="button" (click)="deleteConfirm(mvno.mvnoId)">
+                  <img src="assets/img/ioc02.jpg" />
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <div class="row">
+          <div class="col-md-12">
+            <pagination-controls
+              id="listing_mvnodata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-6 right">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} MVNO</h3>
+        <div class="right">
+          <button type="button" class="btn-toggle-collapse">
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <form class="form-auth-small" [formGroup]="mvnoForm">
+        <div class="panel-body">
+          <label>MVNO Name</label>
+          <input
+            type="text"
+            [readonly]="editMode"
+            name="name"
+            class="form-control"
+            placeholder="Enter MVNO name"
+            formControlName="name"
+            [ngClass]="{
+              'is-invalid': submitted && mvnoForm.controls.name.errors
+            }"
+          />
+          <div class="errorWrap text-danger" *ngIf="submitted && mvnoForm.controls.name.errors">
+            <div
+              class="error text-danger"
+              *ngIf="submitted && mvnoForm.controls.name.errors.required"
+            >
+              MVNO Name is required
+            </div>
+          </div>
+          <br />
+          <div *ngIf="!editMode">
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              class="form-control"
+              placeholder="Enter MVNO username"
+              formControlName="username"
+              [ngClass]="{
+                'is-invalid': submitted && mvnoForm.controls.username.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && mvnoForm.controls.username.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && mvnoForm.controls.username.errors.required"
+              >
+                MVNO Username is required
+              </div>
+            </div>
+            <br />
+          </div>
+          <div *ngIf="!editMode">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="Enter MVNO password"
+              formControlName="password"
+              [ngClass]="{
+                'is-invalid': submitted && mvnoForm.controls.password.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && mvnoForm.controls.password.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && mvnoForm.controls.password.errors.required"
+              >
+                MVNO Password is required
+              </div>
+            </div>
+            <br />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <p-dropdown
+              id="status"
+              [options]="status"
+              placeholder="Select MVNO Status"
+              optionLabel="label"
+              optionValue="label"
+              formControlName="status"
+            ></p-dropdown>
+            <div class="errorWrap text-danger" *ngIf="submitted && mvnoForm.controls.status.errors">
+              <div
+                class="error text-danger"
+                *ngIf="submitted && submitted && mvnoForm.controls.status.errors.required"
+              >
+                Status is required
+              </div>
+            </div>
+          </div>
+          <label>Organisation</label>
+          <input
+            type="text"
+            name="organisation"
+            class="form-control"
+            placeholder="Enter MVNO Organisation"
+            formControlName="organisation"
+            [ngClass]="{
+              'is-invalid': submitted && mvnoForm.controls.organisation.errors
+            }"
+          />
+          <div
+            class="errorWrap text-danger"
+            *ngIf="submitted && mvnoForm.controls.organisation.errors"
+          >
+            <div
+              class="error text-danger"
+              *ngIf="submitted && mvnoForm.controls.organisation.errors.required"
+            >
+              MVNO Organisation is required
+            </div>
+          </div>
+          <br />
+          <label for="logo">Logo Upload</label>
+          <input
+            type="file"
+            (change)="handleFileInput($event.target.files)"
+            name="logo"
+            placeholder="Enter MVNO Logo"
+            formControlName="logo"
+            [ngClass]="{
+              'is-invalid': submitted && mvnoForm.controls.logo.errors
+            }"
+          />
+          <div class="errorWrap text-danger" *ngIf="submitted && mvnoForm.controls.logo.errors">
+            <div
+              class="error text-danger"
+              *ngIf="submitted && mvnoForm.controls.logo.errors.required"
+            >
+              MVNO Logo is required
+            </div>
+          </div>
+          <br />
+          <div class="addUpdateBtn">
+            <button type="submit" class="btn btn-primary" (click)="saveMvno()">
+              <i class="fa fa-check-circle"></i>
+              {{
+                editMode
+                  ? "Update MVNO"
+                  : "Add
+                MVNO"
+              }}
+            </button>
+            <br />
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- END Form Design -->
+  </div>
+</div>
+
+<div class="modal fade" id="mvnoModal" role="dialog">
+  <div class="modal-dialog" style="width: 35%">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="panel-title">Mvno Details</h3>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="row" id="viewDetail">
+              <div class="col-md-6">
+                <label for="name">Name :</label>
+              </div>
+              <div class="col-md-6">
+                <label for="name">{{ mvno.name }}</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="username">Username :</label>
+              </div>
+              <div class="col-md-6">
+                <label for="username">{{ mvno.username }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-6">
+                <label for="status">Status :</label>
+              </div>
+              <div class="col-md-6">
+                <label for="status">{{ mvno.status }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-6">
+                <label for="organisation">Organisation :</label>
+              </div>
+              <div class="col-md-6">
+                <label for="organisation">{{ mvno.organisation }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

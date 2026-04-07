@@ -1,0 +1,192 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Device Group</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Device Group</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataSector"
+            aria-expanded="false"
+            aria-controls="allDataSector"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataSector" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Group Name</th>
+                    <th>Description</th>
+                    <th>Submitted Date</th>
+                    <th>LastModified Date</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let Device of deciceGroupList
+                        | paginate
+                          : {
+                              id: 'casListDataID',
+                              itemsPerPage: deviceitemsPerPage,
+                              currentPage: currentPagedevice,
+                              totalItems: devicetotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ Device.tacacsDeviceGroupName }}</td>
+                    <td>{{ Device.tacacsDeviceGroupDescription }}</td>
+                    <td>{{ Device.submittedDate }}</td>
+                    <td>{{ Device.lastModifiedDate }}</td>
+
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        (click)="editDeviceGroup(Device)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonSector(Device)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="casListDataID"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCasList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} {{ title }} Device Group</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (editMode && editAccess)">
+          <form [formGroup]="deviceFormGroup">
+            <label> Group Name*</label>
+            <input
+              id="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter deviceGroupName"
+              formControlName="tacacsDeviceGroupName"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && deviceFormGroup.controls.deviceGroupName.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && deviceFormGroup.controls.deviceGroupName.errors.required"
+              >
+                {{ title }} deviceGroupName is required.
+              </div>
+            </div>
+            <br />
+            <label>Description</label>
+            <input
+              id="sharedKey"
+              type="text"
+              class="form-control"
+              placeholder="Enter Description "
+              formControlName="tacacsDeviceGroupDescription"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && deviceFormGroup.controls.tacacsDeviceGroupDescription.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  submitted && deviceFormGroup.controls.tacacsDeviceGroupDescription.errors.required
+                "
+              >
+                {{ title }} tacacsDeviceGroupDescription is required.
+              </div>
+            </div>
+            <br />
+
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="onSubmit(deviceFormGroup.get('id').value)"
+              >
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update" : "Add" }} {{ title }} Device
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

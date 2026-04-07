@@ -1,0 +1,184 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="customerDetailOpen()"
+            class="btn btn-secondary backbtn"
+            data-placement="bottom"
+            data-toggle="tooltip"
+            title="Go to Customer Details"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerLedgerDetailData?.title }}
+            {{ customerLedgerDetailData?.firstname }}
+            {{ customerLedgerDetailData?.lastname }}
+            Wallet
+          </h3>
+          <button
+            class="btn btn-primary statusbtn"
+            data-backdrop="static"
+            data-keyboard="false"
+            data-target="#recordPayment"
+            data-title="Transaction Audit"
+            (click)="getChildParentWalletPaymentAudit()"
+            style="background-color: #f7b206 !important; font-size: 16px; padding: 3px 12px"
+            type="submit"
+          >
+            Transaction Audit
+          </button>
+        </div>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="addWalletIncustomer()">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            aria-controls="customerWallet"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#customerWallet"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="customerWallet">
+        <div class="panel-body table-responsive">
+          <div class="card" style="display: flex; justify-content: center; text-align: center">
+            <p-card [style]="{ width: '360px' }">
+              <ng-template pTemplate="header">
+                <h1>Wallet Balance</h1>
+              </ng-template>
+              <p-badge
+                *ngIf="getWallatData.customerWalletDetails >= 0"
+                [value]="
+                  getWallatData.customerWalletDetails
+                    | customCurrency: currency : customerLedgerDetailData?.mvnoId
+                "
+                size="xlarge"
+                severity="success"
+              >
+              </p-badge>
+              <p-badge
+                *ngIf="getWallatData.customerWalletDetails < 0"
+                [value]="
+                  getWallatData.customerWalletDetails
+                    | customCurrency: currency : customerLedgerDetailData?.mvnoId
+                "
+                size="xlarge"
+                severity="danger"
+              >
+              </p-badge>
+              <ng-template pTemplate="footer">
+                <div
+                  *ngIf="this.WalletAmount > 0 && withdrawalAmountAccess"
+                  style="margin-bottom: 2rem"
+                >
+                  <button
+                    (click)="
+                      withdrawalAmountModel('withdrawalAmountModal', customerId, this.WalletAmount)
+                    "
+                    class="btn btn-primary"
+                    id="submit"
+                    type="submit"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    Withdrawal Amount
+                  </button>
+                </div>
+              </ng-template>
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-customer-withdrawalmodal
+  *ngIf="displayDialogWithDraw"
+  (selectedStaffChange)="selectedStaffChange($event)"
+  (closeSelectStaff)="closeSelectStaff()"
+  (walletCustomerID)="addWalletIncustomer($event)"
+  [wCustID]="wCustID"
+></app-customer-withdrawalmodal>
+<p-dialog
+  header="Transfer Audit Details"
+  [(visible)]="showWalletDetails"
+  [style]="{ width: '80%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeWalletAudit()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>From Name</th>
+              <th>To Name</th>
+              <th>Amount</th>
+              <th>Created Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let audit of walletAuditList
+                  | paginate
+                    : {
+                        id: 'walletAuditDetails',
+                        itemsPerPage: walletAuditItemsPerPage,
+                        currentPage: currentPageWalletAuditSlab,
+                        totalItems: walletAuditTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td>{{ audit.fromName }}</td>
+              <td>{{ audit.toName }}</td>
+              <td>{{ audit.amount }}</td>
+              <td>{{ audit.createdDate }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="row">
+          <div class="col-md-12" style="display: flex">
+            <pagination-controls
+              id="walletAuditDetails"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedWalletAuditList($event)"
+            ></pagination-controls>
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptionsWalletAudit"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPageWalletAudit($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="closeWalletAudit()">Close</button>
+  </div>
+</p-dialog>

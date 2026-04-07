@@ -1,0 +1,217 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Audit Reports</h3>
+        <!-- <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchAuditReport"
+            aria-expanded="false"
+            aria-controls="searchAuditReport"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div> -->
+      </div>
+
+      <div id="searchAuditReport" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                type="text"
+                [(ngModel)]="searchName"
+                class="form-control"
+                placeholder="Enter Module Name"
+                (keydown.enter)="search()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="search()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button type="reset" class="btn btn-default" id="searchbtn" (click)="clearSearch()">
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="createMapping()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Audit</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="listMapping()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Audit</h5>
+              </a>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel mb-15">
+      <!-- Data Table -->
+      <div class="panel-heading">
+        <h3 class="panel-title">Audit Data</h3>
+        <!-- <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#auditDetails"
+            aria-expanded="false"
+            aria-controls="auditDetails"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div> -->
+      </div>
+
+      <div class="panel-collapse collapse in" id="auditDetails">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Module Name</th>
+                <th>Action Time</th>
+                <th>Request URL</th>
+                <th>Request Headers</th>
+                <th>Request Body</th>
+                <th>Request Param</th>
+                <th>Response Body</th>
+                <th>Response Status Code</th>
+                <th>Response Header</th>
+                <th>Method Type</th>
+                <th>IP Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let audit of auditData
+                    | paginate
+                      : {
+                          id: 'listing_auditdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>
+                  {{ audit.moduleName }}
+                </td>
+                <td>{{ formatTimestamp(audit.actionTime) }}</td>
+                <td>{{ audit.requestUrl }}</td>
+                <td>
+                  <a
+                    (click)="openDetailsModel(audit.requestHeaders, 'Request Header')"
+                    style="color: #f7b206; cursor: pointer"
+                  >
+                    view</a
+                  >
+                </td>
+                <td>
+                  <a
+                    (click)="openDetailsModel(audit.requestBody, 'Request Body')"
+                    style="color: #f7b206; cursor: pointer"
+                  >
+                    view</a
+                  >
+                </td>
+                <td>{{ audit.requestParams }}</td>
+                <td>
+                  <a
+                    (click)="openDetailsModel(audit.responseBody, 'Response Body')"
+                    style="color: #f7b206; cursor: pointer"
+                  >
+                    view</a
+                  >
+                </td>
+                <td>{{ audit.responseStatusCode }}</td>
+                <td>
+                  <a
+                    (click)="openDetailsModel(audit.responseHeaders, 'Response Header')"
+                    style="color: #f7b206; cursor: pointer"
+                  >
+                    view</a
+                  >
+                </td>
+                <td>{{ audit.httpMethodType }}</td>
+                <td>{{ audit.requestIpAddress }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_auditdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  [(ngModel)]="itemsPerPage"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+</div>
+
+<p-dialog
+  header="{{ detailsHeader }}"
+  [(visible)]="isViewDetails"
+  [modal]="true"
+  [breakpoints]="{ '1024px': '75vw', '767px': '90vw' }"
+  [style]="{ width: '60vw' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="description">
+    <pre
+      style="
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 70vh;
+        overflow: auto;
+      "
+      >{{ detailsBody }}
+        </pre
+    >
+  </div>
+</p-dialog>

@@ -1,0 +1,502 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Feedback Config</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchfeedback"
+            aria-expanded="false"
+            aria-controls="searchfeedback"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchfeedback" class="panel-collapse collapse in">
+        <!-- <div class="panel-body" *ngIf="listView">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="feedbackName"
+                type="text"
+                [(ngModel)]="searchfeedbackName"
+                class="form-control"
+                placeholder="Enter feedback Name"
+                (keydown.enter)="searchfeedback()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-3 marginTopSearchinput">
+              <p-dropdown
+                [options]="feedbackTypeAll"
+                optionValue="value"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                placeholder="Select a feedback Type"
+                [(ngModel)]="searchfeedbackType"
+                (keydown.enter)="searchfeedback()"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchfeedback()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchfeedback()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div> -->
+        <div class="panel-body no-padding panel-udata">
+          <!-- *ngIf="createAccess" -->
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="createFeedback()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Feedback Config</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="listFeedback()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Feedback Config</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Feedback Config List</h3>
+        <div class="right">
+          <button type="button" (click)="getRefresh()">
+            <i class="fa fa-refresh"></i></button
+          >&nbsp;
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listfeedback"
+            aria-expanded="false"
+            aria-controls="listfeedback"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listfeedback" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Event Name</th>
+                    <th>Channel Type</th>
+                    <th>Rating Display Type</th>
+                    <th>Rating Scale</th>
+                    <th>Mandatory</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <!-- *ngIf="deleteAccess || editAccess" -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of feedbackListData">
+                    <td>{{ data.event }}</td>
+                    <td>{{ data.channel }}</td>
+                    <td>{{ data.ratingDisplayType }}</td>
+                    <td>{{ data.ratingScale }}</td>
+                    <td>{{ data.isMandatory }}</td>
+                    <td>
+                      <span *ngIf="data.isActive" class="badge badge-success">Active</span>
+                      <span *ngIf="!data.isActive" class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td class="btnAction">
+                      <!-- *ngIf="deleteAccess || editAccess" -->
+                      <a
+                        id="edit-button"
+                        type="button"
+                        title="Edit"
+                        href="javascript:void(0)"
+                        (click)="editFeedback(data.id)"
+                      >
+                        <!-- *ngIf="editAccess" -->
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        title="Delete"
+                        (click)="deleteFeedback(data.id)"
+                      >
+                        <!-- *ngIf="deleteAccess" -->
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+                <tr *ngIf="feedbackListData?.length === 0">
+                  <td>No Record Found</td>
+                </tr>
+              </table>
+              <!-- <div class="pagination_Dropdown" *ngIf="feedbackListData?.feedbacklist?.length > 0">
+                <pagination-controls
+                  id="feedbackListData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedfeedbackList((currentPagefeedbackListdata = $event))"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isFeedbackEdit ? "Update" : "Create" }} Feedback Config</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createFeedback"
+            aria-expanded="false"
+            aria-controls="createFeedback"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createFeedback" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body">
+            <form class="form-auth-small" [formGroup]="feedbackGroupForm">
+              <fieldset style="margin-top: 0px">
+                <legend>Feedback Config Information</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Event Name*</label>
+                      <input
+                        id="event"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Event Name"
+                        formControlName="event"
+                        [ngClass]="{
+                          'is-invalid': submitted && feedbackGroupForm.controls.event.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.event.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && feedbackGroupForm.controls.event.errors.required"
+                        >
+                          Event name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Channel Type*</label>
+                      <p-dropdown
+                        [options]="channelTypelist"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Channel Type"
+                        formControlName="channel"
+                        [ngClass]="{
+                          'is-invalid': submitted && feedbackGroupForm.controls.channel.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.channel.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && feedbackGroupForm.controls.channel.errors.required"
+                        >
+                          Channel Type is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Status*</label>
+                      <div>
+                        <p-dropdown
+                          [options]="statuslist"
+                          optionValue="value"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Status"
+                          formControlName="isActive"
+                          [ngClass]="{
+                            'is-invalid': submitted && feedbackGroupForm.controls.isActive.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.isActive.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && feedbackGroupForm.controls.isActive.errors.required"
+                        >
+                          Status is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Rating Type*</label>
+                      <p-dropdown
+                        [options]="ratingTypelist"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Channel Type"
+                        formControlName="ratingDisplayType"
+                        (onChange)="getChannelType($event.value)"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && feedbackGroupForm.controls.ratingDisplayType.errors
+                        }"
+                        [disabled]="isFeedbackEdit"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.ratingDisplayType.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            feedbackGroupForm.controls.ratingDisplayType.errors.required
+                          "
+                        >
+                          Rating Type is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div> -->
+                    <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Rating*</label>
+                      <input
+                        id="feedbackName"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter feedback Name"
+                        formControlName="ratingScale"
+                        [ngClass]="{
+                          'is-invalid': submitted && feedbackGroupForm.controls.ratingScale.errors
+                        }"
+                        [disabled]="isFeedbackEdit"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.ratingScale.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && feedbackGroupForm.controls.ratingScale.errors.required
+                          "
+                        >
+                          Rating is required.
+                        </div>
+                        <div
+                          class="position"
+                          *ngIf="
+                            submitted &&
+                            feedbackGroupForm.controls.ratingScale.errors?.cannotContainSpace
+                          "
+                        >
+                          <p class="error">White space are not allowed.</p>
+                        </div>
+                      </div>
+                      <br />
+                    </div> -->
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Mandatory*</label>
+                      <p-dropdown
+                        [options]="mandatorylist"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Channel Type"
+                        formControlName="isMandatory"
+                        [ngClass]="{
+                          'is-invalid': submitted && feedbackGroupForm.controls.isMandatory.errors
+                        }"
+                      ></p-dropdown>
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.isMandatory.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && feedbackGroupForm.controls.isMandatory.errors.required
+                          "
+                        >
+                          Mandatory is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Message*</label>
+                      <textarea
+                        class="form-control"
+                        placeholder="Enter Message"
+                        rows="3"
+                        formControlName="feedBackMessage"
+                        name="feedBackMessage"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && feedbackGroupForm.controls.feedBackMessage.errors
+                        }"
+                      ></textarea>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.feedBackMessage.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && feedbackGroupForm.controls.feedBackMessage.errors.required
+                          "
+                        >
+                          Message is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && feedbackGroupForm.controls.feedBackMessage.errors.pattern
+                          "
+                        >
+                          Maximum 150 charecter required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Message*</label>
+                      <textarea
+                        class="form-control"
+                        placeholder="Enter Message"
+                        rows="3"
+                        formControlName="feedBackMessage"
+                        name="feedBackMessage"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && feedbackGroupForm.controls.feedBackMessage.errors
+                        }"
+                      ></textarea>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && feedbackGroupForm.controls.feedBackMessage.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && feedbackGroupForm.controls.feedBackMessage.errors.required
+                          "
+                        >
+                          Message is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && feedbackGroupForm.controls.feedBackMessage.errors.pattern
+                          "
+                        >
+                          Maximum 150 charecter required.
+                        </div>
+                      </div>
+                    </div> -->
+                  </div>
+                </div>
+              </fieldset>
+              <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  *ngIf="!isFeedbackEdit"
+                  (click)="addFeedback('')"
+                  id="submit"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Add
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  *ngIf="isFeedbackEdit"
+                  (click)="addFeedback(editFeedbackId)"
+                  id="submit"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

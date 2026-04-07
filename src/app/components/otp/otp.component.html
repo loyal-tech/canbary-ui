@@ -1,0 +1,475 @@
+<div class="childComponent">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- User Data -->
+      <div class="panel top">
+        <div class="panel-heading">
+          <h3 class="panel-title">OTP Profile Management</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#OTPsearchPanel"
+              aria-expanded="false"
+              aria-controls="OTPsearchPanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="OTPsearchPanel" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="searchForm">
+              <form class="form-auth-small" [formGroup]="searchForm">
+                <div class="col-md-2" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px">OTP Profile Name:</label>
+                </div>
+                <div class="col-md-6" style="padding-left: 0%">
+                  <input
+                    id="searchName"
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter OTP Profile"
+                    formControlName="name"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchForm.controls.name.errors
+                    }"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    data-title="Search OTP Profile"
+                    data-toggle="tooltip"
+                    (click)="search()"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    data-title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="panel-body no-padding panel-udata">
+            <div class="col-md-6 pcol">
+              <div class="dbox">
+                <a href="javascript:void(0)" (click)="createNewOtp()">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Create Profile</h5>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 pcol">
+              <div class="dbox">
+                <a href="javascript:void(0)" (click)="clearSearchForm()">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Search Profile</h5>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 left">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Profile</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#OTPtabelPanel"
+              aria-expanded="false"
+              aria-controls="OTPtabelPanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="OTPtabelPanel" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Length</th>
+                    <th>Validity</th>
+                    <th>Generation</th>
+                    <th>ISP Name</th>
+                    <th *ngIf="editAccess || deleteAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let profile of otpProfileList
+                        | paginate
+                          : {
+                              id: 'listing_profiledata',
+                              itemsPerPage: itemsPerPage,
+                              currentPage: currentPage,
+                              totalItems: totalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <a
+                        class="detailOnAnchorClick"
+                        style="color: #f7b206"
+                        (click)="getOTPDetail(profile.profileId, profile.mvnoId)"
+                        data-title="Click here to see OTP details"
+                        data-toggle="modal"
+                        data-target="#otpDetailModal"
+                      >
+                        {{ profile.profileName }}
+                      </a>
+                    </td>
+                    <td>{{ profile.otpLength }}</td>
+                    <td>{{ profile.otpValidityInMin }} Mins</td>
+                    <td>
+                      {{ getGenerationType(profile.generationType) | titlecase }}
+                    </td>
+                    <td>{{ profile.mvnoName }}</td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <a
+                        *ngIf="editAccess"
+                        class="detailOnAnchorClick"
+                        type="button"
+                        data-title="Edit"
+                        data-toggle="tooltip"
+                        (click)="edit(profile.profileId)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        class="detailOnAnchorClick"
+                        type="button"
+                        data-title="Delete"
+                        data-toggle="tooltip"
+                        title="Delete"
+                        (click)="deleteConfirm(profile.profileId, i)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <br />
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="listing_profiledata"
+                    [maxSize]="10"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChanged($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+
+    <div class="col-md-6 right">
+      <!-- Form Design -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ editId ? "Update" : "Create" }} OTP Profile</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#createOtp"
+              aria-expanded="false"
+              aria-controls="createOtp"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="createOtp" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="panel-body table-responsive" *ngIf="!createAccess && !editId">
+              Sorry you have not privilege to create operation!
+            </div>
+            <div *ngIf="createAccess || (editId && editAccess)">
+              <form [formGroup]="detailGroupForm" (ngSubmit)="addOrUpdate()">
+                <div class="panel-body">
+                  <label>Profile Name *</label>
+                  <input
+                    #focusOnOTP
+                    type="text"
+                    name="name"
+                    [readonly]="editId"
+                    formControlName="name"
+                    class="form-control"
+                    [ngClass]="{
+                      'is-invalid': submitted && detailGroupForm.controls.name.errors
+                    }"
+                    placeholder="Enter Profile Name"
+                    ngModel
+                  />
+                  <div
+                    *ngIf="submitted && detailGroupForm.controls.name.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="detailGroupForm.controls.name.errors.required">
+                      Please Enter Profile Name.
+                    </div>
+                  </div>
+                  <br />
+                  <label>OTP Length *</label>
+                  <input
+                    type="text"
+                    name="length"
+                    formControlName="length"
+                    class="form-control"
+                    [ngClass]="{
+                      'is-invalid': submitted && detailGroupForm.controls.length.errors
+                    }"
+                    placeholder="Enter Length"
+                    ngModel
+                  />
+                  <div
+                    *ngIf="submitted && detailGroupForm.controls.length.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="detailGroupForm.controls.length.errors.required">
+                      Please Enter OTP Length.
+                    </div>
+                    <div *ngIf="detailGroupForm.controls.length.errors.pattern">
+                      Length should be in numeric
+                    </div>
+                  </div>
+                  <br />
+                  <label>OTP Validity(min) *</label>
+                  <input
+                    type="text"
+                    name="validity"
+                    formControlName="validity"
+                    class="form-control"
+                    [ngClass]="{
+                      'is-invalid': submitted && detailGroupForm.controls.validity.errors
+                    }"
+                    placeholder="Enter Validity in min"
+                    ngModel
+                  />
+                  <div
+                    *ngIf="submitted && detailGroupForm.controls.validity.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="detailGroupForm.controls.validity.errors.required">
+                      Please Enter Validity.
+                    </div>
+                    <div *ngIf="detailGroupForm.controls.validity.errors.pattern">
+                      Validity should be in numeric
+                    </div>
+                  </div>
+                  <br />
+                  <label>Generation Type *</label>
+                  <p-dropdown
+                    [options]="generationTypes"
+                    optionValue="value"
+                    optionLabel="label"
+                    filter="true"
+                    filterBy="label"
+                    placeholder="Select Generation Types"
+                    formControlName="selectedGenerationType"
+                    (onChange)="generationTypeChange($event)"
+                    [ngClass]="{
+                      is_invalidNGSelecet:
+                        submitted && detailGroupForm.controls.selectedGenerationType?.errors
+                    }"
+                  ></p-dropdown>
+                  <div></div>
+                  <div
+                    *ngIf="submitted && detailGroupForm.controls.selectedGenerationType?.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="detailGroupForm.controls.selectedGenerationType.errors.required">
+                      Please Select Generation Type.
+                    </div>
+                  </div>
+                  <br />
+
+                  <!-- Static Value -->
+                  <div *ngIf="detailGroupForm.value.selectedGenerationType === 'STATIC'">
+                    <label>Static Value *</label>
+                    <input
+                      type="text"
+                      name="staticOtp"
+                      formControlName="staticOtp"
+                      class="form-control"
+                      [ngClass]="{
+                        'is-invalid': submitted && detailGroupForm.controls.staticOtp.errors
+                      }"
+                      placeholder="Enter Static OTP"
+                    />
+                    <div
+                      *ngIf="submitted && detailGroupForm.controls.staticOtp.errors"
+                      class="invalid-feedback"
+                    >
+                      Please Enter Static OTP.
+                    </div>
+                    <br />
+                  </div>
+
+                  <!-- Value Allowed -->
+                  <label>Values allowed *</label>
+                  <p-multiSelect
+                    id="id"
+                    [options]="allowedValues"
+                    formControlName="selectedAllowedValues"
+                    optionLabel="label"
+                    optionValue="value"
+                    filter="true"
+                    filterBy="label"
+                    placeholder="Select Allowed values"
+                    [ngClass]="{
+                      is_invalidNGSelecet:
+                        submitted && detailGroupForm.controls.selectedAllowedValues?.errors
+                    }"
+                  ></p-multiSelect>
+                  <div></div>
+                  <div
+                    *ngIf="submitted && detailGroupForm.controls.selectedAllowedValues?.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="detailGroupForm.controls.selectedAllowedValues.errors.required">
+                      Please Select Allowed Value.
+                    </div>
+                  </div>
+
+                  <br />
+
+                  <div class="addUpdateBtn">
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      data-title="Submit OTP Profile Details"
+                    >
+                      <i class="fa fa-check-circle"></i>
+                      {{ editId ? "Update" : "Add" }} OTP Profile
+                    </button>
+                    <br />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Form Design -->
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="showDetailsDialogue">
+  <div class="modal fade" id="otpDetailModal" role="dialog">
+    <div class="modal-dialog" style="width: 35%">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="panel-title">OTP Details</h3>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="name">Name :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="nameValue">
+                  {{ this.otpProfileData.profileName }}
+                </label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="type">Otp Length :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="typeValue">
+                  {{ this.otpProfileData.otpLength }}
+                </label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="type">Otp Validity In Min :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="typeValue">
+                  {{ this.otpProfileData.otpValidityInMin }}
+                </label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="type">Generation Type :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="typeValue">
+                  {{ this.otpProfileData.generationType }}
+                </label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="type">Values allowed :</label>
+              </div>
+              <div class="col-md-7" *ngIf="otpProfileData.type">
+                <label for="typeValue" *ngFor="let data of otpProfileData.type">
+                  <span>{{ data }},&nbsp;</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

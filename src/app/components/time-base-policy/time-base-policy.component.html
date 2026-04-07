@@ -1,0 +1,630 @@
+<div class="childComponent">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- User Data -->
+      <div class="panel top">
+        <div class="panel-heading">
+          <h3 class="panel-title">Time Base Policy Management</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#timeBasePolicySearchPanel"
+              aria-expanded="false"
+              aria-controls="timeBasePolicySearchPanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="timeBasePolicySearchPanel" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="searchForm" *ngIf="!createtimePolicyFlag">
+              <div class="row">
+                <div class="col-lg-3 col-md-4">
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Policy Name"
+                    [(ngModel)]="searchName"
+                    (keydown.enter)="searchPolicyByName()"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    data-title="Search Policy Details"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    (click)="searchPolicyByName()"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    data-title="Clear"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    (click)="clearSearchForm()"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body no-padding panel-udata">
+            <div
+              *ngIf="createAccess"
+              class="col-md-6 pcol"
+              [ngClass]="{
+                'is-active': createtimePolicyFlag
+              }"
+            >
+              <div class="dbox">
+                <a class="detailOnAnchorClick" (click)="CreateUpdatetimePolicy()">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Create Policy</h5>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 pcol">
+              <div class="dbox">
+                <a class="detailOnAnchorClick" (click)="timePolicyListData()">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Search Policy</h5>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12" *ngIf="!createtimePolicyFlag">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Time Base Policy</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#timeBasePolicyTablePanel"
+              aria-expanded="false"
+              aria-controls="timeBasePolicyTablePanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="timeBasePolicyTablePanel" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Policy Name</th>
+                    <th>Status</th>
+                    <th>ISP Name</th>
+                    <!-- <th>Created On</th> -->
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let policy of filteredPolicyList
+                        | paginate
+                          : {
+                              id: 'listing_groupdata',
+                              itemsPerPage: itemsPerPage,
+                              currentPage: currentPage,
+                              totalItems: totalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td class="detailOnAnchorClick">
+                      <a
+                        (click)="getPolicyDetails(policy.id)"
+                        data-title="Click here to see Time Base Policy detail"
+                        data-toggle="modal"
+                        data-target="#policyDetailModal"
+                        style="color: #f7b206"
+                      >
+                        {{ policy.name }}
+                      </a>
+                    </td>
+                    <td>
+                      <div *ngIf="policy.status == 'Active'">
+                        <span class="badge badge-success">Active</span>
+                      </div>
+                      <div *ngIf="policy.status == 'Inactive'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </div>
+                    </td>
+                    <td>{{ policy.mvnoName }}</td>
+                    <!-- <td>
+                    {{ policy.createdate | date: 'dd-MM-yyy HH:mm' }}
+                  </td> -->
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        type="button"
+                        data-title="Edit"
+                        data-toggle="tooltip"
+                        class="detailOnAnchorClick"
+                        (click)="editPolicyDetailById(policy.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        type="button"
+                        class="detailOnAnchorClick"
+                        data-title="Delete"
+                        data-toggle="tooltip"
+                        (click)="deleteConfirm(policy, i)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="listing_groupdata"
+                    [maxSize]="10"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChanged($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      [(ngModel)]="showItemPerPage"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+    <div class="col-md-12" *ngIf="createtimePolicyFlag">
+      <!-- Form Design -->
+      <div class="panel" *ngIf="this.accessData.timeBasePolicy.createUpdateAccess">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Policy</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#policyFormToggle"
+              aria-expanded="false"
+              aria-controls="policyFormToggle"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="policyFormToggle" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="panel-body">
+              <form class="form-auth-small" [formGroup]="policyForm">
+                <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+                  <legend>Time Base Policy Parameters</legend>
+                  <div class="boxWhite">
+                    <div class="row">
+                      <div class="col-lg-4 co-md-4 col-sm-7 col-xs-12">
+                        <label>Policy Name *</label>
+                        <input
+                          type="text"
+                          name="name"
+                          class="form-control"
+                          placeholder="Enter policy name"
+                          formControlName="name"
+                          [ngClass]="{
+                            'is-invalid': submitted && policyForm.controls.name.errors
+                          }"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && policyForm.controls.name.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && policyForm.controls.name.errors.required"
+                          >
+                            Please Enter Policy Name.
+                          </div>
+                          <div
+                            class="position"
+                            *ngIf="submitted && policyForm.controls.name.errors?.cannotContainSpace"
+                          >
+                            <p class="error">White space are not allowed.</p>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                      <div class="col-lg-4 co-md-4 col-sm-7 col-xs-12">
+                        <div>
+                          <label>Status *</label>
+                          <p-dropdown
+                            id="status"
+                            [options]="status"
+                            placeholder="Select Policy Status"
+                            optionLabel="label"
+                            optionValue="value"
+                            formControlName="status"
+                            [ngClass]="{
+                              'is-invalid': submitted && policyForm.controls.status.errors
+                            }"
+                          ></p-dropdown>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && policyForm.controls.status.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="submitted && policyForm.controls.status.errors.required"
+                            >
+                              Please Select Status.
+                            </div>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                      <div *ngIf="mvnoId === 1" class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-15">
+                        <label>{{ mvnoTitle }} List*</label>
+                        <p-dropdown
+                          id="mvnoId"
+                          [disabled]="editMode"
+                          [options]="commondropdownService.mvnoList"
+                          filter="true"
+                          filterBy="name"
+                          formControlName="mvnoId"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select a mvno"
+                        ></p-dropdown>
+                        <div
+                          *ngIf="submitted && policyForm.controls.mvnoId.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="submitted && policyForm.controls.mvnoId.errors.required"
+                            class="error text-danger"
+                          >
+                            Mvno is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+                  <legend>Policy Details Mapping List</legend>
+                  <div class="boxWhite">
+                    <!-- <div class="row">
+                                        <div class="col-lg-4 co-md-4 col-sm-7 col-xs-12">
+                                        </div>
+                                    </div> -->
+                    <div class="table-responsive">
+                      <p-table
+                        [value]="this.policyDetailsArray.controls"
+                        styleClass="p-datatable-gridlines"
+                        responsiveLayout="scroll"
+                      >
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th>From Day *</th>
+                            <th>From Time *</th>
+                            <th>To Day *</th>
+                            <th>To Time *</th>
+                            <!-- <th>Speed *</th> -->
+                            <th>Qos Policy *</th>
+                            <th>Access</th>
+                            <th>Free Quota</th>
+                            <th>
+                              <button
+                                id="addAtt"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onAddAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+                          <tr [formGroup]="product">
+                            <td>
+                              <p-dropdown
+                                id="fromDay"
+                                [options]="weekDaysList"
+                                appendTo="body"
+                                placeholder="From Day"
+                                optionLabel="label"
+                                optionValue="value"
+                                formControlName="fromDay"
+                              ></p-dropdown>
+                            </td>
+                            <td>
+                              <p-calendar
+                                id="fromTime"
+                                formControlName="fromTime"
+                                appendTo="body"
+                                placeholder="From Time"
+                                [timeOnly]="true"
+                              ></p-calendar>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                id="toDay"
+                                [options]="weekDaysList"
+                                placeholder="To Day"
+                                optionLabel="label"
+                                appendTo="body"
+                                optionValue="value"
+                                formControlName="toDay"
+                              ></p-dropdown>
+                            </td>
+                            <td>
+                              <p-calendar
+                                id="toTime"
+                                placeholder="To Time"
+                                appendTo="body"
+                                [timeOnly]="true"
+                                formControlName="toTime"
+                              ></p-calendar>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                [options]="qosPolicyData"
+                                optionValue="id"
+                                optionLabel="name"
+                                filter="true"
+                                filterBy="name"
+                                placeholder="Select a Qos Policy"
+                                formControlName="qqsid"
+                              ></p-dropdown>
+                              <!-- <input type="text" name="speed" class="form-control" placeholder="Speed"
+                                formControlName="speed" /> -->
+                            </td>
+                            <td>
+                              <input type="checkbox" formControlName="access" />
+                            </td>
+                            <td>
+                              <input type="checkbox" formControlName="isFreeQuota" />
+                            </td>
+                            <td>
+                              <a
+                                id="deleteAtt"
+                                *ngIf="this.policyDetailsArray.length > 1"
+                                (click)="this.deleteConfirmArray(rowIndex)"
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                          <tr *ngIf="submitted && product.invalid">
+                            <td>
+                              <div class="error text-danger">Please Enter All the Details.</div>
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                      <br />
+                    </div>
+                  </div>
+                </fieldset>
+
+                <div class="addUpdateBtn">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    data-title="Submit Details"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    (click)="savePolicy()"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    {{ editMode ? "Update Policy" : "Add Policy" }}
+                  </button>
+                  <br />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Form Design -->
+    </div>
+  </div>
+</div>
+<p-dialog
+  header="Policy Detail"
+  [(visible)]="showDialogue"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModal()"
+  ><div class="modal-body">
+    <div class="container-fluid">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Time Base Policy Parameters</legend>
+        <div class="boxWhite">
+          <div class="row">
+            <div class="col-lg-6 co-md-6 col-sm-6 col-xs-12">
+              <label for="name">Policy Name :</label>
+              <label for="nameValue">
+                {{ this.policyDetails.name }}
+              </label>
+              <br />
+            </div>
+            <div class="col-lg-6 co-md-6 col-sm-6 col-xs-12">
+              <label for="status">Status :</label>
+              <label for="statusValue">
+                <span *ngIf="this.policyDetails.status == 'Active'">
+                  <span class="badge badge-success" style="margin-left: 10px">Active</span>
+                </span>
+                <span *ngIf="this.policyDetails.status == 'Inactive'">
+                  <span class="badge badge-danger" style="margin-left: 10px">Inactive</span>
+                </span>
+              </label>
+              <br />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Policy Details Mapping List</legend>
+        <div class="boxWhite">
+          <table class="table map-table">
+            <thead>
+              <tr>
+                <th>From Day</th>
+                <th>From Time</th>
+                <th>To Day</th>
+                <th>To Time</th>
+                <th>QoS</th>
+                <th>Access</th>
+                <th>Free Quota</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of this.PolicyMappingDetails; let index = index">
+                <td>{{ data.fromDay }}</td>
+                <td>{{ data.fromTime }}</td>
+                <td>{{ data.toDay }}</td>
+                <td>{{ data.toTime }}</td>
+                <td>{{ data.qos_name }}</td>
+                <td>
+                  <input type="checkbox" [value]="data.access" [(ngModel)]="data.access" disabled />
+                </td>
+                <td>
+                  <input
+                    type="checkbox"
+                    [value]="data.isFreeQuota"
+                    [(ngModel)]="data.isFreeQuota"
+                    disabled
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</p-dialog>
+<!-- <div class="modal fade" id="policyDetailModal" role="dialog">
+    <div class="modal-dialog" style="width: 75%">
+
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="panel-title">Policy Detail</h3>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Time Base Policy Parameters</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 co-md-4 col-sm-7 col-xs-12">
+                    <label for="name">Policy Name :</label>
+                    <label for="nameValue">
+                      {{ this.policyDetails.name }}
+                    </label>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 co-md-4 col-sm-7 col-xs-12">
+                    <label for="status">Staus :</label>
+                    <label for="statusValue">
+                      <span *ngIf="this.policyDetails.status == 'Active'">
+                        <span class="badge badge-success">Active</span>
+                      </span>
+                      <span *ngIf="this.policyDetails.status == 'Inactive'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </span>
+                    </label>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Policy Details Mapping List</legend>
+              <div class="boxWhite">
+                <table class="table map-table">
+                  <thead>
+                    <tr>
+                      <th>From Day</th>
+                      <th>From Time</th>
+                      <th>To Day</th>
+                      <th>To Time</th>
+                      <th>QoS</th>
+                      <th>Access</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of this.PolicyMappingDetails; let index = index">
+                      <td>{{ data.fromDay }}</td>
+                      <td>{{ data.fromTime }}</td>
+                      <td>{{ data.toDay }}</td>
+                      <td>{{ data.toTime }}</td>
+                      <td>{{ data.qos_name }}</td>
+                      <td>
+                        <input
+                          type="checkbox"
+                          [value]="data.access"
+                          [(ngModel)]="data.access"
+                          disabled
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+<!-- </div> -->

@@ -1,0 +1,434 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Role Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchRole"
+            aria-expanded="false"
+            aria-controls="searchRole"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchRole" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="isRoleList">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchRoleForm">
+              <!-- <div class="col-md-2" style="padding-right: 0%; text-align: right">
+                                <label style="padding: 5px">Role Name:</label>
+                            </div> -->
+              <div class="col-md-4" style="padding-left: 0%">
+                <input
+                  id="searchRoleName"
+                  type="text"
+                  name="roleName"
+                  class="form-control"
+                  placeholder="Enter Role"
+                  formControlName="name"
+                  (keydown.enter)="searchRoleByName()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchRoleForm.controls.name.errors
+                  }"
+                />
+              </div>
+              <div class="col-md-4 marginTopSearchBtn" style="padding-left: 0%">
+                <button
+                  id="search"
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="searchRoleByName()"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+                &nbsp;
+                <button id="clear" type="reset" class="btn btn-default" (click)="clearSearchForm()">
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel-body no-padding panel-udata">
+          <!-- *ngIf="!isRoleCreateOrEdit" -->
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="openRoleCreateMenu()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Role</h5>
+                <!-- <p>Create Role</p> -->
+              </a>
+            </div>
+          </div>
+          <!-- *ngIf="!isRoleList" -->
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="openRoleListMenu()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Role List</h5>
+                <!-- <p>Role List</p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+
+<div class="row">
+  <div *ngIf="isRoleList" class="col-md-12">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Role</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listrole"
+            aria-expanded="false"
+            aria-controls="listrole"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listrole" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let role of roleSearchData.dataList
+                    | paginate
+                      : {
+                          id: 'listing_roledata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ role.rolename }}</td>
+                <td>
+                  <span *ngIf="role.status == 'Active'" class="badge badge-success"> Active </span>
+                  <span *ngIf="role.status == 'Inactive'" class="badge badge-danger">
+                    Inactive
+                  </span>
+                </td>
+                <td class="btnAction">
+                  <a
+                    id="edit"
+                    type="button"
+                    (click)="editRoleById(role.id, i)"
+                    class="curson_pointer"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a id="delete" (click)="deleteConfirm(role)" class="curson_pointer">
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+
+          <div class="pagination_Dropdown">
+            <pagination-controls
+              id="listing_roledata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div *ngIf="isRoleCreateOrEdit" class="col-md-12">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Role</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createrole"
+            aria-expanded="false"
+            aria-controls="createrole"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createrole" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form class="form-auth-small" [formGroup]="roleGroupForm">
+            <div class="form-group row">
+              <div class="col-md-4 ml-15">
+                <label>Name *</label>
+                <input
+                  id="rolename"
+                  type="text"
+                  name="rolename"
+                  class="form-control"
+                  placeholder="Enter name"
+                  formControlName="rolename"
+                  [ngClass]="{
+                    'is-invalid': submitted && roleGroupForm.controls.rolename.errors
+                  }"
+                  [readOnly]="editMode"
+                />
+
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && roleGroupForm.controls.rolename.errors"
+                >
+                  <div class="error text-danger">Name is required.</div>
+                </div>
+              </div>
+              <div class="col-md-4 ml-15">
+                <label>Status *</label>
+                <p-dropdown
+                  [options]="commonStatusList"
+                  optionValue="value"
+                  optionLabel="text"
+                  filter="true"
+                  filterBy="text"
+                  placeholder="Select a Status"
+                  formControlName="status"
+                  [ngClass]="{
+                    'is-invalid': submitted && roleGroupForm.controls.status.errors
+                  }"
+                ></p-dropdown>
+                <div></div>
+
+                <!-- <ng-select
+                id="rstatus"
+                formControlName="status"
+                placeholder="Select Status"
+                [items]="commonStatusList"
+                bindLabel="text"
+                bindValue="value"
+              ></ng-select> -->
+                <!-- <div
+                  *ngIf="
+                    roleGroupForm.controls['status'].invalid &&
+                    (roleGroupForm.controls['status'].dirty ||
+                      roleGroupForm.controls['status'].touched)
+                  "
+                >
+                  <div
+                    class="position"
+                    *ngIf="roleGroupForm.controls['status'].errors.required"
+                  >
+                    <p class="error">Status is required</p>
+                  </div>
+                </div> -->
+
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && roleGroupForm.controls.status.errors"
+                >
+                  <div class="error text-danger">Status is required.</div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div>
+            <label style="margin-bottom: 20px">Access Module</label>
+            <div
+              class="p-grid p-shadow-5"
+              style="
+                padding: 10px 0;
+                border-top: 2px solid #ddd;
+                border-bottom: 2px solid #ddd;
+                margin: 0 !important;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <div style="text-align: center" class="p-col-3">Services</div>
+              <div style="text-align: center" class="p-col-1">Display</div>
+              <div style="text-align: center" class="p-col-1">
+                All
+                <p-toggleButton
+                  [(ngModel)]="accessAll"
+                  (onChange)="accessAllCheck()"
+                  onIcon="pi pi-check"
+                  offIcon="pi pi-times"
+                ></p-toggleButton>
+              </div>
+              <div style="text-align: center" class="p-col-1">
+                Read
+                <p-toggleButton
+                  [(ngModel)]="readAccess"
+                  (onChange)="readAccessCheck()"
+                  onIcon="pi pi-check"
+                  offIcon="pi pi-times"
+                ></p-toggleButton>
+              </div>
+              <div style="text-align: center" class="p-col-1">Create</div>
+              <div style="text-align: center" class="p-col-1">Update</div>
+              <div style="text-align: center" class="p-col-1">Delete</div>
+              <div style="width: 100%">
+                <p-accordion>
+                  <p-accordionTab *ngFor="let acl of dataListAccess; let idx = index">
+                    <p-header>
+                      <span>{{ acl.dispName }}</span
+                      >&nbsp;
+                      <p-toggleButton
+                        (click)="$event.stopPropagation()"
+                        (onChange)="accessServiceCheck($event, acl.dispName)"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                      ></p-toggleButton>
+                    </p-header>
+                    <div
+                      style="
+                        padding: 10px 0;
+                        border-top: 2px solid #ddd;
+                        border-bottom: 2px solid #ddd;
+                        margin: 0 !important;
+                        justify-content: center;
+                        align-items: center;
+                      "
+                      class="p-grid"
+                      *ngFor="let row of dataListAccess[idx].submenu; let index = index"
+                    >
+                      <div class="p-col-3">
+                        <input
+                          [disabled]="true"
+                          type="text"
+                          style="text-align: center"
+                          id="screenName"
+                          class="form-control"
+                          value="{{ row.dispname }}"
+                        />
+                      </div>
+                      <div style="text-align: center" class="p-col-1 centerCheckbox">
+                        <p-checkbox
+                          class="p-field-checkbox"
+                          name="checkAccess"
+                          [(ngModel)]="getAclOperation(row, 'display').accessible"
+                          [binary]="true"
+                          *ngIf="getAclOperation(row, 'display').visible"
+                        ></p-checkbox>
+                      </div>
+                      <div style="text-align: center" class="p-col-1 centerCheckbox">
+                        <p-checkbox
+                          class="p-field-checkbox"
+                          name="checkAccess"
+                          [(ngModel)]="getAclOperation(row, 'all').accessible"
+                          [binary]="true"
+                          (click)="checkRead(row.aclOperationsList, 'all')"
+                          *ngIf="getAclOperation(row, 'all').visible"
+                        ></p-checkbox>
+                      </div>
+                      <div style="text-align: center" class="p-col-1 centerCheckbox">
+                        <p-checkbox
+                          class="p-field-checkbox"
+                          name="checkAccess"
+                          [(ngModel)]="getAclOperation(row, 'view').accessible"
+                          (click)="checkRead(row.aclOperationsList, 'view')"
+                          [binary]="true"
+                          *ngIf="getAclOperation(row, 'view').visible"
+                        ></p-checkbox>
+                      </div>
+                      <div style="text-align: center" class="p-col-1 centerCheckbox">
+                        <p-checkbox
+                          class="p-field-checkbox"
+                          name="checkAccess"
+                          [(ngModel)]="getAclOperation(row, 'add').accessible"
+                          (click)="checkRead(row.aclOperationsList, 'add')"
+                          [binary]="true"
+                          *ngIf="getAclOperation(row, 'add').visible"
+                        ></p-checkbox>
+                      </div>
+                      <div style="text-align: center" class="p-col-1 centerCheckbox">
+                        <p-checkbox
+                          class="p-field-checkbox"
+                          name="checkAccess"
+                          [(ngModel)]="getAclOperation(row, 'edit').accessible"
+                          (click)="checkRead(row.aclOperationsList, 'edit')"
+                          [binary]="true"
+                          *ngIf="getAclOperation(row, 'edit').visible"
+                        ></p-checkbox>
+                      </div>
+                      <div style="text-align: center" class="p-col-1 centerCheckbox">
+                        <p-checkbox
+                          class="p-field-checkbox"
+                          name="checkAccess"
+                          [(ngModel)]="getAclOperation(row, 'delete').accessible"
+                          (click)="checkRead(row.aclOperationsList, 'delete')"
+                          [binary]="true"
+                          *ngIf="getAclOperation(row, 'delete').visible"
+                        ></p-checkbox>
+                      </div>
+                    </div>
+                  </p-accordionTab>
+                </p-accordion>
+              </div>
+            </div>
+            <!-- <app-acl-gerneric-component
+              (onSave)="onDataSave($event)"
+              (onAllAccess)="onAllAccessClick($event)"
+              [isAllOperation]="this.saveSelectedPermission.isAllOperation"
+              [isUpdated]="this.isUpdateComponent"
+              [DataList]="dataList"
+            ></app-acl-gerneric-component> -->
+
+            <br />
+            <div class="addUpdateBtn">
+              <button type="submit" class="btn btn-primary" (click)="addRole()" id="submit">
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update" : "Add" }} Role
+              </button>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Form Design -->
+    </div>
+  </div>
+</div>

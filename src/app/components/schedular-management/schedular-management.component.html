@@ -1,0 +1,425 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="listView">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                class="form-control"
+                [(ngModel)]="search"
+                placeholder="Global Search Filter"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="getAllSchedularList()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button type="reset" class="btn btn-default" id="searchbtn" (click)="clearsearch()">
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="createSchedular()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create {{ title }}</h5>
+                <!-- <p>Create Charge</p> -->
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="searchSchedular()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search {{ title }}</h5>
+                <!-- <p>Search Charge</p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#schedularlist"
+            aria-expanded="false"
+            aria-controls="schedularlist"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="schedularlist" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <p-table
+                styleClass="p-datatable-gridlines advanceTable"
+                dataKey="id"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [tableStyle]="{ 'min-width': '60rem' }"
+                [rowsPerPageOptions]="[5, 10, 20, 50]"
+                rowExpandMode="single"
+                [value]="schedularList"
+                [paginator]="true"
+                [rows]="itemsPerPage"
+                [totalRecords]="totalRecords"
+                [lazy]="true"
+                (onLazyLoad)="loadSchedulers($event)"
+                [(first)]="first"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Scheduler Name</th>
+                    <th>Scheduler Time</th>
+                    <th>Schedule Type</th>
+                    <th>Status</th>
+                    <th>Weekly</th>
+                    <th>Day of Month</th>
+                    <th>Action</th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-scheduler let-i="rowIndex">
+                  <tr>
+                    <td>{{ scheduler.schedulerName || "-" }}</td>
+                    <td>{{ scheduler.schedulerTime || "-" }}</td>
+                    <td>{{ scheduler.scheduleType || "-" }}</td>
+                    <td *ngIf="scheduler.status == 'ACTIVE' || scheduler.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="scheduler.status == 'INACTIVE' || scheduler.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td>{{ scheduler.weekly || "-" }}</td>
+                    <td>{{ scheduler.dayOfMonth || "-" }}</td>
+                    <td class="btnAction">
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        (click)="editSchedular(scheduler.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteSchedularConfirmation(scheduler)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                      <a
+                        *ngIf="scheduler?.status?.toLowerCase() === 'inactive'"
+                        data-title="Start"
+                        data-toggle="tooltip"
+                        id="send"
+                        style="
+                          background-color: #f8b205 !important;
+                          color: #ffffff !important;
+                          background: #f6b305;
+                          border: 1px solid #f6b305;
+                          border-radius: 5px;
+                          padding: 7px 0px 6px 0px;
+                          font-size: 1rem;
+                        "
+                        (click)="sendToKafka(role.db_id)"
+                      >
+                        <img
+                          srcset="https://img.icons8.com/ios-glyphs/30/000000/play--v1.png 2x"
+                          style="
+                            filter: invert(99%) sepia(39%) saturate(0%) brightness(113%)
+                              contrast(101%);
+                          "
+                        />
+                      </a>
+
+                      <!-- Stop Button -->
+                      <a
+                        *ngIf="scheduler?.status?.toLowerCase() === 'active'"
+                        data-title="Stop"
+                        data-toggle="tooltip"
+                        id="stop"
+                        style="
+                          color: #ffffff !important;
+                          background: #f6b305;
+                          border: 1px solid #f6b305;
+                          border-radius: 5px;
+                          padding: 7px 2px 6px 0px;
+                          font-size: 1rem;
+                        "
+                        (click)="stopDeviceDriver(role.db_id)"
+                      >
+                        <img src="assets/img/stop.svg" />
+                      </a>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isSchedularEdit ? "Update" : "Create" }} {{ title }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createSchedular"
+            aria-expanded="false"
+            aria-controls="createSchedular"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createSchedular" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="schedularForm" (ngSubmit)="addOrUpdateScheduler()">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Schedular Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Scheduler Name*</label>
+                    <p-dropdown
+                      [options]="scheduleNameList"
+                      optionValue="value"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select Schedule Name"
+                      formControlName="schedulerName"
+                      [disabled]="isSchedularEdit"
+                      [ngClass]="{
+                        'is-invalid': submitted && schedularForm.controls.schedulerName.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && schedularForm.controls.schedulerName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && schedularForm.controls.schedulerName.errors.required"
+                      >
+                        {{ title }} Name is required.
+                      </div>
+                      <div
+                        class="position"
+                        *ngIf="
+                          submitted &&
+                          schedularForm.controls.schedulerName.errors?.cannotContainSpace
+                        "
+                      >
+                        <p class="error">White space are not allowed.</p>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <div>
+                      <label>Scheduler Time *</label>
+                      <p-calendar
+                        [timeOnly]="true"
+                        appendTo="body"
+                        formControlName="schedulerTime"
+                        placeholder="Enter Scheduler Time"
+                        inputId="timeonly"
+                        dateFormat="HH:mm"
+                      ></p-calendar>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && schedularForm.controls.schedulerTime.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && schedularForm.controls.schedulerTime.errors.required"
+                        >
+                          Scheduler Time is required.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <div>
+                      <label>Schedule Type*</label>
+                      <p-dropdown
+                        [options]="scheduleTypeList"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select Schedule Type"
+                        formControlName="scheduleType"
+                        [ngClass]="{
+                          'is-invalid': submitted && schedularForm.controls.scheduleType.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && schedularForm.controls.scheduleType.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && schedularForm.controls.scheduleType.errors.required"
+                        >
+                          Schedule Type is required.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+                <div class="row">
+                  <div
+                    class="col-lg-4 col-md-4 col-12"
+                    *ngIf="schedularForm.value.scheduleType == 'WEEKLY'"
+                  >
+                    <label>Weekly*</label>
+                    <p-dropdown
+                      appendTo="body"
+                      [options]="[
+                        'SUNDAY',
+                        'MONDAY',
+                        'TUESDAY',
+                        'WEDNESDAY',
+                        'THURSDAY',
+                        'FRIDAY',
+                        'SATURDAY'
+                      ]"
+                      formControlName="weekly"
+                      placeholder="Select Day of week"
+                      [ngClass]="{
+                        'is-invalid': submitted && schedularForm.controls.weekly.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && schedularForm.controls.weekly.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && schedularForm.controls.weekly.errors.required"
+                      >
+                        Weekly is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-lg-4 col-md-4 col-12"
+                    *ngIf="schedularForm.value.scheduleType == 'MONTHLY'"
+                  >
+                    <label>Day Of Month*</label>
+                    <p-dropdown
+                      appendTo="body"
+                      [options]="dayOfMonthOptions"
+                      formControlName="dayOfMonth"
+                      placeholder="Select Day of Month"
+                      [ngClass]="{
+                        'is-invalid': submitted && schedularForm.controls.dayOfMonth.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && schedularForm.controls.dayOfMonth.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && schedularForm.controls.dayOfMonth.errors.required"
+                      >
+                        Day Of Month is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Status*</label>
+                    <p-dropdown
+                      [options]="status"
+                      placeholder="Select  Status"
+                      optionLabel="label"
+                      optionValue="label"
+                      formControlName="status"
+                      [filter]="true"
+                      filterBy="label"
+                      [ngClass]="{
+                        'is-invalid': submitted && schedularForm.controls.status.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && schedularForm.controls.status.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && schedularForm.controls.status.errors.required"
+                      >
+                        Status is required.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+              <button type="submit" class="btn btn-primary" id="submit">
+                <i class="fa fa-check-circle"></i>
+                {{ isSchedularEdit ? "Update" : "Add" }} {{ title }}
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

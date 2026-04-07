@@ -1,0 +1,863 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Postpaid Invoice Master</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Search Invoice</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchInvoice"
+            aria-expanded="false"
+            aria-controls="searchInvoice"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchInvoice" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="searchInvoiceMasterFormGroup">
+            <div class="row">
+              <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                  <label>Bill Run</label>
+                  <p-dropdown
+                    [options]="commondropdownService.billRunMasterList"
+                    optionValue="id"
+                    optionLabel="id"
+                    filter="true"
+                    filterBy="id"
+                    placeholder="Select a Bill Run ID"
+                    formControlName="billrunid"
+                    (keydown.enter)="searchInvoices()"
+                  ></p-dropdown>
+                  <!-- <select
+                  class="form-control"
+                  name="billrunid"
+                  formControlName="billrunid"
+                  style="width: 100%;"
+                >
+                  <option value="">
+                    Select Bill Run ID
+                  </option>
+                  <option
+                    value="{{ bill.id }}"
+                    *ngFor="let bill of commondropdownService.billRunMasterList"
+                  >
+                    {{ bill.id }}
+                  </option>
+                </select> -->
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                  <label>Document No</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Document No"
+                    formControlName="docnumber"
+                    (keydown.enter)="searchInvoices()"
+                  />
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                  <label>Customer Name</label>
+                  <!-- <p-dropdown
+                    [options]="customerListData"
+                    optionValue="id"
+                    optionLabel="name"
+                    filter="true"
+                    filterBy="name"
+                    placeholder="Select a Customer"
+                    formControlName="customerid"
+                    (keydown.enter)="searchInvoices()"
+                  ></p-dropdown> -->
+                  <p-dropdown
+                    [disabled]="true"
+                    [options]="parentCustList"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="name"
+                    formControlName="customerid"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Select a Customer"
+                    styleClass="disableDropdown"
+                  >
+                    <ng-template let-data pTemplate="item">
+                      <div class="item-drop1">
+                        <span class="item-value1"> {{ data.title }} {{ data.name }} </span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                  <button
+                    type="button"
+                    (click)="modalOpenParentCustomer()"
+                    class="btn btn-primary"
+                    style="
+                      border-radius: 5px;
+                      padding: 5px 10px;
+                      line-height: 1.5;
+                      margin-left: 10px;
+                    "
+                  >
+                    <i class="fa fa-plus-square"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="form-group">
+                  <label>Customer Mobile</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Customer Mobile"
+                    formControlName="custMobile"
+                    (keydown.enter)="searchInvoices()"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                  <label>Bill From Date</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    placeholder="Enter Pay From Date"
+                    formControlName="billfromdate"
+                    (keydown.enter)="searchInvoices()"
+                  />
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                  <label>Bill To Date</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    placeholder="Enter Pay To Date"
+                    formControlName="billtodate"
+                    (keydown.enter)="searchInvoices()"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="addUpdateBtn">
+              <button type="submit" class="btn btn-primary" (click)="searchInvoices()">
+                <i class="fa fa-search"></i>
+                Search Invoice
+              </button>
+              <button
+                type="submit"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchinvoiceMaster()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="isInvoiceSearch">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Invoice List</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#invoiceList"
+            aria-expanded="false"
+            aria-controls="invoiceList"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <app-invoice-payment-details-modal
+        dialogId="invoicePaymentDetailModal"
+        [invoiceId]="invoiceId"
+        [customerDetailData]="selectedParentCust"
+      ></app-invoice-payment-details-modal>
+      <div id="invoiceList" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="invoiceMasterListData.length !== 0">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <!-- length= {{invoiceMasterListData.length}} -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th style="width: 20%">Document No.</th>
+                    <th>Created By</th>
+                    <th>Bill Run ID</th>
+                    <th>Total Amount</th>
+                    <th>Adjusted Amount</th>
+                    <th>Bill Run Status</th>
+                    <th>Bill Date</th>
+                    <th>Payment Status</th>
+                    <th>ISP Name</th>
+                    <!-- <th>Document</th> -->
+                    <th
+                      *ngIf="
+                        viewInvoiceAccess ||
+                        cancelRegenerateAccess ||
+                        reprintAccess ||
+                        invoiceAccess ||
+                        voidAccess ||
+                        generateAccess
+                      "
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let invoice of invoiceMasterListData
+                        | paginate
+                          : {
+                              id: 'searchinvoiceMasterPageData',
+                              itemsPerPage: invoiceMasteritemsPerPage,
+                              currentPage: currentPageinvoiceMasterSlab,
+                              totalItems: invoiceMastertotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <div
+                        *ngIf="invoice.billrunstatus !== 'VOID'"
+                        class="curson_pointer"
+                        style="color: #f7b206"
+                        (click)="openCustomerModal('custmerDetailModal', invoice.custid)"
+                      >
+                        {{ invoice.customerName }}
+                      </div>
+                      <div *ngIf="invoice.billrunstatus == 'VOID'">-</div>
+                    </td>
+                    <td *ngIf="invoice.docnumber !== '' && invoice.docnumber !== null">
+                      <div
+                        class="curson_pointer"
+                        style="color: #f7b206"
+                        (click)="openInvoiceModal(invoice)"
+                      >
+                        {{ invoice.docnumber }}
+                      </div>
+                    </td>
+                    <td *ngIf="invoice.docnumber == '' || invoice.docnumber === null">NA</td>
+                    <td>{{ invoice.createdByName }}</td>
+                    <td>{{ invoice.billrunid }}</td>
+                    <td>
+                      <span>
+                        {{
+                          invoice.totalamount
+                            | customCurrency
+                              : selectedParentCust?.currency
+                              : selectedParentCust?.mvnoId
+                        }}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        *ngIf="invoice.adjustedAmount"
+                        class="curson_pointer"
+                        style="color: #f7b206"
+                        (click)="openInvoicePaymentModal('invoicePaymentDetailModal', invoice.id)"
+                      >
+                        {{
+                          invoice.adjustedAmount
+                            | customCurrency
+                              : selectedParentCust?.currency
+                              : selectedParentCust?.mvnoId
+                        }}
+                      </span>
+                      <span *ngIf="!invoice.adjustedAmount">{{
+                        "0"
+                          | customCurrency
+                            : selectedParentCust?.currency
+                            : selectedParentCust?.mvnoId
+                      }}</span>
+                    </td>
+                    <td>
+                      <div class="badge badge-success">
+                        {{ invoice.billrunstatus }}
+                      </div>
+                    </td>
+                    <td style="font-weight: 400">
+                      {{ invoice.billdate | date: "yyyy-MM-dd" }}
+                    </td>
+                    <td>
+                      <span
+                        class="badge bg-success"
+                        *ngIf="invoice.paymentStatus !== null && invoice.paymentStatus !== ''"
+                      >
+                        {{ invoice.paymentStatus }}
+                      </span>
+                      <span
+                        class="badge bg-warning"
+                        *ngIf="invoice.paymentStatus === null || invoice.paymentStatus === ''"
+                      >
+                        UnPaid
+                      </span>
+                    </td>
+                    <td>{{ invoice.mvnoName }}</td>
+                    <!-- <th style="font-weight: 400;">{{invoice.latepaymentdate | date: 'yyyy-MM-dd'}}</th> -->
+
+                    <!-- <td class="discInfo" title="{{invoice.document}}">{{ invoice.document }}</td> -->
+                    <td
+                      class="btnAction"
+                      *ngIf="
+                        viewInvoiceAccess ||
+                        cancelRegenerateAccess ||
+                        reprintAccess ||
+                        invoiceAccess ||
+                        voidAccess ||
+                        generateAccess
+                      "
+                    >
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        title="Download"
+                        *ngIf="invoice.billrunstatus == 'Exported'"
+                        (click)="downloadPDFINvoice(invoice.id, invoice.customerName)"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/pdf.png" />
+                      </a>
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        title="Generate"
+                        *ngIf="invoice.billrunstatus == 'Generated' && generateAccess"
+                        (click)="generatePDFInvoice(invoice.id)"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/generate.jpg" />
+                      </a>
+                      <button
+                        *ngIf="invoiceAccess"
+                        type="button"
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        title="Invoice Payment List"
+                        (click)="invoicePaymentList(invoice)"
+                        [disabled]="invoice.adjustedAmount >= invoice.totalamount"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/icons-03.png" />
+                      </button>
+                      <button
+                        *ngIf="invoice.billrunstatus !== 'Cancelled' && voidAccess"
+                        type="button"
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        title="Void Invoice"
+                        (click)="invoiceRemarks(invoice, 'void')"
+                      >
+                        <img
+                          src="assets/img/20_Void-Invoice_Y.png"
+                          style="width: 25px; height: 25px"
+                        />
+                      </button>
+                      <a
+                        *ngIf="invoice.billrunstatus !== 'Cancelled' && reprintAccess"
+                        (click)="InvoiceReprint(invoice.id, invoice.customerName)"
+                        href="javascript:void(0)"
+                        title="Reprint Invoice"
+                      >
+                        <img src="assets/img/22_Reprint-invoice_Y.png" />
+                      </a>
+                      <a
+                        (click)="invoiceRemarks(invoice, 'cancelRegenerate')"
+                        href="javascript:void(0)"
+                        title="Cancel and Regenerate Invoice"
+                        *ngIf="invoice.billrunstatus !== 'Cancelled' && cancelRegenerateAccess"
+                      >
+                        <img src="assets/img/21_Cancel-and-Regenerate-Invoice_Y.png" />
+                      </a>
+                      <a
+                        *ngIf="invoice.billrunstatus !== 'Cancelled' && viewInvoiceAccess"
+                        (click)="viewInvoice(invoice.id, invoice.customerName)"
+                        href="javascript:void(0)"
+                        title="View Invoice"
+                      >
+                        <img src="assets/img/22_Reprint-invoice_Y.png" />
+                      </a>
+                      <a
+                        id="edit-button"
+                        class="detailOnAnchorClick"
+                        href="javascript:void(0)"
+                        type="button"
+                        title="Email Invoice"
+                        *ngIf="
+                          invoice.billrunstatus == 'Exported' ||
+                          invoice.billrunstatus == 'Distributed'
+                        "
+                        (click)="sendemailinvoice(invoice.id)"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/icons-02.png" />
+                      </a>
+                      <button
+                        (click)="displayNote()"
+                        class="approve-btn"
+                        class="curson_pointer"
+                        data-backdrop="static"
+                        data-keyboard="false"
+                        data-target="#note"
+                        data-toggle="modal"
+                        style="border: none; background: transparent; padding: 0; margin: 0px 2px"
+                        title="Notes"
+                        type="button"
+                        *ngIf="
+                          (invoice.billrunstatus === 'Cancelled' ||
+                            invoice.billrunstatus === 'VOID') &&
+                          invoice.status !== 'Terminate'
+                        "
+                      >
+                        <img class="icon" src="assets/img/icons-03.png" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="searchinvoiceMasterPageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedinvoiceMasterList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body table-responsive" *ngIf="invoiceMasterListData.length === 0">
+          Details are not available
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- invoice payment List -->
+<!-- <div *ngIf="ifInvoicePayment"> -->
+
+
+
+
+<p-dialog
+    header="Payment Details"
+    [(visible)]="invoicePayment"
+    [modal]="true"
+    [style]="{ width: '800px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="invoicePaymentCloseModal()"
+  >
+  <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="widthCheckboxColom">
+                    <div class="centerCheckbox">
+                      <p-checkbox
+                        name="allChecked"
+                        [(ngModel)]="ispaymentChecked"
+                        binary="true"
+                        (onChange)="checkInvoicePaymentAll($event)"
+                      ></p-checkbox>
+                    </div>
+                  </th>
+                  <th>Reference Number</th>
+                  <th>Payment Date</th>
+                  <th>Payment Amount</th>
+                  <th>Adjusted Amount</th>
+                  <th>Remaining Amount</th>
+                  <th>Payment Mode</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let data of invoicePaymentData
+                      | paginate
+                        : {
+                            id: 'invoicePaymentModal',
+                            itemsPerPage: invoicePaymentItemPerPage,
+                            currentPage: currentPageinvoicePaymentList,
+                            totalItems: invoicePaymenttotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    <div class="centerCheckbox">
+                      <p-checkbox
+                        class="p-field-checkbox"
+                        [value]="data.isSinglepaymentChecked"
+                        [inputId]="data.id"
+                        [(ngModel)]="data.isSinglepaymentChecked"
+                        (onChange)="addInvoicePaymentChecked(data.id, $event)"
+                        [binary]="true"
+                      ></p-checkbox>
+                    </div>
+                  </td>
+                  <td>{{ data.referenceno }}</td>
+                  <td>{{ data.paymentdate }}</td>
+                  <td>
+                    {{
+                      data.amount
+                        | customCurrency: selectedParentCust?.currency : selectedParentCust?.mvnoId
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      data.adjustedAmount
+                        | customCurrency: selectedParentCust?.currency : selectedParentCust?.mvnoId
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      data.amount - data.adjustedAmount
+                        | customCurrency: selectedParentCust?.currency : selectedParentCust?.mvnoId
+                    }}
+                  </td>
+                  <td>{{ data.paymode }}</td>
+                  <td>{{ data.type }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="invoicePaymentModal"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedInvoicePaymentList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            type="button"
+            class="btn btn-success btn-sm"
+            (click)="invoicePaymentAdjsment()"
+            [disabled]="allchakedPaymentData.length == 0"
+            #closebutton
+            data-dismiss="modal"
+          >
+            Manual Adjustment
+          </button>
+        </div>
+        <div class="addUpdateBtn" style="margin-left: 1.5rem">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm"
+            #closebutton
+            data-dismiss="modal"
+            (click)="invoicePaymentCloseModal()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+<!-- </div> -->
+ </p-dialog>
+
+<p-dialog
+  header="Select Customer"
+  [(visible)]="selectParentCustomer"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="clearSearchParentCustomer()"
+>
+  <!-- <div class="modal fade" id="selectParentCustomer" role="dialog">
+  <div class="modal-dialog" style="width: 80%"> -->
+  <!-- Modal content-->
+  <!-- <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="panel-title">Select Customer</h3>
+      </div> -->
+  <div class="modal-body">
+    <h5>Search Customer</h5>
+    <div class="row">
+      <div class="col-lg-3 col-md-3 m-b-10">
+        <p-dropdown
+          (onChange)="selParentSearchOption($event)"
+          [(ngModel)]="searchParentCustOption"
+          [options]="searchOptionSelect"
+          [filter]="true"
+          filterBy="label"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select a Search Option"
+        ></p-dropdown>
+      </div>
+      <div
+        *ngIf="
+          parentFieldEnable &&
+          searchParentCustOption != 'status' &&
+          searchParentCustOption !== 'serviceareaName' &&
+          searchParentCustOption !== 'plan'
+        "
+        class="col-lg-3 col-md-3 m-b-10"
+      >
+        <input
+          [(ngModel)]="searchParentCustValue"
+          class="form-control"
+          id="username"
+          placeholder="Enter Search Detail"
+          type="text"
+          (keydown.enter)="searchParentCustomer()"
+        />
+      </div>
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption === 'status'">
+        <p-dropdown
+          [options]="commondropdownService.CustomerStatusValue"
+          optionValue="value"
+          optionLabel="text"
+          filter="true"
+          filterBy="text"
+          placeholder="Select a Status"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'serviceareaName'">
+        <p-dropdown
+          [options]="commondropdownService.serviceAreaList"
+          optionValue="id"
+          optionLabel="name"
+          filter="true"
+          filterBy="name"
+          placeholder="Select a Servicearea"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'plan'">
+        <p-dropdown
+          [options]="commondropdownService.postpaidplanData"
+          optionValue="id"
+          optionLabel="name"
+          filter="true"
+          filterBy="name"
+          placeholder="Select a Plan"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+      <div *ngIf="parentFieldEnable" class="col-lg-6 col-md-6 col-sm-12">
+        <button
+          (click)="searchParentCustomer()"
+          class="btn btn-primary"
+          id="searchbtn"
+          type="button"
+        >
+          <i class="fa fa-search"></i>
+          Search
+        </button>
+        <button
+          (click)="clearSearchParentCustomer()"
+          class="btn btn-default"
+          id="searchbtn"
+          type="reset"
+        >
+          <i class="fa fa-refresh"></i>
+          Clear
+        </button>
+      </div>
+    </div>
+    <h5 style="margin-top: 15px">Select Customer</h5>
+    <p-table
+      #dt
+      [(selection)]="selectedParentCust"
+      [value]="customerList"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 5rem"></th>
+          <th>Name</th>
+          <th>User Name</th>
+        </tr>
+      </ng-template>
+      <ng-template let-customerList let-rowIndex="rowIndex" pTemplate="body">
+        <tr>
+          <td>
+            <p-tableRadioButton [value]="customerList"></p-tableRadioButton>
+          </td>
+          <td>
+            {{ customerList.name }}
+            {{ customerList.lastname }}
+          </td>
+          <td>{{ customerList.username }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <p-paginator
+          (onPageChange)="paginate($event)"
+          [first]="newFirst"
+          [rows]="parentCustomerListdataitemsPerPage"
+          [totalRecords]="parentCustomerListdatatotalRecords"
+        ></p-paginator>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        (click)="saveSelCustomer()"
+        [disabled]="this.selectedParentCust.length == 0"
+        class="btn btn-primary"
+        style="object-fit: cover; padding: 5px 8px"
+      >
+        <i class="fa fa-check-circle"></i>
+        Save
+      </button>
+      <button (click)="modalCloseParentCustomer()" class="btn btn-danger btn-sm" type="button">
+        Close
+      </button>
+    </div>
+  </div></p-dialog
+>
+<!-- </div>
+  </div>
+</div> -->
+<p-dialog
+    header="Add Remark"
+    [(visible)]="invoiceCancelRemarksModal"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="modalCloseRemark()"
+  >
+  <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Remark*</label>
+            <textarea
+              [(ngModel)]="invoiceCancelRemarks"
+              class="form-control"
+              name="remark"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          (click)="addInvoiceRemarks()"
+          [disabled]="!invoiceCancelRemarks"
+          class="btn btn-primary"
+          id="submit"
+          type="submit"
+        >
+          <i class="fa fa-check-circle"></i>
+          Remarks
+        </button>
+        <button class="btn btn-danger" id="searchbtn" type="reset" (click)="modalCloseRemark()">
+          <i class="fa fa-refresh"></i>
+          Close
+        </button>
+      </div>
+</p-dialog>
+
+<div aria-labelledby="myModalLabel" class="modal fade" id="note" role="dialog" tabindex="-1">
+  <div class="modal-dialog" role="document" style="width: 75%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel" style="color: #fff !important">Notes</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Date</th>
+                  <th>Remark</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of showdata">
+                  <td *ngIf="data.billrunstatus === 'Cancelled'">Cancel and Regenerate Invoice</td>
+                  <td *ngIf="data.billrunstatus === 'VOID'">Void Invoice</td>
+                  <td>{{ data.createdate }}</td>
+                  <td *ngIf="data.invoiceCancelRemarks !== null">
+                    {{ data.invoiceCancelRemarks }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isInvoiceDetail">
+<app-invoice-detalis-model
+  [invoiceID]="invoiceID"
+  [custID]="custID"
+  [sourceType]="'invoiceMaster'"
+  [customerLedgerDetailData]="selectedParentCust"
+  (closeInvoiceDetails)="closeInvoiceDetails()"
+></app-invoice-detalis-model>
+</div>
+
+<app-customer-details
+  *ngIf="dialogId"
+  (closeSelectStaff)="closeSelectStaff()"
+  [custId]="custId"
+></app-customer-details>

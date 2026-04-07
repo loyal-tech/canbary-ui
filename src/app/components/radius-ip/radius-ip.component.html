@@ -1,0 +1,613 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">IP Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchIp"
+            aria-expanded="false"
+            aria-controls="searchIp"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchIp" class="panel-collapse collapse in">
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createIpView()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create IP</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="listIpView()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search IP</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">IP</h3>
+        <div class="right">
+          <button
+            class="btn refreshbtn"
+            type="reset"
+            (click)="getIpDataList(ipListdataitemsPerPage)"
+          >
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listIp"
+            aria-expanded="false"
+            aria-controls="listIp"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listIp" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div>
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Pool Name</th>
+                      <th>IP Range</th>
+                      <th>Usage Category</th>
+
+                      <th>Status</th>
+                      <th *ngIf="editAccess || deleteAccess">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let ip of ipListData
+                          | paginate
+                            : {
+                                id: 'ipListData',
+                                itemsPerPage: ipListdataitemsPerPage,
+                                currentPage: currentPageIpListdata,
+                                totalItems: ipListdatatotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td
+                        class="curson_pointer"
+                        (click)="IpAllDetails(ip.poolId)"
+                        style="color: #f7b206"
+                      >
+                        {{ ip.poolName }}
+                      </td>
+                      <td>{{ ip.ipRange }}</td>
+                      <td>{{ ip.usageCategory }}</td>
+
+                      <td *ngIf="ip.status == 'Active'">
+                        <span class="badge badge-success">Active</span>
+                      </td>
+                      <td *ngIf="ip.status == 'Inactive'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </td>
+                      <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                        <a
+                          *ngIf="editAccess"
+                          id="edit-button"
+                          type="button"
+                          href="javascript:void(0)"
+                          (click)="editIp(ip.poolId)"
+                        >
+                          <img src="assets/img/ioc01.jpg" />
+                        </a>
+                        <a
+                          *ngIf="deleteAccess"
+                          id="delete-button"
+                          href="javascript:void(0)"
+                          (click)="deleteConfirmonIp(ip.poolId)"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="ipListData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedIpList((currentPageIpListdata = $event))"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isIpEdit ? "Update" : "Create" }} IP</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createIP"
+            aria-expanded="false"
+            aria-controls="createIP"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createIP" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form class="form-auth-small" [formGroup]="ipForm">
+            <fieldset style="margin-top: 0px">
+              <legend>IP Information</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>Pool Name*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Pool Name"
+                      formControlName="poolName"
+                      [ngClass]="{
+                        'is-invalid': submitted && ipForm.controls.poolName.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ipForm.controls.poolName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && ipForm.controls.poolName.errors.required"
+                      >
+                        Pool Name is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>IP Range*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter IP Range"
+                      formControlName="ipRange"
+                      [ngClass]="{
+                        'is-invalid': submitted && ipForm.controls.ipRange.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ipForm.controls.ipRange.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && ipForm.controls.ipRange.errors.required"
+                      >
+                        IP Range is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>Usage Category*</label>
+                    <p-dropdown
+                      [options]="UsageCategory"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Usage Category"
+                      formControlName="usageCategory"
+                      [ngClass]="{
+                        'is-invalid': submitted && ipForm.controls.usageCategory.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ipForm.controls.usageCategory.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && ipForm.controls.usageCategory.errors.required"
+                      >
+                        Usage Category is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>Status*</label>
+                    <p-dropdown
+                      [options]="statusOptions"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Status"
+                      formControlName="status"
+                      [ngClass]="{
+                        'is-invalid': submitted && ipForm.controls.status.errors
+                      }"
+                    ></p-dropdown>
+                    <!-- <select
+                    class="form-control"
+                    formControlName="status"
+                    style="width: 100%;"
+                    [ngClass]="{
+                      'is-invalid': submitted && ipForm.controls.status.errors
+                    }"
+                  >
+                    <option value="">
+                      Select Status
+                    </option>
+                    <option value="Active">
+                      Active
+                    </option>
+                    <option value="InActive">
+                      InActive
+                    </option>
+                  </select> -->
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ipForm.controls.status.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && ipForm.controls.status.errors.required"
+                      >
+                        Status is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>Remark*</label>
+                    <textarea
+                      class="form-control"
+                      placeholder="Enter Remark"
+                      formControlName="remark"
+                      [ngClass]="{
+                        'is-invalid': submitted && ipForm.controls.remark.errors
+                      }"
+                    ></textarea>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ipForm.controls.remark.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && ipForm.controls.remark.errors.required"
+                      >
+                        Remark is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="!isIpEdit"
+                (click)="addEditIp()"
+                id="submit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add IP
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="isIpEdit"
+                (click)="addEditIp(viewIpData.poolId)"
+                id="submit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update IP
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="detailView">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Ip Details"
+            (click)="listIpView()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">IP</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#deatilsIP"
+            aria-expanded="false"
+            aria-controls="deatilsIP"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="deatilsIP" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Pool Name :</label>
+                  <span>{{ viewIpData.poolName }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">IP Range :</label>
+                  <span>{{ viewIpData.ipRange }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Usage Category :</label>
+                  <span>{{ viewIpData.usageCategory }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Network IP :</label>
+                  <span>{{ viewIpData.networkIp }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Broadcast IP :</label>
+                  <span>{{ viewIpData.broadcastIp }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">First Host :</label>
+                  <span>{{ viewIpData.firstHost }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Last Host :</label>
+                  <span>{{ viewIpData.lastHost }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Total Host :</label>
+                  <span>{{ viewIpData.totalHost }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Net Mask :</label>
+                  <span>{{ viewIpData.netMask }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span *ngIf="viewIpData.status == 'Active'" class="badge badge-success">
+                    Active
+                  </span>
+                  <span *ngIf="viewIpData.status == 'Inactive'" class="badge badge-danger">
+                    Inactive
+                  </span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Remark :</label>
+                  <span>{{ viewIpData.remark }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">IP Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#ipMangemnetSearchPanel"
+            aria-expanded="false"
+            aria-controls="ipMangemnetSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="ipMangemnetSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="ipForm">
+            <form class="form-auth-small" [formGroup]="searchForm">
+              <div class="row">
+                <div class="col-md-3" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px">IP Address:</label>
+                </div>
+                <div class="col-md-5" style="padding-left: 0%">
+                  <input
+                    type="text"
+                    name="ipAddress"
+                    class="form-control"
+                    placeholder="Enter IP Address"
+                    formControlName="ipAddress"
+                    (keydown.enter)="searchIPByIpAddress()"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search IP Address"
+                    data-toggle="tooltip"
+                    (click)="searchIPByIpAddress()"
+                    [disabled]="searchForm.invalid"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="right">
+          <button
+            aria-controls="listPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#listPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="listPreCust">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Customer Name</th>
+                    <th>Acct Seesion Id</th>
+                    <th>Nas IP Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let ippool of ipPoolDataList
+                        | paginate
+                          : {
+                              id: 'ipPoolDataList',
+                              itemsPerPage: ipListdataitemsPerPage,
+                              currentPage: currentPageIpListdata,
+                              totalItems: ipListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ ippool.ipAddress }}</td>
+                    <td>{{ ippool.status }}</td>
+                    <td>{{ ippool.userName }}</td>
+                    <td>{{ ippool.blockBySessionId }}</td>
+                    <td>{{ ippool.nasIpAddress }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row">
+                <div style="display: flex">
+                  <pagination-controls
+                    id="ipPoolDataList"
+                    [maxSize]="10"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChanged($event)"
+                  >
+                  </pagination-controls>
+
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPageIp($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,600 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Lead Source Master Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchLeadSource"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchLeadSource" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <form [formGroup]="searchLeadSourceFormGroup">
+            <div class="row">
+              <div class="col-lg-3 col-md-3">
+                <input
+                  id="sourceName"
+                  (keydown.enter)="searchLeadSource()"
+                  type="text"
+                  class="form-control"
+                  formControlName="searchTrscName"
+                  placeholder="Enter Lead Source Master Name"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="
+                    searchSubmitted && searchLeadSourceFormGroup.controls.searchTrscName.errors
+                  "
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      searchSubmitted &&
+                      searchLeadSourceFormGroup.controls.searchTrscName.errors.required
+                    "
+                  >
+                    Keyword is required.
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="searchbtn"
+                  (click)="searchLeadSource()"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+                <button
+                  type="reset"
+                  class="btn btn-default"
+                  id="searchbtn"
+                  (click)="clearSearchTrsc()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Lead Source Master</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#leadSourceData"
+            aria-expanded="false"
+            aria-controls="leadSourceData"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="leadSourceData" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12" *ngIf="leadSourceDataList?.length > 0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 30%">Lead Source</th>
+                    <th style="width: 20%">Status</th>
+                    <th *ngIf="editAccess || deleteAccess" style="width: 20%">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let source of leadSourceDataList
+                        | paginate
+                          : {
+                              id: 'leadSourceData',
+                              itemsPerPage: leadSourceItemsPerPage,
+                              currentPage: currentLeadSourceListData,
+                              totalItems: leadSourceDataListTotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="curson_pointer"
+                      style="color: #f7b206"
+                      data-backdrop="static"
+                      data-keyboard="false"
+                      data-target="#leadSourceDetails"
+                      data-toggle="modal"
+                      (click)="trscAllDetails(source)"
+                    >
+                      {{ source.leadSourceName }}
+                    </td>
+                    <td *ngIf="source.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="source.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <button
+                        *ngIf="editAccess"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        [disabled]="source.view"
+                        id="edit-button"
+                        (click)="editLeadSourceMasterDataFunction(source.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </button>
+                      <button
+                        *ngIf="deleteAccess"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        [disabled]="source.view"
+                        id="delete-button"
+                        (click)="deleteConfirmonLeadSourceData(source.id)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="leadSourceData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedTrscList($event, 'leadSourceData')"
+                  >
+                  </pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12" *ngIf="leadSourceDataList?.length === 0">
+              No Records Found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          {{ isLeadSourceMasterEdit ? "Update" : "Create" }} Lead Source Master
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createLeadSource"
+            aria-expanded="false"
+            aria-controls="createLeadSource"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createLeadSource" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !isLeadSourceMasterEdit">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (isLeadSourceMasterEdit && editAccess)">
+          <form [formGroup]="leadSourceMasterFormGroup">
+            <div class="row">
+              <div *ngIf="mvnoId === 1" class="col-lg-12 col-md-12 col-sm-12">
+                <label>{{ mvnoTitle }} List*</label>
+                <div>
+                  <p-dropdown
+                    id="mvnoId"
+                    [disabled]="isLeadSourceMasterEdit"
+                    [options]="commondropdownService.mvnoList"
+                    filter="true"
+                    filterBy="name"
+                    formControlName="mvnoId"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Select a mvno"
+                    (onChange)="mvnoChange($event)"
+                  ></p-dropdown>
+                </div>
+                <div
+                  *ngIf="submitted && leadSourceMasterFormGroup.controls.mvnoId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && leadSourceMasterFormGroup.controls.mvnoId.errors.required"
+                    class="error text-danger"
+                  >
+                    Mvno is required.
+                  </div>
+                </div>
+
+                <br />
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <label>Lead Source Master Name*</label>
+                <input
+                  id="name"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter Lead Source Master Name"
+                  formControlName="leadSourceName"
+                  [ngClass]="{
+                    'is-invalid':
+                      submitted && leadSourceMasterFormGroup.controls.leadSourceName.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && leadSourceMasterFormGroup.controls.leadSourceName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      submitted && leadSourceMasterFormGroup.controls.leadSourceName.errors.required
+                    "
+                  >
+                    Lead Source Master Name is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <label>Status*</label>
+                <div>
+                  <p-dropdown
+                    [options]="statusOptions"
+                    optionValue="label"
+                    optionLabel="label"
+                    placeholder="Select a Status"
+                    formControlName="status"
+                    [ngClass]="{
+                      'is-invalid': submitted && leadSourceMasterFormGroup.controls.status.errors
+                    }"
+                  ></p-dropdown>
+                </div>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && leadSourceMasterFormGroup.controls.status.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && leadSourceMasterFormGroup.controls.status.errors.required"
+                  >
+                    Status is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+            </div>
+
+            <label>Lead Sub source</label>
+            <div [formGroup]="leadSubSourceMappingForm">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-8">
+                  <div>
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Enter Sub Source"
+                      formControlName="leadSubSourceName"
+                      [ngClass]="{
+                        'is-invalid':
+                          leadSubSourceSubmitted &&
+                          leadSubSourceMappingForm.controls.leadSubSourceName.errors
+                      }"
+                    />
+                  </div>
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      leadSubSourceSubmitted &&
+                      leadSubSourceMappingForm.controls.leadSubSourceName.errors.required
+                    "
+                  >
+                    Lead Sub Source Name is required.
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-4">
+                  <button
+                    id="addAtt"
+                    style="object-fit: cover; padding: 5px 8px"
+                    class="btn btn-primary"
+                    (click)="onAddSubSourceMappingField()"
+                  >
+                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <table class="table coa-table" style="margin-top: 10px">
+              <thead>
+                <tr>
+                  <th style="text-align: center">Sub Source</th>
+                  <th style="text-align: right; width: 20%; padding: 8px">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let row of leadSubSourceMapping.controls
+                      | paginate
+                        : {
+                            id: 'leadSubSourceMappingData',
+                            itemsPerPage: leadSubSourceItemsPerPage,
+                            currentPage: currentLeadSubSourceListData,
+                            totalItems: leadSubSourceDataListTotalRecords
+                          };
+                    let pageIndex = index
+                  "
+                >
+                  <td style="padding-left: 5px">
+                    <input
+                      class="form-control"
+                      type="text"
+                      [formControl]="row.get('leadSubSourceName')"
+                      disabled
+                    />
+                  </td>
+                  <td style="text-align: right">
+                    <a
+                      id="deleteAtt"
+                      class="curson_pointer"
+                      (click)="deleteConfirmonLeadSubSourceMappingField(pageIndex, row.get('id'))"
+                    >
+                      <img src="assets/img/ioc02.jpg" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="row">
+              <div class="col-md-12" style="display: flex">
+                <pagination-controls
+                  id="leadSubSourceMappingData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="leadSubsourcePageChanged($event)"
+                >
+                </pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="leadSubSourcePageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="LeadSubTotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="!isLeadSourceMasterEdit && createAccess"
+                (click)="addEditLeadSourceMaster('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Lead Source Master
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="isLeadSourceMasterEdit && editAccess"
+                (click)="addEditLeadSourceMaster(editLeadSourceMasterData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Lead Source Master
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog
+  header="Lead Source Master"
+  [(visible)]="leadSourceDetailsmodal"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalOfdetails()"
+  ><div class="modal-body">
+    <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+      <legend>Basic Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 dataGroup">
+            <label class="datalbl">Lead Source :</label>
+            <span>{{ viewTrscData.leadSourceName }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 dataGroup">
+            <label class="datalbl">Status :</label>
+            <span *ngIf="viewTrscData.status === 'Active'" class="badge badge-success">
+              Active
+            </span>
+            <span *ngIf="viewTrscData.status === 'Inactive'" class="badge badge-danger">
+              Inactive
+            </span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset *ngIf="viewTrscData.leadSubSourceDtoList?.length > 0">
+      <legend>Lead Sub Source Detail</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Sub Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let subSource of viewTrscData.leadSubSourceDtoList
+                      | paginate
+                        : {
+                            id: 'leadSubSourcePageData',
+                            itemsPerPage: viewLeadSubSourceItemsPerPage,
+                            currentPage: viewLeadSubSourceListData,
+                            totalItems: viewLeadSubSourceDataListTotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>{{ subSource.name }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="leadSubSourcePageData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedTrscList($event, 'leadSubSourcePageData')"
+            >
+            </pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        (click)="closeModalOfdetails()"
+        class="btn btn-danger btn-sm"
+        data-dismiss="modal"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- <div class="modal fade" id="leadSourceDetails" role="dialog">
+  <div class="modal-dialog" style="width: 50%"> -->
+<!-- Modal content-->
+<!-- <div class="modal-content"> -->
+<!-- <div class="modal-header">
+        <h3 class="panel-title">Lead Source Master</h3>
+      </div> -->
+<!-- <div class="modal-body">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Basic Details</legend>
+        <div class="boxWhite">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 dataGroup">
+              <label class="datalbl">Lead Source :</label>
+              <span>{{ viewTrscData.leadSourceName }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 dataGroup">
+              <label class="datalbl">Status :</label>
+              <span *ngIf="viewTrscData.status === 'Active'" class="badge badge-success">
+                Active
+              </span>
+              <span *ngIf="viewTrscData.status === 'Inactive'" class="badge badge-danger">
+                Inactive
+              </span>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset *ngIf="viewTrscData.leadSubSourceDtoList?.length > 0">
+        <legend>Lead Sub Source Detail</legend>
+        <div class="boxWhite">
+          <div class="row table-responsive">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Sub Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let subSource of viewTrscData.leadSubSourceDtoList
+                        | paginate
+                          : {
+                              id: 'leadSubSourcePageData',
+                              itemsPerPage: viewLeadSubSourceItemsPerPage,
+                              currentPage: viewLeadSubSourceListData,
+                              totalItems: viewLeadSubSourceDataListTotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ subSource.name }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <pagination-controls
+                id="leadSubSourcePageData"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChangedTrscList($event, 'leadSubSourcePageData')"
+              >
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+    <div class="modal-footer">
+      <div class="addUpdateBtn">
+        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div> -->
+<!-- </div> -->
+<!-- </div>
+</div> -->

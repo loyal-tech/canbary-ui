@@ -1,0 +1,530 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">DB Mapping Master</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#dbMappingSearchPanel"
+            aria-expanded="false"
+            aria-controls="dbMappingSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="dbMappingSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchForm">
+              <div class="row">
+                <div class="col-12 col-sm-4 col-md-2" style="padding: 0%; text-align: right">
+                  <label style="padding: 5px">DB Mapping Master Name:</label>
+                </div>
+                <div class="col-12 col-sm-6 col-md-2" style="padding-left: 0%">
+                  <input
+                    id="search-mappingmaster-name"
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter DB Mapping Master Name"
+                    formControlName="name"
+                    (keydown.enter)="searchByName()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchForm.controls.name.errors
+                    }"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search DB Mapping Master Details"
+                    data-toggle="tooltip"
+                    (click)="searchByName()"
+                    id="search-button"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                    id="search-clear"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="createDBMapping()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create DB Mapping Master</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="clearSearchForm()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search DB Mapping Master</h5>
+              </a>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">DB Mapping Masters</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#dbMappingTablePanel"
+            aria-expanded="false"
+            aria-controls="dbMappingTablePanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="dbMappingTablePanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>DB Mapping Master</th>
+                <th>Status</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let mappingMaster of dbMappingMasterData
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td class="detailOnAnchorClick">
+                  <a
+                    (click)="
+                      showMappingMasterDetail(mappingMaster.mappingMasterId, mappingMaster.mvnoId)
+                    "
+                    data-title="Click To See DB Mapping Master Detail"
+                    data-toggle="modal"
+                    data-target="#myModal"
+                    class="curson_pointer"
+                  >
+                    {{ mappingMaster.name }}
+                  </a>
+                </td>
+                <td></td>
+                <td *ngIf="mappingMaster.status == 'Active'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" checked [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      checked
+                      [disabled]="!editAccess"
+                      (click)="
+                        changeStatusToInActive(
+                          mappingMaster.mappingMasterId,
+                          mappingMaster.mvnoId,
+                          $event
+                        )
+                      "
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td *ngIf="mappingMaster.status == 'Inactive'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      [disabled]="!editAccess"
+                      (click)="
+                        changeStatusToActive(
+                          mappingMaster.mappingMasterId,
+                          mappingMaster.mvnoId,
+                          $event
+                        )
+                      "
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <!-- <td>
+                 <label class="switch"
+                    (change)="changeStatusToActive(mappingMaster.mappingMasterId, mappingMaster.mvnoId)">
+                    <input *ngIf="!modalToggle" type="checkbox" disabled />
+                    <input *ngIf="modalToggle" type="checkbox" />
+                    <span class="slider round"></span>
+                  </label> 
+
+                  <label
+                    class="switch"
+                    (click)="
+                      changeStatusToActive(
+                        mappingMaster.mappingMasterId,
+                        mappingMaster.mvnoId,
+                        $event
+                      )
+                    "
+                  >
+                    <input *ngIf="!modalToggle" type="checkbox" disabled />
+                    <input *ngIf="modalToggle" type="checkbox" />
+                    <span class="slider round"></span>
+                  </label>
+                </td> -->
+
+                <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                  <a
+                    *ngIf="editAccess"
+                    id="edit-button"
+                    type="button"
+                    data-title="Edit"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="
+                      editDBMappingMasterById(
+                        mappingMaster.mappingMasterId,
+                        mappingMaster.mvnoId,
+                        i
+                      )
+                    "
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    *ngIf="deleteAccess"
+                    id="delete-button"
+                    data-title="Delete"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="deleteConfirm(mappingMaster.mappingMasterId, mappingMaster.mvnoId, i)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_groupdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-6 right">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} DB Mapping Master</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#dbMappingFormPanel"
+            aria-expanded="false"
+            aria-controls="dbMappingFormPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+        Sorry you have not privilege to create operation!
+      </div>
+      <div
+        class="panel-body table-responsive"
+        *ngIf="createAccess || (editMode && editAccess)"
+      ></div>
+      <div
+        id="dbMappingFormPanel"
+        class="panel-collapse collapse in"
+        *ngIf="editAccess || createAccess"
+      >
+        <form class="form-auth-small" [formGroup]="mappingMasterForm">
+          <div class="panel-body">
+            <!-- <div *ngIf="userId == superAdminId">
+              <label>Mvno Name</label>
+              <div>
+                <p-dropdown
+                  #dd
+                  [options]="mvnoData"
+                  placeholder="Select mvno"
+                  optionLabel="name"
+                  optionValue="mvnoId"
+                  (onChange)="getDetailsByMvno($event.value)"
+                  formControlName="mvnoName"
+                  filter="true"
+                  filterBy="name"
+                  [readonly]="editMode"
+                  [ngClass]="{
+                    'is-invalid': submitted && mappingMasterForm.controls.mvnoName.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && mappingMasterForm.controls.mvnoName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && mappingMasterForm.controls.mvnoName.errors.required"
+                  >
+                    Mvno name is required
+                  </div>
+                </div>
+              </div>
+              <br />
+            </div> -->
+            <label>DB Mapping Master Name</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              class="form-control"
+              [readonly]="editMode"
+              placeholder="Enter DB Mapping Master Name"
+              formControlName="name"
+              [ngClass]="{
+                'is-invalid': submitted && mappingMasterForm.controls.name.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && mappingMasterForm.controls.name.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && mappingMasterForm.controls.name.errors.required"
+              >
+                Please enter DB Mapping Master name.
+              </div>
+            </div>
+            <br />
+            <div>
+              <label style="display: block">Status</label>
+              <p-dropdown
+                [options]="status"
+                placeholder="Select DB Mapping Master Status"
+                optionLabel="label"
+                optionValue="label"
+                formControlName="status"
+                filter="true"
+                filterBy="label"
+                [ngClass]="{
+                  'is-invalid': submitted && mappingMasterForm.controls.status.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && mappingMasterForm.controls.status.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && mappingMasterForm.controls.status.errors.required"
+                >
+                  Please select Status.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>Attribute Mapping</label>
+              <table class="table map-table" style="margin-top: 10px">
+                <thead>
+                  <tr>
+                    <th style="text-align: center; width: 41%">Radius Attribute Name</th>
+                    <th style="text-align: center; width: 41%">DB Column Name</th>
+                    <!--                    <th style="text-align: right; width: 18%; padding: 8px">-->
+                    <!--                      <button-->
+                    <!--                        id="addAtt"-->
+                    <!--                        style="object-fit: cover; padding: 5px 8px"-->
+                    <!--                        class="btn btn-primary"-->
+                    <!--                        (click)="onAddAttribute()"-->
+                    <!--                      >-->
+                    <!--                        <i class="fa fa-plus-square" aria-hidden="true"></i>-->
+                    <!--                        Add-->
+                    <!--                      </button>-->
+                    <!--                    </th>-->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of attribute.controls; let index = index">
+                    <td style="padding-left: 8px; width: 41%">
+                      <p-dropdown
+                        [options]="this.filtereDictionaryAttributeList"
+                        placeholder="Select Radius Attribute"
+                        optionLabel="name"
+                        optionValue="name"
+                        [formControl]="row.get('radiusName')"
+                        appendTo="body"
+                        filter="true"
+                        filterBy="name"
+                        [disabled]="row.get('isDesibled').value"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && row.get('radiusName').errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && row.get('radiusName').errors"
+                        >
+                          Please select Radius Attribute OR delete the row.
+                        </div>
+                      </div>
+                    </td>
+                    <td style="padding-left: 8px; width: 41%">
+                      <input
+                        id="dbColumnName"
+                        class="form-control"
+                        placeholder="Enter DB Column Name"
+                        [formControl]="row.get('dbColumnName')"
+                        [ngClass]="{
+                          'is-invalid': submitted && row.get('dbColumnName').invalid
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && row.get('dbColumnName').errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && row.get('dbColumnName').errors"
+                        >
+                          Please enter DB column name OR delete the row.
+                        </div>
+                      </div>
+                    </td>
+
+                    <!--                    <td style="text-align: right">-->
+                    <!--                      <a-->
+                    <!--                        id="deleteAtt"-->
+                    <!--                        class="curson_pointer"-->
+                    <!--                        (click)="-->
+                    <!--                          deleteConfirmAttribute(-->
+                    <!--                            index,-->
+                    <!--                            row.get('mappingId').value,-->
+                    <!--                            row.get('mvnoId')-->
+                    <!--                          )-->
+                    <!--                        "-->
+                    <!--                      >-->
+                    <!--                        <img src="assets/img/ioc02.jpg" />-->
+                    <!--                      </a>-->
+                    <!--                    </td>-->
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                title="Submit DB Mapping Master Details"
+                data-toggle="tooltip"
+                (click)="addNewDbMappingMaster()"
+              >
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update DB Mapping Master" : "Add DB Mapping Master" }}
+              </button>
+              <br />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- END Form Design -->
+  </div>
+</div>
+<div class="row">
+  <div class="modal fade" id="myModal" *ngIf="modalToggle" role="dialog">
+    <div class="modal-dialog" style="width: 35%">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="panel-title">{{ mappingMasterDetails.name }} Detail</h3>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="name">Name :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="nameValue">{{ mappingMasterDetails.name }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="status">Status :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="status">{{ mappingMasterDetails.status }}</label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

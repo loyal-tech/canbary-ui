@@ -1,0 +1,49 @@
+@import "~@ng-select/ng-select/themes/default.theme.css";
+.form-control.ng-select {
+  border: none;
+  padding: 0;
+}
+
+.ml-15 {
+  padding-top: 15px;
+}
+.error {
+  color: red;
+}
+
+.form-group {
+  padding-top: 5px;
+}
+
+.position {
+  position: absolute;
+}
+
+input.ng-invalid.ng-touched,
+ng-select.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border: 1px solid red;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+.modal-backdrop.fade {
+  opacity: 0.5;
+}
+.modal-open .modal {
+  opacity: 1;
+}
+
+.centerCheckbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

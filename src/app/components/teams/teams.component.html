@@ -1,0 +1,364 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Teams Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchTeamMa"
+            aria-expanded="false"
+            aria-controls="searchTeamMa"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchTeamMa" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="listView">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchTeamName"
+                class="form-control"
+                placeholder="Enter Team Name"
+                (keydown.enter)="searchTrc()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchTrc()"
+                [disabled]="!searchTeamName"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchTrc()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="openTeamCreateMenu()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Team</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="openTeamListMenu()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Team List</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row" *ngIf="isTeamList">
+  <div class="col-md-12">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Teams</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listTeamM"
+            aria-expanded="false"
+            aria-controls="listTeamM"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listTeamM" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="teamListData?.length > 0">
+              <tr
+                *ngFor="
+                  let team of teamListData
+                    | paginate
+                      : {
+                          id: 'listing_teamdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ team.name }}</td>
+                <td *ngIf="team.status == 'active'">
+                  <span class="badge badge-success">Active</span>
+                </td>
+                <td *ngIf="team.status !== 'active'">
+                  <span class="badge badge-danger">{{ team.status }}</span>
+                </td>
+                <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                  <a
+                    type="button"
+                    (click)="editTeamById(team.id, i)"
+                    title="Edit"
+                    class="curson_pointer"
+                    *ngIf="editAccess"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    (click)="deleteConfirmonTeam(team)"
+                    title="Delete"
+                    class="curson_pointer"
+                    *ngIf="deleteAccess"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="teamHierarchyModalOpen(team)"
+                    title="Team Hierarchy"
+                  >
+                    <img style="width: 30px" src="assets/img/diagram.png" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+            <tr *ngIf="teamListData?.length === 0">
+              <td colspan="5">No Record Found.</td>
+            </tr>
+          </table>
+          <br />
+
+          <div class="pagination_Dropdown" *ngIf="teamListData?.length > 0">
+            <pagination-controls
+              id="listing_teamdata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [(ngModel)]="showItemPerPage"
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+</div>
+<div class="row" *ngIf="isTeamCreateOrEdit">
+  <div class="col-md-12">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Team</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createTeamM"
+            aria-expanded="false"
+            aria-controls="createTeamM"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createTeamM" class="panel-collapse collapse in">
+        <div>
+          <form class="form-auth-small" [formGroup]="teamFormGroup">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-4 ml-15">
+                  <label>Name</label>
+                  <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter name"
+                    formControlName="name"
+                    [ngClass]="{
+                      'is-invalid': submitted && teamFormGroup.controls.name.errors
+                    }"
+                  />
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && teamFormGroup.controls.name.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="submitted && teamFormGroup.controls.name.errors.required"
+                    >
+                      Name is required.
+                    </div>
+                  </div>
+
+                  <!-- <div
+                *ngIf="
+                  teamFormGroup.controls['name'].invalid &&
+                  (teamFormGroup.controls['name'].dirty ||
+                    teamFormGroup.controls['name'].touched)
+                "
+              >
+                <div
+                  class="position"
+                  *ngIf="teamFormGroup.controls['name'].errors.required"
+                >
+                  <p class="error">Name is required</p>
+                </div>
+              </div> -->
+                </div>
+                <div class="col-md-4 ml-15">
+                  <label for="status">Status *</label>
+                  <p-dropdown
+                    [options]="statusList"
+                    optionValue="value_field"
+                    optionLabel="display_field"
+                    filter="true"
+                    filterBy="display_field"
+                    placeholder="Select a Status"
+                    formControlName="status"
+                    [ngClass]="{
+                      'is-invalid': submitted && teamFormGroup.controls.status.errors
+                    }"
+                  ></p-dropdown>
+                  <div></div>
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && teamFormGroup.controls.status.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="submitted && teamFormGroup.controls.status.errors.required"
+                    >
+                      Status is required.
+                    </div>
+                  </div>
+
+                  <!-- <div
+                *ngIf="
+                  teamFormGroup.controls['status'].invalid &&
+                  (teamFormGroup.controls['status'].dirty ||
+                    teamFormGroup.controls['status'].touched)
+                "
+              >
+                <div
+                  class="position"
+                  *ngIf="teamFormGroup.controls['status'].errors.required"
+                >
+                  <p class="error">Status is required</p>
+                </div>
+              </div> -->
+                </div>
+
+                <div class="col-md-4 ml-15">
+                  <label for="type">Team Type</label>
+                  <p-dropdown
+                    [options]="teamtypedata"
+                    filter="true"
+                    filterBy="text"
+                    placeholder="Select a Type"
+                    formControlName="teamType"
+                    optionLabel="text"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 ml-15">
+                  <label for="type">Staff</label>
+                  <p-multiSelect
+                    [options]="staffUserData"
+                    filter="true"
+                    placeholder="Select a Staff"
+                    formControlName="staffUserIds"
+                    optionLabel="username"
+                    optionValue="id"
+                  ></p-multiSelect>
+                </div>
+              </div>
+            </div>
+            <div class="addUpdateBtn">
+              <button type="submit" class="btn btn-primary" (click)="addUpdateTeam()">
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update" : "Add" }} Team
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- END Form Design -->
+  </div>
+</div>
+
+<!-- team Hierarchy Modal -->
+
+<p-dialog
+  header="Team Hierarchy"
+  [(visible)]="teamHierarchyModal"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
+  (onHide)="onHierarchyClose()"
+>
+  <div class="modal-body" style="overflow-x: scroll">
+    <div class="networkPerent">
+      <p-organizationChart
+        *ngIf="teamHierarchyData?.length"
+        [value]="teamHierarchyData"
+        selectionMode="single"
+        [(selection)]="selectedNode"
+        styleClass="company"
+      >
+        <ng-template let-node pTemplate="person">
+          <div class="node-header">{{ node.label }}</div>
+        </ng-template>
+      </p-organizationChart>
+    </div>
+  </div>
+</p-dialog>

@@ -1,0 +1,1184 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">CDRs Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#cdrSearchPanel"
+            aria-expanded="false"
+            aria-controls="cdrSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="cdrSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchAcctCdrForm">
+            <form class="form-auth-small" [formGroup]="searchAcctCdrForm">
+              <div class="row">
+                <div class="col-md-3" style="margin-bottom: 2%">
+                  <p-multiSelect
+                    id="roles"
+                    (onChange)="selSearchOption($event)"
+                    [options]="searchOptionSelect"
+                    placeholder="Select a Search Option"
+                    [(ngModel)]="searchOption"
+                    optionLabel="label"
+                    optionValue="value"
+                    filter="true"
+                    filterBy="label"
+                    [ngModelOptions]="{ standalone: true }"
+                  ></p-multiSelect>
+                </div>
+                <div class="col-md-3" style="margin-bottom: 2%">
+                  <p-calendar
+                    dateFormat="dd/mm/yy"
+                    [showIcon]="true"
+                    [showButtonBar]="true"
+                    [hideOnDateTimeSelect]="true"
+                    placeholder="Enter From Date"
+                    formControlName="fromDate"
+                    [style]="{ width: '100%' }"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchAcctCdrForm.controls.fromDate.errors
+                    }"
+                  ></p-calendar>
+                </div>
+                <!-- *ngIf="searchOption?.includes('toDate')" -->
+                <div class="col-md-3" style="margin-bottom: 2%">
+                  <p-calendar
+                    dateFormat="dd/mm/yy"
+                    [showIcon]="true"
+                    [showButtonBar]="true"
+                    [hideOnDateTimeSelect]="true"
+                    placeholder="Enter To Date"
+                    formControlName="toDate"
+                    [style]="{ width: '100%' }"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchAcctCdrForm.controls.toDate.errors
+                    }"
+                  ></p-calendar>
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('userName')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Username"
+                    formControlName="userName"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchAcctCdrForm.controls.userName.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('framedIpAddress')"
+                >
+                  <input
+                    type="text"
+                    name="framedIpAddress"
+                    class="form-control"
+                    placeholder="Enter Framed Ip"
+                    formControlName="framedIpAddress"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.framedIpAddress.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('nasIpAddress')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Nas Ip"
+                    formControlName="nasIpAddress"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.nasIpAddress.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('classAttribute')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Class Attribute"
+                    formControlName="classAttribute"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.classAttribute.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('acctStatusType')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Account Status Type"
+                    formControlName="acctStatusType"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.acctStatusType.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('nasIdentifier')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Nas Identifier"
+                    formControlName="nasIdentifier"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.nasIdentifier.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('framedRoute')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Framed Route"
+                    formControlName="framedRoute"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchAcctCdrForm.controls.framedRoute.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('nasPortType')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Nas Port Type"
+                    formControlName="nasPortType"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchAcctCdrForm.controls.nasPortType.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('nasPortId')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Nas Port Id"
+                    formControlName="nasPortId"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchAcctCdrForm.controls.nasPortId.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('acctMultiSessionId')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Account Multi SessionId"
+                    formControlName="acctMultiSessionId"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.acctMultiSessionId.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('framedIpv6Address')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Farmed IpV6 Address"
+                    formControlName="framedIpv6Address"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.framedIpv6Address.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('acctSessionId')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Account Session"
+                    formControlName="acctSessionId"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.acctSessionId.errors
+                    }"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  style="margin-bottom: 2%"
+                  *ngIf="searchOption?.includes('sourceIpAddress')"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Source Ip Address"
+                    formControlName="sourceIpAddress"
+                    (keydown.enter)="search()"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchSubmitted && searchAcctCdrForm.controls.sourceIpAddress.errors
+                    }"
+                  />
+                </div>
+              </div>
+              <div class="searchbtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  title="Search CDRs"
+                  (click)="search()"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+                &nbsp;
+                <button
+                  type="reset"
+                  class="btn btn-default"
+                  title="Clear"
+                  data-toggle="tooltip"
+                  (click)="clearSearchForm()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+                <!-- &nbsp;
+                <a
+                  title="Export to Excel"
+                  data-toggle="tooltip"
+                  (click)="exportExcel()"
+                  class="curson_pointer"
+                >
+                  <img class="icon-ex" src="assets/img/icons-07.png" />
+                </a> -->
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">CDRs</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#cdrTabelPanel"
+            aria-expanded="false"
+            aria-controls="cdrTabelPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="cdrTabelPanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <app-simple-search
+            #listing_groupdata
+            [instanceData]="
+              rootInstanceData
+                | paginate
+                  : {
+                      id: 'listing_groupdata',
+                      itemsPerPage: itemsPerPage,
+                      currentPage: currentPage,
+                      totalItems: totalRecords
+                    }
+            "
+            [cols]="cols"
+            [function]="'acct-cdr'"
+            [selectedCols]="selectedCols"
+            [backUpCalls]="cols"
+            [value]="value"
+            [hideTable]="hideTable"
+            [exportColumns]="exportColumns"
+            (getRootInstanceData)="getRootInstanceData($event)"
+            (reloadTable)="search()"
+            (viewDataa)="this.open($event)"
+            (viewData)="getCdrDetail($event)"
+            (showModalDetails)="openModal('custmerDetailModal', $event)"
+            [showbtn]="false"
+            [showCheckbox]="false"
+          ></app-simple-search>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_groupdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                  [ngModel]="itemsPerPage"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+</div>
+<p-dialog
+  header="CDR Detail"
+  [(visible)]="cdrDetailModal"
+  [style]="{ width: '35%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+>
+  <!-- <div class="modal fade" id="cdrDetailModal" role="dialog">
+  <div class="modal-dialog" style="width: 35%"> -->
+  <!-- Modal content-->
+  <!-- <div class="modal-content"> -->
+  <!-- <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h3 class="panel-title">CDR Detail</h3>
+  </div> -->
+  <div class="modal-body">
+    <div class="container-fluid">
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="type">Username :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="typeValue">{{ cdrDetail.userName }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="noOfVoucher">Password :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="noOfVoucherValue">{{ cdrDetail.userPassword }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <label for="planName">Chap Password :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="planNameValue">{{ cdrDetail.chapPassword }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="length">Nas IP Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="lengthValue">{{ cdrDetail.nasIpAddress }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="preValue">Nas Port :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="preValuevalue">{{ cdrDetail.nasPort }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="postValue">Service Type :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="postValueValue">{{ cdrDetail.serviceType }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Protocol :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedProtocol }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IP Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedIpAddress }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IP Netmask :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedIpNetmask }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Routing :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedRouting }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Filter Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.filterId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Mtu :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedMtu }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Compression :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedCompression }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login IP Host :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginIpHost }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login Service :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginService }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login Tcp Port :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginTcpPort }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Reply Message :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.replyMessage }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Callback Number :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.callbackNumber }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Callback Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.callbackId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Route :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedRoute }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPx Network :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedIpxNetwork }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">State :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.state }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Class :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctClass }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Vendor Specific :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.vendorSpecific }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Session Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.sessionTimeout }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Idle Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.idleTimeout }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Termination Action :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.terminationAction }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Called Station Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.calledStationId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Calling Station Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.callingStationId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas Identifier :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.nasIdentifier }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Idle Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.idleTimeout }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Proxy State :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.proxyState }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">LoginLat Service :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginLatService }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">LoginLat Node :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginLatNode }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">LoginLat Group :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginLatGroup }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Apple TalkLink :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.framedAppleTalkLink }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Idle Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.idleTimeout }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Apple TalkNetwork :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.framedAppleTalkNetwork }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Apple TalkZone :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.framedAppleTalkZone }}
+          </label>
+        </div>
+      </div>
+
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Status Type :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctStatusType }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Delay Time :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctDelayTime }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct InputOctets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctInputOctets }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct OutputOctets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctOutputOctets }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Session Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctSessionId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Authentic :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctAuthentic }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Session Time :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctSessionTime }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Input Packets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctInputPackets }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Output Packets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctOutputPackets }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Terminate Cause :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.acctTerminateCause }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Multi Session Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.acctMultiSessionId }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Link Count :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctLinkCount }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Input Gigawords :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.acctInputGigawords }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Output Gigawords :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.acctOutputGigawords }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Event Timestamp :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.eventTimestamp }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Chap Challenge :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.chapChallenge }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas Port Type :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.nasPortType }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Session Time :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.acctSessionTime }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Port Limit :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.portLimit }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login LAT Port :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginLATPort }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Tunnel Connection :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.acctTunnelConnection }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Password :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.arapPassword }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Features :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.arapFeatures }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Zone Access :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.arapZoneAccess }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Security :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.arapSecurity }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Security Data :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.arapSecurityData }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Password Retry :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.passwordRetry }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Prompt :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.prompt }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Connect Info :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.connectInfo }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Configuration Token :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.configurationToken }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Eap Message :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.eapMessage }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Message Authenticator :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.messageAuthenticator }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Challenge Response :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.arapChallengeResponse }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Interim Interval :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ cdrDetail.acctInterimInterval }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas Port Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.nasPortId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Pool :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedPool }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas IPv6 Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.nasIPv6Address }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Interface Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedInterfaceId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPv6 Prefix :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedIPv6Prefix }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login IPv6 Host :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.loginIPv6Host }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPv6 Route :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedIPv6Route }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPv6 Pool :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedIPv6Pool }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Digest Response :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.digestResponse }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Digest Attributes :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.digestAttributes }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Ipv6 Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ cdrDetail.framedipv6address }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  </div>
+  <!-- </div>
+  </div>
+</div> -->
+</p-dialog>
+<p-dialog
+  header="Add Concurrency"
+  [(visible)]="displayShiftLocationDetails"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeShiftLocation()"
+>
+  <div class="modal-body">
+    <div [formGroup]="presentGroupForm">
+      <fieldset>
+        <label>Add concurrency</label>
+        <input
+          type="number"
+          pInputText
+          formControlName="maxconcurrentsession"
+          pKeyFilter="int"
+          placeholder="Integers"
+        />
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        (click)="saveShiftLocation()"
+        class="btn btn-primary"
+        data-title="Shift Location"
+        type="button"
+      >
+        save
+      </button>
+      <button type="button" class="btn btn-default" (click)="closeShiftLocation()">Close</button>
+    </div>
+  </div>
+</p-dialog>
+<app-customer-details
+  *ngIf="dialogId"
+  (closeSelectStaff)="closeSelectStaff()"
+  [custId]="custId"
+></app-customer-details>

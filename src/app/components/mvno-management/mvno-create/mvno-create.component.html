@@ -1,0 +1,754 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 *ngIf="!isMvnoEdit" class="panel-title">Create {{ mvnoTitle }}</h3>
+        <h3 *ngIf="isMvnoEdit" class="panel-title">Update {{ mvnoTitle }}</h3>
+        <div class="right">
+          <button
+            id="create"
+            aria-controls="createPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#createPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="createPreCust">
+        <div class="panel-body">
+          <form [formGroup]="mvnoFormGroup">
+            <fieldset style="margin-top: 1.5rem">
+              <legend>{{ mvnoTitle }} Details</legend>
+              <div class="boxWhite">
+                <div class="form-group row">
+                  <div class="col-md-12 ml-12">
+                    <div
+                      class="borderuploadphoto"
+                      *ngIf="!profileImage"
+                      style="
+                        border: 1px solid black !important;
+                        background: url(&quot;../assets/img/user.png&quot;);
+                      "
+                    >
+                      <button
+                        type="button"
+                        class="upload_btn-profileimage"
+                        style="border: none; width: 23%; height: 35px; padding: 5px"
+                      >
+                        <label for="upload-profileImage"> <i class="fa fa-camera"></i></label>
+                        <input
+                          type="file"
+                          name="photo"
+                          id="upload-profileImage"
+                          (change)="onFileChangeUpload($event.target.files)"
+                          accept=".jpg, .jpeg, .png"
+                          maxlength="2097152"
+                          style="display: none"
+                        />
+                      </button>
+                    </div>
+                    <div
+                      class="borderuploadphoto"
+                      *ngIf="profileImage"
+                      style="
+                            border: 1px solid black !important;
+                            background: url('{{ profileImage }}');
+                          "
+                    >
+                      <button
+                        type="button"
+                        class="upload_btn-profileimage"
+                        style="border: none; width: 23%; height: 35px; padding: 5px"
+                      >
+                        <label for="upload-profileImage"><i class="fa fa-camera"></i></label>
+                        <input
+                          type="file"
+                          name="photo"
+                          id="upload-profileImage"
+                          (change)="onFileChangeUpload($event.target.files)"
+                          accept="image/*"
+                          style="display: none"
+                        />
+                      </button>
+                    </div>
+                    <label style="text-align: center; display: flex; justify-content: center"
+                      >Profile Image</label
+                    >
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>{{ mvnoTitle }} FullName*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter {{ mvnoTitle }} FullName"
+                      formControlName="fullName"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.fullName.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.fullName.errors"
+                    >
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.fullName.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && mvnoFormGroup.controls.fullName.errors.required"
+                        >
+                          {{ mvnoTitle }} FullName is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>{{ mvnoTitle }} Name*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter {{ mvnoTitle }} Name"
+                      (change)="generateUserName()"
+                      formControlName="name"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.name.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.name.errors"
+                    >
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.name.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && mvnoFormGroup.controls.name.errors.required"
+                        >
+                          {{ mvnoTitle }} Name is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>User Name</label>
+                    <input
+                      type="text"
+                      name="username"
+                      class="form-control"
+                      placeholder="Enter {{ mvnoTitle }} username"
+                      formControlName="username"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.username.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.username.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.username.errors.required"
+                      >
+                        {{ mvnoTitle }} Username is required
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Phone*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [attr.maxlength]="commondropdownService.maxMobileLength"
+                      placeholder="Enter Phone"
+                      formControlName="phone"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.phone.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && mvnoFormGroup.controls.phone.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div *ngIf="mvnoFormGroup.controls.phone.errors.required">
+                        Mobile Number is required.
+                      </div>
+
+                      <div
+                        *ngIf="
+                          mvnoFormGroup.controls.phone.errors.minlength ||
+                          mvnoFormGroup.controls.phone.errors.maxlength
+                        "
+                      >
+                        <ng-container
+                          *ngIf="
+                            commondropdownService.minMobileLength ===
+                              commondropdownService.maxMobileLength;
+                            else rangeError
+                          "
+                        >
+                          Mobile Number must be exactly
+                          {{ commondropdownService.minMobileLength }} digits.
+                        </ng-container>
+                        <ng-template #rangeError>
+                          Mobile Number must be between
+                          {{ commondropdownService.minMobileLength }} and
+                          {{ commondropdownService.maxMobileLength }} digits.
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Email*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Email"
+                      formControlName="email"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.email.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.email.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.email.errors.required"
+                      >
+                        Email is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.email.errors.email"
+                      >
+                        Email is not valid.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Suffix</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Suffix"
+                      formControlName="suffix"
+                    />
+                    <!-- <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.suffix.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.suffix.errors.required"
+                      >
+                        Suffix is required.
+                      </div>
+                    </div> -->
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Log File</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Log File"
+                      formControlName="logfile"
+                    />
+                    <!-- <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.logfile.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.logfile.errors.required"
+                      >
+                        Log File is required.
+                      </div>
+                    </div> -->
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>{{ mvnoTitle }} Header</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter {{ mvnoTitle }} Header"
+                      formControlName="mvnoHeader"
+                    />
+                    <!-- <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.mvnoHeader.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.mvnoHeader.errors.required"
+                      >
+                        {{ mvnoTitle }} Header is required.
+                      </div>
+                    </div> -->
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>{{ mvnoTitle }} Footer</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter {{ mvnoTitle }} Footer"
+                      formControlName="mvnoFooter"
+                    />
+                    <!-- <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.mvnoFooter.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.mvnoFooter.errors.required"
+                      >
+                        {{ mvnoTitle }} Footer is required.
+                      </div>
+                    </div> -->
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>2FAuth Enabled*</label>
+                    <p-dropdown
+                      [options]="twofaOptions"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select 2FA Auth"
+                      formControlName="isTwoFactorEnabled"
+                      #ddlAuthType
+                      (onChange)="changeAuthType($event, ddlAuthType)"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.isTwoFactorEnabled.errors
+                      }"
+                    ></p-dropdown>
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.isTwoFactorEnabled.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && mvnoFormGroup.controls.isTwoFactorEnabled.errors.required
+                        "
+                      >
+                        {{ mvnoTitle }} 2FAuth Enabled is required.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label
+                      >2FAuth Type
+                      {{ mvnoFormGroup.value.isTwoFactorEnabled == "true" ? "*" : "" }}</label
+                    >
+                    <p-dropdown
+                      [disabled]="mvnoFormGroup.value.isTwoFactorEnabled !== 'true'"
+                      [options]="twofaType"
+                      optionValue="value"
+                      optionLabel="displayName"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select 2FA Auth Type"
+                      formControlName="authEventName"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.authEventName.errors
+                      }"
+                    ></p-dropdown>
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.authEventName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.authEventName.errors.required"
+                      >
+                        {{ mvnoTitle }} 2FAuth Auth Type is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Status*</label>
+                    <p-dropdown
+                      [options]="statusOptions"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Status"
+                      formControlName="status"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.status.errors
+                      }"
+                    ></p-dropdown>
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.status.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.status.errors.required"
+                      >
+                        {{ mvnoTitle }} Status is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Roles*</label>
+                    <p-dropdown
+                      id="roles"
+                      [options]="roleList"
+                      placeholder="Select a Role"
+                      formControlName="roleId"
+                      optionLabel="rolename"
+                      optionValue="id"
+                      filter="true"
+                      filterBy="label"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.roleId.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.roleId.errors.required"
+                      >
+                        Role is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <!-- <br /> -->
+                    <label>Password-Policies*</label>
+                    <p-dropdown
+                      id="roles"
+                      [options]="passwordList"
+                      placeholder="Select a Password-Policy"
+                      formControlName="passwordPolicyId"
+                      optionLabel="name"
+                      optionValue="id"
+                      filter="true"
+                      filterBy="label"
+                      [disabled]="isMvnoEdit"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.passwordPolicyId.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.passwordPolicyId.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.passwordPolicyId.errors.required"
+                      >
+                        Password-Policies is required.
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15"
+                    *ngIf="isNotificationRequired"
+                  >
+                    <label>Notification-Event*</label>
+                    <p-dropdown
+                      [options]="eventTemplateList"
+                      optionLabel="eventName"
+                      optionValue="eventName"
+                      appendTo="body"
+                      formControlName="eventName"
+                      placeholder="Select Event Template"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.eventName.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.eventName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.eventName.errors.required"
+                      >
+                        Notification-Event is required.
+                      </div>
+                    </div>
+                  </div> -->
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Password *</label>
+                    <input
+                      [readonly]="isMvnoEdit"
+                      type="password"
+                      name="password"
+                      class="form-control"
+                      placeholder="Enter {{ mvnoTitle }} password"
+                      formControlName="password"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.password.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.password.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.password.errors.required"
+                      >
+                        {{ mvnoTitle }} Password is required
+                      </div>
+                    </div>
+                    <!-- <br /> -->
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Profile*</label>
+                    <p-dropdown
+                      id="roles"
+                      [options]="ProfileList"
+                      placeholder="Select a Profile"
+                      formControlName="profileId"
+                      optionLabel="name"
+                      optionValue="id"
+                      filter="true"
+                      filterBy="label"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.profileId.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.profileId.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.profileId.errors.required"
+                      >
+                        Profile is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Payment Due Days</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Payment"
+                      min="1"
+                      formControlName="mvnoPaymentDueDays"
+                      pattern="[0-9]*"
+                    />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Address</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Address"
+                      formControlName="address"
+                    />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>ISP Commission* %</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Percentage"
+                      min="1"
+                      formControlName="ispCommissionPercentage"
+                      pattern="[0-9]*"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && mvnoFormGroup.controls.ispCommissionPercentage.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.ispCommissionPercentage.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted &&
+                          mvnoFormGroup.controls.ispCommissionPercentage.errors.required
+                        "
+                      >
+                        ISP Commission is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Billing Type*</label>
+
+                    <p-dropdown
+                      [options]="billingOptions"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Billing Type"
+                      formControlName="billType"
+                      (onChange)="onChangeBillType($event)"
+                      [disabled]="isMvnoEdit && mvnoFormGroup.get('billType')?.value"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.billType.errors
+                      }"
+                    ></p-dropdown>
+
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.billType.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.billType.errors.required"
+                      >
+                        {{ mvnoTitle }} Billing Type is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15"
+                    *ngIf="mvnoFormGroup.get('billType')?.value === 'Monthly'"
+                  >
+                    <label>ISP Bill Generation Day*</label>
+                    <p-dropdown
+                      id="ispBillDay"
+                      [options]="days"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Day"
+                      formControlName="ispBillDay"
+                      [disabled]="isMvnoEdit && mvnoFormGroup.get('ispBillDay')?.value"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.ispBillDay.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.ispBillDay.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.ispBillDay.errors.required"
+                      >
+                        ISP Bill Generation Day is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Client Id</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Client Id"
+                      formControlName="clientId"
+                    />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Description*</label>
+                    <textarea
+                      class="form-control"
+                      rows="4"
+                      formControlName="description"
+                      placeholder="Enter Description"
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls.description.errors
+                      }"
+                    ></textarea>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && mvnoFormGroup.controls.description.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && mvnoFormGroup.controls.description.errors.required"
+                      >
+                        Description is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Child Creation Threshold</label>
+                    <input
+                      [ngClass]="{
+                        'is-invalid': submitted && mvnoFormGroup.controls['threshold'].errors
+                      }"
+                      class="form-control"
+                      formControlName="threshold"
+                      min="1"
+                      placeholder="Enter Child Creation Threshold"
+                      type="number"
+                      customDecimal
+                      (keypress)="keypressId($event)"
+                    />
+                    <div
+                      *ngIf="submitted && mvnoFormGroup.controls['threshold'].errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div
+                        *ngIf="mvnoFormGroup.controls['threshold'].errors['required']"
+                        class="error text-danger"
+                      >
+                        Threshold is required.
+                      </div>
+                      <div
+                        *ngIf="mvnoFormGroup.controls['threshold'].errors['min']"
+                        class="error text-danger"
+                      >
+                        Child Creation Threshold must be greater than 0.
+                      </div>
+                    </div>
+
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+
+          <div class="addUpdateBtn" style="margin-top: 3.5rem">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              *ngIf="!isMvnoEdit"
+              id="submit"
+              (click)="addEditMvno('')"
+            >
+              <i class="fa fa-check-circle"></i>
+              Add {{ mvnoTitle }}
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              *ngIf="isMvnoEdit"
+              id="submit"
+              (click)="addEditMvno(viewMvnoData.id)"
+            >
+              <i class="fa fa-check-circle"></i>
+              Update {{ mvnoTitle }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

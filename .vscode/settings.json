@@ -1,0 +1,17 @@
+{
+  "files.autoSave": "off",
+  "files.autoSaveDelay": 10000,
+  "editor.formatOnSave": true,
+  "editor.tabSize": 4,
+  "editor.detectIndentation": false,
+  "prettier.tabWidth": 4,
+  "prettier.printWidth": 140,
+  "editor.formatOnPaste": true,
+  "editor.minimap.showSlider": "always",
+  "editor.minimap.maxColumn": 100,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "explorer.autoReveal": true,
+  "emmet.triggerExpansionOnTab": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active"
+}

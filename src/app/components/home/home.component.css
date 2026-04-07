@@ -1,0 +1,16 @@
+.container
+{
+    width: 100%;
+}
+
+.transaction
+{
+    width: 50%;
+    float: left;
+}
+
+.opration
+{
+    width: 50%;
+    float:right; 
+}

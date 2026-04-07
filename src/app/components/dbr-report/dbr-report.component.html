@@ -1,0 +1,194 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Revenue Report</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDbr"
+            aria-expanded="false"
+            aria-controls="searchtax"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchDbr" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <p-dropdown
+                [options]="searchTypeList"
+                optionValue="value"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                placeholder="Select Search Type"
+                [(ngModel)]="searchType"
+                (onChange)="getSearchType($event)"
+              >
+              </p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-3 marginTopSearchinput" *ngIf="isDateRangeShow">
+              <input
+                type="date"
+                [(ngModel)]="searchFormDate"
+                placeholder="From Date"
+                class="form-control"
+                (keydown.enter)="searchDBR()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-3 marginTopSearchinput" *ngIf="isDateRangeShow">
+              <input
+                type="date"
+                [(ngModel)]="searchEndDate"
+                placeholder="To Date"
+                class="form-control"
+                [min]="searchFormDate"
+                (keydown.enter)="searchDBR()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-3" *ngIf="isMonthShow">
+              <!-- <input
+                type="month"
+                class="form-control"
+                placeholder="Select Month"
+                name="searchStartMonth"
+                [(ngModel)]="searchStartMonth"
+                min="1990-12"
+                max="2050-12"
+                (keydown.enter)="searchDBR()"
+              /> -->
+              <p-calendar
+                placeholder="Select Start Month"
+                view="month"
+                dateFormat="MM, yy"
+                [readonlyInput]="true"
+                [showIcon]="true"
+                [(ngModel)]="searchStartMonth"
+                (keydown.enter)="searchDBR()"
+              ></p-calendar>
+            </div>
+
+            <div class="col-lg-3 col-md-3" *ngIf="isMonthShow">
+              <!-- <input
+                type="month"
+                class="form-control"
+                placeholder="Select Month"
+                name="searchEndMonth"
+                [(ngModel)]="searchEndMonth"
+                [min]="searchStartMonth"
+                max="2050-12"
+                (keydown.enter)="searchDBR()"
+              /> -->
+              <p-calendar
+                placeholder="Select End Month"
+                view="month"
+                dateFormat="MM, yy"
+                [readonlyInput]="true"
+                [showIcon]="true"
+                [(ngModel)]="searchEndMonth"
+                (keydown.enter)="searchDBR()"
+              ></p-calendar>
+            </div>
+
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchDBR()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="searchClearDBR()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ titleText }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listDBR"
+            aria-expanded="false"
+            aria-controls="listDBR"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listDBR" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table" *ngIf="dbrListData.length > 0">
+            <thead>
+              <tr>
+                <th *ngIf="gridDateDisplay">Date</th>
+                <th *ngIf="gridMonthDisplay">Month</th>
+
+                <th>Prepaid Revenue</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let dbr of dbrListData
+                    | paginate
+                      : {
+                          id: 'dbrListData',
+                          itemsPerPage: DBRListdataitemsPerPage,
+                          currentPage: currentPageDBRListdata,
+                          totalItems: DBRListdatatotalRecords
+                        };
+                  index as i
+                "
+              >
+                <td *ngIf="gridDateDisplay">
+                  {{ dbr.startdate }}
+                </td>
+                <td *ngIf="gridMonthDisplay">
+                  {{ dbr.month }}
+                </td>
+                <td>
+                  {{ dbr.pendingamt | number : "1.2-2" }}
+                </td>
+                <td>{{ dbr.dbr | number : "1.2-2" }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            id="dbrListData"
+            maxSize="10"
+            *ngIf="dbrListData.length > 0"
+            directionLinks="true"
+            previousLabel=""
+            nextLabel=""
+            (pageChange)="pageChangedDbrList($event)"
+          >
+          </pagination-controls>
+          <div *ngIf="dbrListData.length <= 0">Revenue data not found</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

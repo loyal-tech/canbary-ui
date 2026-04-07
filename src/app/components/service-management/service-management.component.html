@@ -1,0 +1,874 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Service Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+       <div id="searchDataCountry" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchName"
+                class="form-control"
+                placeholder="Search Service Name"
+                (keydown.enter)="search()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="search()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearch()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Service</h3>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="getServiceDataList('')">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchSerice"
+            aria-expanded="false"
+            aria-controls="searchSerice"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchSerice" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+              <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Display Name</th>
+                    <th>IC Name</th>
+                    <th>IC Code</th>
+                    <th>ISP Name</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let service of serviceListData
+                        | paginate
+                          : {
+                              id: 'serviceListpageData',
+                              itemsPerPage: serviceListdataitemsPerPage,
+                              currentPage: currentPageServiceListdata,
+                              totalItems: serviceListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.displayName }}</td>
+                    <td>{{ service.icname }}</td>
+                    <td>{{ service.iccode }}</td>
+                    <td>{{ service.mvnoName }}</td>
+
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        href="javascript:void(0)"
+                        id="edit-button"
+                        type="button"
+                        title="Edit"
+                        (click)="editService(service.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        title="Delete"
+                        (click)="deleteConfirmonService(service.id)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        title="View"
+                        (click)="viewService(service.id)"
+                      >
+                        <img src="assets/img/eye-icon.png" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="serviceListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedServiceList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isServiceEdit ? "Update" : "Create" }} Service</h3>
+        <div class="right">
+          <button class="btn btn-default clearbtn" type="reset" (click)="reserServiceGroupForm()">
+            <i class="fa fa-refresh"></i>
+            Clear
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataService"
+            aria-expanded="false"
+            aria-controls="allDataService"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="allDataService" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !isServiceEdit">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (isServiceEdit && editAccess)">
+          <form [formGroup]="serviceGroupForm">
+             <div *ngIf="mvnoId === 1">
+              <label>{{ mvnoTitle }} List</label>
+              <p-dropdown
+                id="mvnoId"
+                [disabled]="isServiceEdit"
+                [options]="commondropdownService.mvnoList"
+                filter="true"
+                filterBy="name"
+                formControlName="mvnoId"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a mvno"
+              ></p-dropdown>
+              <div
+                *ngIf="submitted && serviceGroupForm.controls.mvnoId.errors"
+                class="errorWrap text-danger"
+              >
+                <div
+                  *ngIf="submitted && serviceGroupForm.controls.mvnoId.errors.required"
+                  class="error text-danger"
+                >
+                  Mvno is required.
+                </div>
+              </div>
+            </div>
+            <br/>
+            <label>Service Name*</label>
+            <input
+              id="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter Service Name"
+              formControlName="name"
+              [ngClass]="{
+                'is-invalid': submitted && serviceGroupForm.controls.name.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && serviceGroupForm.controls.name.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && serviceGroupForm.controls.name.errors.required"
+              >
+                Service Name is required.
+              </div>
+              <div
+                class="position"
+                *ngIf="submitted && serviceGroupForm.controls.name.errors?.cannotContainSpace"
+              >
+                <p class="error">White space are not allowed.</p>
+              </div>
+            </div>
+            <br />
+            <label>Display Name</label>
+            <input
+              id="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter Display Name"
+              formControlName="displayName"
+              [ngClass]="{
+                'is-invalid': submitted && serviceGroupForm.controls.displayName.errors
+              }"
+            />
+            <br />
+            <!--<label>IC Name</label>
+            <input
+              id="icname"
+              type="text"
+              class="form-control"
+              placeholder="Enter IC Name"
+              formControlName="icname"
+              [ngClass]="{
+                'is-invalid': submitted && serviceGroupForm.controls.icname.errors
+              }"
+            /> -->
+            <label>IC Name</label>
+            <p-dropdown
+              [readonly]="
+                isServiceEdit &&
+                serviceGroupForm.value.icname !== null &&
+                serviceGroupForm.value.icname !== ''
+              "
+              [options]="ICListdata"
+              optionValue="icname"
+              optionLabel="icname"
+              filter="true"
+              filterBy="icname"
+              placeholder="Select a Ic code"
+              formControlName="icname"
+              (onChange)="getSelIcName($event)"
+              [ngClass]="{
+                'is-invalid': submitted && serviceGroupForm.controls.icname.errors
+              }"
+            ></p-dropdown>
+
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && serviceGroupForm.controls.icname.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && serviceGroupForm.controls.icname.errors.required"
+              ></div>
+            </div>
+            <br />
+            <br />
+            <label>IC Code</label>
+            <input
+              id="iccode"
+              type="text"
+              class="form-control"
+              placeholder="Enter IC COde"
+              formControlName="iccode"
+              readonly
+              [ngClass]="{
+                'is-invalid': submitted && serviceGroupForm.controls.iccode.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && serviceGroupForm.controls.iccode.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && serviceGroupForm.controls.iccode.errors.required"
+              ></div>
+              <div
+                class="error text-danger"
+                *ngIf="submitted && serviceGroupForm.controls.iccode.errors.pattern"
+              >
+                Special characters not allowed.
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>Ledger Id</label>
+              <input
+                id="ledgerId"
+                type="text"
+                class="form-control"
+                placeholder="Enter Ledger Id"
+                formControlName="ledgerId"
+              />
+              <br />
+            </div>
+            <div>
+              <label>Is DTV Service</label>
+              <div>
+                <p-dropdown
+                  id="is_dtv"
+                  [options]="isDTV"
+                  formControlName="is_dtv"
+                  defaultLabel="Select Is DTV Service"
+                  optionLabel="label"
+                  optionValue="value"
+                  [filter]="true"
+                  filterBy="name"
+                  (onChange)="onchangeEventForDTV($event.value)"
+                ></p-dropdown>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>Expiry </label>
+              <!-- <div style="display: flex">
+                <div style="width: 40%; height: 34px" [formGroup]="serviceSelectExpire"> -->
+              <p-dropdown
+                [options]="selectExpireType"
+                optionLabel="label"
+                optionValue="value"
+                formControlName="expiry"
+                filter="true"
+                filterBy="label"
+                placeholder="Select Expire Type"
+                [disabled]="expiryFlag"
+                (onChange)="getExpireTypeType($event)"
+              ></p-dropdown>
+              <!-- </div>
+                <div style="width: 60%">
+                  <p-dropdown
+                    [options]="eventExpireData"
+                    optionValue="value"
+                    optionLabel="text"
+                    formControlName="expiry"
+                    filter="true"
+                    filterBy="text"
+                    placeholder="Select Expiry"
+                  ></p-dropdown>
+                </div> -->
+              <!-- </div> -->
+            </div>
+            <br />
+           
+            <br />
+            <!-- <div *ngIf="statusCheckService.isActiveInventoryService">
+              <label>Required Inventory</label>
+              <div>
+                <p-multiSelect
+                  id="roles"
+                  [options]="reqInventoryList"
+                  formControlName="pcategoryId"
+                  defaultLabel="Select Required Inventory"
+                  optionLabel="name"
+                  optionValue="id"
+                  filter="true"
+                  filterBy="name"
+                ></p-multiSelect>
+              </div>
+            </div>
+            <br /> -->
+            <div>
+              <label>Service Parameters</label>
+              <div>
+                <!-- <p-multiSelect
+                  id="roles"
+                  [options]="serviceParams"
+                  formControlName="serviceParamMappingList"
+                  defaultLabel="Select Service Parameters"
+                  optionLabel="name"
+                  optionValue="id"
+                  filter="true"
+                  filterBy="name"
+                ></p-multiSelect> -->
+                <button type="button" class="btn btn-primary" (click)="addServiceParameter()">
+                  Service Parameters
+                </button>
+              </div>
+            </div>
+            <div class="checkBoxMainWrap">
+              <div class="checkBoxWrap">
+                <p-checkbox
+                  name="allChecked"
+                  binary="true"
+                  formControlName="feasibility"
+                  [disabled]="isServiceEdit"
+                ></p-checkbox>
+                <label for="allChecked" class="form-check-label"> Feasibility </label>
+              </div>
+              <div class="checkBoxWrap">
+                <p-checkbox
+                  name="allChecked"
+                  binary="true"
+                  formControlName="installation"
+                  [disabled]="isServiceEdit"
+                ></p-checkbox>
+                <label for="allChecked" class="form-check-label"> Installation </label>
+              </div>
+              <div class="checkBoxWrap">
+                <p-checkbox
+                  name="allChecked"
+                  binary="true"
+                  formControlName="poc"
+                  [disabled]="isServiceEdit"
+                ></p-checkbox>
+                <label for="allChecked" class="form-check-label"> POC </label>
+              </div>
+              <div class="checkBoxWrap">
+                <p-checkbox
+                  name="allChecked"
+                  binary="true"
+                  formControlName="isPriceEditable"
+                  [disabled]="isServiceEdit"
+                ></p-checkbox>
+                <label for="allChecked" class="form-check-label"> Allow Price Override </label>
+              </div>
+              <div class="checkBoxWrap">
+                <p-checkbox
+                  name="allChecked"
+                  binary="true"
+                  formControlName="provisioning"
+                  [disabled]="isServiceEdit"
+                ></p-checkbox>
+                <label for="allChecked" class="form-check-label"> Provisioning </label>
+              </div>
+              <!-- <div class="checkBoxWrap">
+                <p-checkbox name="allChecked" binary="true" formControlName="isServiceThroughLead"
+                  [disabled]="isServiceEdit"></p-checkbox>
+                <label for="allChecked" class="form-check-label">Service Through Lead </label>
+              </div> -->
+            </div>
+            <!-- <div style="display: flex; margin-top: 2.5rem">
+              <p-checkbox
+                name="allChecked"
+                binary="true"
+                formControlName="isQoSV"
+                [disabled]="isServiceEdit"
+              ></p-checkbox>
+              <label for="allChecked" class="form-check-label" style="margin-left: 1rem">
+                Quota Configuration Require
+              </label>
+            </div> -->
+            <!-- <br />
+                    <label>Quota</label>
+                    <input id="quota" type="text" class="form-control" placeholder="Enter Quota"
+                        formControlName="quota"
+                        [ngClass]="{'is-invalid': submitted && serviceGroupForm.controls.quota.errors}" />
+                    <div class="errorWrap text-danger" *ngIf="submitted && serviceGroupForm.controls.quota.errors">
+                        <div class="error text-danger"
+                            *ngIf="submitted && serviceGroupForm.controls.quota.errors.required">
+                            Quota is required.
+                        </div>
+                    </div>
+                    <br />
+                    <label>Stml</label>
+                    <input id="stml" type="text" class="form-control" placeholder="Enter stml"
+                        formControlName="stml"
+                        [ngClass]="{'is-invalid': submitted && serviceGroupForm.controls.quota.errors}" />
+                    <div class="errorWrap text-danger" *ngIf="submitted && serviceGroupForm.controls.stml.errors">
+                        <div class="error text-danger"
+                            *ngIf="submitted && serviceGroupForm.controls.stml.errors.required">
+                            stml is required.
+                        </div>
+                    </div>
+                    <br />
+                    <label>Validity</label>
+                    <input id="validity" type="text" class="form-control" placeholder="Enter Validity"
+                        formControlName="validity"
+                        [ngClass]="{'is-invalid': submitted && serviceGroupForm.controls.validity.errors}" />
+                    <div class="errorWrap text-danger" *ngIf="submitted && serviceGroupForm.controls.validity.errors">
+                        <div class="error text-danger"
+                            *ngIf="submitted && serviceGroupForm.controls.validity.errors.required">
+                            Validity is required.
+                        </div>
+                    </div> -->
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="!isServiceEdit"
+                (click)="addEditService('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Service
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="isServiceEdit"
+                (click)="addEditService(viewServiceListData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Service
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<p-dialog
+  header="Add Service Parameter"
+  [(visible)]="serviceModelFlag"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModal()"
+>
+  <!-- <div class="modal-dialog" role="document" style="width: 50%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Service Parameter</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> -->
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <fieldset style="margin-top: 0px">
+          <legend>Service Parameter</legend>
+          <div class="boxWhite">
+            <form [formGroup]="addServiceParamForm" style="padding: 1.5rem">
+              <table style="width: 100%">
+                <thead>
+                  <tr>
+                    <th style="width: 30%">Parameter</th>
+                    <th style="width: 25%; text-align: center">Mandatory</th>
+                    <th style="width: 30%">
+                      Default Value <span *ngIf="defultUnitName">({{ defultUnitName }})</span>
+                    </th>
+                    <th style="width: 15%"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <p-dropdown
+                        [options]="parameterOptions"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Select a Parameter"
+                        formControlName="serviceParamId"
+                        (onChange)="onParamSelect($event)"
+                      ></p-dropdown>
+                    </td>
+                    <td>
+                      <div style="display: flex; justify-content: center; align-items: center">
+                        <input
+                          class="inputcheckbox"
+                          formControlName="isMandatory"
+                          type="checkbox"
+                          title="Mandatory"
+                          id="isMandatory"
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        *ngIf="isMultipleFields"
+                        [readOnly]="isMultipleFields"
+                        class="form-control"
+                        placeholder="Enter a Value"
+                        formControlName="value"
+                        name="value"
+                      />
+                      <input
+                        *ngIf="!isMultipleFields && !withEndpoint"
+                        class="form-control"
+                        placeholder="Enter a Value"
+                        formControlName="value"
+                        name="value"
+                      />
+                      <p-dropdown
+                        *ngIf="!isMultipleFields && withEndpoint"
+                        [options]="defaultParamValues"
+                        optionValue="displayName"
+                        optionLabel="displayName"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Enter a Value"
+                        formControlName="value"
+                      ></p-dropdown>
+                    </td>
+                    <td>
+                      <button
+                        id="addAtt"
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="addServiceParam()"
+                        style="margin-left: 20px"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table coa-table" style="margin-top: 10px">
+                <thead>
+                  <tr>
+                    <th style="text-align: center; width: 30%">Service Parameter</th>
+                    <th style="text-align: center; width: 25%">Mandatory</th>
+                    <th style="text-align: center; width: 30%">value</th>
+                    <th style="text-align: center; width: 15%">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let row of serviceParamArray.controls
+                        | paginate
+                          : {
+                              id: 'llcDetailArrayData',
+                              itemsPerPage: llcDetailArrayitemsPerPage,
+                              currentPage: currentPagellcDetailArraydata,
+                              totalItems: llcDetailArraytotalRecords
+                            };
+                      let index = index
+                    "
+                  >
+                    <td>
+                      <p-dropdown
+                        [options]="parameterList"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Select a Service Parameter"
+                        [formControl]="row.get('serviceParamId')"
+                        [disabled]="true"
+                      ></p-dropdown>
+                    </td>
+
+                    <td>
+                      <div style="display: flex; justify-content: center; align-items: center">
+                        <input
+                          class="inputcheckbox"
+                          type="checkbox"
+                          title="Mandatory"
+                          id="isMandatory"
+                          [formControl]="row.get('isMandatory')"
+                          disabled
+                        />
+                      </div>
+                      <!-- <p-checkbox
+                            name="group2"
+                            value="row.get('isMandatory')"
+                            [value]="row.get('isMandatory')"
+                            [ngModel]="row.get('isMandatory')"
+                          
+                            [disabled]="true"
+                            [formControl]="row.get('isMandatory')"
+                          ></p-checkbox> -->
+                    </td>
+
+                    <td style="text-align: right">
+                      <input class="form-control" [formControl]="row.get('value')" readonly />
+                    </td>
+                    <td>
+                      <a
+                        id="deleteAtt"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonServiceParameter(index, row.value.serviceParamId)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+
+            <div class="row">
+              <div class="col-md-12">
+                <!-- <pagination-controls
+                      id="llcDetailArrayData"
+                      maxSize="5"
+                      directionLinks="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedTaxTiered($event)"
+                    ></pagination-controls> -->
+              </div>
+            </div>
+            <br />
+          </div>
+        </fieldset>
+        <!-- <div class="panel-heading">
+                <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Lead Template</h3>
+                <div class="right">
+                  <button type="button" class="btn-toggle-collapse" data-toggle="collapse" data-target="#createrole"
+                    aria-expanded="false" aria-controls="createrole">
+                    <i class="fa fa-minus-circle"></i>
+                  </button>
+                </div>
+              </div> -->
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="saveChanges()">Save</button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-dismiss="modal"
+      style="margin-left: 10px"
+      (click)="closeModal()"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Service Details"
+  [(visible)]="viewServiceDialog"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closedialog()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Service Details</legend>
+        <div class="boxWhite">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Service Name :</label>
+              <span>{{ viewServiceListData?.name }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Display Name :</label>
+              <span>{{ viewServiceListData?.displayName }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <!-- <label class="datalbl">Remark Reason:</label> -->
+              <label class="datalbl">IC Name :</label>
+              <span>{{ viewServiceListData?.icname }}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">IC Code :</label>
+              <span>{{ viewServiceListData?.iccode }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">is DTV Service :</label>
+              <span>{{ viewServiceListData?.is_dtv }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Expiry :</label>
+              <span>{{ viewServiceListData?.expiry }}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Feasibility :</label>
+              <span>{{ viewServiceListData?.feasibility }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Installation :</label>
+              <span>{{ viewServiceListData?.installation }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">POC :</label>
+              <span>{{ viewServiceListData?.poc }}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Allow Price Override :</label>
+              <span>{{ viewServiceListData?.provisioning }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Provisioning :</label>
+              <span>{{ viewServiceListData?.isPriceEditable }}</span>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        style="margin-top: 0rem; margin-bottom: 2rem"
+        *ngIf="viewServiceListData?.serviceParamMappingList?.length > 0"
+      >
+        <legend>Service Parameters Details</legend>
+        <div class="boxWhite">
+          <div class="row" *ngFor="let param of viewServiceListData?.serviceParamMappingList">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Parameter Name :</label>
+              <span>{{ param?.serviceParamName }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Value :</label>
+              <span>{{ param?.value }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl">Mandatory :</label>
+              <span>{{ param?.isMandatory }}</span>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal" type="button" (click)="closedialog()">
+      Close
+    </button>
+  </div>
+</p-dialog>

@@ -1,0 +1,11 @@
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #f7b206 !important;
+}
+
+.error-message {
+  color: black;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  text-align: left !important;
+}

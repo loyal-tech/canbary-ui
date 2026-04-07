@@ -1,0 +1,1540 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Qos Policy Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchData"
+            aria-expanded="false"
+            aria-controls="SearchQos"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="searchData" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div>
+            <div class="row">
+              <div class="col-lg-3 col-md-3">
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Policy Name"
+                  [(ngModel)]="searchName"
+                  (keydown.enter)="search()"
+                />
+              </div>
+              <div class="col-md-4">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  data-title="Search Policy Details"
+                  data-toggle="tooltip"
+                  data-placement="bottom"
+                  (click)="search()"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+                &nbsp;
+                <button
+                  type="reset"
+                  class="btn btn-default"
+                  data-title="Clear"
+                  data-toggle="tooltip"
+                  data-placement="bottom"
+                  (click)="clearSearch()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="panel-body no-padding panel-udata">
+            <div class="col-md-6 pcol" *ngIf="createAccess">
+              <div class="dbox">
+                <a (click)="createQosPolicy()" class="curson_pointer">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Create Qos Policy</h5>
+                  <!-- <p>Create Qos Policy</p> -->
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 pcol">
+              <div class="dbox">
+                <a (click)="searchQosPolicy()" class="curson_pointer">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>List Qos Policy</h5>
+                  <!-- <p>Search Qos Policy</p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Qos Policy</h3>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="getQosPolicyList('')">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listQos"
+            aria-expanded="false"
+            aria-controls="listQos"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listQos" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <div class="row">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Qos Policy Name</th>
+                        <th>Policy Name</th>
+                        <th>Qos Speed</th>
+                        <th>ISP Name</th>
+                        <!-- <th>Download / Upload Speed</th> -->
+                        <!-- <th>Base Policy Name</th>
+                                            <th>Base Download / Upload Speed</th> -->
+
+                        <th *ngIf="deleteAccess || editAccess">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let qosPolicy of qosPolicyListData
+                            | paginate
+                              : {
+                                  id: 'qosPolicyListpageData',
+                                  itemsPerPage: qosPolicyListdataitemsPerPage,
+                                  currentPage: currentPageQosPolicyListdata,
+                                  totalItems: qosPolicyListdatatotalRecords
+                                };
+                          index as i
+                        "
+                      >
+                        <td>
+                          <!-- <a
+                            data-backdrop="static"
+                            data-keyboard="false"
+                            title="Go To service Area List"
+                          >
+                          </a> -->
+                          <span
+                            class="HoverEffect"
+                            (click)="qosPolicyDetail(qosPolicy.id)"
+                            data-backdrop="static"
+                            data-keyboard="false"
+                            title="Go To service Area List"
+                          >
+                            {{ qosPolicy.name }}
+                          </span>
+                        </td>
+                        <td>{{ qosPolicy.thpolicyname }}</td>
+                        <td>{{ qosPolicy.qosspeed ? qosPolicy.qosspeed + " Mbps" : "-" }}</td>
+                        <!-- <td>
+                          {{ qosPolicy.thdownloadspeed }} /
+                          {{ qosPolicy.thuploadspeed }}
+                        </td> -->
+                        <!-- <td>{{ qosPolicy.basepolicyname }}</td>
+                                            <td>{{ qosPolicy.basedownloadspeed }} / {{ qosPolicy.baseuploadspeed }}</td> -->
+                        <td>{{ qosPolicy.mvnoName }}</td>
+                        <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                          <a
+                            id="edit-button"
+                            href="javascript:void(0)"
+                            type="button"
+                            *ngIf="editAccess"
+                            (click)="editQosPolicy(qosPolicy.id)"
+                            title="Edit"
+                          >
+                            <img src="assets/img/ioc01.jpg" />
+                          </a>
+                          <a
+                            id="delete-button"
+                            href="javascript:void(0)"
+                            *ngIf="deleteAccess"
+                            (click)="deleteConfirmonQosPolicy(qosPolicy.id)"
+                            title="Delete"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="pagination_Dropdown">
+                    <pagination-controls
+                      id="qosPolicyListpageData"
+                      [maxSize]="10"
+                      [directionLinks]="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedQosPolicyList($event)"
+                    ></pagination-controls>
+                    <div id="itemPerPageDropdown">
+                      <p-dropdown
+                        [options]="pageLimitOptions"
+                        optionLabel="value"
+                        optionValue="value"
+                        (onChange)="TotalItemPerPage($event)"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isQosPolicyEdit ? "Update" : "Create" }} Qos Policy</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#updateQus"
+            aria-expanded="false"
+            aria-controls="updateQus"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="updateQus" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body">
+            <form [formGroup]="qosPolicyGroupForm">
+              <!--    Basic details    -->
+              <fieldset style="margin-top: 0px">
+                <legend>Basic Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Qos Policy Name*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Qos Policy Name"
+                        formControlName="name"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.name.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.name.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && qosPolicyGroupForm.controls.name.errors.required"
+                        >
+                          Qos Policy Name is required.
+                        </div>
+                        <div
+                          class="position"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.name.errors?.cannotContainSpace
+                          "
+                        >
+                          <p class="error">White space are not allowed.</p>
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Policy Name*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Policy Name"
+                        formControlName="thpolicyname"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.thpolicyname.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.thpolicyname.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.thpolicyname.errors.required
+                          "
+                        >
+                          Policy Name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Base Policy Name*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Base Policy Name"
+                        formControlName="basepolicyname"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && qosPolicyGroupForm.controls.basepolicyname.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.basepolicyname.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.basepolicyname.errors.required
+                          "
+                        >
+                          Base Policy Name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>QoS Speed*</label>
+                      <div style="display: flex">
+                        <div style="width: 60%">
+                          <input
+                            (keypress)="onKeymobilelength($event)"
+                            class="form-control"
+                            formControlName="qosspeed"
+                            id="qosspeed"
+                            maxlength="9"
+                            minlength="1"
+                            placeholder="Enter QoS Speed"
+                            type="text"
+                            [ngClass]="{
+                              'is-invalid': submitted && qosPolicyGroupForm.controls.qosspeed.errors
+                            }"
+                          />
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && qosPolicyGroupForm.controls.qosspeed.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                submitted && qosPolicyGroupForm.controls.qosspeed.errors.required
+                              "
+                            >
+                              Qos Speed is required.
+                            </div>
+                          </div>
+                          <br />
+                        </div>
+                        <div style="width: 40%; height: 34px">
+                          <input class="form-control" placeholder="Mbps" disabled="true" />
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Description*</label>
+                      <textarea
+                        rows="3"
+                        class="form-control"
+                        placeholder="Enter Description"
+                        formControlName="description"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.description.errors
+                        }"
+                      ></textarea>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.description.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.description.errors.required
+                          "
+                        >
+                          Description is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.description.errors.pattern
+                          "
+                        >
+                          Maximum 100 charecter required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div *ngIf="mvnoId === 1" class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-15">
+                      <label>{{ mvnoTitle }} List</label>
+                      <p-dropdown
+                        id="mvnoId"
+                        [disabled]="isQosPolicyEdit"
+                        [options]="commondropdownService.mvnoList"
+                        filter="true"
+                        filterBy="name"
+                        formControlName="mvnoId"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select a mvno"
+                      ></p-dropdown>
+                      <div
+                        *ngIf="submitted && qosPolicyGroupForm.controls.mvnoId.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div
+                          *ngIf="submitted && qosPolicyGroupForm.controls.mvnoId.errors.required"
+                          class="error text-danger"
+                        >
+                          Mvno is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="row" *ngIf="!isUpStreamDetailView">
+                <div class="col-md-12">
+                  <fieldset style="margin-top: 1.5rem">
+                    <legend>Gateway Details</legend>
+                    <div class="boxWhite">
+                      <div id="createInActiveProfileMapping" style="margin-top: 10px">
+                        <div class="row">
+                          <div class="col-lg-4 col-md-4 col-xs-12">
+                            <button
+                              id="createInActiveProfileMappingAttribute"
+                              style="object-fit: cover"
+                              class="btn btn-primary"
+                              (click)="onAddOfGatwayMapping()"
+                            >
+                              <i class="fa fa-plus-square" aria-hidden="true"></i>
+                              Add
+                            </button>
+                          </div>
+                        </div>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>Gateway Name</th>
+                              <th>Download Speed</th>
+                              <th>Upload Speed</th>
+                              <th>Base Download Speed</th>
+                              <th>Base Upload Speed</th>
+                              <th>Throttle Download Speed</th>
+                              <th>Throttle Upload Speed</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let row of gatewayAtrribute.controls; let index = index">
+                              <td>
+                                <input
+                                  id="gatewayName"
+                                  class="form-control"
+                                  placeholder="Enter Gateway Name"
+                                  [formControl]="row.get('gatewayName')"
+                                  [ngClass]="{
+                                    'is-invalid': submitted && row.get('gatewayName').invalid
+                                  }"
+                                />
+                                <div
+                                  class="errorWrap text-danger"
+                                  *ngIf="submitted && row.get('gatewayName').errors"
+                                >
+                                  <div
+                                    class="error text-danger"
+                                    *ngIf="submitted && row.get('gatewayName').errors.required"
+                                  >
+                                    Gateway Name is required.
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <input
+                                  id="downloadSpeed"
+                                  class="form-control"
+                                  placeholder="Enter Download Speed"
+                                  [formControl]="row.get('downloadSpeed')"
+                                  [ngClass]="{
+                                    'is-invalid': submitted && row.get('downloadSpeed').invalid
+                                  }"
+                                />
+                                <div
+                                  class="errorWrap text-danger"
+                                  *ngIf="submitted && row.get('downloadSpeed').errors"
+                                >
+                                  <div
+                                    class="error text-danger"
+                                    *ngIf="submitted && row.get('downloadSpeed').errors.required"
+                                  >
+                                    Download Speed is required.
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <input
+                                  id="uploadSpeed"
+                                  class="form-control"
+                                  placeholder="Enter Upload Speed"
+                                  [formControl]="row.get('uploadSpeed')"
+                                  [ngClass]="{
+                                    'is-invalid': submitted && row.get('uploadSpeed').invalid
+                                  }"
+                                />
+                                <div
+                                  class="errorWrap text-danger"
+                                  *ngIf="submitted && row.get('uploadSpeed').errors"
+                                >
+                                  <div
+                                    class="error text-danger"
+                                    *ngIf="submitted && row.get('uploadSpeed').errors.required"
+                                  >
+                                    Upload Speed is required.
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <input
+                                  id="baseDownloadSpeed"
+                                  class="form-control"
+                                  placeholder="Enter Base Download Speed"
+                                  [formControl]="row.get('baseDownloadSpeed')"
+                                  [ngClass]="{
+                                    'is-invalid': submitted && row.get('baseDownloadSpeed').invalid
+                                  }"
+                                />
+                                <div
+                                  class="errorWrap text-danger"
+                                  *ngIf="submitted && row.get('baseDownloadSpeed').errors"
+                                >
+                                  <div
+                                    class="error text-danger"
+                                    *ngIf="
+                                      submitted && row.get('baseDownloadSpeed').errors.required
+                                    "
+                                  >
+                                    Base Download Speed is required.
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <input
+                                  id="baseUploadSpeed"
+                                  class="form-control"
+                                  placeholder="Enter Base Upload Speed"
+                                  [formControl]="row.get('baseUploadSpeed')"
+                                  [ngClass]="{
+                                    'is-invalid': submitted && row.get('baseUploadSpeed').invalid
+                                  }"
+                                />
+                                <div
+                                  class="errorWrap text-danger"
+                                  *ngIf="submitted && row.get('baseUploadSpeed').errors"
+                                >
+                                  <div
+                                    class="error text-danger"
+                                    *ngIf="submitted && row.get('baseUploadSpeed').errors.required"
+                                  >
+                                    Base Upload Speed is required.
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <input
+                                  id="throttleDownloadSpeed"
+                                  class="form-control"
+                                  placeholder="Enter Throttle Download Speed"
+                                  [formControl]="row.get('throttleDownloadSpeed')"
+                                  [ngClass]="{
+                                    'is-invalid':
+                                      submitted && row.get('throttleDownloadSpeed').invalid
+                                  }"
+                                />
+                                <div
+                                  class="errorWrap text-danger"
+                                  *ngIf="submitted && row.get('throttleDownloadSpeed').errors"
+                                >
+                                  <div
+                                    class="error text-danger"
+                                    *ngIf="
+                                      submitted && row.get('throttleDownloadSpeed').errors.required
+                                    "
+                                  >
+                                    Throttle Download Speed is required.
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <input
+                                  id="throttleUploadSpeed"
+                                  class="form-control"
+                                  placeholder="Enter Throttle Upload Speed"
+                                  [formControl]="row.get('throttleUploadSpeed')"
+                                  [ngClass]="{
+                                    'is-invalid':
+                                      submitted && row.get('throttleUploadSpeed').invalid
+                                  }"
+                                />
+                                <div
+                                  class="errorWrap text-danger"
+                                  *ngIf="submitted && row.get('throttleUploadSpeed').errors"
+                                >
+                                  <div
+                                    class="error text-danger"
+                                    *ngIf="
+                                      submitted && row.get('throttleUploadSpeed').errors.required
+                                    "
+                                  >
+                                    Throttle Upload Speed is required.
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <a
+                                  id="deleteAtt"
+                                  class="curson_pointer"
+                                  (click)="deleteConfirmInActiveAttribute(index)"
+                                >
+                                  <img src="assets/img/ioc02.jpg" />
+                                </a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div *ngIf="isUpStreamDetailView">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>UpStream - DownStream Details</legend>
+                  <div class="boxWhite">
+                    <div class="row">
+                      <div class="col-lg-4 col-md-4 col-sm-3">
+                        <label>UpStream Profile Name</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter UpStream Profile Name"
+                          formControlName="upstreamprofileName"
+                          (blur)="upProfileLeave()"
+                        />
+                        <br />
+                      </div>
+                      <div class="col-lg-4 col-md-4 col-sm-3">
+                        <label>UpStream Profile</label>
+                        <p-dropdown
+                          id="upstreamprofileuid"
+                          formControlName="upstreamprofileuid"
+                          [options]="upStreamProfileData"
+                          filter="true"
+                          filterBy="profile-name"
+                          optionLabel="uuid"
+                          optionValue="uuid"
+                          placeholder="Select a UpStream Profile"
+                          (onChange)="onDropdownChange($event, upStreamProfileData)"
+                        ></p-dropdown>
+
+                        <div
+                          *ngIf="!qosPolicyGroupForm.value.upstreamprofileName"
+                          class="errorWrap text-danger"
+                        >
+                          <div class="error text-danger">Please enter upstream profile first!</div>
+                        </div>
+                        <div
+                          *ngIf="submitted && qosPolicyGroupForm.controls.upstreamprofileuid.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              submitted &&
+                              qosPolicyGroupForm.controls.upstreamprofileuid.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            UpStream Profile is required.
+                          </div>
+                        </div>
+
+                        <br />
+                      </div>
+                      <div class="col-md-4 form-group" *ngIf="assuredbandwidth">
+                        <label> </label><br />
+                        <a
+                          class="form-control"
+                          style="color: #f7b206; border: none; border-color: #ffff; cursor: pointer"
+                          (click)="getUpStreamProfileData(upStreamProfileData, upStreamprofilename)"
+                          title="Click To See Upstream bandwidth data"
+                          >{{ assuredbandwidth + bandwidthUnit }}
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-lg-2 col-md-2 col-xs-12 mt" *ngIf="assuredbandwidth != null">
+                        <div class="col-lg-3 col-md-3 col-xs-12">
+                          <label> </label>
+                          <a
+                            (click)="
+                              getUpStreamProfileData(upStreamProfileData, upStreamprofilename)
+                            "
+                            data-target="#cdrDetailModal"
+                            data-toggle="modal"
+                            title="Click To See CDRs Detail"
+                            >{{ assuredbandwidth + bandwidthUnit }}
+                          </a>
+                        </div>
+                      </div> -->
+                    <div class="row">
+                      <div class="col-lg-4 col-md-4 col-sm-3">
+                        <label>DownStream Profile Name</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter DownStream Profile Name"
+                          formControlName="downstreamprofileName"
+                          (blur)="downProfileLeave()"
+                        />
+                        <br />
+                      </div>
+                      <div class="col-lg-4 col-md-4 col-sm-3">
+                        <label>DownStream Profile</label>
+                        <p-dropdown
+                          id="downstreamprofileuid"
+                          formControlName="downstreamprofileuid"
+                          [options]="downStreamProfileData"
+                          filter="true"
+                          filterBy="profile-name"
+                          optionLabel="uuid"
+                          optionValue="uuid"
+                          placeholder="Select a DownStream Profile"
+                          (onChange)="ondownstramDropdownChange($event, downStreamProfileData)"
+                        ></p-dropdown>
+
+                        <div
+                          *ngIf="!qosPolicyGroupForm.value.downstreamprofileName"
+                          class="errorWrap text-danger"
+                        >
+                          <div class="error text-danger">
+                            Please enter downstream profile first!
+                          </div>
+                        </div>
+                        <div
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.downstreamprofileuid.errors
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              submitted &&
+                              qosPolicyGroupForm.controls.downstreamprofileuid.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            DownStream Profile is required.
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                      <div *ngIf="bandwidthValue" class="col-md-4 form-group">
+                        <label> </label><br />
+                        <a
+                          class="form-control"
+                          style="color: #f7b206; border: none; border-color: #ffff; cursor: pointer"
+                          (click)="
+                            getDownStreamProfileData(downStreamProfilename, downStreamProfileData)
+                          "
+                          data-toggle="modal"
+                          title="Click To See CDRs Detail"
+                          >{{ bandwidthValue }}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <!--    Speed Details    -->
+              <!-- <fieldset>
+              <legend>Speed Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-xs-12">
+                    <label>Download Speed*</label>
+                    <input
+                      type="text"
+                      min="1"
+                      class="form-control"
+                      placeholder="Enter Download Speed"
+                      formControlName="thdownloadspeed"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && qosPolicyGroupForm.controls.thdownloadspeed.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && qosPolicyGroupForm.controls.thdownloadspeed.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.thdownloadspeed.errors.required
+                        "
+                      >
+                        Download Speed is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.thdownloadspeed.errors.pattern
+                        "
+                      >
+                        Only Numeric Character Allowed.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-xs-12">
+                    <label>Upload Speed*</label>
+                    <input
+                      type="text"
+                      min="1"
+                      class="form-control"
+                      placeholder="Enter Upload Speed"
+                      formControlName="thuploadspeed"
+                      [ngClass]="{
+                        'is-invalid': submitted && qosPolicyGroupForm.controls.thuploadspeed.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && qosPolicyGroupForm.controls.thuploadspeed.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.thuploadspeed.errors.required
+                        "
+                      >
+                        Upload Speed is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.thuploadspeed.errors.pattern
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.thdownloadspeed.errors.required
+                          "
+                        >
+                          Download Speed is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.thdownloadspeed.errors.pattern
+                          "
+                        >
+                          Only Numeric Character Allowed.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-xs-12">
+                    <label>Base Download Speed*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      min="1"
+                      placeholder="Enter Base Download Speed"
+                      formControlName="basedownloadspeed"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && qosPolicyGroupForm.controls.basedownloadspeed.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && qosPolicyGroupForm.controls.basedownloadspeed.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.basedownloadspeed.errors.required
+                        "
+                      >
+                        Base Download Speed is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.basedownloadspeed.errors.pattern
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.thuploadspeed.errors.required
+                          "
+                        >
+                          Upload Speed is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.thuploadspeed.errors.pattern
+                          "
+                        >
+                          Only Numeric Character Allowed.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-xs-12">
+                    <label>Base Upload Speed*</label>
+                    <input
+                      type="text"
+                      min="1"
+                      class="form-control"
+                      placeholder="Enter Base Upload Speed"
+                      formControlName="baseuploadspeed"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && qosPolicyGroupForm.controls.baseuploadspeed.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && qosPolicyGroupForm.controls.baseuploadspeed.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.baseuploadspeed.errors.required
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            qosPolicyGroupForm.controls.basedownloadspeed.errors.required
+                          "
+                        >
+                          Base Download Speed is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            qosPolicyGroupForm.controls.basedownloadspeed.errors.pattern
+                          "
+                        >
+                          Only Numeric Character Allowed.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Base Upload Speed*</label>
+                      <input
+                        type="text"
+                        min="1"
+                        class="form-control"
+                        placeholder="Enter Base Upload Speed"
+                        formControlName="baseuploadspeed"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && qosPolicyGroupForm.controls.baseuploadspeed.errors
+                        }"
+                      />
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && qosPolicyGroupForm.controls.baseuploadspeed.errors.pattern
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.baseuploadspeed.errors.required
+                          "
+                        >
+                          Base Upload Speed is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.baseuploadspeed.errors.pattern
+                          "
+                        >
+                          Only Numeric Character Allowed.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset> -->
+
+              <!--    Param Details    -->
+              <fieldset>
+                <legend>Param Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Param 1*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Param 1"
+                        formControlName="thparam1"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.thparam1.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.thparam1.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && qosPolicyGroupForm.controls.thparam1.errors.required"
+                        >
+                          Param 1 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Param 2*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Param 2"
+                        formControlName="thparam2"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.thparam2.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.thparam2.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && qosPolicyGroupForm.controls.thparam2.errors.required"
+                        >
+                          Param 2 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Param 3*</label>
+                      <input
+                        id="thparam3"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Param 3"
+                        formControlName="thparam3"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.thparam3.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.thparam3.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && qosPolicyGroupForm.controls.thparam3.errors.required"
+                        >
+                          Param 3 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Base Param 1*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Base Param 1"
+                        formControlName="baseparam1"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.baseparam1.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.baseparam1.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.baseparam1.errors.required
+                          "
+                        >
+                          Base Param 1 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Base Param 2*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Base Param 2"
+                        formControlName="baseparam2"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.baseparam2.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.baseparam2.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.baseparam2.errors.required
+                          "
+                        >
+                          Base Param 2 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Base Param 3*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Base Param 3"
+                        formControlName="baseparam3"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.baseparam3.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.baseparam3.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && qosPolicyGroupForm.controls.baseparam3.errors.required
+                          "
+                        >
+                          Base Param 3 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                      <label>Multi service type</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter type"
+                        formControlName="type"
+                        [ngClass]="{
+                          'is-invalid': submitted && qosPolicyGroupForm.controls.type.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && qosPolicyGroupForm.controls.type.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && qosPolicyGroupForm.controls.type.errors.required"
+                        >
+                          Multi service type required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  *ngIf="!isQosPolicyEdit"
+                  (click)="addEditQosPolicy('')"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Add Qos Policy
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  *ngIf="isQosPolicyEdit"
+                  (click)="addEditQosPolicy(viewQosPolicyListData.id)"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update Qos Policy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="detailView">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Qos Policy Details"
+            (click)="searchQosPolicy()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">Qos Policy Detail</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#qosdeatils"
+            aria-expanded="false"
+            aria-controls="qosdeatils"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="qosdeatils" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ qosPolicyData.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Policy Name :</label>
+                  <span>{{ qosPolicyData.thpolicyname }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Base Policy Name :</label>
+                  <span>{{ qosPolicyData.basepolicyname }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+                  <label class="datalbl">Description:</label>
+                  <span>{{ qosPolicyData.description }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <!-- <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Speed Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Download Speed :</label>
+                  <span>{{ qosPolicyData.thdownloadspeed }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Upload Speed:</label>
+                  <span>{{ qosPolicyData.thuploadspeed }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Base Download Speed :</label>
+                  <span>{{ qosPolicyData.basedownloadspeed }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Base Upload Speed :</label>
+                  <span>{{ qosPolicyData.baseuploadspeed }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset> -->
+
+          <fieldset
+            *ngFor="let gateway of qosPolicyData.qosPolicyGatewayMappingList"
+            style="margin-top: 0rem; margin-bottom: 2rem"
+          >
+            <legend>{{ gateway.gatewayName }} Details</legend>
+            <div class="boxWhite">
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                    <label class="datalbl">Download Speed :</label>
+                    <span>{{ gateway.downloadSpeed }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                    <label class="datalbl">Upload Speed :</label>
+                    <span>{{ gateway.uploadSpeed }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Base Download Speed :</label>
+                    <span>{{ gateway.baseDownloadSpeed }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl"> Base Upload Speed:</label>
+                    <span>{{ gateway.baseUploadSpeed }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                    <label class="datalbl">Throttle download Speed :</label>
+                    <span>{{ gateway.throttleDownloadSpeed }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                    <label class="datalbl">Throttle Upload Speed :</label>
+                    <span>{{ gateway.throttleUploadSpeed }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Param Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Param 1 :</label>
+                  <span>{{ qosPolicyData.thparam1 }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Param 2 :</label>
+                  <span>{{ qosPolicyData.thparam2 }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Param 3 :</label>
+                  <span>{{ qosPolicyData.thparam3 }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Base Param 1 :</label>
+                  <span>{{ qosPolicyData.baseparam1 }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Base Param 2 :</label>
+                  <span>{{ qosPolicyData.baseparam2 }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Base Param 3 :</label>
+                  <span>{{ qosPolicyData.baseparam3 }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <!-- ********** -->
+          <div *ngIf="isUpStreamDetailView">
+            <fieldset style="margin-top: 1.5rem">
+              <legend>UpStream - DownStream Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-md-6 col-sm-2 dataGroup">
+                    <label class="datalbl">UpStream Profile Name :</label>
+                    {{ qosPolicyData.upstreamprofileName }}
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-3 dataGroup">
+                    <label class="datalbl">UpStream Profile :</label>
+                    {{ qosPolicyData.upstreamprofileuid }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-2 dataGroup">
+                    <label class="datalbl">DownStream Profile Name :</label>
+                    {{ qosPolicyData.downstreamprofileName }}
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-3 dataGroup">
+                    <label class="datalbl">DownStream Profile :</label>
+                    {{ qosPolicyData.downstreamprofileuid }}
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+    header="Upstream Profile Details"
+    [(visible)]="UpProfilename"
+    [modal]="true"
+    [style]="{ width: '800px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeUpstreamProfile()"
+  >
+<div class="modal-body">
+        <div class="container-fluid">
+          <div class="row" id="viewDetail" *ngIf="filteredUpstreamProfile">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl" for="type">Assured bandwidth :</label>
+              <span>{{ filteredUpstreamProfile["assured-bandwidth"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Bandwidth-unit:</label>
+              <span>{{ filteredUpstreamProfile["bandwidth-unit"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Fixed-bandwidth:</label>
+              <span>{{ filteredUpstreamProfile["fixed-bandwidth"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Max bandwidth:</label>
+              <span>{{ filteredUpstreamProfile["max-bandwidth"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Profile name:</label>
+              <span>{{ filteredUpstreamProfile["profile-name"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Profile name:</label>
+              <span>{{ filteredUpstreamProfile["profile-name"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Uuid:</label>
+              <span>{{ filteredUpstreamProfile["uuid"] }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" (click)="closeUpstreamProfile()">Close</button>
+        </div>
+      </div>
+</p-dialog>
+
+<p-dialog
+    header="DownStream Profile Details"
+    [(visible)]="DownProfilename"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="CloseDownStream()"
+  >
+
+  <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row" id="viewDetail" *ngIf="filteredDownstreamProfile">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label class="datalbl" for="type">Commited Information Rate :</label>
+              <span>{{ bandwidthValue }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Committed-burst-size:</label>
+              <span>{{ commistedBustsize }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Peak-burst-size:</label>
+              <span>{{ peakBustsize }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">profile-name:</label>
+              <span>{{ filteredDownstreamProfile["profile-name"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Downstream-bandwidth-policy-type:</label>
+              <span>{{ filteredDownstreamProfile["downstream-bandwidth-policy-type"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">downstream-bandwidth-profile-type:</label>
+              <span>{{ filteredDownstreamProfile["downstream-bandwidth-profile-type"] }}</span>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Uuid:</label>
+              <span>{{ filteredDownstreamProfile.uuid }}</span>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">StromControl:</label>
+              <span>{{ filteredDownstreamProfile.stromControl }}</span>
+            </div>
+            <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Peak-information-rate:</label>
+              <span>{{ filteredDownstreamProfile["peak-information-rate"] }}</span>
+            </div> -->
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Color-aware:</label>
+              <span>{{ filteredDownstreamProfile["color-aware"] }}</span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+              <label for="type" class="datalbl">Is-strom-control:</label>
+              <span>{{ filteredDownstreamProfile["is-strom-control"] }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" (click)="CloseDownStream()">Close</button>
+        </div>
+      </div>
+</p-dialog>

@@ -1,0 +1,29 @@
+.displayflex {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+a#download-button[disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.header {
+  font-size: 20px;
+  font-weight: bolder;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  border: 1px solid;
+  padding: 10px;
+  box-shadow: 2px 2px #f7b206 !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #f7b206 !important ;
+}
+
+.modal-body-junk {
+  position: relative;
+}

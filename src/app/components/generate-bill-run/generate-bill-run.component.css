@@ -1,0 +1,19 @@
+
+:host ::ng-deep .btn-success {
+  background-color: #41b314 !important;
+  border-color: #3ca512 !important;
+  color: #fff !important;
+}
+
+.exportIcon{
+    color: white !important;
+    font-size: 15px !important;
+}
+
+.heading{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+

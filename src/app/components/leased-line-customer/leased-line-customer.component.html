@@ -1,0 +1,822 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Leased Line Customer</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchleased"
+            aria-expanded="false"
+            aria-controls="searchleased"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchleased" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                type="text"
+                [(ngModel)]="searchLlcName"
+                class="form-control"
+                placeholder="Enter Leased line customer Name"
+                (keydown.enter)="searchLlc()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchLlc()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchLlc()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createLlc()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Leased Line Customer</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="listLlc()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>List Leased Line Customer</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Leased Line Customer</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listLeased"
+            aria-expanded="false"
+            aria-controls="listLeased"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listLeased" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Business Name</th>
+                    <th>Technical Person</th>
+                    <th>Contact No</th>
+                    <th *ngIf="editAccess || deleteAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let llc of llcListData
+                        | paginate
+                          : {
+                              id: 'llcListData',
+                              itemsPerPage: LlcListdataitemsPerPage,
+                              currentPage: currentPageLlcListdata,
+                              totalItems: LlcListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td class="curson_pointer" style="color: #f7b206" (click)="detailLlc(llc.id)">
+                      {{ llc.name }}
+                    </td>
+                    <td>{{ llc.email }}</td>
+                    <td>{{ llc.businessName }}</td>
+                    <td>{{ llc.technicalPersonName }}</td>
+                    <td>{{ llc.technicalPersonContactNo }}</td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        (click)="editLlc(llc.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonLlc(llc.id)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="llcListData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedTaxList((currentPageLlcListdata = $event))"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isLlcEdit ? "Update" : "Create" }} Leased Line Customer</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createLeased"
+            aria-expanded="false"
+            aria-controls="createLeased"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createLeased" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form class="form-auth-small" [formGroup]="llcGroupForm">
+            <!--    Tax Information   -->
+            <fieldset style="margin-top: 0px">
+              <legend>Leased Line Customer</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Name*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Leased Line Customer Name"
+                        formControlName="name"
+                        [ngClass]="{
+                          'is-invalid': submitted && llcGroupForm.controls.name.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && llcGroupForm.controls.name.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && llcGroupForm.controls.name.errors.required"
+                        >
+                          Leased Line Customer Name is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Email*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Email"
+                        formControlName="email"
+                        [ngClass]="{
+                          'is-invalid': submitted && llcGroupForm.controls.email.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && llcGroupForm.controls.email.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && llcGroupForm.controls.email.errors.required"
+                        >
+                          email is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && llcGroupForm.controls.email.errors.email"
+                        >
+                          Email is invalid.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Business Name*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter businessName"
+                        formControlName="businessName"
+                        [ngClass]="{
+                          'is-invalid': submitted && llcGroupForm.controls.businessName.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && llcGroupForm.controls.businessName.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && llcGroupForm.controls.businessName.errors.required"
+                        >
+                          Business Name is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Billing Address*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Billing Address"
+                        formControlName="billingAddress"
+                        [ngClass]="{
+                          'is-invalid': submitted && llcGroupForm.controls.billingAddress.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && llcGroupForm.controls.billingAddress.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && llcGroupForm.controls.billingAddress.errors.required"
+                        >
+                          Billing Address is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Technical Person Name*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Technical Person Name"
+                        formControlName="technicalPersonName"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && llcGroupForm.controls.technicalPersonName.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && llcGroupForm.controls.technicalPersonName.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && llcGroupForm.controls.technicalPersonName.errors.required
+                          "
+                        >
+                          Technical Person Name is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Technical Person Contact No*</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter technicalPersonContactNo"
+                        formControlName="technicalPersonContactNo"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && llcGroupForm.controls.technicalPersonContactNo.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && llcGroupForm.controls.technicalPersonContactNo.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            llcGroupForm.controls.technicalPersonContactNo.errors.required
+                          "
+                        >
+                          Technical Person Contact No is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            llcGroupForm.controls.technicalPersonContactNo.errors.pattern
+                          "
+                        >
+                          Only Numeric Value Allowed.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Leased Line Circuit Details</legend>
+              <div class="boxWhite">
+                <div class="row" [formGroup]="llcDetailForm">
+                  <div class="col-lg-2 col-md-3 col-sm-3">
+                    <input
+                      class="form-control"
+                      placeholder="Enter Label"
+                      formControlName="llcLabel"
+                      [ngClass]="{
+                        'is-invalid': llcDetailSubmitted && llcDetailForm.controls.llcLabel.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="llcDetailSubmitted && llcDetailForm.controls.llcLabel.errors"
+                    >
+                      <div class="error text-danger">Circuit Label is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-md-3 col-sm-3">
+                    <p-dropdown
+                      [options]="typeSelect"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Type"
+                      formControlName="llcType"
+                      [ngClass]="{
+                        'is-invalid': llcDetailSubmitted && llcDetailForm.controls.llcType.errors
+                      }"
+                    ></p-dropdown>
+
+                    <!-- <select
+                    class="form-control"
+                    formControlName="llcType"
+                    style="width: 100%;"
+                    [ngClass]="{
+                      'is-invalid':
+                        llcDetailSubmitted &&
+                        llcDetailForm.controls.llcType.errors
+                    }"
+                  >
+                    <option value="">
+                      Select Type
+                    </option>
+                    <option value="L2">
+                      L2
+                    </option>
+                    <option value="L3">
+                      L3
+                    </option>
+                    <option value="SIP">
+                      SIP
+                    </option>
+                    <option value="Internet">
+                      Internet
+                    </option>
+                  </select> -->
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="llcDetailSubmitted && llcDetailForm.controls.llcType.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="llcDetailSubmitted && llcDetailForm.controls.llcType.errors.required"
+                      >
+                        Circuit Type is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-md-3 col-sm-3">
+                    <p-dropdown
+                      [options]="planData"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a Plan"
+                      formControlName="packageId"
+                      [ngClass]="{
+                        'is-invalid': llcDetailSubmitted && llcDetailForm.controls.packageId.errors
+                      }"
+                    ></p-dropdown>
+
+                    <!-- <select
+                    class="form-control"
+                    formControlName="packageId"
+                    style="width: 100%;"
+                    [ngClass]="{
+                      'is-invalid':
+                        llcDetailSubmitted &&
+                        llcDetailForm.controls.packageId.errors
+                    }"
+                  >
+                    <option value="">
+                      Select Plan
+                    </option>
+                    <option value="{{ plan.id }}" *ngFor="let plan of planData">
+                      {{ plan.name }}
+                    </option>
+                  </select> -->
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="llcDetailSubmitted && llcDetailForm.controls.packageId.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          llcDetailSubmitted && llcDetailForm.controls.packageId.errors.required
+                        "
+                      >
+                        Plan is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-md-3 col-sm-3">
+                    <input
+                      class="form-control"
+                      placeholder="Enter Static IP"
+                      formControlName="llcStaticIP"
+                      [ngClass]="{
+                        'is-invalid':
+                          llcDetailSubmitted && llcDetailForm.controls.llcStaticIP.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="llcDetailSubmitted && llcDetailForm.controls.llcStaticIP.errors"
+                    >
+                      <div class="error text-danger">Static IP is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-md-3 col-sm-3">
+                    <p-dropdown
+                      [options]="devicetype"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a  Device Type"
+                      formControlName="llcDeviceType"
+                      [ngClass]="{
+                        'is-invalid':
+                          llcDetailSubmitted && llcDetailForm.controls.llcDeviceType.errors
+                      }"
+                    ></p-dropdown>
+                    <!-- <select
+                    class="form-control"
+                    formControlName="llcDeviceType"
+                    style="width: 100%;"
+                    [ngClass]="{
+                      'is-invalid':
+                        llcDetailSubmitted &&
+                        llcDetailForm.controls.llcDeviceType.errors
+                    }"
+                  >
+                    <option value="">
+                      Select Device Type
+                    </option>
+                    <option value="Router">
+                      Router
+                    </option>
+                    <option value="ONU">
+                      ONU
+                    </option>
+                  </select> -->
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="llcDetailSubmitted && llcDetailForm.controls.llcDeviceType.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          llcDetailSubmitted && llcDetailForm.controls.llcDeviceType.errors.required
+                        "
+                      >
+                        Device Type is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-md-3 col-sm-3">
+                    <button
+                      id="addAtt"
+                      style="object-fit: cover; padding: 5px 8px"
+                      class="btn btn-primary"
+                      (click)="onAddllcDetailField()"
+                    >
+                      <i class="fa fa-plus-square" aria-hidden="true"></i>
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <table class="table coa-table" style="margin-top: 10px">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center; width: 20%">Label*</th>
+                      <th style="text-align: center; width: 20%">Type*</th>
+                      <th style="text-align: center; width: 20%">Plan*</th>
+                      <th style="text-align: center; width: 15%">Static IP*</th>
+                      <th style="text-align: center; width: 15%">Device Type*</th>
+                      <th style="text-align: right; width: 10%; padding: 8px">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let row of llcDetailArray.controls
+                          | paginate
+                            : {
+                                id: 'llcDetailArrayData',
+                                itemsPerPage: llcDetailArrayitemsPerPage,
+                                currentPage: currentPagellcDetailArraydata,
+                                totalItems: llcDetailArraytotalRecords
+                              };
+                        let index = index
+                      "
+                    >
+                      <td style="padding-left: 8px">
+                        <input
+                          class="form-control"
+                          placeholder="Enter Label"
+                          [formControl]="row.get('llcLabel')"
+                        />
+                      </td>
+                      <td>
+                        <p-dropdown
+                          [options]="typeSelect"
+                          optionValue="label"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Type"
+                          [formControl]="row.get('llcType')"
+                        ></p-dropdown>
+                      </td>
+                      <td>
+                        <p-dropdown
+                          [options]="planData"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a Plan"
+                          [formControl]="row.get('packageId')"
+                        ></p-dropdown>
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          type="text"
+                          placeholder="Enter llcStaticIP"
+                          [formControl]="row.get('llcStaticIP')"
+                        />
+                      </td>
+                      <td>
+                        <p-dropdown
+                          [options]="devicetype"
+                          optionValue="label"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a  Device Type"
+                          [formControl]="row.get('llcDeviceType')"
+                        ></p-dropdown>
+                      </td>
+                      <td style="text-align: right">
+                        <a
+                          href="javascript:void(0)"
+                          (click)="deleteConfirmonLlcDetailField(index, row.get('id').value)"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <pagination-controls
+                      id="llcDetailArrayData"
+                      maxSize="10"
+                      directionLinks="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedTaxTiered($event)"
+                    ></pagination-controls>
+                  </div>
+                </div>
+                <br />
+              </div>
+            </fieldset>
+            <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="!isLlcEdit"
+                (click)="addEditLlc('')"
+                id="submit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Leased Line Customer
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="isLlcEdit"
+                (click)="addEditLlc(this.viewLlcData.id)"
+                id="submit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Leased Line Customer
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="detailView">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Lease Line Customer Details"
+            (click)="listLlc()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">Lease Line Customer Detail</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#leasedData"
+            aria-expanded="false"
+            aria-controls="leasedData"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="leasedData" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ viewLlcData.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Email :</label>
+                  <span>{{ viewLlcData.email }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Business Name :</label>
+                  <span>{{ viewLlcData.businessName }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Billing Address :</label>
+                  <span>{{ viewLlcData.billingAddress }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Technical Person Name :</label>
+                  <span>{{ viewLlcData.technicalPersonName }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Technical Person Contact No :</label>
+                  <span>{{ viewLlcData.technicalPersonContactNo }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Tax Type Mapping</legend>
+            <div class="boxWhite">
+              <div class="row table-responsive">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>llcIdentifier</th>
+                        <th>llcLabel</th>
+                        <th>llcType</th>
+                        <th>Plan</th>
+                        <th>llcStaticIP</th>
+                        <th>llcDeviceType</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let llc of viewLlcData.llcDetailsList
+                            | paginate
+                              : {
+                                  id: 'llcDetailPageData',
+                                  itemsPerPage: llcDetailItemPerPage,
+                                  currentPage: currentPagellcDetailList,
+                                  totalItems: llcDetailtotalRecords
+                                };
+                          index as i
+                        "
+                      >
+                        <td>{{ llc.llcIdentifier }}</td>
+                        <td>{{ llc.llcLabel }}</td>
+                        <td>{{ llc.llcType }}</td>
+                        <td>{{ llc.planName }}</td>
+                        <td>{{ llc.llcStaticIP }}</td>
+                        <td>{{ llc.llcDeviceType }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pagination-controls
+                    id="llcDetailPageData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedllcDetailbList($event)"
+                  ></pagination-controls>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,2077 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Create Quick Invoice</h3>
+        <div class="right">
+          <button
+            aria-controls="createPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#createPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="createPreCust">
+        <div class="panel-body">
+          <!-- <div
+            *ngIf="
+              !loginService.hasOperationPermission(
+                AclClassConstants.ACL_CUSTOMER,
+                AclConstants.OPERATION_CUSTOMER_ADD,
+                AclConstants.OPERATION_CUSTOMER_ALL
+              ) &&
+              !loginService.hasOperationPermission(
+                AclClassConstants.ACL_CUSTOMER,
+                AclConstants.OPERATION_CUSTOMER_EDIT,
+                AclConstants.OPERATION_CUSTOMER_ALL
+              )
+            "
+          >
+            Sorry you have not privilege to add or edit operation!
+          </div>
+          <div
+            *ngIf="
+              loginService.hasOperationPermission(
+                AclClassConstants.ACL_CUSTOMER,
+                AclConstants.OPERATION_CUSTOMER_ADD,
+                AclConstants.OPERATION_CUSTOMER_ALL
+              ) ||
+              loginService.hasOperationPermission(
+                AclClassConstants.ACL_CUSTOMER,
+                AclConstants.OPERATION_CUSTOMER_EDIT,
+                AclConstants.OPERATION_CUSTOMER_ALL
+              )
+            "
+          > -->
+          <form [formGroup]="customerGroupForm">
+            <!-- Basic Details -->
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>LeadNo *</label>
+                    <input
+                      disabled
+                      class="form-control"
+                      name="leadNo"
+                      id="leadNo"
+                      formControlName="leadNo"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.leadNo.errors
+                      }"
+                      placeholder="Enter the leadNo"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.leadNo.errors"
+                    >
+                      <div class="error text-danger">LeadNo is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Title *</label>
+                    <p-dropdown
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.title.errors
+                      }"
+                      [options]="selectTitile"
+                      filter="true"
+                      filterBy="label"
+                      formControlName="title"
+                      optionLabel="label"
+                      optionValue="label"
+                      placeholder="Select a Type"
+                    ></p-dropdown>
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.title.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">Title is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>First Name *</label>
+                    <input
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.firstname.errors
+                      }"
+                      class="form-control"
+                      formControlName="firstname"
+                      id="firstname"
+                      placeholder="Enter First Name"
+                      type="text"
+                    />
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.firstname.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">First Name is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Last Name *</label>
+                    <input
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.lastname.errors
+                      }"
+                      class="form-control"
+                      formControlName="lastname"
+                      id="lastname"
+                      placeholder="Enter Last Name"
+                      type="text"
+                    />
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.lastname.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">Last Name is required.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Username </label>
+                    <input
+                      (keydown.Tab)="onKey($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.username.errors
+                      }"
+                      class="form-control"
+                      formControlName="username"
+                      id="username"
+                      placeholder="Enter Username"
+                      type="text"
+                    />
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.username.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">Username is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Password </label>
+                    <div class="form-control displayflex">
+                      <div style="width: 95%">
+                        <input
+                          [ngClass]="{
+                            'is-invalid': submitted && customerGroupForm.controls.password.errors
+                          }"
+                          [type]="_passwordType"
+                          class="inputPassword"
+                          formControlName="password"
+                          id="password"
+                          placeholder="Enter Password"
+                        />
+                      </div>
+                      <div style="width: 5%">
+                        <div *ngIf="showPassword">
+                          <i
+                            (click)="showPassword = false; _passwordType = 'password'"
+                            class="fa fa-eye"
+                          ></i>
+                        </div>
+                        <div *ngIf="!showPassword">
+                          <i
+                            (click)="showPassword = true; _passwordType = 'text'"
+                            class="fa fa-eye-slash"
+                          ></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.password.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">Password is required.</div>
+                    </div>
+                  </div> -->
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Primary Mobile Number *</label>
+                    <div style="display: flex">
+                      <div style="width: 30%">
+                        <p-dropdown
+                          [filter]="true"
+                          [options]="countries"
+                          formControlName="countryCode"
+                          id="countryCode"
+                          optionLabel="dial_code"
+                          optionValue="dial_code"
+                          placeholder="+91"
+                        ></p-dropdown>
+                      </div>
+                      <div style="width: 70%">
+                        <input
+                          (keyup)="onKeymobilelength($event)"
+                          [ngClass]="{
+                            'is-invalid': submitted && customerGroupForm.controls.mobile.errors
+                          }"
+                          class="form-control"
+                          formControlName="mobile"
+                          id="mobile"
+                          min="0"
+                          placeholder="Enter Mobile "
+                          type="number"
+                        />
+                      </div>
+                    </div>
+                    <div style="display: flex">
+                      <div style="width: 30%"></div>
+                      <div style="width: 70%">
+                        <div
+                          *ngIf="submitted && customerGroupForm.controls.mobile.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div *ngIf="customerGroupForm.controls.mobile.errors.required">
+                            Mobile Number minimum 3 character is required.
+                          </div>
+                        </div>
+                        <div
+                          *ngIf="inputMobile && customerGroupForm.value.mobile"
+                          class="error text-danger"
+                        >
+                          {{ this.inputMobile }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Email *</label>
+                    <input
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.email.errors
+                      }"
+                      class="form-control"
+                      formControlName="email"
+                      id="email"
+                      placeholder="Enter Email"
+                      type="text"
+                    />
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.email.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div
+                        *ngIf="submitted && this.customerGroupForm.controls.email.errors.required"
+                        class="error text-danger"
+                      >
+                        Email is required.
+                      </div>
+                      <div
+                        *ngIf="submitted && this.customerGroupForm.controls.email.errors.email"
+                        class="error text-danger"
+                      >
+                        Email is not valid.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>TIN/PAN No.</label>
+                    <input
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.pan.errors
+                      }"
+                      class="form-control"
+                      formControlName="pan"
+                      id="pan"
+                      placeholder="Enter TIN/PAN No"
+                      type="text"
+                    />
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.pan.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div
+                        *ngIf="submitted && customerGroupForm.controls.pan.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div *ngIf="customerGroupForm.controls.pan.errors.maxlength">
+                          TIN/PAN Number minimum 9 character is required.
+                        </div>
+                        <div *ngIf="customerGroupForm.controls.pan.errors.minlength">
+                          TIN/PAN Number minimum 9 character is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Contact Person </label>
+                    <input
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.contactperson.errors
+                      }"
+                      class="form-control"
+                      formControlName="contactperson"
+                      id="contactperson"
+                      placeholder="Enter Contact Person"
+                      type="text"
+                    />
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.contactperson.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">Contact Person is required.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Calendar Type *</label>
+                    <p-dropdown
+                      [options]="celendarTypeData"
+                      filter="true"
+                      filterBy="label"
+                      formControlName="calendarType"
+                      optionLabel="label"
+                      optionValue="label"
+                      placeholder="Select a Calendar Type"
+                      [disabled]="calTypwDisable"
+                    ></p-dropdown>
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.calendarType.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div
+                        *ngIf="submitted && customerGroupForm.controls.calendarType.errors.required"
+                        class="error text-danger"
+                      >
+                        Calendar Type is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Customer Type *</label>
+                    <p-dropdown
+                      [filter]="true"
+                      [options]="leadcustTypeList"
+                      optionValue="value"
+                      optionLabel="label"
+                      formControlName="custtype"
+                      placeholder="Select Customer Type"
+                      id="value"
+                      (onChange)="custTypeEvent($event.value)"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.custtype.errors
+                      }"
+                    >
+                    </p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.custtype.errors"
+                    >
+                      <div class="error text-danger">Customer Type is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 form-group">
+                    <label>Billable To</label>
+                    <br />
+                    <p-dropdown
+                      [disabled]="true"
+                      [options]="commondropdownService.customerAllList"
+                      [showClear]="true"
+                      filter="true"
+                      filterBy="name"
+                      formControlName="billableCustomerId"
+                      optionLabel="name"
+                      optionValue="id"
+                      placeholder="Select a Billable"
+                      styleClass="disableDropdown"
+                    ></p-dropdown>
+                    <button
+                      type="button"
+                      (click)="modalOpenParentCustomer('billable-change-plan')"
+                      class="btn btn-primary"
+                      style="
+                        border-radius: 5px;
+                        padding: 5px 10px;
+                        line-height: 1.5;
+                        margin-left: 10px;
+                      "
+                    >
+                      <i class="fa fa-plus-square"></i>
+                    </button>
+                    <button
+                      class="btn btn-danger"
+                      style="
+                        border-radius: 5px;
+                        padding: 5px 10px;
+                        line-height: 1.5;
+                        margin-left: 10px;
+                      "
+                      (click)="removeSelParentCust('billable-change-plan')"
+                    >
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15"
+                    *ngIf="customerGroupForm.controls.custtype.value === 'Postpaid'"
+                  >
+                    <label>Bill Day *</label>
+                    <p-dropdown
+                      [options]="days"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Day"
+                      formControlName="billday"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.billday.errors
+                      }"
+                    ></p-dropdown>
+
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.billday.errors"
+                    >
+                      <div class="error text-danger">Bill Day is required.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Service Area Details -->
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Service Area Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Service Area *</label>
+
+                    <p-dropdown
+                      (onChange)="selServiceArea($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.serviceareaid.errors
+                      }"
+                      [options]="commondropdownService.serviceAreaList"
+                      filter="true"
+                      filterBy="name"
+                      formControlName="serviceareaid"
+                      optionLabel="name"
+                      optionValue="id"
+                      placeholder="Select a Servicearea"
+                    ></p-dropdown>
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.serviceareaid.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">Service Area is required.</div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" *ngIf="isBranchAvailable">
+                    <label for="branchId">Branch/Partner *</label>
+                    <p-dropdown
+                      [options]="branchData"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a Branch"
+                      formControlName="branch"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.branch.errors
+                      }"
+                    >
+                    </p-dropdown>
+                    <div
+                      *ngIf="submitted && !customerGroupForm.value.serviceareaid"
+                      class="errorWrap text-danger"
+                    >
+                      <div class="error text-danger">Please select Service Area first!</div>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.branch.errors"
+                    >
+                      <div class="error text-danger">Branch Is required</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" *ngIf="!isBranchAvailable">
+                    <label>Branch/Partner *</label>
+
+                    <p-dropdown
+                      [disabled]="partnerId !== 1 || !customerGroupForm.value.serviceareaid"
+                      [options]="partnerListByServiceArea"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a Partner"
+                      formControlName="partnerid"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.partnerid.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.partnerid.errors"
+                    >
+                      <div class="error text-danger">Partner is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+                <div [formGroup]="presentGroupForm">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                      <label>Address *</label>
+                      <input
+                        [ngClass]="{
+                          'is-invalid': submitted && presentGroupForm.controls.landmark.errors
+                        }"
+                        class="form-control"
+                        formControlName="landmark"
+                        id="landmark"
+                        name="landmark"
+                        placeholder="Enter Address"
+                        type="text"
+                      />
+                      <div
+                        *ngIf="submitted && presentGroupForm.controls.landmark.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div class="error text-danger">Address is required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                      <label>{{ pincodeTitle }} *</label>
+                      <p-dropdown
+                        (onChange)="selectPINCODEChange($event, 'present')"
+                        [ngClass]="{
+                          'is-invalid': submitted && presentGroupForm.controls.pincodeId.errors
+                        }"
+                        [options]="pincodeDD"
+                        filter="true"
+                        filterBy="pincode"
+                        formControlName="pincodeId"
+                        optionLabel="pincode"
+                        optionValue="pincodeid"
+                        placeholder="Select a {{ pincodeTitle }}"
+                        [disabled]="!customerGroupForm.value.serviceareaid || iscustomerEdit"
+                      ></p-dropdown>
+                      <div
+                        *ngIf="!customerGroupForm.value.serviceareaid"
+                        class="errorWrap text-danger"
+                      >
+                        <div class="error text-danger">Please select Service Area first!</div>
+                      </div>
+                      <div
+                        *ngIf="submitted && presentGroupForm.controls.pincodeId.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div class="error text-danger">{{ pincodeTitle }} is required.</div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                      <label>{{ areaTitle }} *</label>
+                      <p-dropdown
+                        (onChange)="selectAreaChange($event, 'present')"
+                        [ngClass]="{
+                          'is-invalid': submitted && presentGroupForm.controls.areaId.errors
+                        }"
+                        [options]="AreaListDD"
+                        filter="true"
+                        filterBy="areaId"
+                        formControlName="areaId"
+                        id="areaId"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select a {{ areaTitle }}"
+                        [disabled]="!customerGroupForm.value.serviceareaid || iscustomerEdit"
+                      ></p-dropdown>
+                      <div
+                        *ngIf="submitted && presentGroupForm.controls.areaId.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div class="error text-danger">{{ areaTitle }} is required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                      <label>{{ cityTitle }} *</label>
+                      <select
+                        class="form-control"
+                        disabled
+                        formControlName="cityId"
+                        id="cityId"
+                        name="cityId"
+                        style="width: 100%"
+                      >
+                        <option value="">Select {{ cityTitle }}</option>
+                        <option
+                          *ngFor="let item of commondropdownService.cityListData"
+                          value="{{ item.id }}"
+                        >
+                          {{ item.name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                      <label>{{ stateTitle }} *</label>
+                      <select
+                        class="form-control"
+                        disabled
+                        formControlName="stateId"
+                        id="stateId"
+                        name="stateId"
+                        style="width: 100%"
+                      >
+                        <option value="">Select {{ stateTitle }}</option>
+                        <option
+                          *ngFor="let item of commondropdownService.stateListData"
+                          value="{{ item.id }}"
+                        >
+                          {{ item.name }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                      <label>{{ countryTitle }} *</label>
+                      <select
+                        class="form-control"
+                        disabled
+                        formControlName="countryId"
+                        id="countryId"
+                        name="countryId"
+                        style="width: 100%"
+                      >
+                        <option value="">Select {{ countryTitle }}</option>
+                        <option
+                          *ngFor="let item of commondropdownService.countryListData"
+                          value="{{ item.id }}"
+                        >
+                          {{ item.name }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                      <label>Landmark</label>
+                      <input
+                        class="form-control"
+                        formControlName="landmark1"
+                        id="landmark1"
+                        placeholder="Enter Landmark "
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Valley Type</label>
+                    <p-dropdown
+                      [options]="commondropdownService.valleyType"
+                      filter="true"
+                      filterBy="text"
+                      formControlName="valleyType"
+                      optionLabel="text"
+                      optionValue="value"
+                      placeholder="Select a Valley Type"
+                    ></p-dropdown>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Latitude</label>
+                    <input
+                      [readonly]="iflocationFill"
+                      class="form-control"
+                      formControlName="latitude"
+                      id="latitude"
+                      placeholder="Enter latitude"
+                      type="text"
+                    />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Longitude</label>
+                    <input
+                      [readonly]="iflocationFill"
+                      class="form-control"
+                      formControlName="longitude"
+                      id="longitude"
+                      placeholder="Enter longitude"
+                      type="text"
+                    />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 mb-15">
+                    <div style="margin-bottom: 1rem">
+                      <span
+                        (click)="mylocation()"
+                        class="HoverEffect"
+                        style="border-bottom: 1px solid #f7b206"
+                        title="Get Current Location"
+                      >
+                        <img
+                          class="LocationIcon LocationIconMargin"
+                          src="assets/img/B_Find-My-current-location_Y.png"
+                        />
+                      </span>
+                      <span
+                        (click)="openSearchModel()"
+                        class="HoverEffect"
+                        data-backdrop="static"
+                        data-keyboard="false"
+                        data-target="#searchLocationModal"
+                        data-toggle="modal"
+                        style="margin-left: 8px; border-bottom: 1px solid #f7b206"
+                        title="Search Location"
+                      >
+                        <img
+                          class="LocationIcon LocationIconMargin"
+                          src="assets/img/C_Search-location_Y.png"
+                        />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div
+                    *ngIf="customerGroupForm.value.valleyType == 'Outside Valley'"
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15"
+                  >
+                    <label>Outside Valley</label>
+                    <p-dropdown
+                      [options]="commondropdownService.outsideValley"
+                      filter="true"
+                      filterBy="text"
+                      formControlName="customerArea"
+                      optionLabel="text"
+                      optionValue="value"
+                      placeholder="Select a Outside Valley"
+                    ></p-dropdown>
+                  </div>
+                  <div
+                    *ngIf="customerGroupForm.value.valleyType == 'Inside Valley'"
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15"
+                  >
+                    <label>Inside Valley</label>
+                    <p-dropdown
+                      [options]="commondropdownService.insideValley"
+                      filter="true"
+                      filterBy="text"
+                      formControlName="customerArea"
+                      optionLabel="text"
+                      optionValue="value"
+                      placeholder="Select a Inside Valley"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Plan Information</legend>
+              <div class="boxWhite">
+                <div class="row" [formGroup]="planGroupForm">
+                  <div class="col-lg-3 col-md-3 col-12">
+                    <div>
+                      <label>Service*</label>
+
+                      <p-dropdown
+                        id="roles"
+                        [options]="commondropdownService.planserviceData"
+                        placeholder="Select a service"
+                        formControlName="serviceId"
+                        optionLabel="name"
+                        optionValue="id"
+                        filter="true"
+                        filterBy="name"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && planGroupForm.controls.serviceId.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && planGroupForm.controls.serviceId.errors.required"
+                        >
+                          Service is required.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                    <label>Validity *</label>
+                    <div style="display: flex">
+                      <div style="width: 60%">
+                        <input
+                          [ngClass]="{
+                            'is-invalid': submitted && planGroupForm.controls.validity.errors
+                          }"
+                          [readonly]="!customerGroupForm.value.serviceareaid"
+                          class="form-control"
+                          formControlName="validity"
+                          id="validity"
+                          min="1"
+                          placeholder="Enter Validity"
+                          readonly
+                          type="number"
+                        />
+                        <div
+                          *ngIf="submitted && planGroupForm.controls.validity.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="submitted && planGroupForm.controls.validity.errors.required"
+                            class="error text-danger"
+                          >
+                            Validity is required.
+                          </div>
+                          <div
+                            *ngIf="submitted && planGroupForm.controls.validity.errors.pattern"
+                            class="error text-danger"
+                          >
+                            Only Numeric value are allowed.
+                          </div>
+                        </div>
+                      </div>
+                      <div style="width: 40%; height: 34px">
+                        <p-dropdown
+                          [disabled]="!customerGroupForm.value.serviceareaid"
+                          [ngClass]="{
+                            'is-invalid': submitted && planGroupForm.controls.unitsOfValidity.errors
+                          }"
+                          [options]="validityUnit"
+                          filter="true"
+                          filterBy="label"
+                          formControlName="unitsOfValidity"
+                          optionLabel="label"
+                          optionValue="label"
+                          placeholder="Select Unit"
+                        ></p-dropdown>
+
+                        <div></div>
+                        <div
+                          *ngIf="submitted && planGroupForm.controls.unitsOfValidity.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              submitted && planGroupForm.controls.unitsOfValidity.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Unit is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Product Details</legend>
+              <div class="boxWhite">
+                <div [formGroup]="planProductfromgroup">
+                  <div class="row">
+                    <!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                              <input
+                                class="form-control"
+                                formControlName="name"
+                                placeholder="Enter Name"
+                                type="text"
+                              />
+                            </div>
+                          </div> -->
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label>Product Category</label>
+                        <p-dropdown
+                          (onChange)="getProductbyCategory($event)"
+                          [options]="commondropdownService.productCategoryList"
+                          filter="true"
+                          filterBy="name"
+                          formControlName="productCategoryId"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select a Product Category"
+                        ></p-dropdown>
+                        <div
+                          *ngIf="
+                            planProductSubmitted &&
+                            planProductfromgroup.controls.productCategoryId.errors
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.productCategoryId.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Product Category is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" *ngIf="productFlag">
+                      <div class="form-group">
+                        <label>Product*</label>
+                        <p-dropdown
+                          (onChange)="getProductDetails($event)"
+                          [options]="productList"
+                          filter="true"
+                          filterBy="name"
+                          formControlName="productId"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select a Product"
+                        ></p-dropdown>
+                        <div
+                          *ngIf="
+                            planProductSubmitted && planProductfromgroup.controls.productId.errors
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.productId.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Product is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- </div> -->
+                    <!-- <div class="row"> -->
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" *ngIf="productTypeFlag">
+                      <div class="form-group">
+                        <label>Product Type*</label>
+                        <p-dropdown
+                          (onChange)="getChargeAmount($event)"
+                          [options]="productType"
+                          filter="true"
+                          filterBy="label"
+                          formControlName="product_type"
+                          optionLabel="label"
+                          optionValue="value"
+                          placeholder="Select a Product Type"
+                        ></p-dropdown>
+                        <div
+                          *ngIf="
+                            planProductSubmitted &&
+                            planProductfromgroup.controls.product_type.errors
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.product_type.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Product Type is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" *ngIf="ownershipTypeFlag">
+                      <div class="form-group">
+                        <label>Product Quantity *</label>
+                        <input
+                          [ngClass]="{
+                            'is-invalid':
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.productQuantity.errors
+                          }"
+                          class="form-control"
+                          formControlName="productQuantity"
+                          min="1"
+                          type="number"
+                        />
+                        <div
+                          *ngIf="
+                            planProductSubmitted &&
+                            planProductfromgroup.controls.productQuantity.errors
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.productQuantity.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Product Quantity is required.
+                          </div>
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.productQuantity.errors.min
+                            "
+                            class="error text-danger"
+                          >
+                            Minimum 1 Allowed.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- </div>
+                          <div class="row"> -->
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" *ngIf="ownershipTypeFlag">
+                      <div class="form-group">
+                        <label>Ownership Type*</label>
+                        <p-dropdown
+                          (onChange)="checkOwnership($event)"
+                          [options]="ownershipType"
+                          filter="true"
+                          filterBy="label"
+                          formControlName="ownershipType"
+                          optionLabel="label"
+                          optionValue="value"
+                          placeholder="Select a Ownership Type"
+                        ></p-dropdown>
+                        <div
+                          *ngIf="
+                            planProductSubmitted &&
+                            planProductfromgroup.controls.ownershipType.errors
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.ownershipType.errors
+                            "
+                            class="errorWrap text-danger"
+                          >
+                            <div
+                              *ngIf="
+                                planProductSubmitted &&
+                                planProductfromgroup.controls.ownershipType.errors.required
+                              "
+                              class="error text-danger"
+                            >
+                              Owership Type is required.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" *ngIf="revisedChargeFlag">
+                      <div class="form-group">
+                        <label>Revised Charge</label>
+                        <input
+                          [ngClass]="{
+                            'is-invalid':
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.revisedCharge.errors
+                          }"
+                          [(ngModel)]="revicedAmount"
+                          class="form-control"
+                          formControlName="revisedCharge"
+                          min="1"
+                          type="number"
+                          (keypress)="revicedChargeValidation($event)"
+                        />
+                        <div
+                          *ngIf="
+                            planProductSubmitted &&
+                            planProductfromgroup.controls.revisedCharge.errors
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.revisedCharge.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Revised Charge is required.
+                          </div>
+                          <div
+                            *ngIf="
+                              planProductSubmitted &&
+                              planProductfromgroup.controls.revisedCharge.errors.minlength
+                            "
+                            class="error text-danger"
+                          >
+                            Minimum 0 Allowed.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" *ngIf="productChargeFlag">
+                      <div class="form-group">
+                        <label>Product Charge</label>
+                        <input
+                          [value]="chargeAmount"
+                          class="form-control"
+                          type="text"
+                          required
+                          value=""
+                          readonly
+                        />
+                      </div>
+                    </div>
+                    <!-- </div>
+                        <div class="row"> -->
+                    <!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                              <div class="form-group">
+                                <button
+                                  (click)="onAddProductField()"
+                                  class="btn btn-primary"
+                                  id="addAtt"
+                                  style="object-fit: cover; padding: 5px 8px"
+                                >
+                                  <i aria-hidden="true" class="fa fa-plus-square"></i>
+                                  Add
+                                </button>
+                              </div>
+                            </div> -->
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <button
+                          (click)="onAddProductField()"
+                          class="btn btn-primary"
+                          id="addAtt"
+                          style="object-fit: cover; padding: 5px 8px"
+                          [disabled]="
+                            !this.planProductfromgroup.valid &&
+                            !customerGroupForm.value.serviceareaid
+                          "
+                        >
+                          <i aria-hidden="true" class="fa fa-plus-square"></i>
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                    <div class="error text-danger" *ngIf="this.showQtyError">
+                      {{ this.qtyErroMsg }}
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 15px">
+                  <table class="table coa-table">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center">Name</th>
+                        <th style="text-align: center">Product Category</th>
+                        <th style="text-align: center">Product</th>
+                        <th style="text-align: center">Product Type</th>
+                        <th style="text-align: center">Quantity</th>
+                        <th style="text-align: center">Revised Charge</th>
+                        <th style="text-align: center">Ownership Type</th>
+                        <th style="text-align: right; padding: 8px">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of planProductMappingFromArray.controls
+                            | paginate
+                              : {
+                                  id: 'planProductFromArrayData',
+                                  itemsPerPage: planProductMappingItemsPerPage,
+                                  currentPage: currentPagePlanProductMapping,
+                                  totalItems: planProductMappingTotalRecords
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <div class="form-group">
+                            <p-dropdown
+                              [options]="this.commondropdownService.activeProductList"
+                              filter="true"
+                              filterBy="name"
+                              [formControl]="row.get('productId')"
+                              optionLabel="name"
+                              optionValue="id"
+                              placeholder="Select a Product"
+                              [disabled]="true"
+                            ></p-dropdown>
+                            <!-- <input
+                              class="form-control"
+                              [formControl]="row.get('name')"
+                              placeholder="Enter Name"
+                              type="text"
+                              readonly
+                            /> -->
+                          </div>
+                        </td>
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            [options]="commondropdownService.productCategoryList"
+                            filter="true"
+                            filterBy="name"
+                            [formControl]="row.get('productCategoryId')"
+                            optionLabel="name"
+                            optionValue="id"
+                            placeholder="Select a Product Category"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            [options]="productList"
+                            filter="true"
+                            filterBy="name"
+                            [formControl]="row.get('productId')"
+                            optionLabel="name"
+                            optionValue="id"
+                            placeholder="Select a Product"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            [options]="productType"
+                            filter="true"
+                            filterBy="label"
+                            [formControl]="row.get('product_type')"
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder="Select a Product Type"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td>
+                          <input
+                            class="form-control"
+                            [formControl]="row.get('productQuantity')"
+                            min="1"
+                            type="number"
+                            readonly
+                          />
+                        </td>
+                        <td>
+                          <input
+                            [formControl]="row.get('revisedCharge')"
+                            class="form-control"
+                            min="1"
+                            placeholder="Enter Revised Charge"
+                            type="number"
+                            readonly
+                          />
+                        </td>
+                        <td>
+                          <p-dropdown
+                            [options]="ownershipType"
+                            filter="true"
+                            filterBy="label"
+                            [formControl]="row.get('ownershipType')"
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder="Select a Ownership Type"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+
+                        <td style="text-align: right">
+                          <button
+                            (click)="
+                              deleteConfirmonPlanProductField(index, row.get('revisedCharge'))
+                            "
+                            class="curson_pointer approve-btn"
+                            id="deleteAtt"
+                            [disabled]="this.ifPlanEditInput && isPlanEdit"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="pagination_Dropdown">
+                    <pagination-controls
+                      (pageChange)="pageChangePlanProductData($event)"
+                      directionLinks="true"
+                      id="planProductFromArrayData"
+                      maxSize="10"
+                      nextLabel=""
+                      previousLabel=""
+                    ></pagination-controls>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!--    charge Details   -->
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Charge Details</legend>
+              <div class="boxWhite">
+                <div *ngIf="!this.planGroupForm.value.serviceId" class="errorWrap text-danger">
+                  <div class="error text-danger">Please select Service first!</div>
+                </div>
+                <div [formGroup]="chargeGroupForm">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-12">
+                      <label>Charge Name*</label>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Charge Name"
+                        formControlName="name"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="chargeSubmitted && chargeGroupForm.controls.name.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="chargeSubmitted && chargeGroupForm.controls.name.errors.required"
+                        >
+                          Charge Name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-12">
+                      <div>
+                        <label>Charge Category*</label>
+                        <p-dropdown
+                          [options]="chargeCategoryList"
+                          optionValue="value"
+                          optionLabel="text"
+                          filter="true"
+                          filterBy="text"
+                          placeholder="Select Charge Category"
+                          formControlName="chargecategory"
+                          (onChange)="getSelChargeCategory($event)"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="chargeSubmitted && chargeGroupForm.controls.chargecategory.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              chargeSubmitted &&
+                              chargeGroupForm.controls.chargecategory.errors.required
+                            "
+                          >
+                            Charge Category is required.
+                          </div>
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-12">
+                      <div>
+                        <label>Charge Type*</label>
+                        <p-dropdown
+                          [options]="chargeType"
+                          optionValue="value"
+                          optionLabel="text"
+                          filter="true"
+                          filterBy="text"
+                          placeholder="Select a Charge Type"
+                          formControlName="chargetype"
+                          [disabled]="isChargeEdit"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="chargeSubmitted && chargeGroupForm.controls.chargetype.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              chargeSubmitted && chargeGroupForm.controls.chargetype.errors.required
+                            "
+                          >
+                            Charge Type is required.
+                          </div>
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Ledger ID</label>
+                      <input
+                        id="ledgerId"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Ledger ID"
+                        formControlName="ledgerId"
+                      />
+                      <br />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-12">
+                      <label>Actual Price*</label>
+                      <input
+                        id="actualprice"
+                        type="number"
+                        min="1"
+                        class="form-control"
+                        placeholder="Enter Actual Price"
+                        formControlName="actualprice"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="chargeSubmitted && chargeGroupForm.controls.actualprice.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            chargeSubmitted && chargeGroupForm.controls.actualprice.errors.required
+                          "
+                        >
+                          Actual Price is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            chargeSubmitted && chargeGroupForm.controls.actualprice.errors.pattern
+                          "
+                        >
+                          Only numeric charcter allowed.
+                        </div>
+                        <div class="error text-danger" *ngIf="chargeValueSentence">
+                          {{ chargeValueSentence }}
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-12">
+                      <label>Tax*</label>
+                      <div>
+                        <p-dropdown
+                          [options]="commondropdownService.taxAllList"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a Tax"
+                          formControlName="taxid"
+                          (onChange)="taxRang($event)"
+                          [disabled]="isChargeEdit"
+                          [ngClass]="{
+                            'is-invalid': submitted && chargeGroupForm.controls.taxid.errors
+                          }"
+                        >
+                          <ng-template let-data pTemplate="item">
+                            <div class="item-drop1">
+                              <span class="item-value1">
+                                {{ data.name }}
+                                <span *ngFor="let row of data.tieredList">
+                                  ( {{ row.name }} {{ row.rate }}%)</span
+                                >
+                              </span>
+                            </div>
+                          </ng-template>
+                        </p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="chargeSubmitted && chargeGroupForm.controls.taxid.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="chargeSubmitted && chargeGroupForm.controls.taxid.errors.required"
+                        >
+                          Tax is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-12">
+                      <label>Charge Description*</label>
+                      <textarea
+                        class="form-control"
+                        placeholder="Enter Charge Description"
+                        rows="3"
+                        formControlName="desc"
+                        name="desc"
+                        [ngClass]="{
+                          'is-invalid': chargeSubmitted && chargeGroupForm.controls.desc.errors
+                        }"
+                      ></textarea>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="chargeSubmitted && chargeGroupForm.controls.desc.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="chargeSubmitted && chargeGroupForm.controls.desc.errors.required"
+                        >
+                          Charge Description is required.
+                        </div>
+
+                        <div
+                          class="error text-danger"
+                          *ngIf="chargeSubmitted && chargeGroupForm.controls.desc.errors.pattern"
+                        >
+                          Maximum 225 charecter required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6">
+                      <label style="display: block">&nbsp;</label>
+                      <button
+                        id="addAtt"
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddChargeArray()"
+                        [disabled]="!this.planGroupForm.value.serviceId"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div
+                      *ngIf="customerGroupForm.controls.custtype.value === 'Postpaid'"
+                      class="col-lg-3 col-md-3 col-12"
+                    >
+                      <label>Billing Cycle*</label>
+                      <p-dropdown
+                        [ngClass]="{
+                          'is-invalid':
+                            chargeSubmitted && chargeGroupForm.controls.billingCycle.errors
+                        }"
+                        [options]="billingCycle"
+                        filter="true"
+                        filterBy="label"
+                        formControlName="billingCycle"
+                        optionLabel="label"
+                        optionValue="label"
+                        placeholder="Select a Billing Cycle"
+                      ></p-dropdown>
+
+                      <div
+                        *ngIf="chargeSubmitted && chargeGroupForm.controls.billingCycle.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div class="error text-danger">Billing Cycle is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <table class="table coa-table" style="margin-top: 10px">
+                      <thead>
+                        <tr>
+                          <th style="text-align: center; width: 15%">Name*</th>
+                          <th style="text-align: center; width: 10%">Category*</th>
+                          <th style="text-align: center; width: 10%">Type*</th>
+                          <th style="text-align: center; width: 10%; padding: 8px">Ledger Id</th>
+                          <th
+                            style="text-align: center; width: 10%; padding: 8px"
+                            *ngIf="customerGroupForm.controls.custtype.value === 'Postpaid'"
+                          >
+                            Billing Cycle
+                          </th>
+                          <th style="text-align: center; width: 10%; padding: 8px">Tax</th>
+                          <th style="text-align: center; width: 10%; padding: 8px">Actual Price</th>
+                          <th style="text-align: center; width: 10%; padding: 8px">
+                            Price(including tax)
+                          </th>
+                          <th style="text-align: center; width: 10%; padding: 8px">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let row of chargeGroupFormArray.controls
+                              | paginate
+                                : {
+                                    id: 'chargeData',
+                                    itemsPerPage: chargeIemsPerPage,
+                                    currentPage: currentPageChargeData,
+                                    totalItems: chargeDatatotalRecords
+                                  };
+                            let index = index
+                          "
+                        >
+                          <td style="padding-left: 8px">
+                            <input
+                              id="name"
+                              type="text"
+                              class="form-control"
+                              placeholder="Enter Charge Name"
+                              [formControl]="row.get('name')"
+                              disabled
+                            />
+                          </td>
+                          <td>
+                            <p-dropdown
+                              [options]="chargeCategoryList"
+                              optionValue="value"
+                              optionLabel="text"
+                              filter="true"
+                              filterBy="text"
+                              placeholder="Select Charge Category"
+                              [formControl]="row.get('chargecategory')"
+                              [disabled]="true"
+                            ></p-dropdown>
+                          </td>
+                          <td>
+                            <p-dropdown
+                              [options]="mainChargeList"
+                              optionValue="value"
+                              optionLabel="text"
+                              filter="true"
+                              filterBy="text"
+                              placeholder="Select a Charge Type"
+                              [formControl]="row.get('chargetype')"
+                              [disabled]="true"
+                            ></p-dropdown>
+                          </td>
+                          <td>
+                            <input
+                              id="ledgerId"
+                              type="text"
+                              class="form-control"
+                              placeholder="Enter Ledger ID"
+                              [formControl]="row.get('ledgerId')"
+                              disabled
+                            />
+                          </td>
+                          <td *ngIf="customerGroupForm.controls.custtype.value === 'Postpaid'">
+                            <p-dropdown
+                              [options]="billingCycle"
+                              filter="true"
+                              filterBy="label"
+                              [formControl]="row?.get('billingCycle')"
+                              optionLabel="label"
+                              optionValue="label"
+                              placeholder="Select a Billing Cycle"
+                              [disabled]="true"
+                            ></p-dropdown>
+                          </td>
+                          <td>
+                            <p-dropdown
+                              [options]="commondropdownService.taxAllList"
+                              optionValue="id"
+                              optionLabel="name"
+                              filter="true"
+                              filterBy="name"
+                              placeholder="Select a Tax"
+                              [formControl]="row.get('taxid')"
+                              [disabled]="true"
+                            >
+                              <ng-template let-data pTemplate="item">
+                                <div class="item-drop1">
+                                  <span class="item-value1">
+                                    {{ data.name }}
+                                    <span *ngFor="let row of data.tieredList">
+                                      ( {{ row.name }} {{ row.rate }}%)</span
+                                    >
+                                  </span>
+                                </div>
+                              </ng-template>
+                            </p-dropdown>
+                          </td>
+                          <td>
+                            <input
+                              id="actualprice"
+                              type="number"
+                              min="1"
+                              class="form-control"
+                              placeholder="Enter Actual Price"
+                              [formControl]="row.get('actualprice')"
+                              disabled
+                            />
+                          </td>
+                          <td>
+                            <input
+                              data-backdrop="static"
+                              data-keyboard="false"
+                              data-target="#taxDetailModal"
+                              data-toggle="modal"
+                              [formControl]="row.get('taxamount')"
+                              class="form-control"
+                              id="taxamount        "
+                              min="0"
+                              name="taxamount"
+                              placeholder="Enter Actual Price"
+                              readonly
+                              type="number"
+                            />
+                          </td>
+
+                          <td style="text-align: right">
+                            <a
+                              id="deleteAtt"
+                              *ngIf="this.chargeGroupFormArray.value.length > 1"
+                              class="curson_pointer"
+                              (click)="deleteConfirmonChargeField(index, row.get('actualprice'))"
+                            >
+                              <img src="assets/img/ioc02.jpg" />
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <pagination-controls
+                          id="chargeData"
+                          maxSize="10"
+                          directionLinks="true"
+                          previousLabel=""
+                          nextLabel=""
+                          (pageChange)="pageChangedCharge($event)"
+                        ></pagination-controls>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- MilestoneList -->
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Milestone List</legend>
+              <div class="boxWhite">
+                <label>Total Amount: {{ countTotalOfferPrice }}</label>
+                <label style="margin-left: 20px"
+                  >Remaining Payment: {{ countTotalOfferPrice - adjustedAmount }}</label
+                >
+                <label style="margin-left: 20px">Adjusted Amount: {{ adjustedAmount }}</label>
+                <div class="boxWhite">
+                  <div [formGroup]="milestoneGroupForm">
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-12">
+                        <label>Name*</label>
+                        <input
+                          id="milestoneName"
+                          type="text"
+                          class="form-control"
+                          formControlName="milestoneName"
+                          placeholder="Enter Name"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            milestonesubmitted && milestoneGroupForm.controls.milestoneName.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              milestonesubmitted &&
+                              milestoneGroupForm.controls.milestoneName.errors.required
+                            "
+                          >
+                            Name is required.
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-12">
+                        <div>
+                          <label>Amount*</label>
+                          <input
+                            id="amount"
+                            class="form-control"
+                            placeholder="Enter Amount"
+                            formControlName="amount"
+                          />
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="milestonesubmitted && milestoneGroupForm.controls.amount.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                milestonesubmitted &&
+                                milestoneGroupForm.controls.amount.errors.required
+                              "
+                            >
+                              Amount is required.
+                            </div>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-12">
+                        <div>
+                          <label>Due Date*</label>
+
+                          <input
+                            id="dueDate"
+                            type="date"
+                            class="form-control"
+                            placeholder="Enter Due Date"
+                            formControlName="dueDate"
+                          />
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="milestonesubmitted && milestoneGroupForm.controls.dueDate.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                milestonesubmitted &&
+                                milestoneGroupForm.controls.dueDate.errors.required
+                              "
+                            >
+                              Due Date is required.
+                            </div>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-12">
+                        <button
+                          id="addAtt"
+                          style="margin-top: 2.4rem"
+                          class="btn btn-primary"
+                          (click)="onAddmilestoneList()"
+                        >
+                          <i class="fa fa-plus-square" aria-hidden="true"></i>
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="Createradius" style="margin-top: 10px">
+                    <table class="table map-table">
+                      <thead>
+                        <tr>
+                          <th style="text-align: center">Name *</th>
+                          <th style="text-align: center">Amount *</th>
+                          <th style="text-align: center">Due Date *</th>
+                          <th style="text-align: right; width: 18%; padding: 8px">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let row of milestoneFormArray.controls; let index = index">
+                          <td style="padding-left: 8px">
+                            <input
+                              id="milestoneName"
+                              class="form-control"
+                              placeholder="Enter Milestone Number"
+                              [formControl]="row.get('milestoneName')"
+                              disabled
+                            />
+                          </td>
+                          <td style="padding-left: 8px">
+                            <input
+                              id="amount"
+                              class="form-control"
+                              placeholder="Enter Amount"
+                              [formControl]="row.get('amount')"
+                              [ngClass]="{
+                                'is-invalid': submitted && row.get('amount').invalid
+                              }"
+                              disabled
+                            />
+                            <div
+                              class="errorWrap text-danger"
+                              *ngIf="submitted && row.get('amount').errors"
+                            >
+                              <div
+                                class="error text-danger"
+                                *ngIf="submitted && row.get('amount').errors"
+                              >
+                                Amount is required.
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <input
+                              id="dueDate"
+                              type="date"
+                              class="form-control"
+                              placeholder="Enter Due Date"
+                              [formControl]="row.get('dueDate')"
+                              [ngClass]="{
+                                'is-invalid': submitted && row.get('dueDate').invalid
+                              }"
+                              disabled
+                            />
+                            <div
+                              class="errorWrap text-danger"
+                              *ngIf="submitted && row.get('dueDate').errors"
+                            >
+                              <div
+                                class="error text-danger"
+                                *ngIf="submitted && row.get('dueDate').errors"
+                              >
+                                Due Date required
+                              </div>
+                            </div>
+                          </td>
+                          <td style="text-align: right">
+                            <a
+                              *ngIf="this.milestoneFormArray.value.length > 1"
+                              id="deleteAtt"
+                              class="curson_pointer"
+                              (click)="deleteConfirmmilestone(index, row.get('amount'))"
+                            >
+                              <img src="assets/img/ioc02.jpg" />
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <br />
+              </div>
+            </fieldset>
+
+            <div class="addUpdateBtn" style="margin-top: 3.5rem">
+              <button
+                (click)="addPlanInCustomer()"
+                class="btn btn-primary"
+                id="submit"
+                type="submit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Save
+              </button>
+            </div>
+          </form>
+          <!-- </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+    header="Search Location"
+    [(visible)]="ifsearchLocationModal"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="clearsearchLocationData()"
+  >
+ <div class="modal-body">
+          <form name="searchLocationForm" [formGroup]="searchLocationForm">
+            <div class="form-group">
+              <label for="searchLocationname">Search Location Name:</label>
+              <div class="row">
+                <div class="col-lg-7 col-md-6">
+                  <input
+                    type="searchLocationname"
+                    class="form-control"
+                    id="searchLocationname"
+                    placeholder="Enter Location Name"
+                    formControlName="searchLocationname"
+                  />
+                </div>
+                <div class="col-lg-5 col-md-6" style="padding: 0 10px !important">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-sm"
+                    id="closeModal"
+                    (click)="searchLocation()"
+                    [disabled]="!searchLocationForm.valid"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    id="btn"
+                    type="button"
+                    class="btn btn-default btn-sm"
+                    (click)="clearLocationForm()"
+                    style="margin-left: 8px"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="row">
+            <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 35%">Name</th>
+                    <th style="width: 65%">Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of searchLocationData
+                        | paginate
+                          : {
+                              id: 'searchpageData',
+                              itemsPerPage: searchLocationItemPerPage,
+                              currentPage: currentPagesearchLocationList,
+                              totalItems: searchLocationtotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="HoverEffect"
+                      (click)="filedLocation(data.placeId)"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Set value Latitude & Longitude"
+                      style="width: 35%"
+                    >
+                      {{ data.name }}
+                    </td>
+                    <td style="width: 65%">{{ data.address }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <pagination-controls
+                id="searchpageData"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChangedSearchLocationList($event)"
+              ></pagination-controls>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="addUpdateBtn">
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+              (click)="clearsearchLocationData()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+<app-customer-select
+  *ngIf="showParentCustomerModel"
+  [type]="custType"
+  [custId]="customerLedgerDetailData.id"
+  [selectedCust]="selectedParentCust"
+  (selectedCustChange)="selectedCustChange($event)"
+  (closeParentCust)="closeParentCust()"
+></app-customer-select>

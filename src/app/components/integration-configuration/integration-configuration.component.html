@@ -1,0 +1,259 @@
+<div class="row">
+  <div class="col-md-6 left">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Integration Configurations</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchEmail"
+            aria-expanded="false"
+            aria-controls="searchEmail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchEmail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Base URL</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let integrationConfig of integrationConfigurationList
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: integrationConfigItemsPerPage,
+                          currentPage: integrationConfigCurrentPage,
+                          totalItems: integrationConfigTotalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ integrationConfig.name }}</td>
+                <td>{{ integrationConfig.baseurl }}</td>
+                <td class="btnAction">
+                  <a
+                    *ngIf="editAccess"
+                    (click)="editConfigById(integrationConfig.id, i)"
+                    class="curson_pointer"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    id="delete-button"
+                    href="javascript:void(0)"
+                    *ngIf="deleteAccess"
+                    (click)="deleteIntegrationConfirmation(integrationConfig.id)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="pagination_Dropdown">
+            <pagination-controls
+              id="listing_groupdata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-6 right">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Integration Configuration</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#editEmail"
+            aria-expanded="false"
+            aria-controls="editEmail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="editEmail" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+            Sorry you have not privilege to create operation!
+          </div>
+          <div *ngIf="createAccess || (editMode && editAccess)">
+            <form class="form-auth-small" [formGroup]="integrationConfigFormGroup">
+              <!-- Name -->
+              <label>Name</label>
+              <br />
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Enter Name"
+                formControlName="name"
+                [ngClass]="{
+                  'is-invalid': submitted && integrationConfigFormGroup.controls.name.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && integrationConfigFormGroup.controls.name.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && integrationConfigFormGroup.controls.name.errors.required"
+                >
+                  Name is required
+                </div>
+              </div>
+              <br />
+              <!-- Base URL -->
+              <label>Base URL</label>
+              <br />
+              <input
+                type="text"
+                name="baseurl"
+                class="form-control"
+                placeholder="Enter Name"
+                formControlName="baseurl"
+                [ngClass]="{
+                  'is-invalid': submitted && integrationConfigFormGroup.controls.baseurl.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && integrationConfigFormGroup.controls.baseurl.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && integrationConfigFormGroup.controls.baseurl.errors.required"
+                >
+                  Base URL is required
+                </div>
+              </div>
+              <br />
+
+              <!-- Port -->
+              <label>Port</label>
+              <br />
+              <input
+                type="text"
+                name="port"
+                class="form-control"
+                placeholder="Enter Port"
+                formControlName="port"
+                (keypress)="keypressId($event)"
+                [ngClass]="{
+                  'is-invalid': submitted && integrationConfigFormGroup.controls.port.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && integrationConfigFormGroup.controls.port.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && integrationConfigFormGroup.controls.port.errors.required"
+                >
+                  Port is required
+                </div>
+              </div>
+              <br />
+
+              <!-- Username -->
+              <label>Username</label>
+              <br />
+              <input
+                type="text"
+                name="username"
+                class="form-control"
+                placeholder="Enter Username"
+                formControlName="username"
+              />
+              <div
+                *ngIf="submitted && integrationConfigFormGroup.controls.username.errors['noSpace']"
+                class="error text-danger"
+              >
+                Username cannot contain spaces.
+              </div>
+
+              <!-- Password -->
+              <label>Password</label>
+              <br />
+              <input
+                type="text"
+                name="password"
+                class="form-control"
+                placeholder="Enter Password"
+                formControlName="password"
+              />
+              <div
+                *ngIf="submitted && integrationConfigFormGroup.controls.password.errors['noSpace']"
+                class="error text-danger"
+              >
+                Password cannot contain spaces.
+              </div>
+              <br />
+
+              <div *ngIf="editMode == false" class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="addUpdateIntegrationConfig()"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Add Integration Config
+                </button>
+                <br />
+              </div>
+              <div *ngIf="editMode == true" class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="addUpdateIntegrationConfig()"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update Integration Config
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

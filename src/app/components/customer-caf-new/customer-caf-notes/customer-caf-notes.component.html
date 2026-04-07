@@ -1,0 +1,212 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="customerDetailOpen(customerDetailData?.id)"
+            class="btn btn-secondary backbtn"
+            data-placement="bottom"
+            data-toggle="tooltip"
+            title="Go to Customer Details"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerDetailData?.title }}
+            {{ customerDetailData?.custname }} CAF Notes Details
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            aria-controls="custStatus"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#custStatus"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="custStatuss">
+        <div class="panel-body table-responsive">
+          <div style="margin: 20px">
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Created By</th>
+                      <th>Created Date and time</th>
+                      <th>Created Staff Team</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let data of customerNotesList
+                          | paginate
+                            : {
+                                id: 'customerNotesList',
+                                itemsPerPage: itemsPerPage,
+                                currentPage: currentPage,
+                                totalItems: totalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td>{{ data?.id }}</td>
+                      <td>{{ data?.createdByName }}</td>
+                      <td>{{ data?.createdOn | date: "dd-MM-yyyy hh:mm a" }}</td>
+                      <td>
+                        <a
+                          (click)="openStaffDetailModal(data.createdBy)"
+                          href="javascript:void(0)"
+                          style="color: #f7b206"
+                        >
+                          {{ data.createdByName }}
+                        </a>
+                      </td>
+                      <td>{{ data?.notes }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br />
+                <div style="display: flex">
+                  <pagination-controls
+                    (pageChange)="pageChangeEventForChildCustomers($event)"
+                    [directionLinks]="true"
+                    [maxSize]="10"
+                    id="customerNotesList"
+                    nextLabel=""
+                    previousLabel=""
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      (onChange)="itemPerPageChangeEvent($event)"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Staff Details"
+  [(visible)]="staffDetailModal"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalStaff()"
+>
+  <div class="modal-body">
+    <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+      <legend>Basic Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Name :</label>
+            <span>{{ staffData.fullName }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Email :</label>
+            <span>{{ staffData.email }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Phone :</label>
+            <span>{{ staffData.phone }}</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Username :</label>
+            <span>{{ staffData.username }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Service Area :</label>
+            <a
+              data-target="#serviceAreaDetail"
+              (click)="onClickServiceArea()"
+              href="javascript:void(0)"
+              style="color: blue"
+              >click here</a
+            >
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Parent Staff Name :</label>
+            <span>{{ staffData.parentstaffname }}</span>
+          </div>
+        </div>
+        <!-- <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Team name List :</label>
+              </div>
+            </div> -->
+      </div>
+      <fieldset class="boxWhite">
+        <legend>Team List :</legend>
+        <div class="row">
+          <div
+            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+            *ngFor="let data of staffData.teamNameList"
+          >
+            <span>{{ data }}</span>
+          </div>
+        </div>
+      </fieldset>
+    </fieldset>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeModalStaff()" data-dismiss="modal" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Service Area"
+  [(visible)]="serviceAreaDetailModal"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalOfArea()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <table>
+          <tr *ngFor="let data of serviceAreaList">
+            {{
+              data
+            }}
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal" type="button" (click)="closeModalOfArea()">
+      Close
+    </button>
+  </div>
+</p-dialog>

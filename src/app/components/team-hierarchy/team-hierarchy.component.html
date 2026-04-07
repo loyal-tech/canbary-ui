@@ -1,0 +1,927 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Workflow Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchTeamHirerarchy"
+            aria-expanded="false"
+            aria-controls="searchTeamHirerarchy"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchTeamHirerarchy" class="panel-collapse collapse in">
+        <div *ngIf="searchView" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                type="text"
+                [(ngModel)]="searchName"
+                class="form-control"
+                placeholder="Enter Workflow Management Name"
+                (keydown.enter)="search()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="search()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button type="reset" class="btn btn-default" id="searchbtn" (click)="clearSearch()">
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="createMapping()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Workflow Management</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="listMapping()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Workflow Management</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12" *ngIf="hierarchyListShow">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Workflow</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listteam"
+            aria-expanded="false"
+            aria-controls="listteam"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listteam" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Workflow Name</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let team of teamhierarchyData
+                    | paginate
+                      : {
+                          id: 'listing_teamdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td style="padding-left: 8px">
+                  <a
+                    href="javacript:void(0)"
+                    style="color: #f7b206"
+                    (click)="detailMapping(team.id, team.eventName)"
+                  >
+                    {{ team.hierarchyName }}
+                  </a>
+                </td>
+
+                <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                  <a
+                    type="button"
+                    (click)="editById(team.id)"
+                    class="curson_pointer"
+                    *ngIf="editAccess"
+                    title="Edit"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    (click)="deleteConfirmon(team)"
+                    class="curson_pointer"
+                    *ngIf="deleteAccess"
+                    title="Delete"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="teamHierarchyModalOpen(team.id)"
+                    title="Workflow Management"
+                  >
+                    <img style="width: 30px" src="assets/img/diagram.png" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+
+          <div class="pagination_Dropdown">
+            <pagination-controls
+              id="listing_teamdata"
+              [maxSize]="10"
+              [directionLinks]="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isEdit ? "Update" : "Create" }} Workflow Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createteamHierarchy"
+            aria-expanded="false"
+            aria-controls="createteamHierarchy"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createteamHierarchy" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="teamHierarchyForm">
+            <!--   TeamHierarchy Information  -->
+            <fieldset style="margin-top: 0px">
+              <legend>Workflow Management Information</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                    <label>Workflow Management Name *</label>
+                    <input
+                      id="name"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Workflow Management Name"
+                      formControlName="hierarchyName"
+                      [ngClass]="{
+                        'is-invalid': submittedTH && teamHierarchyForm.controls.hierarchyName.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submittedTH && teamHierarchyForm.controls.hierarchyName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submittedTH && teamHierarchyForm.controls.hierarchyName.errors.required
+                        "
+                      >
+                        Workflow Management Name is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                    <label>Event *</label>
+                    <p-dropdown
+                      [options]="eventData"
+                      [filter]="true"
+                      filterBy="text"
+                      optionValue="value"
+                      optionLabel="text"
+                      placeholder="Select a Event"
+                      formControlName="eventName"
+                      (onChange)="getTeamevent($event)"
+                      [disabled]="isEdit"
+                      [ngClass]="{
+                        'is-invalid': submittedTH && teamHierarchyForm.controls.eventName.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submittedTH && teamHierarchyForm.controls.eventName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submittedTH && teamHierarchyForm.controls.eventName.errors.required"
+                      >
+                        Event is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!--    Team Mapping -->
+          </form>
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Teams</legend>
+            <div class="boxWhite">
+              <div>
+                <div class="row display: flex; justify-content: flex-start; align-items: center">
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                    <span class="p-float-label">
+                      <p-dropdown
+                        [options]="teamListData"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        [(ngModel)]="teamValue"
+                        [ngClass]="{
+                          'is-invalid': teamSubmitted && !teamValue
+                        }"
+                        id="team"
+                        [autoDisplayFirst]="false"
+                      ></p-dropdown>
+                      <label for="team">Teams *</label>
+                    </span>
+                    <div></div>
+
+                    <div class="errorWrap text-danger" *ngIf="teamSubmitted && !teamValue">
+                      <div class="error text-danger">Team is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                    <span class="p-float-label">
+                      <p-dropdown
+                        [disabled]="!isWorkFlowAction"
+                        [options]="eventActionData"
+                        optionValue="value"
+                        optionLabel="text"
+                        filter="true"
+                        filterBy="text"
+                        [(ngModel)]="teamHerAction"
+                        id="team"
+                        [autoDisplayFirst]="false"
+                        (onChange)="removeWorkFlowActionData($event)"
+                      ></p-dropdown>
+                      <label for="team">Action</label>
+                    </span>
+                    <div></div>
+
+                    <!-- [ngClass]="{
+                      'is-invalid': teamSubmitted && !teamHerAction
+                    }" -->
+                    <!-- <div
+                      class="errorWrap text-danger"
+                      *ngIf="teamSubmitted && !teamHerAction"
+                    >
+                      <div class="error text-danger">Action is required.</div>
+                    </div> -->
+                  </div>
+
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12" *ngIf="ifTATMetricsShow">
+                    <p-dropdown
+                      [options]="commondropdownService.activeTatMatricsData"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a TAT Matrics"
+                      [(ngModel)]="tatMatricesID"
+                      [showClear]="true"
+                      id="team"
+                    ></p-dropdown>
+                  </div>
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                    <button
+                      [disabled]="!isWorkFlowAction"
+                      (click)="openConditionModel()"
+                      title="Add a Condition"
+                      data-target="#teamConditionModal"
+                      data-toggle="modal"
+                      data-backdrop="static"
+                      data-keyboard="false"
+                      style="width: 100%; border: none; background: none"
+                    >
+                      <input
+                        type="text"
+                        [(ngModel)]="teamcondition"
+                        class="form-control"
+                        placeholder="Add a condition"
+                        style="width: 100%; width: 100%; cursor: pointer"
+                        readonly
+                      />
+                    </button>
+                  </div>
+                  <div
+                    class="col-lg-1 col-md-1 col-sm-1 col-xs-12"
+                    *ngIf="isAutoAssignShow && teamHerAction"
+                  >
+                    <div
+                      class="form-group form-check inputcheckboxCenter"
+                      style="display: flex; align-items: center; gap: 5px"
+                    >
+                      <p-checkbox
+                        class="checkbox-align"
+                        [(ngModel)]="isAutoAssign"
+                        id="team"
+                        [binary]="true"
+                      ></p-checkbox>
+                      <label class="form-check-label" for="team" style="margin-bottom: 0"
+                        >Auto Assign</label
+                      >
+                    </div>
+                  </div>
+
+                  <div
+                    class="col-lg-2 col-md-2 col-sm-2 col-xs-12"
+                    *ngIf="isAutoAssignShow && teamHerAction"
+                  >
+                    <div
+                      class="form-group form-check inputcheckboxCenter"
+                      style="display: flex; align-items: center; gap: 5px"
+                    >
+                      <p-checkbox
+                        class="checkbox-align"
+                        [(ngModel)]="isAutoApprove"
+                        id="team"
+                        [binary]="true"
+                      >
+                      </p-checkbox>
+                      <label class="form-check-label" for="team" style="margin-bottom: 0"
+                        >Auto Approve</label
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12" style="text-align: end">
+                    <button
+                      style="object-fit: cover; padding: 5px 8px"
+                      class="btn btn-primary"
+                      (click)="onAddAttribute()"
+                    >
+                      <i class="fa fa-plus-square" aria-hidden="true"></i>
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <div class="gridtable">
+                  <table class="table coa-table fixed_header" style="margin-top: 3rem">
+                    <thead class="BI_tablehead">
+                      <tr>
+                        <th style="width: 8%">Approval</th>
+                        <th>Teams*</th>
+                        <th>Action</th>
+                        <th>TAT Matrics</th>
+                        <th style="width: 30%">Condition</th>
+                        <th style="width: 15%" *ngIf="isAutoAssignShow">Workflow Auto Assign</th>
+                        <th style="width: 15%" *ngIf="isAutoAssignShow">Workflow Auto Approve</th>
+                        <th style="width: 5%">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let row of teams.controls; let index = index">
+                        <td style="padding-left: 2px; text-align: center; width: 8%">
+                          Approval {{ index + 1 }}
+                        </td>
+                        <td>
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="teamListData"
+                            placeholder="Select Teams"
+                            optionLabel="name"
+                            optionValue="id"
+                            placeholder="Select a Team"
+                            [formControl]="row.get('teamId')"
+                          ></p-dropdown>
+                        </td>
+
+                        <td>
+                          <p-dropdown
+                            [disabled]="!isWorkFlowAction"
+                            appendTo="body"
+                            [options]="eventActionData"
+                            optionValue="value"
+                            optionLabel="text"
+                            filter="true"
+                            filterBy="text"
+                            placeholder="Select a Action"
+                            [formControl]="row.get('teamAction')"
+                            [showClear]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td *ngIf="ifTATMetricsShow">
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="commondropdownService.activeTatMatricsData"
+                            optionValue="id"
+                            optionLabel="name"
+                            filter="true"
+                            filterBy="name"
+                            placeholder="Select a TAT Matrics"
+                            [formControl]="row.get('tat_id')"
+                          ></p-dropdown>
+                        </td>
+                        <td style="width: 25%">
+                          <button
+                            [disabled]="!isWorkFlowAction"
+                            (click)="defultAddTeamCondition(index, row.value.id)"
+                            title="Add a Condition"
+                            data-target="#teamConditionModal"
+                            data-toggle="modal"
+                            data-backdrop="static"
+                            data-keyboard="false"
+                            style="width: 100%; border: none; background: none"
+                          >
+                            <input
+                              type="text"
+                              [formControl]="row.get('teamcondition')"
+                              class="form-control"
+                              placeholder="Add a condition"
+                              style="width: 100%; width: 100%; cursor: pointer"
+                              readonly
+                            />
+                          </button>
+                        </td>
+                        <td style="padding-left: 8%; text-align: center; width: 15%">
+                          <div
+                            class="form-group form-check inputcheckboxCenter"
+                            *ngIf="isAutoAssignShow"
+                          >
+                            <p-checkbox
+                              class="p-field-checkbox"
+                              [binary]="true"
+                              [formControl]="row.get('isAutoAssign')"
+                              [ngModel]="row.get('isAutoAssign')?.value === true"
+                              (onChange)="row.get('isAutoAssign')?.setValue($event.checked)"
+                              [binary]="true"
+                              [disabled]="!row.get('teamAction')?.value"
+                            ></p-checkbox>
+                          </div>
+                        </td>
+                        <td
+                          style="padding-left: 8%; text-align: center; width: 15%"
+                          *ngIf="isAutoAssignShow"
+                        >
+                          <div class="form-group form-check inputcheckboxCenter">
+                            <p-checkbox
+                              class="p-field-checkbox"
+                              [binary]="true"
+                              [formControl]="row.get('isAutoApprove')"
+                              [ngModel]="row.get('isAutoApprove')?.value === true"
+                              (onChange)="row.get('isAutoApprove')?.setValue($event.checked)"
+                              [disabled]="!row.get('teamAction')?.value"
+                            ></p-checkbox>
+                          </div>
+                        </td>
+                        <td style="text-align: center; width: 5%">
+                          <a
+                            *ngIf="teams.controls.length > 1"
+                            id="deleteAtt"
+                            href="javascript:void(0)"
+                            (click)="deleteConfirmAttribute(index, row.value)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- <div class="row">
+                  <div class="col-md-12">
+                    <pagination-controls
+                      id="ArrayData"
+                      maxSize="5"
+                      directionLinks="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedTeams($event)"
+                    ></pagination-controls>
+                  </div>
+                </div> -->
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="addUpdateBtn" style="margin: 3rem 0">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submit"
+              *ngIf="!isEdit"
+              [disabled]="teams.controls.length == 0"
+              (click)="addEditTeamHierarchy()"
+            >
+              <i class="fa fa-check-circle"></i>
+              Add Workflow Management
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submit"
+              [disabled]="teams.controls.length == 0"
+              *ngIf="isEdit"
+              (click)="addEditTeamHierarchy()"
+            >
+              <i class="fa fa-check-circle"></i>
+              Update Workflow Management
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="hierarchyDeatilsShow">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <div class="displayflex">
+            <button
+              type="button"
+              class="btn btn-secondary backbtn"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Go to Workflow List"
+              (click)="listMapping()"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: #f7b206 !important; font-size: 28px"
+              ></i>
+            </button>
+            <h3 class="panel-title">Workflow Detail</h3>
+          </div>
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#detailteamHierarchy"
+            aria-expanded="false"
+            aria-controls="detailteamHierarchy"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="detailteamHierarchy" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ teamHirerarchyDetailData.hierarchyName }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Event Name :</label>
+                  <span>{{ teamHirerarchyDetailData.eventName }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Teams Details</legend>
+            <div class="boxWhite">
+              <div class="row table-responsive">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Approval</th>
+                        <th>Teams</th>
+                        <th>Action</th>
+                        <!-- <th *ngIf="!ifTATMetricsShow">TAT Matrics</th> -->
+                        <th>Condition</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let teams of teamHirerarchyDetailData.teamHierarchyMappingList;
+                          index as i
+                        "
+                      >
+                        <td>Approval {{ i + 1 }}</td>
+                        <td>{{ teams.teamName }}</td>
+                        <td>
+                          <span *ngIf="teams.teamAction">
+                            {{ teams.teamActionName }}
+                          </span>
+                          <span *ngIf="!teams.teamAction || teams.teamAction == 0"> - </span>
+                        </td>
+                        <!-- <td *ngIf="!ifTATMetricsShow">
+                          <span *ngIf="teams.tat_id">
+                            {{ teams.teamTATMatrics }}
+                          </span>
+                          <span *ngIf="!teams.tat_id || teams.tat_id == 0"> - </span>
+                        </td> -->
+                        <td>
+                          <!-- {{ teams.teamCondition }} -->
+
+                          <span *ngFor="let list of showTeamConditionData; index as j">
+                            <span *ngIf="i === j">
+                              <span *ngIf="list.condition">
+                                {{ list.condition }}
+                              </span>
+                              <span *ngIf="!list.condition">-</span>
+                            </span>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+    header="Assign Parent Team"
+    [(visible)]="assignParentTeamModal"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="assignparentTeamModalClose()"
+  >
+  <div class="modal-body">
+        <form [formGroup]="assignParentTeamForm">
+          <label>Parent Team *</label>
+          <p-dropdown
+            [options]="parentTeamListData"
+            optionValue="id"
+            optionLabel="name"
+            [filter]="true"
+            filterBy="name"
+            placeholder="Select a Parent Team"
+            formControlName="parentteamid"
+            [ngClass]="{
+              'is-invalid': submitted && assignParentTeamForm.controls.parentteamid.errors
+            }"
+          ></p-dropdown>
+          <div></div>
+          <div
+            class="errorWrap text-danger"
+            *ngIf="submitted && assignParentTeamForm.controls.parentteamid.errors"
+          >
+            <div
+              class="error text-danger"
+              *ngIf="submitted && assignParentTeamForm.controls.parentteamid.errors.required"
+            >
+              Parent Team is required.
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button type="submit" class="btn btn-primary btn-sm" (click)="checkAssignparentTeam()">
+            <i class="fa fa-check-circle"></i>
+            Assign
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm"
+            (click)="assignparentTeamModalClose()"
+          >
+            <i class="fa fa-times-circle"></i>
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+
+<!-- Assign Parent Team Modal -->
+
+<p-dialog
+  header="Workflow Management"
+  [(visible)]="teamHierarchyModal"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+>
+  <div class="modal-body">
+    <div *ngFor="let data of teamHierarchyData; let last = last" style="text-align: center">
+      <p-card>{{ data.teamName }}</p-card>
+      <br />
+      <i
+        *ngIf="!last"
+        style="font-size: 30px !important"
+        class="icon-submenu paddingmenuIcon lnr lnr-arrow-down"
+      ></i>
+      <br />
+    </div>
+    <!-- <p-organizationChart [value]="teamHierarchyData"></p-organizationChart> -->
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Team Condition"
+  [(visible)]="teamConditionModal"
+  [style]="{ width: '75%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body" style="height: 30rem; padding-bottom: 20px">
+    <table class="table map-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Operator</th>
+          <th>Value</th>
+          <th>Condition</th>
+          <th style="width: 10%">
+            <button
+              id="addAtt"
+              style="object-fit: cover; padding: 5px 8px"
+              class="btn btn-primary"
+              (click)="onConditionAddAttribute()"
+            >
+              <i class="fa fa-plus-square" aria-hidden="true"></i>
+              Add
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="
+            let row of teamConditionArray.controls
+              | paginate
+                : {
+                    id: 'ArrayData',
+                    itemsPerPage: ItemPerPageteamCondition,
+                    currentPage: currentPageteamCondition,
+                    totalItems: totalRecordsteamCondition
+                  };
+            let index = index
+          "
+        >
+          <td>
+            <p-dropdown
+              [options]="evenCatagorytData"
+              optionValue="value"
+              optionLabel="text"
+              filter="true"
+              filterBy="text"
+              placeholder="Enter a Field"
+              [formControl]="row.get('field')"
+            ></p-dropdown>
+          </td>
+          <td>
+            <p-dropdown
+              [options]="operatorList"
+              placeholder="Select Operator"
+              optionLabel="label"
+              optionValue="value"
+              [formControl]="row.get('operator')"
+              filter="true"
+              filterBy="label"
+            ></p-dropdown>
+          </td>
+          <td>
+            <input
+              type="text"
+              name="speed"
+              class="form-control"
+              placeholder="Enter a Value"
+              [formControl]="row.get('value')"
+            />
+          </td>
+          <td>
+            <span *ngFor="let list of conditionDataEnableDisble; index as j">
+              <span *ngIf="index == j">
+                <p-dropdown
+                  [options]="AndOrDropdown"
+                  *ngIf="index == j"
+                  placeholder="Select a Condition"
+                  optionLabel="label"
+                  optionValue="value"
+                  [formControl]="row.get('condition')"
+                  filter="true"
+                  filterBy="label"
+                  (onChange)="onkeyCondition($event)"
+                ></p-dropdown>
+              </span>
+            </span>
+          </td>
+          <td style="width: 10%">
+            <a
+              id="deleteAtt"
+              class="curson_pointer"
+              (click)="deleteTeamCondition(index, row.value)"
+            >
+              <img src="assets/img/ioc02.jpg" />
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <div
+            style="margin-left: 5px"
+            class="errorWrap text-danger"
+            *ngIf="!this.teamConditionArray.valid"
+          >
+            Please Enter Details.
+          </div>
+          <div
+            style="margin-left: 5px"
+            class="errorWrap text-danger"
+            *ngIf="this.teamConditionArray.valid && errormsgCondition"
+          >
+            {{ this.errormsgCondition }}
+          </div>
+        </tr>
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="col-md-12">
+        <pagination-controls
+          id="ArrayData"
+          [maxSize]="5"
+          [directionLinks]="true"
+          previousLabel=""
+          nextLabel=""
+          (pageChange)="pageChangedTeamMappingList($event)"
+        ></pagination-controls>
+      </div>
+    </div>
+    <br />
+  </div>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-title="Apply Condition"
+        (click)="saveConditionData()"
+        #closebutton
+        data-dismiss="modal"
+        [disabled]="!this.teamConditionArray.valid"
+      >
+        Save
+      </button>
+    </div>
+    <div class="addUpdateBtn" style="margin-left: 1.5rem">
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        #closebutton
+        data-dismiss="modal"
+        (click)="closeConditionModel()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>

@@ -1,0 +1,558 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel mb-15">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} CAF Management</h3>
+        <!-- <div class="right">
+          <button
+            aria-controls="searchPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#searchPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div> -->
+        <br />
+
+        <div class="panel-collapse collapse in" id="searchPreCust">
+          <div class="row panel-udata">
+            <!-- <div
+              class="col-md-6 pcolumn pcol"
+              *ngIf="
+                !isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.CREATE_PRE_CUST_CAF_LIST
+                    : POST_CUST_CONSTANTS.CREATE_POST_CUST_CAF
+                )
+              "
+            >
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: createView
+                }"
+              >
+                <a (click)="checkExit('create')" class="curson_pointer">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Create Customer CAF</h5>
+                </a>
+              </div>
+            </div>
+            <div class="pcolumn pcol" [ngClass]="isCustomerDetailSubMenu ? 'col-md-3' : 'col-md-6'">
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: listView
+                }"
+              >
+                <a (click)="checkExit('list')" class="curson_pointer">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5 *ngIf="!isCustomerDetailSubMenu">Search Customer CAF</h5>
+                  <h5 *ngIf="isCustomerDetailSubMenu">Home</h5>
+                </a>
+              </div>
+            </div> -->
+            <div class="col-md-3 pcol pcolumn">
+              <div
+                [ngClass]="{
+                  activeSubMenu: isDetails
+                }"
+                class="dbox"
+              >
+                <a
+                  class="curson_pointer"
+                  href="javascript:void(0)"
+                  [routerLink]="['/home/customer-caf-new/list/' + custType]"
+                >
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Home</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_CUST_STATUS
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_STATUS
+                )
+              "
+            >
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: customerStatusView
+                }"
+              >
+                <a class="curson_pointer" [routerLink]="['customerCafStatus/' + custId]">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Customer Status</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_CUST_PLANS
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_PLANS
+                )
+              "
+            >
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: customerPlanView
+                }"
+              >
+                <a
+                  class="curson_pointer"
+                  [state]="{ data: this.custData }"
+                  [routerLink]="['customerPlans/' + custId]"
+                >
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Customer Plans</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_INVOICES
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_INVOICES
+                )
+              "
+            >
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: ifMyInvoice
+                }"
+              >
+                <a
+                  class="curson_pointer"
+                  [state]="{ data: this.custData }"
+                  [routerLink]="['invoice/' + custId]"
+                >
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Invoices</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_LEDGER
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_LEDGER
+                )
+              "
+            >
+              <div [ngClass]="!custData ? '' : 'disabledCustSubmenu'">
+                <div
+                  class="dbox"
+                  [ngClass]="{
+                    activeSubMenu: isCustomerLedgerOpen
+                  }"
+                >
+                  <a
+                    href="javascript:void(0)"
+                    class="curson_pointer"
+                    (click)="
+                      !custData
+                        ? openSubMenu(
+                            '/home/customer-caf-new/details/' + custType + '/ledger/' + custId
+                          )
+                        : $event.stopPropagation()
+                    "
+                  >
+                    <img src="../../../assets/img/i01.png" style="width: 32px" />
+                    <h5>Ledger</h5>
+                    <!-- <p> Comes Here</p> -->
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_PAYMENT
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_PAYMENT
+                )
+              "
+            >
+              <div>
+                <div
+                  class="dbox"
+                  [ngClass]="{
+                    activeSubMenu: viewCustomerPaymentList
+                  }"
+                >
+                  <a class="curson_pointer" [routerLink]="['payment/' + custId]">
+                    <img src="../../../assets/img/i01.png" style="width: 32px" />
+                    <h5>Payment</h5>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_INVENTORY
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_INVENTORY
+                ) &&
+                statusCheckService.isActiveInventoryService
+              "
+            >
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: customerrMyInventoryView
+                }"
+              >
+                <a class="curson_pointer" [routerLink]="['inventoryManagement/' + custId]">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Inventory</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_CHANGE_DISCOUNT
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_CHANGE_DISCOUNT
+                )
+              "
+            >
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: customerUpdateDiscount
+                }"
+              >
+                <a
+                  class="curson_pointer"
+                  [state]="{ data: this.custData }"
+                  [routerLink]="['changeDiscount/' + custId]"
+                >
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Change Discount</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_WALLET
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_WALLET
+                )
+              "
+            >
+              <div
+                [ngClass]="
+                  !custData &&
+                  (custData?.parentCustomerId == null || custData?.invoiceType == 'Independent')
+                    ? ''
+                    : 'disabledCustSubmenu'
+                "
+              >
+                <div class="dbox" [ngClass]="{ activeSubMenu: isWallet }">
+                  <a
+                    class="detailOnAnchorClick"
+                    (click)="
+                      !custData &&
+                      (custData?.parentCustomerId == null || custData?.invoiceType == 'Independent')
+                        ? openSubMenu(
+                            '/home/customer-caf-new/details/' + custType + '/wallet/' + custId
+                          )
+                        : $event.stopPropagation()
+                    "
+                    class="curson_pointer"
+                  >
+                    <img src="../../../assets/img/i01.png" style="width: 32px" />
+                    <h5>Wallet</h5>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_CHARGE
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_CHARGE
+                )
+              "
+            >
+              <div>
+                <div class="dbox" [ngClass]="{ activeSubMenu: ifChargeGetData }">
+                  <a
+                    class="detailOnAnchorClick"
+                    (click)="
+                      custData?.status === 'Terminate'
+                        ? $event.stopPropagation()
+                        : openSubMenu(
+                            '/home/customer-caf-new/details/' +
+                              custType +
+                              '/chargeManagement/' +
+                              custId
+                          )
+                    "
+                  >
+                    <img src="../../../assets/img/i01.png" style="width: 32px" />
+                    <h5>Charge Management</h5>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_SHIFT_LOCATION
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_SHIFT_LOCATION
+                )
+              "
+            >
+              <div>
+                <div class="dbox" [ngClass]="{ activeSubMenu: ifUpdateAddress }">
+                  <a
+                    class="detailOnAnchorClick"
+                    (click)="
+                      openSubMenu(
+                        '/home/customer-caf-new/details/' + custType + '/shiftLocation/' + custId
+                      )
+                    "
+                  >
+                    <img src="../../../assets/img/i01.png" style="width: 32px" />
+                    <h5>Shift Location</h5>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcol pcolumn"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_FOLLOW_UP
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_FOLLOW_UP
+                )
+              "
+            >
+              <div
+                [ngClass]="{
+                  activeSubMenu: ifCafFollowUp
+                }"
+                class="dbox"
+              >
+                <a
+                  class="curson_pointer"
+                  [state]="{ data: this.custData }"
+                  [routerLink]="['followup/' + custId]"
+                >
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Follow Up</h5>
+                </a>
+              </div>
+            </div>
+
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_SERVICE
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_SERVICE
+                )
+              "
+            >
+              <div [ngClass]="{ activeSubMenu: isServiceOpen }" class="dbox">
+                <a class="detailOnAnchorClick">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Service Management</h5>
+                </a>
+                <!-- (click)="
+                    openSubMenu(
+                      '/home/customer-caf-new/details/' + custType + '/serviceManagement/' + custId
+                    )
+                  " (click)="openServiceDetails(this.custData.id)"-->
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_SERVICE_CHANGE_PLAN
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_SERVICE_CHANGE_PLAN
+                )
+              "
+            >
+              <div
+                [ngClass]="custData?.cafApproveStatus !== 'Rejected' ? '' : 'disabledCustSubmenu'"
+              >
+                <div [ngClass]="{ activeSubMenu: customerChangePlan }" class="dbox">
+                  <a class="detailOnAnchorClick">
+                    <!-- (click)="
+                      custData?.cafApproveStatus !== 'Rejected'
+                        ? openSubMenu(
+                            '/home/customer-caf-new/details/' + custType + '/changeplan/' + custId
+                          )
+                        : $event.stopPropagation()
+                    " -->
+                    <img src="../../../assets/img/i01.png" style="width: 32px" />
+                    <h5>Change Plan</h5>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_SERVICE_CHANGE_PLAN
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_SERVICE_CHANGE_PLAN
+                ) &&
+                !statusCheckService.isActiveInventoryService
+              "
+            >
+              <div [ngClass]="{ activeSubMenu: customerChangePlan }" class="dbox">
+                <a (click)="openipManagement(this.custData)" class="curson_pointer">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>IP Management</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcolumn pcol"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.PRE_CUST_CAF_SERVICE_CHANGE_PLAN
+                    : POST_CUST_CONSTANTS.POST_CUST_CAF_SERVICE_CHANGE_PLAN
+                ) &&
+                !statusCheckService.isActiveInventoryService
+              "
+            >
+              <div [ngClass]="{ activeSubMenu: customerChangePlan }" class="dbox">
+                <a (click)="openmacManagement(this.custData)" class="curson_pointer">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Mac Management</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              class="col-md-3 pcol pcolumn"
+              *ngIf="
+                isCustomerDetailSubMenu &&
+                loginService.hasPermission(
+                  this.custType == 'Prepaid'
+                    ? PRE_CUST_CONSTANTS.CUSTOMER_CAF_NOTES
+                    : POST_CUST_CONSTANTS.POST_CUST_CHARGE_CREATE
+                )
+              "
+            >
+              <div
+                [ngClass]="{
+                  activeSubMenu: isCustNotes
+                }"
+                class="dbox"
+              >
+                <a
+                  class="curson_pointer"
+                  [state]="{ data: this.custData }"
+                  [routerLink]="['customerCafNotes/' + custId]"
+                >
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Customer CAF Notes</h5>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-md-3 pcol pcolumn" *ngIf="isCustomerDetailSubMenu">
+              <div
+                [ngClass]="{
+                  activeSubMenu: isCallDetails
+                }"
+                class="dbox"
+              >
+                <a
+                  class="curson_pointer"
+                  [state]="{ data: this.custData }"
+                  [routerLink]="['callDetails/' + custId]"
+                >
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Call Details</h5>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <router-outlet> </router-outlet>
+    <app-cust-change-password
+      *ngIf="showChangePassword"
+      [custId]="custId"
+      (closePassChange)="closePassChange()"
+    ></app-cust-change-password>
+  </div>
+</div>
+
+<div *ngIf="isServiceOpen">
+  <div *ngIf="isPlanOnDemand">
+    <app-add-service
+      [custData]="customerDetailData"
+      (custPlanMappping)="clearcustPlanMappping()"
+      (backButton)="openDetailCust($event)"
+      [ifcustCaf]="true"
+      name="Service"
+    ></app-add-service>
+  </div>
+  <div *ngIf="!isPlanOnDemand">
+    <app-cust-service-management
+      [custData]="customerDetailData"
+      (custPlanMappping)="clearcustPlanMappping()"
+      [ifcustCaf]="true"
+      [isThroughLead]="false"
+      (backButton)="openDetailCust($event)"
+    ></app-cust-service-management>
+  </div>
+</div>

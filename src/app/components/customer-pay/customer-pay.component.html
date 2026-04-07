@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" class="fullscreen-bg">
+  <head>
+    <title>Login | Adopt Dashboard</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <!-- VENDOR CSS -->
+    <!-- <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendor/linearicons/style.css"> -->
+    <!-- MAIN CSS -->
+    <!-- <link rel="stylesheet" href="assets/css/main.css"> -->
+
+    <!-- GOOGLE FONTS -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700"
+      rel="stylesheet"
+    />
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png" />
+  </head>
+
+  <body class="loginbg">
+    <!-- <p-toast [style]="{ height: 'auto', width: '20vw', fontSize: '16px' }"></p-toast> -->
+    <!-- <ngx-spinner type="ball-clip-rotate-multiple" size="medium">
+        <p class="loading">Loading...</p>
+    </ngx-spinner> -->
+    <ngx-spinner
+      template='<img class="rotate" width="100" height="100" src="assets/img/ajaxwaiting.png" >'
+    ></ngx-spinner>
+    <!-- WRAPPER -->
+    <div id="wrapper" pFocusTrap>
+      <div class="vertical-align-wrap">
+        <div class="vertical-align-middle">
+          <div class="auth-box">
+            <div class="left">
+              <div class="content">
+                <div class="header">
+                  <div class="logo text-center">
+                    <img src="../../assets/img/loginlogo.jpg" alt="Adopt Logo" class="adoptlogo" />
+                  </div>
+                </div>
+                <span *ngIf="errorMessage == '' && customerDetailData">
+                  <p>Welcome {{ customerDetailData?.customerUsername || "-" }}</p>
+                  <p>
+                    Your {{ customerDetailData?.customerUsername || "-" }} Package Subscription was
+                    due for Renewal on
+                    {{ customerDetailData?.planDueDate | date: "dd-MM-yyyy" || "-" }}
+                  </p>
+                  <p class="lead" *ngIf="customerDetailData?.amount == null">
+                    Please Enter Amount <br /><b>UGX{{ customerDetailData?.amount }}</b>
+                  </p>
+                  <p class="lead" *ngIf="customerDetailData?.amount !== null">
+                    Amount to pay <br /><b>UGX{{ customerDetailData?.amount }}</b>
+                  </p>
+                  <form class="form-auth-small" [formGroup]="mpinForm">
+                    <!-- Username Field -->
+                    <div class="form-group">
+                      <label for="signin-email" class="control-label sr-only">Amount</label>
+                      <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        id="signin-email"
+                        formControlName="amount"
+                        [ngClass]="{
+                          'is-invalid': submitted && mpinForm.controls.amount.errors
+                        }"
+                        placeholder="Amount"
+                      />
+                      <!-- [readonly]="isRenew" -->
+                      <div
+                        class="errorWrap text-danger"
+                        style="text-align: left"
+                        *ngIf="submitted && mpinForm.controls.amount.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && mpinForm.controls.amount.errors.required"
+                        >
+                          Amount is required
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div style="display: flex">
+                        <div style="width: 30%">
+                          <p-dropdown
+                            [filter]="true"
+                            [options]="countries"
+                            formControlName="countryCode"
+                            id="countryCode"
+                            optionLabel="dial_code"
+                            optionValue="dial_code"
+                            placeholder="+91"
+                            appendTo="body"
+                          ></p-dropdown>
+                        </div>
+                        <div style="width: 70%">
+                          <input
+                            type="text"
+                            name="mobileNo"
+                            id="mobileNo"
+                            class="form-control"
+                            formControlName="mobileNumber"
+                            [ngClass]="{
+                              'is-invalid': submitted && mpinForm.controls.mobileNumber.errors
+                            }"
+                            placeholder="Enter mobile number"
+                          />
+                        </div>
+                      </div>
+                      <div style="display: flex">
+                        <div
+                          *ngIf="submitted && mpinForm.controls.mobileNumber.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="submitted && mpinForm.controls.mobileNumber.errors.required"
+                            class="errorWrap text-danger"
+                          >
+                            Mobile Number is required.
+                          </div>
+                          <!-- <div
+                          *ngIf="
+                            (submitted && mpinForm.controls.mobileNumber.errors.maxlength) ||
+                            (submitted && mpinForm.controls.mobileNumber.errors.minlength)
+                          "
+                          class="errorWrap text-danger"
+                        >
+                          9 characters required.
+                        </div> -->
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-lg"
+                      (click)="paymentData()"
+                      [disabled]="this.mpinForm?.value?.amount == null"
+                    >
+                      Pay
+                    </button>
+                  </form>
+                </span>
+                <span *ngIf="errorMessage !== ''">
+                  <p class="error-message">{{ errorMessage }}</p>
+                </span>
+              </div>
+            </div>
+            <div class="right">
+              <div class="overlay"></div>
+              <div class="content text">
+                <h1 class="heading">Lorem ipsum dolor sit consectetur.</h1>
+                <p>Adipiscing elit</p>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END WRAPPER -->
+  </body>
+</html>
+
+<!-- Payment Confirmation Model -->
+<p-dialog
+  header="Payment Confirmation"
+  [(visible)]="paymentConfirmationModal"
+  [modal]="true"
+  [breakpoints]="{ '1024px': '75vw', '767px': '90vw' }"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  (onHide)="hidepaymentConfirmDialog()"
+  [resizable]="false"
+>
+  <h5 class="modalHeadTxt">
+    Payment is in the approval flow one It is approved, you will get the confirmation message
+    through SMS
+  </h5>
+
+  <button
+    class="btn btn-success btnStyle"
+    [disabled]="exitBuy"
+    (click)="hidepaymentConfirmDialog()"
+  >
+    <i class="fa-solid fa-xmark"></i> Close<span *ngIf="exitBuy"> ({{ paymentstatusCount }}) </span>
+  </button>
+</p-dialog>
+
+<!-- Payment Success Model -->
+<p-dialog
+  header="Payment Success"
+  [(visible)]="paymentSucessModel"
+  [modal]="true"
+  [breakpoints]="{ '1024px': '75vw', '767px': '90vw' }"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  (onHide)="hidepaymentSucessDialog()"
+  [resizable]="false"
+>
+  <h5 class="modalHeadTxt plan-sucess-content">Plan purchased successfully</h5>
+
+  <button class="btn btn-success btnStyle plan-sucess-btn" (click)="hidepaymentSucessDialog()">
+    OK
+  </button>
+</p-dialog>

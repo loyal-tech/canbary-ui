@@ -1,0 +1,856 @@
+<p-confirmDialog [style]="{ width: '40vw' }" [baseZIndex]="10000"></p-confirmDialog>
+<div class="childComponent">
+  <!-- <ngx-spinner
+    [fullScreen]="false"
+    type="ball-clip-rotate-multiple"
+    size="medium"
+  >
+    <p class="loading">Loading...</p>
+  </ngx-spinner> -->
+  <div class="row">
+    <div class="col-md-12">
+      <!-- Voucher Data -->
+      <div class="panel top">
+        <div class="panel-heading">
+          <h3 class="panel-title">Voucher Profile Management</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#voucherSearchPanel"
+              aria-expanded="false"
+              aria-controls="collapse1"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="voucherSearchPanel" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="searchForm">
+              <form
+                class="form-inline"
+                #searchVoucherForm="ngForm"
+                (ngSubmit)="searchVoucher(searchVoucherForm.value)"
+              >
+                <div class="col-md-3" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px" for="voucherName"> Voucher Profile Name : </label>
+                </div>
+                <div class="col-md-5" style="padding-left: 0%">
+                  <input
+                    style="width: 100%"
+                    type="text"
+                    class="form-control"
+                    id="voucherName"
+                    placeholder="Enter voucher profile name"
+                    name="voucherName"
+                    ngModel
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    data-title="Search Voucher Details"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    id="searchbtn"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    data-title="Clear"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    (click)="clearSearchForm()"
+                    id="searchbtn"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="panel-body no-padding panel-udata">
+            <div
+              class="col-md-4 pcol"
+              [ngClass]="{
+                'is-active': this.showProfile
+              }"
+            >
+              <div class="dbox">
+                <a href="javascript:void(0)" [routerLink]="['/home/voucherManagement']">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Show Voucher Profile</h5>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-4 pcol" *ngIf="voucherBatchAccess">
+              <div class="dbox">
+                <a href="javascript:void(0)" [routerLink]="['/home/voucherBatch']">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Show Voucher Batch</h5>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-4 pcol" *ngIf="voucherManageAccess">
+              <div class="dbox">
+                <a href="javascript:void(0)" [routerLink]="['/home/voucher']">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Show Manage Vouchers</h5>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 left">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Voucher Profiles</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#voucherTabelePanel"
+              aria-expanded="false"
+              aria-controls="voucherTabelePanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="voucherTabelePanel" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width: 15%">Name</th>
+                  <th>Plan</th>
+                  <th *ngIf="this.accessData.voucher.createUpdateAccess">Status</th>
+                  <th style="width: 20%">Created On</th>
+                  <th style="width: 20%">ISP Name</th>
+                  <th *ngIf="deleteAccess || editAccess || generateAccess">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let voucher of voucherData
+                      | paginate
+                        : {
+                            id: 'listing_voucherdata',
+                            itemsPerPage: itemsPerPage,
+                            currentPage: currentPage,
+                            totalItems: totalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td class="detailOnAnchorClick" style="width: 15%">
+                    <a
+                      (click)="showVoucherDetail(voucher.id, voucher.mvnoId)"
+                      data-title="Click here to see Voucher Profile detail"
+                      data-toggle="modal"
+                      data-target="#voucherModal"
+                    >
+                      {{ voucher.name }}
+                    </a>
+                  </td>
+                  <td>{{ voucher?.plan?.displayName }}</td>
+                  <td *ngIf="voucher.status.toLowerCase() == 'active'">
+                    <label class="switch">
+                      <input
+                        *ngIf="!modalToggle"
+                        type="checkbox"
+                        checked
+                        [disabled]="!editAccess"
+                      />
+                      <input
+                        *ngIf="modalToggle"
+                        type="checkbox"
+                        checked
+                        [disabled]="!editAccess"
+                        (click)="changeStatusToInActive(voucher.id, voucher.mvnoId, $event)"
+                      />
+                      <span class="slider round"></span>
+                    </label>
+                  </td>
+                  <td *ngIf="voucher.status.toLowerCase() == 'inactive'">
+                    <label class="switch">
+                      <input *ngIf="!modalToggle" type="checkbox" [disabled]="!editAccess" />
+                      <input
+                        *ngIf="modalToggle"
+                        type="checkbox"
+                        [disabled]="!editAccess"
+                        (click)="changeStatusToActive(voucher.id, voucher.mvnoId, $event)"
+                      />
+                      <span class="slider round"></span>
+                    </label>
+                  </td>
+                  <td style="width: 20%">
+                    {{ voucher.createDate | date: "dd-MM-yyy HH:mm" }}
+                  </td>
+                  <td style="width: 20%">{{ voucher.mvnoName }}</td>
+                  <!-- *ngIf="this.accessData.voucher.createUpdateAccess" -->
+                  <td class="btnAction" *ngIf="deleteAccess || editAccess || generateAccess">
+                    <button
+                      *ngIf="editAccess"
+                      id="edit-button"
+                      href="javascript:void(0)"
+                      title="Edit"
+                      type="button"
+                      style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                      title="Edit"
+                      (click)="editVoucherById(voucher.id, i)"
+                    >
+                      <img src="assets/img/ioc01.jpg" />
+                    </button>
+                    <button
+                      *ngIf="deleteAccess"
+                      (click)="deleteConfirm(voucher.id, i)"
+                      title="Delete"
+                      id="delete-button"
+                      href="javascript:void(0)"
+                      style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                      type="button"
+                    >
+                      <img src="assets/img/ioc02.jpg" />
+                    </button>
+                    <a
+                      *ngIf="generateAccess"
+                      type="button"
+                      data-title="Generate"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Generate"
+                      (click)="
+                        generateVoucher(
+                          voucher.id,
+                          voucher.name,
+                          voucher.plan?.id,
+                          voucher.noOfVoucher
+                        )
+                      "
+                    >
+                      <img class="icon" src="assets/img/icons-03.svg" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <div class="row">
+              <div class="col-md-12" style="display: flex">
+                <pagination-controls
+                  id="listing_voucherdata"
+                  [maxSize]="10"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChanged($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+    <div class="col-md-6 right" *ngIf="this.accessData.voucher.createUpdateAccess">
+      <div class="panel" [hidden]="shownVoucherConfig">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Voucher Profile</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#voucehrFormPanel"
+              aria-expanded="false"
+              aria-controls="voucehrFormPanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div
+          id="voucehrFormPanel"
+          class="panel-body table-responsive"
+          *ngIf="!createAccess && !editMode"
+        >
+          Sorry you have not privilege to create operation!
+        </div>
+        <div
+          id="voucehrFormPanel"
+          class="panel-body"
+          *ngIf="createAccess || (editMode && editAccess)"
+        >
+          <!-- Form Design -->
+          <form [formGroup]="vourcharConfigForm" (ngSubmit)="saveVoucherConfig()">
+            <div class="panel-body">
+              <div *ngIf="mvnoId === 1" class="">
+                <label>{{ mvnoTitle }} List*</label>
+                <p-dropdown
+                  id="mvnoId"
+                  [disabled]="editMode"
+                  [options]="commondropdownService.mvnoList"
+                  filter="true"
+                  filterBy="name"
+                  formControlName="mvnoId"
+                  optionLabel="name"
+                  optionValue="id"
+                  placeholder="Select a mvno"
+                  (onChange)="mvnoChange($event)"
+                ></p-dropdown>
+                <div
+                  *ngIf="submitted && vourcharConfigForm.controls.mvnoId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && vourcharConfigForm.controls.mvnoId.errors.required"
+                    class="error text-danger"
+                  >
+                    Mvno is required.
+                  </div>
+                </div>
+              </div>
+              <br />
+              <!-- <div *ngIf="userId == superAdminId">
+                <label>Mvno Name *</label>
+                <div>
+                  <p-dropdown
+                    #dd
+                    [options]="mvnoData"
+                    placeholder="Select mvno"
+                    optionLabel="name"
+                    optionValue="mvnoId"
+                    (onChange)="getDetailsByMVNO($event.value)"
+                    formControlName="mvnoName"
+                    [readonly]="editMode"
+                    [ngClass]="{
+                      'is-invalid': submitted && vourcharConfigForm.controls.mvnoName.errors
+                    }"
+                  ></p-dropdown>
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && vourcharConfigForm.controls.mvnoName.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="submitted && vourcharConfigForm.controls.mvnoName.errors.required"
+                    >
+                      Please Select MVNO Name.
+                    </div>
+                  </div>
+                </div>
+                <br />
+              </div> -->
+              <label>Voucher Name *</label>
+              <input
+                type="text"
+                id="voucherName"
+                formControlName="voucherName"
+                class="form-control"
+                placeholder="Enter voucher name"
+                [readonly]="editMode"
+                [ngClass]="{
+                  'is-invalid': submitted && vourcharConfigForm.controls.voucherName.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && vourcharConfigForm.controls.voucherName.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.voucherName.errors.required"
+                >
+                  Please Enter Voucher Name.
+                </div>
+                <div
+                  class="position"
+                  *ngIf="
+                    submitted && vourcharConfigForm.controls.voucherName.errors?.cannotContainSpace
+                  "
+                >
+                  <p class="error">White space are not allowed.</p>
+                </div>
+              </div>
+              <br />
+              <label>Voucher Code Format *</label>
+              <ng-select
+                [items]="voucherTypes"
+                name="voucherCodeFormat"
+                id="voucherCodeFormat"
+                formControlName="voucherCodeFormat"
+                bindLabel="name"
+                placeholder="Select Voucher Code Format"
+                appendTo="body"
+                [multiple]="true"
+                [ngClass]="{
+                  is_invalidNGSelecet:
+                    submitted && vourcharConfigForm.controls.voucherCodeFormat.errors
+                }"
+              ></ng-select>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && vourcharConfigForm.controls.voucherCodeFormat.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.voucherCodeFormat.errors.required"
+                >
+                  Please Select Voucher Code Format.
+                </div>
+              </div>
+              <br />
+              <label>No. Of Voucher *</label>
+              <input
+                type="number"
+                name="noOfVoucher"
+                formControlName="noOfVoucher"
+                class="form-control"
+                placeholder="Enter no of voucher"
+                [ngClass]="{
+                  'is-invalid': submitted && vourcharConfigForm.controls.noOfVoucher.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && vourcharConfigForm.controls.noOfVoucher.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.noOfVoucher.errors.required"
+                >
+                  Please Enter Number of Vouchers.
+                </div>
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.noOfVoucher.errors.max"
+                >
+                  Please enter number of Vouchers less than 10,000
+                </div>
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.noOfVoucher.errors.min"
+                >
+                  Range is 1 to 10,000.
+                </div>
+              </div>
+              <br />
+              <label>Voucher Code Length *</label>
+              <input
+                type="number"
+                name="voucherCodeLength"
+                formControlName="voucherCodeLength"
+                class="form-control"
+                placeholder="Enter Voucher Code Length"
+                [ngClass]="{
+                  'is-invalid': submitted && vourcharConfigForm.controls.voucherCodeLength.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && vourcharConfigForm.controls.voucherCodeLength.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.voucherCodeLength.errors.required"
+                >
+                  Please Enter Voucher Code Length.
+                </div>
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.voucherCodeLength.errors.min"
+                >
+                  Value should be greater than '0'.
+                </div>
+              </div>
+              <div
+                class="error text-danger"
+                *ngIf="
+                  vourcharConfigForm.controls.voucherCodeLength.errors &&
+                  vourcharConfigForm.controls.voucherCodeLength.errors.max
+                "
+              >
+                Allowed maximum voucher code length is 16 characters only.
+              </div>
+              <br />
+              <label>Prefix</label>
+              <input
+                type="text"
+                name="prefix"
+                formControlName="prefix"
+                class="form-control"
+                placeholder="Enter Prefix"
+              />
+              <!-- <div class="errorWrap text-danger" *ngIf="submitted && vourcharConfigForm.controls.prefix.errors">
+              <div class="error text-danger" *ngIf="
+                  submitted &&
+                  vourcharConfigForm.controls.noOfVoucher.errors.required
+                ">
+                Prefix is required
+              </div>
+            </div> -->
+              <br />
+              <label>Suffix</label>
+              <input
+                type="text"
+                name="suffix"
+                formControlName="suffix"
+                class="form-control"
+                placeholder="Enter Suffix"
+              />
+              <!-- <div class="errorWrap text-danger" *ngIf="submitted && vourcharConfigForm.controls.suffix.errors">
+              <div class="error text-danger" *ngIf="
+                  submitted &&
+                  vourcharConfigForm.controls.suffix.errors.required
+                ">
+                Suffix is required
+              </div>
+            </div> -->
+              <br />
+              <!-- <label>Plan</label> -->
+              <div>
+                <label>Voucher Type *</label>
+                <p-dropdown
+                  [options]="voucherTypeOption"
+                  [(ngModel)]="selectedVoucherType"
+                  optionLabel="name"
+                  optionValue="value"
+                  optionLabel="label"
+                  placeholder="Select"
+                  formControlName="linkType"
+                  [readonly]="editMode"
+                  [ngClass]="{
+                    'is-invalid': submitted && vourcharConfigForm.controls.linkType.errors
+                  }"
+                  [required]="true"
+                >
+                </p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.linkType.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && vourcharConfigForm.controls.linkType.errors.required"
+                  >
+                    Please Select Voucher Type.
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="vourcharConfigForm.controls.linkType.value == 'PLAN'">
+                <label>Plan *</label>
+                <p-dropdown
+                  [options]="this.planData"
+                  placeholder="Select Plan"
+                  optionLabel="name"
+                  optionValue="id"
+                  formControlName="planId"
+                  [ngClass]="{
+                    'is-invalid': submitted && vourcharConfigForm.controls.planId.errors
+                  }"
+                  [required]="true"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.planId.errors"
+                >
+                  <div
+                    *ngIf="submitted && vourcharConfigForm.get('planName')?.errors?.required"
+                    class="text-danger"
+                    class="error text-danger"
+                  >
+                    Please select a plan.
+                  </div>
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && vourcharConfigForm.controls.planId.errors.required"
+                  >
+                    Please Select Plan.
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="vourcharConfigForm.controls.linkType.value == 'WALLET'">
+                <br />
+                <label>Amount*</label>
+                <input
+                  type="text"
+                  id="voucherAmount"
+                  formControlName="voucherAmount"
+                  class="form-control"
+                  placeholder="Enter voucher name"
+                  [ngClass]="{
+                    'is-invalid': submitted && vourcharConfigForm.controls.voucherAmount.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.voucherAmount.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && vourcharConfigForm.controls.voucherAmount.errors.required"
+                  >
+                    Please Enter Voucher Amount.
+                  </div>
+                  <div
+                    class="position"
+                    *ngIf="
+                      submitted &&
+                      vourcharConfigForm.controls.voucherAmount.errors?.cannotContainSpace
+                    "
+                  >
+                    <p class="error">White space are not allowed.</p>
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div>
+                <label>Validity(Days) *</label>
+                <input
+                  type="number"
+                  name="validity"
+                  formControlName="validity"
+                  class="form-control"
+                  placeholder="Enter Validity"
+                  [ngClass]="{
+                    'is-invalid': submitted && vourcharConfigForm.controls.validity.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && vourcharConfigForm.controls.validity.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && vourcharConfigForm.controls.validity.errors.required"
+                  >
+                    Please Enter Validity.
+                  </div>
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && vourcharConfigForm.controls.validity.errors.min"
+                  >
+                    Value should be '-1' or greater than '0'.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="form-group">
+                <label>Status *</label>
+                <p-dropdown
+                  id="status"
+                  [options]="status"
+                  placeholder="Select Plan Status"
+                  optionLabel="label"
+                  optionValue="label"
+                  formControlName="status"
+                ></p-dropdown>
+              </div>
+              <br />
+              <div class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  data-title="Submit Voucher Profile"
+                  data-toggle="tooltip"
+                  data-placement="bottom"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  {{ editMode ? "Update" : "Add" }} Voucher Profile
+                </button>
+                <br />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel" [hidden]="shownVoucherGenerate">
+        <div class="panel-heading">
+          <h3 class="panel-title">Generate Voucher</h3>
+          <div class="right">
+            <button type="button" class="btn-toggle-collapse">
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <form [formGroup]="voucherGenerateForm" (ngSubmit)="submitToGenerateVoucher()">
+          <div class="panel-body">
+            <label>Voucher Profile Name</label>
+            <input type="text" id="configName" formControlName="configName" class="form-control" />
+            <br />
+            <label>Batch Name *</label>
+            <input
+              type="text"
+              id="batchName"
+              formControlName="batchName"
+              class="form-control"
+              placeholder="Enter batch name"
+              [ngClass]="{
+                'is-invalid': generateSubmitted && voucherGenerateForm.controls.batchName.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="generateSubmitted && voucherGenerateForm.controls.batchName.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="generateSubmitted && voucherGenerateForm.controls.batchName.invalid"
+              >
+                Please Enter Batch Name.
+              </div>
+            </div>
+            <br />
+            <!-- <div class="form-group">
+              <label>Reseller</label>
+              <p-dropdown
+                id="reseller"
+                [options]="resellerDropDown"
+                placeholder="Select Reseller"
+                optionLabel="resellerName"
+                optionValue="resellerId"
+                formControlName="reseller"
+              ></p-dropdown>
+            </div> -->
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                data-title="Generate Voucher"
+                data-toggle="tooltip"
+                data-placement="bottom"
+              >
+                <i class="fa fa-check-circle"></i>
+                Generate Voucher
+              </button>
+              <br />
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- END Form Design -->
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="voucherModal" role="dialog" *ngIf="modalToggle">
+  <div class="modal-dialog" style="width: 35%">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="panel-title">{{ voucherConfig.name }} Detail</h3>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="name">Name :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="nameValue">{{ voucherConfig?.name }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="type">Voucher Code Format :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="typeValue">
+                {{ voucherConfig?.voucherCodeFormat }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="noOfVoucher">No. of Vouchers :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="noOfVoucherValue">
+                {{ voucherConfig?.noOfVoucher }}
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-5">
+              <label for="planName">Plan :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="planNameValue">{{ planDetail?.name }}</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-5">
+              <label for="planName">Validity :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="planNameValue">{{ planDetail?.validity }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="length">Voucher Code Length :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="lengthValue">
+                {{ voucherConfig?.voucherCodeLength }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="preValue">Prefix :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="preValuevalue">{{ voucherConfig?.prefix }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="postValue">Suffix :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="postValueValue">{{ voucherConfig?.suffix }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Status :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ voucherConfig?.status }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

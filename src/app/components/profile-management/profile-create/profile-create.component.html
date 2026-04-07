@@ -1,0 +1,203 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isProfileEdit ? "Update" : "Create" }} {{ profileTitle }}</h3>
+        <div class="right">
+          <button
+            id="create"
+            aria-controls="createPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#createPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="createPreCust">
+        <div class="panel-body">
+          <form [formGroup]="profileFormGroup" (ngSubmit)="onSubmit()">
+            <fieldset style="margin-top: 1.5rem">
+              <legend>{{ profileTitle }} Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-15">
+                    <label>{{ profileTitle }} Name*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter {{ profileTitle }} FullName"
+                      formControlName="name"
+                      [ngClass]="{
+                        'is-invalid': submitted && profileFormGroup.controls.name.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && profileFormGroup.controls.name.errors"
+                    >
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && profileFormGroup.controls.name.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && profileFormGroup.controls.name.errors.required"
+                        >
+                          {{ profileTitle }} Name is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-15">
+                    <label>{{ profileTitle }} Prefix*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter {{ profileTitle }} Prefix"
+                      formControlName="prefix"
+                      [ngClass]="{
+                        'is-invalid': submitted && profileFormGroup.controls.prefix.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && profileFormGroup.controls.prefix.errors"
+                    >
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && profileFormGroup.controls.prefix.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && profileFormGroup.controls.prefix.errors.required"
+                        >
+                          {{ profileTitle }} Prefix is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-15">
+                    <label>Status*</label>
+                    <p-dropdown
+                      [options]="statusOptions"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Status"
+                      formControlName="status"
+                      [ngClass]="{
+                        'is-invalid': submitted && profileFormGroup.controls.status.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && profileFormGroup.controls.status.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && profileFormGroup.controls.status.errors.required"
+                      >
+                        {{ profileTitle }} Status is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-15">
+                    <label>{{ profileTitle }} Type*</label>
+                    <p-dropdown
+                      id="roles"
+                      [options]="typeList"
+                      placeholder="Select a Type"
+                      formControlName="type"
+                      optionLabel="label"
+                      optionValue="value"
+                      filter="true"
+                      filterBy="label"
+                      (onChange)="onTypeChange($event.value)"
+                      [ngClass]="{
+                        'is-invalid': submitted && profileFormGroup.controls.type.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && profileFormGroup.controls.type.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && profileFormGroup.controls.type.errors.required"
+                      >
+                        {{ profileTitle }} type is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-15"
+                    *ngIf="selectedType === 'number'"
+                  >
+                    <label>Enter Starts From*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Starts From"
+                      formControlName="startFrom"
+                      [min]="0"
+                      (keydown)="onlyNumberKey($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && profileFormGroup.controls.startFrom.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && profileFormGroup.controls.startFrom.errors"
+                    >
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && profileFormGroup.controls.startFrom.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && profileFormGroup.controls.startFrom.errors.required"
+                        >
+                          Starts From is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="selectedType === 'timestamp'"
+                    class="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-15"
+                  >
+                    <label>Select Timestamp Options*</label>
+                    <div>
+                      <input type="checkbox" id="year" formControlName="year" />&nbsp;
+                      <label for="year">Year</label>
+                    </div>
+                    <div>
+                      <input type="checkbox" id="month" formControlName="month" />&nbsp;
+                      <label for="month">Month</label>
+                    </div>
+                    <div>
+                      <input type="checkbox" id="day" formControlName="day" />&nbsp;
+                      <label for="day">Day</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <div class="addUpdateBtn">
+              <button type="submit" class="btn btn-primary" id="submit">
+                <i class="fa fa-check-circle"></i>
+                {{ isProfileEdit ? "Update" : "Create" }} {{ profileTitle }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

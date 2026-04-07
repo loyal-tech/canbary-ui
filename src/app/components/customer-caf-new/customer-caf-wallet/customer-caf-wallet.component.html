@@ -1,0 +1,86 @@
+ <div class="row">
+    <app-customer-withdrawalmodal
+      dialogId="withdrawalAmountModal"
+      [wCustID]="wCustID"
+      (walletCustomerID)="addWalletIncustomer($event)"
+    ></app-customer-withdrawalmodal>
+    <div class="col-md-12 col-sm-12">
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <button
+              type="button"
+              class="btn btn-secondary backbtn"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Go to Customer Details"
+              (click)="customerDetailOpen(customerDetailData.id)"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: #f7b206 !important; font-size: 28px"
+              ></i>
+            </button>
+            <h3 class="panel-title">
+              {{ customerDetailData?.title }}
+              {{ customerDetailData?.custname }} Wallet
+            </h3>
+          </div>
+          <div class="right">
+            <button
+              class="btn refreshbtn"
+              type="reset"
+              (click)="addWalletIncustomer(this.customerDetailData.id)"
+            >
+              <i class="fa fa-refresh"></i>
+            </button>
+            <button type="button" class="btn-toggle-collapse">
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body table-responsive">
+          <div class="card" style="display: flex; justify-content: center; text-align: center">
+            <p-card [style]="{ width: '360px' }">
+              <ng-template pTemplate="header">
+                <h1>Wallet Balance</h1>
+              </ng-template>
+              <p-badge
+                *ngIf="getWallatData.customerWalletDetails >= 0"
+                [value]="getWallatData.customerWalletDetails"
+                size="xlarge"
+                severity="success"
+              >
+              </p-badge>
+              <p-badge
+                *ngIf="getWallatData.customerWalletDetails < 0"
+                [value]="getWallatData.customerWalletDetails"
+                size="xlarge"
+                severity="danger"
+              >
+              </p-badge>
+              <ng-template pTemplate="footer">
+                <div *ngIf="this.WalletAmount > 0" style="margin-bottom: 2rem">
+                  <button
+                    (click)="
+                      withdrawalAmountModel(
+                        'withdrawalAmountModal',
+                        customerDetailData.id,
+                        this.WalletAmount
+                      )
+                    "
+                    class="btn btn-primary"
+                    id="submit"
+                    type="submit"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    Withdrawal Amount
+                  </button>
+                </div>
+              </ng-template>
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,1251 @@
+<div class="childComponent">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- Dictionary Data -->
+      <div class="panel top">
+        <div class="panel-heading">
+          <h3 class="panel-title">Dictionary Management</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#dictionarySearchPanel"
+              aria-expanded="false"
+              aria-controls="dictionarySearchPanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="dictionarySearchPanel" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="searchForm">
+              <form
+                class="form-inline"
+                [formGroup]="searchDictionaryForm"
+                (ngSubmit)="searchDictionary()"
+              >
+                <div class="row">
+                  <div class="col-md-1" style="padding-right: 0%; text-align: right">
+                    <label style="padding: 5px">Vendor : &nbsp;</label>
+                  </div>
+                  <div class="col-md-3" style="padding: 0%">
+                    <input
+                      type="text"
+                      id="vendor"
+                      formControlName="vendor"
+                      class="form-control"
+                      placeholder="Enter vendor"
+                      style="width: 100%"
+                      (click)="searchDictionary()"
+                    />
+                  </div>
+                  <div class="col-md-1" style="padding: 0%; text-align: right">
+                    <label style="padding: 5px">Vendor Id : &nbsp;</label>
+                  </div>
+                  <div class="col-md-3" style="padding: 0%">
+                    <input
+                      type="text"
+                      id="vendorId"
+                      formControlName="vendorId"
+                      class="form-control"
+                      placeholder="Enter vendor id"
+                      style="width: 100%"
+                      (click)="searchDictionary()"
+                    />
+                  </div>
+                  <div class="col-md-1" style="padding: 0%; text-align: right">
+                    <label style="padding: 5px">Vendor Type:</label>
+                  </div>
+                  <div class="col-md-3" style="padding-left: 0%">
+                    <p-dropdown
+                      [options]="vendoreTypeAll"
+                      placeholder="Select Vendor Type"
+                      optionLabel="label"
+                      optionValue="label"
+                      filter="true"
+                      filterBy="label"
+                      formControlName="vendorType"
+                      (click)="searchDictionary()"
+                    ></p-dropdown>
+                    <!-- <select
+                      class="form-control"
+                      name="vendorType"
+                      id="vendorType"
+                      formControlName="vendorType"
+                      style="width: 100%;"
+                    >
+                      <option [ngValue]="null" disabled selected>
+                        Select Vendor Type
+                      </option>
+                      <option
+                        *ngFor="
+                          let vendorTypeValue of vendorTypes.vendorTypeList
+                        "
+                        [ngValue]="vendorTypeValue"
+                      >
+                        {{ vendorTypeValue }}
+                      </option>
+                    </select> -->
+                  </div>
+                </div>
+                <div class="searchbtn">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search Dictionary Details"
+                    data-toggle="tooltip"
+                    id="searchbtn"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Delete Dictionary Details"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                    id="searchbtn"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 left">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Dictionaries</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#dictionaryTablePanel"
+              aria-expanded="false"
+              aria-controls="dictionaryTablePanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="dictionaryTablePanel" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <div style="text-align: right; margin-right: 5px">
+              <button
+                *ngIf="createDictAccess"
+                [disabled]="!isSuperAdmin"
+                type="button"
+                class="btn btn-primary btn-xs"
+                data-target="#addUpdateModal"
+                data-toggle="modal"
+                data-backdrop="static"
+                data-keyboard="false"
+                (click)="openDictionaryPopup()"
+              >
+                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                Add Dictionary
+              </button>
+            </div>
+            <table class="table" id="myTable">
+              <thead>
+                <tr>
+                  <th>Vendor</th>
+                  <th>Id</th>
+                  <th>Vendor Type</th>
+                  <th *ngIf="deleteDictAccess || editDictAccess">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let dictionary of dictionaryData
+                      | paginate
+                        : {
+                            id: 'listing_dictionaryData',
+                            itemsPerPage: itemsPerPage_Dic,
+                            currentPage: currentPage_Dic,
+                            totalItems: totalRecords_Dic
+                          };
+                    index as i
+                  "
+                  (click)="
+                    getDictionaryAttributes(
+                      dictionary.dictionaryId,
+                      dictionary.vendor,
+                      dictionary.mvnoId
+                    )
+                  "
+                  class="curson_pointer"
+                  [ngClass]="{
+                    'selected-row-background': dictionary.vendor === selectedRowVendorName
+                  }"
+                >
+                  <td>{{ dictionary.vendor }}</td>
+                  <td>{{ dictionary.vendorId }}</td>
+                  <td>{{ dictionary.vendorType }}</td>
+                  <!-- <td>{{voucher.status}}</td> -->
+                  <td *ngIf="editDictAccess || deleteDictAccess" class="btnAction">
+                    <a
+                      *ngIf="editDictAccess"
+                      type="button"
+                      data-title="Edit"
+                      class="curson_pointer"
+                      (click)="editDictionaryById(dictionary.mvnoId, i, dictionary.dictionaryId)"
+                    >
+                      <img
+                        src="assets/img/ioc01.jpg"
+                        data-target="#addUpdateModal"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        data-keyboard="false"
+                      />
+                    </a>
+                    <a
+                      *ngIf="deleteDictAccess"
+                      type="button"
+                      data-title="Delete"
+                      data-toggle="tooltip"
+                      class="curson_pointer"
+                      (click)="
+                        deleteConfirm(dictionary.dictionaryId, dictionary.vendor, dictionary.mvnoId)
+                      "
+                    >
+                      <img src="assets/img/ioc02.jpg" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <div class="row">
+              <div class="col-md-12" style="display: flex">
+                <pagination-controls
+                  id="listing_dictionaryData"
+                  [maxSize]="10"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedForDictionary($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown" style="display: flex">
+                  <p-dropdown
+                    [options]="pageLimitOptions_Dic"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage_Dic($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+    <div class="col-md-6 right" *ngIf="viewDictAttrAccess && clickViewDictAtt">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Dictionary Attributes</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#dictionaryFormPanel"
+              aria-expanded="false"
+              aria-controls="dictionaryFormPanel"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="dictionaryFormPanel" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <div class="panel-collapse collapse in">
+              <div *ngIf="showAddDicAttrButton" class="searchForm">
+                <form
+                  class="form-inline"
+                  [formGroup]="searchDictionaryAttributeForm"
+                  (ngSubmit)="searchDictionaryAttribute()"
+                >
+                  <div>
+                    <label>Name : &nbsp;</label>
+                    <input
+                      type="text"
+                      id="name"
+                      formControlName="name"
+                      class="form-control"
+                      placeholder="Enter Name"
+                    />
+                    <button type="submit" class="btn btn-primary btn-xs" id="searchbtn">
+                      <i class="fa fa-search"></i>
+                      Search
+                    </button>
+                    <button
+                      type="reset"
+                      class="btn btn-default btn-xs"
+                      (click)="clearAttributeSearchForm()"
+                      id="searchbtn"
+                    >
+                      <i class="fa fa-refresh"></i>
+                      Clear
+                    </button>
+                    <button
+                      *ngIf="createDictAttrAccess"
+                      [disabled]="!isSuperAdmin"
+                      type="button"
+                      class="btn btn-primary btn-xs"
+                      data-toggle="modal"
+                      data-backdrop="static"
+                      data-keyboard="false"
+                      (click)="openDictionaryAttributePopup()"
+                    >
+                      <i class="fa fa-plus-square" aria-hidden="true"></i>
+                      Add
+                    </button>
+                  </div>
+                </form>
+              </div>
+              &nbsp;
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th *ngIf="deleteDictAttrAccess || editDictAttrAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let dictionaryAttribute of dictionaryAttributeData
+                        | paginate
+                          : {
+                              id: 'listing_dictionaryAttributeData',
+                              itemsPerPage: itemsPerPage_DicAttr,
+                              currentPage: currentPage_DicAttr,
+                              totalItems: totalRecords_DicAttr
+                            };
+                      index as i
+                    "
+                    [ngClass]="{
+                      'selected-row-background': dictionaryAttribute.name === selectedRowDicAttrName
+                    }"
+                  >
+                    <td class="detailOnAnchorClick">
+                      <a
+                        (click)="
+                          showDictionaryAttributeDetail(dictionaryAttribute.dictionaryAttributeId)
+                        "
+                        title="Click To See Attribute Detail"
+                        data-toggle="modal"
+                        data-target="#dictionaryAttributeDetailModal"
+                        class="curson_pointer"
+                        data-keyboard="false"
+                        data-backdrop="static"
+                        style="color: #f7b206"
+                      >
+                        {{ dictionaryAttribute.name }}
+                      </a>
+                    </td>
+                    <td
+                      (click)="attributesRowClick()"
+                      class="curson_pointer"
+                      style="color: #f7b206"
+                    >
+                      {{ dictionaryAttribute.category }}
+                    </td>
+                    <td>
+                      {{ dictionaryAttribute.type }}
+                    </td>
+                    <td class="btnAction" *ngIf="deleteDictAttrAccess || editDictAttrAccess">
+                      <a
+                        *ngIf="editDictAttrAccess"
+                        type="button"
+                        title="Edit Dictionary Details"
+                        data-toggle="tooltip"
+                        class="curson_pointer"
+                        (click)="
+                          editDictionaryAttributeById(
+                            dictionaryAttribute.mvnoId,
+                            i,
+                            dictionaryAttribute.dictionaryAttributeId
+                          )
+                        "
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteDictAttrAccess"
+                        type="button"
+                        title="Delete Dictionary Details"
+                        data-toggle="tooltip"
+                        class="curson_pointer"
+                        (click)="
+                          deleteConfirmAttribute(
+                            dictionaryAttribute.dictionaryAttributeId,
+                            dictionaryAttribute.mvnoId
+                          )
+                        "
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="listing_dictionaryAttributeData"
+                    [maxSize]="10"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedForDictionaryAttribute($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown" style="display: flex">
+                    <p-dropdown
+                      [options]="pageLimitOptions_DicAttr"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage_DicAttr($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END Data Table -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Update Dictionary Model -->
+  <div *ngIf="dictionaryPopupIsOpen" class="modal fade" id="addUpdateModal" role="dialog">
+    <div class="modal-dialog" style="width: 40%">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <!-- <button type="button" #closebutton class="close" data-dismiss="modal">&times;</button> -->
+          <h3 class="panel-title">{{ editMode ? "Update" : "Add" }} Dictionary</h3>
+        </div>
+        <div class="modal-body">
+          <form
+            name="dictionaryForm"
+            [formGroup]="dictionaryForm"
+            (ngSubmit)="submitDictionaryAttribute()"
+          >
+            <!-- <div *ngIf="userId == superAdminId">
+              <label>Mvno Name</label>
+              <div>
+                <p-dropdown
+                  #dd
+                  [options]="mvnoData"
+                  placeholder="Select mvno"
+                  optionLabel="name"
+                  optionValue="mvnoId"
+                  (onChange)="getMvnoLable($event, dd)"
+                  formControlName="mvnoName"
+                  filter="true"
+                  filterBy="name"
+                  [readonly]="editMode"
+                  [ngClass]="{
+                    'is-invalid': submitted && dictionaryForm.controls.mvnoName.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && dictionaryForm.controls.mvnoName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && dictionaryForm.controls.mvnoName.errors.required"
+                  >
+                    Mvno name is required
+                  </div>
+                </div>
+              </div>
+              <br />
+            </div> -->
+            <div
+              class="form-group"
+              [ngClass]="{
+                'has-error':
+                  dictionaryForm.get('vendor').errors &&
+                  (dictionaryForm.get('vendor').touched || dictionaryForm.get('vendor').dirty)
+              }"
+            >
+              <label for="vendor">Vendor:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="vendor"
+                placeholder="Enter vendor"
+                name="vendor"
+                formControlName="vendor"
+              />
+              <span
+                class="help-block"
+                *ngIf="
+                  (dictionaryForm.get('vendor').touched || dictionaryForm.get('vendor').dirty) &&
+                  dictionaryForm.get('vendor').hasError('required')
+                "
+              >
+                Vendor is required
+              </span>
+              <!-- <span class="help-block"
+                            *ngIf="dictionaryForm.get('vendor').errors && (dictionaryForm.get('vendor').touched || dictionaryForm.get('vendor').dirty)">
+                            <span *ngIf="dictionaryForm.get('vendor').errors.required">
+                                Vendor name is required
+                            </span>
+                        </span> -->
+            </div>
+            <div
+              class="form-group"
+              [ngClass]="{
+                'has-error':
+                  dictionaryForm.get('vendorId').errors &&
+                  (dictionaryForm.get('vendorId').touched || dictionaryForm.get('vendorId').dirty)
+              }"
+            >
+              <label for="vendorId">Vendor Id:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="vendorId"
+                placeholder="Enter vendor id"
+                name="vendorId"
+                formControlName="vendorId"
+              />
+              <span
+                class="help-block"
+                *ngIf="
+                  (dictionaryForm.get('vendorId').touched ||
+                    dictionaryForm.get('vendorId').dirty) &&
+                  dictionaryForm.get('vendorId').hasError('required')
+                "
+              >
+                Vendor Id is required
+              </span>
+            </div>
+            <div
+              class="form-group"
+              [ngClass]="{
+                'has-error':
+                  dictionaryForm.get('vendorType').errors &&
+                  (dictionaryForm.get('vendorType').touched ||
+                    dictionaryForm.get('vendorType').dirty)
+              }"
+            >
+              <label for="vendorType">Vendor Type:</label>
+              <p-dropdown
+                [options]="vendoreTypeAll"
+                placeholder="Select Vendor Type"
+                optionLabel="label"
+                optionValue="label"
+                filter="true"
+                filterBy="label"
+                formControlName="vendorType"
+              ></p-dropdown>
+
+              <!-- <select
+              class="form-control"
+              name="vendorType"
+              id="vendorType"
+              formControlName="vendorType"
+            >
+              <option [ngValue]="null" disabled selected>
+                Select Vendor Type
+              </option>
+              <option
+                *ngFor="let vendorTypeValue of vendorTypes.vendorTypeList"
+                [ngValue]="vendorTypeValue"
+              >
+                {{ vendorTypeValue }}
+              </option>
+            </select> -->
+              <span
+                class="help-block"
+                *ngIf="
+                  (dictionaryForm.get('vendorType').touched ||
+                    dictionaryForm.get('vendorType').dirty) &&
+                  dictionaryForm.get('vendorType').hasError('required')
+                "
+              >
+                Please select Vendor Type
+              </span>
+            </div>
+            <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+          </form>
+        </div>
+        <div class="modal-footer">
+          <div class="addUpdateBtn">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm"
+              (click)="submitDictionary()"
+              [disabled]="!dictionaryForm.valid"
+            >
+              <i class="fa fa-check-circle"></i>
+              {{ editMode ? "Update" : "Add" }} Dictionary
+            </button>
+            <button id="btn" type="button" class="btn btn-default btn-sm" (click)="reset()">
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+            <button
+              type="button"
+              #closebutton
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+              (click)="closeDictionaryPopup()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Update Dictionary Attribute Model -->
+
+
+<p-dialog
+  [header]="(attributeEditMode ? 'Update' : 'Add') + ' Dictionary Attribute'"
+    [(visible)]="dictionaryAttributeModal"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeDicAttrAddUpdatePopup()"
+  >
+   <div class="modal-body">
+          <form
+            name="dictionaryAttributeForm"
+            [formGroup]="dictionaryAttributeForm"
+            (ngSubmit)="submitDictionary()"
+          >
+            <!-- <div *ngIf="userId == superAdminId">
+              <label>Mvno Name</label>
+              <div>
+                <p-dropdown
+                  #dd
+                  [options]="mvnoData"
+                  placeholder="Select mvno"
+                  optionLabel="name"
+                  optionValue="mvnoId"
+                  (onChange)="getMvnoLable($event, dd)"
+                  formControlName="mvnoName"
+                  [readonly]="editMode"
+                  filter="true"
+                  filterBy="name"
+                  [ngClass]="{
+                    'is-invalid': submitted && dictionaryAttributeForm.controls.mvnoName.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && dictionaryAttributeForm.controls.mvnoName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && dictionaryAttributeForm.controls.mvnoName.errors.required"
+                  >
+                    Mvno name is required
+                  </div>
+                </div>
+              </div>
+              <br />
+            </div> -->
+
+            <div
+              class="form-group"
+              [ngClass]="{
+                'has-error':
+                  dictionaryAttributeForm.get('name').errors &&
+                  (dictionaryAttributeForm.get('name').touched ||
+                    dictionaryAttributeForm.get('name').dirty)
+              }"
+            >
+              <label for="name">Name:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                placeholder="Enter Attribute Name"
+                name="name"
+                formControlName="name"
+              />
+              <span
+                class="help-block"
+                *ngIf="
+                  (dictionaryAttributeForm.get('name').touched ||
+                    dictionaryAttributeForm.get('name').dirty) &&
+                  dictionaryAttributeForm.get('name').hasError('required')
+                "
+              >
+                Dictionary attribute name is required
+              </span>
+            </div>
+            <div
+              class="form-group"
+              [ngClass]="{
+                'has-error':
+                  dictionaryAttributeForm.get('attributeId').errors &&
+                  (dictionaryAttributeForm.get('attributeId').touched ||
+                    dictionaryAttributeForm.get('attributeId').dirty)
+              }"
+            >
+              <label for="attributeId">Attribute Id:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="attributeId"
+                placeholder="Enter Attribute Id"
+                name="attributeId"
+                formControlName="attributeId"
+              />
+              <span
+                class="help-block"
+                *ngIf="
+                  (dictionaryAttributeForm.get('attributeId').touched ||
+                    dictionaryAttributeForm.get('attributeId').dirty) &&
+                  dictionaryAttributeForm.get('attributeId').hasError('required')
+                "
+              >
+                Dictionary attribute id is required
+              </span>
+            </div>
+            <div
+              class="form-group"
+              [ngClass]="{
+                'has-error':
+                  dictionaryAttributeForm.get('type').errors &&
+                  (dictionaryAttributeForm.get('type').touched ||
+                    dictionaryAttributeForm.get('type').dirty)
+              }"
+            >
+              <label for="type">Attribute Type:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="type"
+                placeholder="Enter Attribute Type"
+                name="type"
+                formControlName="type"
+              />
+              <span
+                class="help-block"
+                *ngIf="
+                  (dictionaryAttributeForm.get('type').touched ||
+                    dictionaryAttributeForm.get('type').dirty) &&
+                  dictionaryAttributeForm.get('type').hasError('required')
+                "
+              >
+                Dictionary attribute type is required
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="vendor">Vendor:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="vendor"
+                placeholder="Enter Vendor"
+                name="vendor"
+                formControlName="vendor"
+                disabled="disabled"
+              />
+            </div>
+            <div
+              class="form-group"
+              [ngClass]="{
+                'has-error':
+                  dictionaryAttributeForm.get('category').errors &&
+                  (dictionaryAttributeForm.get('category').touched ||
+                    dictionaryAttributeForm.get('category').dirty)
+              }"
+            >
+              <label for="category">Category:</label>
+              <p-dropdown
+                [options]="attributeCategoryList"
+                optionValue="label"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                placeholder="Select a Category"
+                formControlName="category"
+              ></p-dropdown>
+              <!-- <select
+              class="form-control"
+              name="category"
+              id="category"
+              formControlName="category"
+            >
+              <option [ngValue]="null" disabled selected>
+                Select Category
+              </option>
+              <option
+                *ngFor="
+                  let attributeCategory of attributeCategories.attributeCategoryList
+                "
+                [ngValue]="attributeCategory"
+              >
+                {{ attributeCategory }}
+              </option>
+            </select> -->
+              <span
+                class="help-block"
+                *ngIf="
+                  (dictionaryAttributeForm.get('category').touched ||
+                    dictionaryAttributeForm.get('category').dirty) &&
+                  dictionaryAttributeForm.get('category').hasError('required')
+                "
+              >
+                Please select dictionary attribute category
+              </span>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <div class="addUpdateBtn">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm"
+              (click)="submitDictionaryAttribute()"
+              [disabled]="!dictionaryAttributeForm.valid"
+            >
+              <i class="fa fa-check-circle"></i>
+              {{ attributeEditMode ? "Update" : "Add" }} Dictionary Attribute
+            </button>
+            <button id="btn" type="button" class="btn btn-default btn-sm" (click)="resetDictAttr()">
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+              (click)="closeDicAttrAddUpdatePopup()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+</p-dialog>
+  <!-- Show dictionary Attribute Detail Modal -->
+  <div class="modal fade" id="dictionaryAttributeDetailModal" role="dialog">
+    <div class="modal-dialog" style="width: 35%">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            (click)="closeDicAttrDetailPopup()"
+          >
+            &times;
+          </button>
+          <h3 class="panel-title">{{ dictionaryAttribute.name }} Detail</h3>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="name">Name :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="nameValue">{{ dictionaryAttribute.name }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="type">Type :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="typeValue">{{ dictionaryAttribute.type }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="category">Category :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="categoryValue">
+                  {{ dictionaryAttribute.category }}
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <label for="attributeId">Attribute Id :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="attributeIdValue">
+                  {{ dictionaryAttribute.attributeId }}
+                </label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="dictionaryId">Vendor :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="dictionaryIdValue">
+                  {{ dictionaryOfAttribute.vendor }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-default"
+            data-dismiss="modal"
+            (click)="closeDicAttrDetailPopup()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dictionary Value Modal -->
+
+  <!-- <div
+    *ngIf="dictionaryValuePopupIsOpen && viewAttrValueAccess"
+    class="modal fade"
+    id="dictionaryValueModal"
+    role="dialog"
+  > -->
+  <p-dialog
+    header="Dictionary Value Management"
+    [(visible)]="myModal"
+    [style]="{ width: '70%' }"
+    [modal]="true"
+    [responsive]="true"
+    [draggable]="false"
+    [closable]="true"
+    (onHide)="removeRowSelection()"
+  >
+    <!-- <div class="modal-dialog" style="width: 70%"> -->
+    <!-- Modal content-->
+    <!-- <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" (click)="removeRowSelection()" class="close" data-dismiss="modal">
+              &times;
+            </button>
+            <h3 class="modal-title">Dictionary Value Management</h3>
+          </div> -->
+    <div class="modal-body" style="background-color: #dddddd">
+      <div class="row" *ngIf="viewAttrValueAccess">
+        <div class="col-md-12">
+          <!-- Dictionary Data -->
+          <div class="panel">
+            <div class="panel-body">
+              <div class="searchForm">
+                <form
+                  class="form-inline"
+                  [formGroup]="searchDictionaryValueForm"
+                  (ngSubmit)="searchDictionaryValue()"
+                >
+                  <div>
+                    <label>Name : &nbsp;</label>
+                    <input
+                      type="text"
+                      id="name"
+                      formControlName="name"
+                      class="form-control"
+                      placeholder="Enter Name"
+                    />
+                    &nbsp; &nbsp;
+                    <label>Value : &nbsp;</label>
+                    <input
+                      type="text"
+                      id="value"
+                      formControlName="value"
+                      class="form-control"
+                      placeholder="Enter Value"
+                    />
+                    &nbsp; &nbsp;
+                    <button type="submit" class="btn btn-primary" id="searchbtn">
+                      <i class="fa fa-search"></i>
+                      Search
+                    </button>
+                    <button
+                      type="reset"
+                      class="btn btn-default"
+                      (click)="clearSearchDictionaryValueForm()"
+                      id="searchbtn"
+                    >
+                      <i class="fa fa-refresh"></i>
+                      Clear
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- END User Data -->
+        </div>
+      </div>
+      <div class="row" *ngIf="viewAttrValueAccess">
+        <div class="col-md-6">
+          <div class="panel">
+            <div class="panel-heading">
+              <h3 class="panel-title" style="font-size: 21px">Dictionary Values</h3>
+              <div class="right">
+                <button type="button" class="btn-toggle-collapse">
+                  <i class="fa fa-minus-circle"></i>
+                </button>
+              </div>
+            </div>
+            <div class="panel-body table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th *ngIf="editAttrValueAccess || deleteAttrValueAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let dictionaryValue of dictionaryValueData.dictionaryValueList
+                        | paginate
+                          : {
+                              id: 'listing_dictionaryValueData',
+                              itemsPerPage: itemsPerPage_DicValue,
+                              currentPage: currentPage_DicValue,
+                              totalItems: totalRecords_DicValue
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ dictionaryValue.name }}</td>
+                    <td>{{ dictionaryValue.type }}</td>
+                    <td>{{ dictionaryValue.value }}</td>
+                    <td class="btnAction" *ngIf="editAttrValueAccess || deleteAttrValueAccess">
+                      <a
+                        *ngIf="editAttrValueAccess"
+                        type="button"
+                        class="curson_pointer"
+                        (click)="
+                          editDictionaryValueById(
+                            dictionaryValue.dictionaryValueId,
+                            i,
+                            dictionaryValue.mvnoId
+                          )
+                        "
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAttrValueAccess"
+                        type="button"
+                        class="curson_pointer"
+                        (click)="
+                          deleteConfirmValue(
+                            dictionaryValue.dictionaryValueId,
+                            dictionaryValue.mvnoId
+                          )
+                        "
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="row">
+                <div class="col-md-12">
+                  <pagination-controls
+                    id="listing_dictionaryValueData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedForDictionaryValue($event)"
+                  ></pagination-controls>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- Form Design -->
+          <div class="panel">
+            <div class="panel-heading">
+              <h3 class="panel-title" style="font-size: 21px">
+                {{ dicValueEditMode ? "Update" : "Create" }} Dictionary Value
+              </h3>
+              <div class="right">
+                <button type="button" class="btn-toggle-collapse">
+                  <i class="fa fa-minus-circle"></i>
+                </button>
+              </div>
+            </div>
+            <div
+              class="panel-body table-responsive"
+              *ngIf="!createAttrValueAccess && !dicValueEditMode"
+            >
+              Sorry you have not privilege to create operation!
+            </div>
+            <div
+              *ngIf="createAttrValueAccess || (dicValueEditMode && editAttrValueAccess)"
+              id="radiusClientFormTabel"
+              class="panel-collapse collapse in"
+            >
+              <form [formGroup]="dictionaryValueForm" (ngSubmit)="submitDictionaryValue()">
+                <div class="panel-body">
+                  <div
+                    class="form-group"
+                    [ngClass]="{
+                      'has-error':
+                        dictionaryValueForm.get('name').errors &&
+                        (dictionaryValueForm.get('name').touched ||
+                          dictionaryValueForm.get('name').dirty)
+                    }"
+                  >
+                    <!-- <div *ngIf="userId == superAdminId">
+                      <label>Mvno Name</label>
+                      <div>
+                        <p-dropdown
+                          #dd
+                          [options]="mvnoData"
+                          placeholder="Select mvno"
+                          optionLabel="name"
+                          optionValue="mvnoId"
+                          (onChange)="getMvnoLable($event, dd)"
+                          formControlName="mvnoName"
+                          [readonly]="editMode"
+                          [ngClass]="{
+                            'is-invalid': submitted && dictionaryValueForm.controls.mvnoName.errors
+                          }"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && dictionaryValueForm.controls.mvnoName.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && dictionaryValueForm.controls.mvnoName.errors.required
+                            "
+                          >
+                            Mvno name is required
+                          </div>
+                        </div>
+                      </div>
+                      <br />
+                    </div> -->
+
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      id="name"
+                      formControlName="name"
+                      class="form-control"
+                      placeholder="Enter Name"
+                    />
+                    <span
+                      class="help-block"
+                      *ngIf="
+                        (dictionaryValueForm.get('name').touched ||
+                          dictionaryValueForm.get('name').dirty) &&
+                        dictionaryValueForm.get('name').hasError('required')
+                      "
+                    >
+                      Dictionary value name is required
+                    </span>
+                  </div>
+
+                  <!-- <label>Type</label>
+                                    <input type="text" name="type" formControlName="type" class=" form-control"
+                                        placeholder="Enter Type">
+                                    <br> -->
+                  <div
+                    class="form-group"
+                    [ngClass]="{
+                      'has-error':
+                        dictionaryValueForm.get('value').errors &&
+                        (dictionaryValueForm.get('value').touched ||
+                          dictionaryValueForm.get('value').dirty)
+                    }"
+                  >
+                    <label>Value</label>
+                    <input
+                      type="text"
+                      name="value"
+                      formControlName="value"
+                      class="form-control"
+                      placeholder="Enter Value"
+                    />
+                    <span
+                      class="help-block"
+                      *ngIf="
+                        (dictionaryValueForm.get('value').touched ||
+                          dictionaryValueForm.get('value').dirty) &&
+                        dictionaryValueForm.get('value').hasError('required')
+                      "
+                    >
+                      Value is required
+                    </span>
+                  </div>
+                  <div class="addUpdateBtn">
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      [disabled]="!dictionaryValueForm.valid || !isSuperAdmin"
+                    >
+                      <i class="fa fa-check-circle"></i>
+                      {{ dicValueEditMode ? "Update" : "Add" }} Dictionary Value
+                    </button>
+                    <br />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        (click)="removeRowSelection()"
+        class="btn btn-default"
+        data-dismiss="modal"
+      >
+        Close
+      </button>
+    </div>
+    <!-- </div>
+      </div> -->
+  </p-dialog>
+  <!-- </div> -->
+</div>

@@ -1,0 +1,503 @@
+<div class="row">
+  <!-- <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchDataCountry" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchBuildingName"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchBuilding()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchBuilding()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearBuildingCountry()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchDataCountry" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchBuildingName"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchBuilding()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchBuilding()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearBuildingCountry()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataCountry"
+            aria-expanded="false"
+            aria-controls="allDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <!-- <th>Status</th> -->
+                    <th *ngIf="editAccess || deleteAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let building of buildingNameListData
+                        | paginate
+                          : {
+                              id: 'buildingNameListData',
+                              itemsPerPage: buildingItemsPerPage,
+                              currentPage: currentPageBuildingSlab,
+                              totalItems: buildingTotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ building.buildingName }}</td>
+                    <!-- <td *ngIf="building.status == 'ACTIVE' || building.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="building.status == 'INACTIVE' || building.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td> -->
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        title="Edit"
+                        *ngIf="editAccess"
+                        (click)="editBuilding(building.buildingMgmtId)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        title="Delete"
+                        (click)="deleteConfirmonBuilding(building)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="buildingNameListData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCountryList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                      [(ngModel)]="buildingItemsPerPage"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isBuildingEdit ? "Update" : "Create" }} {{ title }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !isBuildingEdit">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (isBuildingEdit && editAccess)">
+          <form [formGroup]="buildingFormGroup">
+            <!-- <label>{{ title }} Name*</label>
+            <input
+              id="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter {{ title }} Name"
+              formControlName="buildingName"
+              [ngClass]="{ 'is-invalid': submitted && buildingFormGroup.controls.name.errors }"
+              maxLength="250"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && buildingFormGroup.controls.name.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && buildingFormGroup.controls.name.errors.required"
+              >
+                {{ title }} Name is required.
+              </div>
+              <div
+                class="position"
+                *ngIf="submitted && buildingFormGroup.controls.name.errors?.cannotContainSpace"
+              >
+                <p class="error">White space are not allowed.</p>
+              </div>
+            </div> -->
+            <br />
+            <label>Building Name *</label>
+            <div
+              *ngIf="
+                !isBuildingEdit &&
+                (selectedMappingFrom === null ||
+                  selectedMappingFrom === undefined ||
+                  selectedMappingFrom === '')
+              "
+            >
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Building Name not available"
+                formControlName="buildingName"
+                disabled
+              />
+            </div>
+            <div *ngIf="isBuildingEdit">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter {{ areaTitle }} Name"
+                formControlName="buildingName"
+                disabled
+              />
+            </div>
+            <div *ngIf="selectedMappingFrom === 'Pin Code' && !isBuildingEdit">
+              <p-dropdown
+                (onChange)="onChnage($event)"
+                id="pincodeId"
+                formControlName="pincode"
+                [options]="pincodeListData"
+                optionValue="pincodeid"
+                optionLabel="pincode"
+                placeholder="Select Building Name"
+                [disabled]="isBuildingEdit"
+                [ngClass]="{ 'is-invalid': submitted && buildingFormGroup.controls.pincode.errors }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && buildingFormGroup.controls.pincode.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && buildingFormGroup.controls.pincode.errors.required"
+                >
+                  Building Name is required.
+                </div>
+              </div>
+            </div>
+
+            <!-- Dropdown for Area -->
+            <div *ngIf="selectedMappingFrom === 'Area' && !isBuildingEdit">
+              <p-dropdown
+                (onChange)="onChnage($event)"
+                id="areaId"
+                formControlName="areaId"
+                [options]="areaListData"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select Building Name"
+                [disabled]="isBuildingEdit"
+                [ngClass]="{ 'is-invalid': submitted && buildingFormGroup.controls.areaId.errors }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && buildingFormGroup.controls.areaId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && buildingFormGroup.controls.areaId.errors.required"
+                >
+                  Building Name is required.
+                </div>
+              </div>
+            </div>
+
+            <!-- Dropdown for Sub Area -->
+            <div *ngIf="selectedMappingFrom === 'Sub Area' && !isBuildingEdit">
+              <p-dropdown
+                (onChange)="onChnage($event)"
+                id="subAreaId"
+                formControlName="subAreaId"
+                [options]="subAreaListData"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select Building Name"
+                [disabled]="isBuildingEdit"
+                [ngClass]="{
+                  'is-invalid': submitted && buildingFormGroup.controls.subAreaId.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && buildingFormGroup.controls.subAreaId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && buildingFormGroup.controls.subAreaId.errors.required"
+                >
+                  Building Name is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>Building Type</label>
+              <p-dropdown
+                [options]="buildingTypeData"
+                formControlName="buildingType"
+                placeholder="Select a Building Type"
+                optionLabel="displayName"
+                optionValue="displayName"
+              >
+              </p-dropdown>
+            </div>
+            <br />
+            <div *ngIf="!isBuildingEdit">
+              <label>Method*</label>
+              <p-dropdown
+                [options]="methodOptions"
+                formControlName="selectedMethod"
+                placeholder="Select a Method"
+                (onChange)="onMethodChange($event)"
+              >
+              </p-dropdown>
+            </div>
+            <br />
+            <!-- Range Inputs -->
+            <div *ngIf="buildingFormGroup.get('selectedMethod')?.value === 'Range'">
+              <label>Range*</label>
+              <div style="display: flex; justify-content: space-between">
+                <span>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="rangeStart"
+                    placeholder="Start"
+                  />
+                </span>
+                <span
+                  class="mx-2"
+                  style="display: flex; justify-content: center; align-items: center"
+                  >To</span
+                >
+                <span>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="rangeEnd"
+                    placeholder="End"
+                  />
+                </span>
+              </div>
+            </div>
+            <!-- CSV Upload -->
+            <div *ngIf="buildingFormGroup.get('selectedMethod')?.value === 'CSV'">
+              <label>Upload CSV*</label>
+              <input
+                (change)="onFileChange($event)"
+                class="form-control"
+                formControlName="file"
+                id="txtSelectDocument"
+                multiple="multiple"
+                placeholder="Select Attachment"
+                style="padding: 2px; width: 100%"
+                type="file"
+              />
+            </div>
+
+            <!-- Manual Inputs -->
+            <div *ngIf="buildingFormGroup.get('selectedMethod')?.value === 'Manual'">
+              <label>Building Number*</label>
+              <div
+                formArrayName="manualControls"
+                *ngFor="let control of manualControls.controls; let i = index"
+                class="d-flex align-items-center mb-2"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  gap: 10px;
+                  margin-bottom: 10px;
+                "
+              >
+                <input
+                  class="form-control me-2"
+                  type="text"
+                  [formControlName]="i"
+                  placeholder="Enter value"
+                />
+
+                <a
+                  id="delete-button"
+                  href="javascript:void(0)"
+                  *ngIf="manualControls.length > 1"
+                  (click)="removeManualInput(i)"
+                >
+                  <img src="assets/img/ioc02.jpg" />
+                </a>
+              </div>
+
+              <button
+                (click)="addManualInput()"
+                class="btn btn-primary"
+                type="button"
+                style="margin-top: 5px"
+              >
+                <i class="fa fa-plus-square"></i> Add
+              </button>
+            </div>
+            <div class="addUpdateBtn">
+              <button
+                *ngIf="!isBuildingEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addOrUpdateBuilding('')"
+                [disabled]="buildingFormGroup.invalid"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add {{ title }}
+              </button>
+              <button
+                *ngIf="isBuildingEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addOrUpdateBuilding(buildingData.buildingMgmtId)"
+                [disabled]="buildingFormGroup.invalid"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update {{ title }}
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

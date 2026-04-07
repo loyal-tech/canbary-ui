@@ -1,0 +1,48 @@
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #f7b206 !important;
+}
+
+.counter-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+}
+.time-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 10px;
+}
+.flip {
+  background: #f7b206;
+  color: #fff;
+  font-size: 3rem;
+  padding: 0px 5px 0px 5px;
+  /* border-radius: 8px; */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+.colon {
+  font-size: 3rem;
+  /* margin: 0 5px; */
+  padding-bottom: 20px;
+  color: #333;
+}
+.remain-time {
+  font-size: 18px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ended-message {
+  font-size: 2rem;
+  color: red;
+  padding: 10px;
+  /* background-color: red; */
+  /* border-radius: 5px; */
+  /* border: 1px solid red; */
+}
+.mt-span {
+  margin-top: 8px;
+}

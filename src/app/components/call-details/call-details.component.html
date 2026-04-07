@@ -1,0 +1,246 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+    <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="customerDetailOpen()"
+            class="btn btn-secondary backbtn"
+            data-placement="bottom"
+            data-toggle="tooltip"
+            title="Go to Customer Details"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ callDetailData?.title }}
+            {{ callDetailData?.firstname }}
+            {{ callDetailData?.lastname }} Call Details
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            aria-controls="searchInvoiceCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#searchInvoiceCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="invoiceCustomerDetails">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div *ngIf="callDetailsListData?.length > 0" class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Phone Number</th>
+                    <th>Entry Date</th>
+                    <th>Unique Id</th>
+                    <th>Call Start Time</th>
+                    <th>Call End Time</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of callDetailsListData
+                        | paginate
+                          : {
+                              id: 'searchinvoiceMasterPageData',
+                              itemsPerPage: callDetailsitemsPerPage,
+                              currentPage: currentPagecallDetails,
+                              totalItems: callDetailstotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                        {{ data.user }}
+                    </td>
+                    <td>  
+                        {{ '+' + data.phoneCode }} {{ data.phoneNumber }}
+                    </td>
+                    <td>
+                      
+                        {{ data.entryDate }}
+                    </td>
+                      <td>
+                        {{ data.uniqueId }}
+                    </td>
+                    <td>
+                        {{ data.callStartTime }}
+                    </td>
+                    <td>
+                        {{ data.callEndTime }}
+                    </td>
+                   <td class="btnAction">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-toggle="modal"
+                        data-target="#viewModal"
+                        (click)="openViewModal(data)"
+                    >
+                          <i
+                                class="fa fa-eye"
+                              ></i>
+                    </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  (pageChange)="pageChangedcallDetailsList($event)"
+                  directionLinks="true"
+                  id="searchinvoiceMasterPageData"
+                  maxSize="10"
+                  nextLabel=""
+                  previousLabel=""
+                >
+                </pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    (onChange)="TotalItemPerPageCall($event)"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="callDetailsListData?.length === 0" class="col-lg-12 col-md-12">
+              Call Details data not found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Call Details Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title" id="viewModalLabel">Call Log Details</h4>
+      </div>
+
+      <div class="modal-body">
+        <fieldset>
+          <legend>Call Information</legend>
+          <div class="boxWhite" style="font-size: 16px; line-height: 1.6;">
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>Call Start Time:</strong> {{ selectedRow?.callStartTime | date:'dd-MM-yyyy hh:mm:ss' || '-' }}
+              </div>
+              <div class="col-md-6">
+                <strong>Call End Time:</strong> {{ selectedRow?.callEndTime | date:'dd-MM-yyyy hh:mm:ss' || '-' }}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>Phone:</strong> {{ selectedRow?.phoneCode && selectedRow?.phoneNumber ? '+' + selectedRow.phoneCode + ' ' + selectedRow.phoneNumber : '-' }}
+              </div>
+              <div class="col-md-6">
+                <strong>Alt Phone:</strong> {{ selectedRow?.altPhone || '-' }}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>User:</strong> {{ selectedRow?.user || '-' }}
+              </div>
+              <div class="col-md-6">
+                <strong>Agent Name:</strong> {{ selectedRow?.agentFullName || '-' }}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>Disposition:</strong> {{ selectedRow?.dispositionDescription || '-' }}
+              </div>
+              <div class="col-md-6">
+                <strong>Campaign:</strong> {{ selectedRow?.campaign || '-' }}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>Call Type:</strong> {{ selectedRow?.callType || '-' }}
+              </div>
+              <div class="col-md-6">
+                <strong>Called Count:</strong> {{ selectedRow?.calledCount || '-' }}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>Entry Date:</strong> {{ selectedRow?.entryDate | date:'dd-MM-yyyy hh:mm:ss' || '-' }}
+              </div>
+              <div class="col-md-6">
+                <strong>Comments:</strong> {{ selectedRow?.comments || '-' }}
+              </div>
+            </div>
+
+            <!-- Dynamic Fields -->
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>Country:</strong> {{ selectedRow?.dynamicData?.selectCountry || '-' }}
+              </div>
+              <div class="col-md-6">
+                <strong>State:</strong> {{ selectedRow?.dynamicData?.selectState || '-' }}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <strong>Dial Field:</strong> {{ selectedRow?.dynamicData?.dialButtonField || '-' }}
+              </div>
+            </div>
+
+            <!-- Duration & Recording at Bottom -->
+            <div class="row mt-4 pt-2 border-top" style="margin-top: 25px; padding-top: 20px;">
+              <div class="col-md-6">
+                <strong>Call Duration:</strong> {{ selectedRow?.callDuration || '-' }} sec
+              </div>
+              <div class="col-md-6">
+                <strong>Recording:</strong>
+                <ng-container *ngIf="selectedRow?.recordingUrl; else noAudio">
+                  <audio controls [src]="selectedRow.recordingUrl" style="display:block; margin-top: 8px;"></audio>
+                </ng-container>
+                <ng-template #noAudio>-</ng-template>
+              </div>
+            </div>
+
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+

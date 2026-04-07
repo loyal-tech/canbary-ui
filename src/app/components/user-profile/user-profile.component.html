@@ -1,0 +1,2462 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">User Profile</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchPartner"
+            aria-expanded="false"
+            aria-controls="searchPartner"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchPartner" class="panel-collapse collapse in">
+        <div class="panel-body no-padding panel-udata">
+          <div class="pcol col-md-3">
+            <div class="dbox">
+              <a (click)="getPartnerDetails()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>My Profile</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-3">
+            <div class="dbox">
+              <a (click)="PartnerBalnceData(partnerDATA.id, '')" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Partner Balance Data</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+
+          <div class="pcol col-md-3">
+            <div class="dbox">
+              <a (click)="getPartnerInvoiceList()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Partner Invoice</h5>
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-3">
+            <div class="dbox">
+              <a (click)="getPartnerOnlinePaymentAudit()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Online Payment Audit</h5>
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-3" *ngIf="partnerDATA.partnerType === 'Franchise'">
+            <div class="dbox">
+              <a (click)="getChildPartnerList()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Child Partner Data</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+
+          <div class="pcol col-md-3" *ngIf="partnerDATA.partnerType == 'LCO'">
+            <div class="dbox">
+              <a (click)="showListInvoiceData()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Invoice</h5>
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-3" *ngIf="partnerDATA.partnerType == 'LCO'">
+            <div class="dbox">
+              <a (click)="showListPaymentData()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Payment</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="partnerrALLDeatilsShow">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <h3 class="panel-title">{{ partnerDATA.name }} Partner</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#partnerdeatilsview"
+            aria-expanded="false"
+            aria-controls="partnerdeatilsview"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="partnerdeatilsview" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <!--    Basic Details    -->
+          <fieldset style="margin-top: 0rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ partnerDATA.name }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl"> Partner Code :</label>
+                  <span>{{ partnerDATA.prcode }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Partner Type :</label>
+                  <span>{{ partnerDATA.partnerType }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Tax Name :</label>
+                  <span>{{ partnerDATA.taxName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Balance :</label>
+                  <span>{{ partnerDATA.outcomeBalance }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Credit :</label>
+                  <span>{{ partnerDATA.credit }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Credit Consume :</label>
+                  <span>{{ partnerDATA.creditConsume }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Parent Partner :</label>
+                  <span>{{ partnerDATA.parentPartnerName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Calendar Type :</label>
+                  <span>{{ partnerDATA.calendarType }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span *ngIf="partnerDATA.status == 'ACTIVE'" class="badge badge-success">
+                    Active
+                  </span>
+                  <span *ngIf="partnerDATA.status == 'INACTIVE'" class="badge badge-danger">
+                    Inactive
+                  </span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!--    Contact Details    -->
+          <fieldset>
+            <legend>Contact Details & Service Area</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Mobile Number :</label>
+                  <span>
+                    <span *ngIf="partnerDATA.countryCode" title="Country Code">
+                      ({{ partnerDATA.countryCode }})&nbsp;
+                    </span>
+                    {{ partnerDATA.mobile }}
+                  </span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Email :</label>
+                  <span>{{ partnerDATA.email }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Service Area :</label>
+                  <!-- <span
+                  style="word-break: break-all;"
+                  *ngFor="let serviceName of partnerDATA.serviceAreaNameList"
+                >
+                  <span>{{ serviceName }},&nbsp;</span>
+                </span> -->
+                  <span
+                    class="HoverEffect"
+                    data-target="#serviceareaModal"
+                    data-toggle="modal"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    title="Go To service Area List"
+                    (click)="openServiceareaModal()"
+                  >
+                    Click here
+                  </span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">PAN :</label>
+                  <span>{{ partnerDATA.panName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Contact Person Name :</label>
+                  <span>{{ partnerDATA.cpName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Company Name :</label>
+                  <span>{{ partnerDATA.cname }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!--    Commission Details   -->
+          <fieldset>
+            <legend>{{ CommissionLabel }} Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ CommissionLabel }} Type :</label>
+                  <span>{{ partnerDATA.commtype }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ CommissionLabel }} Day :</label>
+                  <span>{{ partnerDATA.commdueday }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Commission Interval :</label>
+                  <span *ngIf="partnerDATA.commissionInterval">
+                    {{ partnerDATA.commissionInterval }}
+                  </span>
+                  <span *ngIf="!partnerDATA.commissionInterval">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ CommissionLabel }} :</label>
+                  <span *ngIf="partnerDATA.commrelvalue">
+                    {{ partnerDATA.commrelvalue }}
+                  </span>
+                  <span *ngIf="!partnerDATA.commrelvalue">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Plan Bundle Name :</label>
+                  <span *ngIf="partnerDATA.pricebookname">
+                    {{ partnerDATA.pricebookname }}
+                  </span>
+                  <span *ngIf="!partnerDATA.pricebookname">-</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!--    Address Details    -->
+          <fieldset>
+            <legend>Address Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Address Type :</label>
+                  <span>{{ partnerDATA.addresstype }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Address1 :</label>
+                  <span>{{ partnerDATA.address1 }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Address2 :</label>
+                  <span>{{ partnerDATA.address2 }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ pincodeTitle }} :</label>
+                  <span *ngIf="partnerDATA.pincode">
+                    {{ viewPincodeNumber }}
+                  </span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ cityTitle }} :</label>
+                  <span>{{ partnerDATA.cityName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ countryTitle }} :</label>
+                  <span>{{ partnerDATA.countryName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ stateTitle }} :</label>
+                  <span>{{ partnerDATA.stateName }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Customer Count Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">New Customer Count :</label>
+                  <span>{{ partnerDATA.newCustomerCount }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Renew Customer Count :</label>
+                  <span>{{ partnerDATA.renewCustomerCount }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Total Customer Count :</label>
+                  <span>{{ partnerDATA.totalCustomerCount }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Partner Hierarchy Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Partner Hierarchy:</label>
+                  <span
+                    class="HoverEffect"
+                    title="Go To Partner Hierarchy"
+                    (click)="openPartnerModal(partnerDATA.id)"
+                    >Click here
+                  </span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="balanceDetailsView">
+  <div class="row">
+    <!-- search -->
+
+    <div class="col-md-12 col-sm-12">
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <button
+              type="button"
+              class="btn btn-secondary backbtn"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Go to Partner Details"
+              (click)="particularALLDatashow('')"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: #f7b206 !important; font-size: 28px"
+              ></i>
+            </button>
+            <h3 class="panel-title">Search {{ partnerDATA.name }} Balance Management</h3>
+          </div>
+          <div class="right">
+            <button
+              aria-controls="searchPreCustLedger"
+              aria-expanded="false"
+              class="btn-toggle-collapse"
+              data-target="#searchPreCustLedger"
+              data-toggle="collapse"
+              type="button"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-collapse collapse in" id="searchPartnerLedger">
+          <div class="panel-body table-responsive">
+            <form [formGroup]="custLedgerForm" name="custLedgerForm">
+              <div class="row">
+                <div class="col-lg-3 col-md-3">
+                  <input
+                    [ngClass]="{
+                      'is-invalid':
+                        custLedgerSubmitted && custLedgerForm.controls.startDateCustLedger.errors
+                    }"
+                    class="form-control"
+                    formControlName="startDateCustLedger"
+                    placeholder="From Ledger Date"
+                    type="date"
+                  />
+                  <div
+                    *ngIf="
+                      custLedgerSubmitted && custLedgerForm.controls.startDateCustLedger.errors
+                    "
+                    class="errorWrap text-danger"
+                  >
+                    <div
+                      *ngIf="
+                        custLedgerSubmitted &&
+                        custLedgerForm.controls.startDateCustLedger.errors.required
+                      "
+                      class="error text-danger"
+                    >
+                      From Date is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-3">
+                  <input
+                    [ngClass]="{
+                      'is-invalid':
+                        custLedgerSubmitted && custLedgerForm.controls.endDateCustLedger.errors
+                    }"
+                    class="form-control"
+                    formControlName="endDateCustLedger"
+                    placeholder="To Ledger Date"
+                    type="date"
+                  />
+                  <div
+                    *ngIf="custLedgerSubmitted && custLedgerForm.controls.endDateCustLedger.errors"
+                    class="errorWrap text-danger"
+                  >
+                    <div
+                      *ngIf="
+                        custLedgerSubmitted &&
+                        custLedgerForm.controls.endDateCustLedger.errors.required
+                      "
+                      class="error text-danger"
+                    >
+                      To Date is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-3">
+                  <button
+                    (click)="searchCustomerLedger()"
+                    class="btn btn-primary"
+                    id="searchbtn"
+                    type="button"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    (click)="clearSearchCustomerLedger()"
+                    class="btn btn-default"
+                    id="searchbtn"
+                    type="reset"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- search -->
+
+    <div class="col-md-12 col-sm-12" *ngIf="BalanceAllData?.commissionType != 'Plan level'">
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <h3 class="panel-title">{{ partnerDATA.name }} Balance Management</h3>
+          </div>
+          <div class="right">
+            <button
+              class="btn refreshbtn"
+              type="reset"
+              (click)="PartnerBalnceData(partnerDATA.id, '')"
+            >
+              <i class="fa fa-refresh"></i>
+            </button>
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#BalanceManagement"
+              aria-expanded="false"
+              aria-controls="BalanceManagement"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="BalanceManagement" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <div class="row" style="margin-top: 2rem">
+              <div class="col-lg-12 col-md-12">
+                <table class="table myclass">
+                  <thead>
+                    <tr>
+                      <th class="myclass">Service Name</th>
+                      <th class="myclass">Total Price</th>
+                      <th class="myclass">Customer Count</th>
+                      <th class="myclass">Total Sale</th>
+                      <th class="myclass">Total Base Revenue</th>
+                      <th class="myclass">Net Total Commission Of Service (%)</th>
+                      <th class="myclass">Total Commission Of Service</th>
+                      <th class="myclass">Category</th>
+                      <th class="myclass">Debit</th>
+                      <th class="myclass">Credit</th>
+                      <th class="myclass">Balance Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let data of partnerLedgerInfoPojo.partnerLedgerDetailsServiceLevelDTO
+                          | paginate
+                            : {
+                                id: 'balanceLedgerpageData',
+                                itemsPerPage: balanceLedgerItemPerPage,
+                                currentPage: currentPagebalanceLedgerList,
+                                totalItems: balanceLedgertotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td class="myclass">{{ data.serviceName }}</td>
+                      <td>
+                        {{ data.planOrPlanGroupPrice }}
+                      </td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="
+                          openCustomerCountDetailsModelForServiceLevel(
+                            data.serviceId,
+                            data.transcategory,
+                            data.transType
+                          )
+                        "
+                      >
+                        {{ data.customerCount }}
+                      </td>
+                      <td>
+                        {{ data.totalSale }}
+                      </td>
+                      <td class="myclass">{{ data.basePlanOrPlanGroupPrice }}</td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openNetTotalCommissionOfServiceDetailsModelForServiceLevel(data)"
+                      >
+                        {{ data.netCommission }}
+                      </td>
+
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openCustomerTotalCommissionDetailsModel(data)"
+                      >
+                        {{ data.totalCommission }}
+                      </td>
+                      <td class="myclass">{{ data.transcategory }}</td>
+                      <td class="myclass">{{ data.debit }}</td>
+                      <td class="myclass">{{ data.credit }}</td>
+                      <td class="myclass">{{ data.balAmount }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 dataGroup text-right" style="margin-top: 2rem">
+                    <label class="datalbl">Opening Amount :</label>
+                    <span>
+                      {{ partnerLedgerInfoPojo.openingAmount | number: "1.2-2" }}
+                    </span>
+                  </div>
+                  <div class="col-lg-12 col-sm-12 dataGroup text-right" style="margin-top: 2rem">
+                    <label class="datalbl">Closing Balance :</label>
+                    <span>
+                      {{ partnerLedgerInfoPojo.closingBalance | number: "1.2-2" }}
+                    </span>
+                  </div>
+                </div>
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="balanceLedgerpageData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedbalanceLedgerList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="balanceLedgerItemPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPageBalnce($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12" *ngIf="BalanceAllData?.commissionType == 'Plan level'">
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <h3 class="panel-title">{{ partnerDATA.name }} Balance Management</h3>
+          </div>
+          <div class="right">
+            <button
+              class="btn refreshbtn"
+              type="reset"
+              (click)="PartnerBalnceData(partnerDATA.id, '')"
+            >
+              <i class="fa fa-refresh"></i>
+            </button>
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#BalanceManagement"
+              aria-expanded="false"
+              aria-controls="BalanceManagement"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="BalanceManagement" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <div class="row" style="margin-top: 2rem">
+              <div class="col-lg-12 col-md-12">
+                <table class="table myclass">
+                  <thead>
+                    <tr>
+                      <th class="myclass">Plan/Plan Group</th>
+                      <th class="myclass">Plan/Plan Group Price</th>
+                      <th class="myclass">Base Revenue</th>
+                      <th class="myclass">Customer Count</th>
+                      <th class="myclass">Total Sale</th>
+                      <th class="myclass">Commission Share Per Customer(%)</th>
+                      <th class="myclass">Net Commission Per Customer (without any share)</th>
+                      <th class="myclass">Total Commission Per Customer (without any share)</th>
+                      <th class="myclass">Actual Total Plan Commission</th>
+                      <th class="myclass">Category</th>
+                      <th class="myclass">Debit</th>
+                      <th class="myclass">Credit</th>
+                      <th class="myclass">Balance Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let ledger of partnerLedgerInfoPojo.partnerLedgerDetailsPlanLevelDTO
+                          | paginate
+                            : {
+                                id: 'balanceLedgerpageData',
+                                itemsPerPage: balanceLedgerItemPerPage,
+                                currentPage: currentPagebalanceLedgerList,
+                                totalItems: balanceLedgertotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td class="myclass">{{ ledger.planOrPlanGroupName }}</td>
+                      <td class="myclass">{{ ledger.planOrPlanGroupPrice }}</td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openCustomerRevenueDetailsModel(ledger)"
+                      >
+                        {{ ledger.basePlanOrPlanGroupPrice }}
+                      </td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="
+                          openCustomerCountDetailsModel(
+                            ledger.isPlanGroup,
+                            ledger.planOrPlanGroupId,
+                            ledger.transcategory,
+                            ledger.transType
+                          )
+                        "
+                      >
+                        {{ ledger.customerCount }}
+                      </td>
+                      <td class="myclass">{{ ledger.totalSale }}</td>
+                      <td class="myclass">{{ ledger.commissionSharePercentage }}</td>
+                      <td *ngIf="!ledger.isPlanGroup" class="myclass">
+                        {{ ledger.netCommission }}
+                      </td>
+                      <td
+                        *ngIf="ledger.isPlanGroup"
+                        class="HoverEffect myclass"
+                        (click)="openCustomerNetCommissionDetailsModel(ledger)"
+                      >
+                        {{ ledger.netCommission }}
+                      </td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openCustomerCommissionDetailsModel(ledger)"
+                      >
+                        {{ ledger.totalCommission }}
+                      </td>
+                      <td class="myclass">{{ ledger.totalPlanCommission }}</td>
+                      <td class="myclass">{{ ledger.transcategory }}</td>
+                      <td class="myclass">{{ ledger.debit }}</td>
+                      <td class="myclass">{{ ledger.credit }}</td>
+                      <td class="myclass">{{ ledger.balAmount }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 dataGroup text-right" style="margin-top: 2rem">
+                    <label class="datalbl">Opening Amount :</label>
+                    <span>
+                      {{ partnerLedgerInfoPojo.openingAmount | number: "1.2-2" }}
+                    </span>
+                  </div>
+                  <div class="col-lg-12 col-sm-12 dataGroup text-right" style="margin-top: 2rem">
+                    <label class="datalbl">Closing Balance :</label>
+                    <span>
+                      {{ partnerLedgerInfoPojo.closingBalance | number: "1.2-2" }}
+                    </span>
+                  </div>
+                </div>
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="balanceLedgerpageData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedbalanceLedgerList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="balanceLedgerItemPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPageBalnce($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header=" Balance Information"
+  [(visible)]="showDialogue"
+  [style]="{ width: '45%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="panel-body table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Plan Gross Offer Price</td>
+            <td>
+              <span>{{ balanceData.grossOfferPrice | number: "1.2-2" }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Plan Offer Price(Inc. only Recurring Charge)</td>
+            <td>
+              <span>{{ balanceData.offerprice | number: "1.2-2" }}</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Tax on Plan</td>
+            <td>{{ balanceData.tax | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>AGR</td>
+            <td>{{ balanceData.agr_amount | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>Plan Base Price</td>
+            <td>
+              {{
+                balanceData.offerprice - balanceData.tax - balanceData.agr_amount | number: "1.2-2"
+              }}
+            </td>
+          </tr>
+          <tr *ngIf="loginPartner == 1 && loginPartner == '1'">
+            <td>Operator Revenue Share</td>
+            <td>
+              {{ balanceData.operatorCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.operatorCommission * 100) /
+                  (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                  | number: "1.2-2"
+              }}% of Plan Base Price)
+            </td>
+          </tr>
+          <tr
+            *ngIf="
+              balanceData.totalSharedCommission != null &&
+              balanceData.totalSharedCommission > 0 &&
+              loginPartner == 1 &&
+              loginPartner == '1'
+            "
+          >
+            <td>Total Shared Partner Commission</td>
+            <td>
+              {{ balanceData.totalSharedCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.totalSharedCommission * 100) /
+                  (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                  | number: "1.2-2"
+              }}% of Plan Base Price)
+            </td>
+          </tr>
+          <tr
+            *ngIf="
+              balanceData.totalSharedCommission != null &&
+              balanceData.totalSharedCommission > 0 &&
+              loginPartner == 1 &&
+              loginPartner == '1'
+            "
+          >
+            <td>Parent Partner Shared Commission</td>
+            <td>
+              {{ balanceData.parentSharedCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.parentSharedCommission * 100) / balanceData.totalSharedCommission
+                  | number: "1.2-2"
+              }}% of Total Shared Commission)
+            </td>
+          </tr>
+          <tr
+            *ngIf="
+              balanceData.totalSharedCommission != null &&
+              balanceData.totalSharedCommission > 0 &&
+              loginPartner == 1 &&
+              loginPartner == '1'
+            "
+          >
+            <td>Child partner shared commission</td>
+            <td>
+              {{ balanceData.childSharedCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.childSharedCommission * 100) / balanceData.totalSharedCommission
+                  | number: "1.2-2"
+              }}% of Total Shared Commission)
+            </td>
+          </tr>
+          <tr>
+            <td>{{ PartnerCommission }}</td>
+            <td>
+              <span *ngIf="partnerFlag">
+                {{
+                  balanceData.tds_amount +
+                    balanceData.amount -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2"
+                }}
+                ({{
+                  ((balanceData.tds_amount +
+                    balanceData.amount -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2") *
+                    100) /
+                    (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                    | number: "1.2-2"
+                }}%)</span
+              >
+
+              <!-- Franchise Partner -->
+              <span
+                *ngIf="
+                  !partnerFlag &&
+                  (balanceData.totalSharedCommission == null ||
+                    balanceData.totalSharedCommission == 0)
+                "
+              >
+                {{
+                  balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2"
+                }}
+                ({{
+                  ((balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2") *
+                    100) /
+                    (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                    | number: "1.2-2"
+                }}%)</span
+              >
+
+              <span
+                *ngIf="
+                  !partnerFlag &&
+                  balanceData.totalSharedCommission != null &&
+                  balanceData.totalSharedCommission > 0
+                "
+              >
+                {{
+                  balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2"
+                }}
+                ({{
+                  ((balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2") *
+                    100) /
+                    balanceData.totalSharedCommission | number: "1.2-2"
+                }}%)</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>Royalty Base Price</td>
+            <td>{{ balanceData.royaltyBasePrice | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>Royalty</td>
+            <!-- <td>{{ balanceData.royalty | number : "1.2-2" }}</td> -->
+            <td>
+              <span *ngIf="partnerFlag">
+                {{ balanceData.royalty ? balanceData.royalty : (0 | number: "1.2-2") }}({{
+                  !balanceData.royaltyBasePrice
+                    ? 0
+                    : ((balanceData.royalty * 100) / balanceData.royaltyBasePrice
+                      | number: "1.2-2")
+                }}%)
+              </span>
+              <span *ngIf="!partnerFlag">
+                {{ balanceData.royalty ? balanceData.royalty : (0 | number: "1.2-2") }} ({{
+                  !balanceData.royaltyBasePrice
+                    ? 0
+                    : ((balanceData.royalty * 100) / balanceData.royaltyBasePrice
+                      | number: "1.2-2")
+                }}%)
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>Net {{ CommissionLabel }}</td>
+            <td>
+              <span *ngIf="partnerFlag">
+                {{
+                  balanceData.tds_amount + balanceData.amount - balanceData.partnerTax
+                    | number: "1.2-2"
+                }}</span
+              >
+              <span *ngIf="!partnerFlag">
+                {{
+                  balanceData.tds_amount + balanceData.commission - balanceData.partnerTax
+                    | number: "1.2-2"
+                }}</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>Tax On {{ CommissionLabel }}</td>
+            <td>{{ balanceData.partnerTax | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>TDS</td>
+            <td>{{ balanceData.tds_amount | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>{{ PartnerPayableCommission }}</td>
+            <td>
+              <span *ngIf="partnerFlag"> {{ balanceData.amount | number: "1.2-2" }}</span>
+              <span *ngIf="!partnerFlag"> {{ balanceData.commission | number: "1.2-2" }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td>{{ balanceData.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="balanceDetailsColse(i)"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- service area list -->
+<p-dialog
+  header=" {{ partnerDATA.name }} Service Area List"
+  [(visible)]="serviceareaModal"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="panel-body table-responsive" id="networkDeviceTabel">
+      <table class="table">
+        <tbody>
+          <tr>
+            <td><label class="networkLabel">Service Area :</label></td>
+            <td>
+              <span
+                style="word-break: break-all"
+                *ngFor="let serviceName of partnerDATA.serviceAreaNameList"
+              >
+                <span>
+                  {{ serviceName }},
+                  <br />
+                </span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="closeServiceareaModal()"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+<!-- partner hierarchy diagram -->
+<p-dialog
+  header=" {{ partnerDATA.name }} Partner Hierarchy Diagram"
+  [(visible)]="partnerModal"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="panel-body table-responsive" id="networkDeviceTabel">
+      <table class="table">
+        <tbody>
+          <p-organizationChart [value]="partnerHierarchy"></p-organizationChart>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="closePartnerModal()"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<div *ngIf="isInvoiceSubMenu" class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Partner Details"
+            (click)="particularALLDatashow('')"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ partnerDATA.name }} Invoice</h3>
+        </div>
+        <div class="right">
+          <button
+            class="btn refreshbtn"
+            type="reset"
+            (click)="showListInvoiceData(partnerDATA.id, '')"
+          >
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            aria-controls="searchInvoiceCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#searchInvoiceCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="searchInvoiceCust">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div *ngIf="invoiceMasterListData.length !== 0" class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 30%">Document No.</th>
+                    <th>Total Amount</th>
+                    <th>Adjusted Amount</th>
+                    <th>Bill Run Status</th>
+                    <th>Bill Date</th>
+                    <th>Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let invoice of invoiceMasterListData
+                        | paginate
+                          : {
+                              id: 'invoiceDataID',
+                              itemsPerPage: invoiceMasteritemsPerPage,
+                              currentPage: currentPageinvoiceMasterSlab,
+                              totalItems: invoiceMastertotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      {{ invoice.docnumber }}
+                    </td>
+                    <td>
+                      {{ invoice.totalamount | number: "1.2-2" }}
+                    </td>
+                    <td>
+                      <span>
+                        {{ invoice.adjustedamount | number: "1.2-2" }}
+                      </span>
+                      <span *ngIf="!invoice.adjustedamount">0</span>
+                    </td>
+                    <td>
+                      <div class="badge badge-success">
+                        {{ invoice.billrunstatus }}
+                      </div>
+                    </td>
+                    <td style="font-weight: 400">
+                      {{ invoice.billdate | date: "yyyy-MM-dd" }}
+                    </td>
+                    <td style="font-weight: 400">
+                      {{ invoice.duedate | date: "yyyy-MM-dd" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  (pageChange)="pageChangedinvoiceMasterList($event)"
+                  directionLinks="true"
+                  id="invoiceDataID"
+                  maxSize="10"
+                  nextLabel=""
+                  previousLabel=""
+                >
+                </pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    (onChange)="TotalItemPerPageInvoice($event)"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="invoiceMasterListData.length === 0" class="col-lg-12 col-md-12">
+              Invoice data not found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--child partner-->
+<div class="row" *ngIf="childListData">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <h3 class="panel-title">Child Partner Data</h3>
+        </div>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="getChildPartnerList()">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#ChildManagement"
+            aria-expanded="false"
+            aria-controls="ChildManagement"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listpartner" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Commission Type</th>
+                    <th>{{ countryTitle }} Name</th>
+                    <!-- <th>Address</th> -->
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of childListData
+                        | paginate
+                          : {
+                              id: 'partnerListpageData',
+                              itemsPerPage: partnerListdataitemsPerPage,
+                              currentPage: currentPagepartnerListdata,
+                              totalItems: partnerListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td class="curson_pointer" (click)="openChildData(data)" style="color: #f7b206">
+                      {{ data.name }}
+                    </td>
+                    <td>{{ data.email }}</td>
+                    <td>{{ data.commtype }}</td>
+                    <td>{{ data.countryName }}</td>
+                    <td>
+                      <div *ngIf="data.status == 'ACTIVE'">
+                        <span class="badge badge-success">Active</span>
+                      </div>
+                      <div *ngIf="data.status == 'INACTIVE'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="partnerListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedpartnerList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="partnerListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Partner Invoice List -->
+<div class="row" *ngIf="isPartnerInvoiceList">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <h3 class="panel-title">Partner Invoice</h3>
+        </div>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="getPartnerInvoiceList()">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#ChildManagement"
+            aria-expanded="false"
+            aria-controls="ChildManagement"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listpartner" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Invoice Number</th>
+                    <th>Bill To</th>
+                    <th>Total Amount</th>
+                    <th>Adjusted Amount</th>
+                    <th>Unpaid Amount</th>
+                    <th>Bill Run Status</th>
+                    <th>Bill Date</th>
+                    <th>Payment Status</th>
+                    <th>Payment Owner</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let invoice of partnerInvoiceListData
+                        | paginate
+                          : {
+                              id: 'partnerInvoiceListpageData',
+                              itemsPerPage: partnerInvoiceListdataitemsPerPage,
+                              currentPage: currentInvoicePagepartnerListdata,
+                              totalItems: partnerListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <a
+                        (click)="showInvoiceDetail(invoice.id)"
+                        title="Click To See Plan Detail"
+                        style="color: #f7b206"
+                        class="curson_pointer"
+                      >
+                        {{ invoice.docnumber }}
+                      </a>
+                    </td>
+                    <td>{{ invoice.toOperatorName }}</td>
+                    <td>{{ invoice.totalamount | customCurrency: currency }}</td>
+                    <td>{{ invoice.adjustedamount | customCurrency: currency }}</td>
+                    <td>{{ invoice.totaldue | customCurrency: currency }}</td>
+                    <td>
+                      <div class="badge badge-success">
+                        {{ invoice.billrunstatus }}
+                      </div>
+                    </td>
+                    <td style="font-weight: 400">
+                      {{ invoice.billdate | date: "yyyy-MM-dd" }}
+                    </td>
+                    <td>
+                      <span
+                        *ngIf="invoice.paymentStatus !== null && invoice.paymentStatus !== ''"
+                        class="badge bg-success"
+                      >
+                        {{ invoice.paymentStatus }}
+                      </span>
+                      <span
+                        *ngIf="invoice.paymentStatus === null || invoice.paymentStatus === ''"
+                        class="badge bg-warning"
+                      >
+                        UnPaid
+                      </span>
+                    </td>
+                    <td>-</td>
+                    <td class="btnAction">
+                      <a
+                        (click)="downloadPDFINvoice(invoice.id, invoice.customerName)"
+                        *ngIf="
+                          invoice.billrunstatus == 'Exported' || invoice.billrunstatus == 'Printed'
+                        "
+                        href="javascript:void(0)"
+                        id="edit-button"
+                        title="Download"
+                        type="button"
+                      >
+                        <img src="assets/img/pdf.png" style="width: 25px; height: 25px" />
+                      </a>
+                      <a
+                        (click)="generatePDFInvoice(invoice.id)"
+                        *ngIf="invoice.billrunstatus == 'Generated'"
+                        href="javascript:void(0)"
+                        id="edit-button"
+                        title="Generate"
+                        type="button"
+                      >
+                        <img src="assets/img/generate.jpg" style="width: 25px; height: 25px" />
+                      </a>
+                      <a
+                        *ngIf="invoice.billrunstatus !== 'Cancelled'"
+                        (click)="viewInvoice(invoice.id, invoice.customerName)"
+                        href="javascript:void(0)"
+                        title="View Invoice"
+                      >
+                        <img src="assets/img/22_Reprint-invoice_Y.png" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="partnerInvoiceListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="invoicePageChangedpartnerList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="partnerInvoiceListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="invoiceTotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Partner Online Payment Audit -->
+<div class="row" *ngIf="isOnlinePaymentAudit">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <h3 class="panel-title">Online Payment Audit</h3>
+        </div>
+        <div class="right">
+          <!-- <button class="btn refreshbtn" type="reset" (click)="getPartnerInvoiceList()">
+            <i class="fa fa-refresh"></i>
+          </button> -->
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#ChildManagement"
+            aria-expanded="false"
+            aria-controls="ChildManagement"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listpartner" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Reference No</th>
+                    <th>Payment Amount</th>
+                    <th>Status</th>
+                    <th>Payment Date</th>
+                    <th>Merchant Name</th>
+                    <th>Transaction Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let payment of partnerOnlinePaymentAuditListData
+                        | paginate
+                          : {
+                              id: 'partnerOnlinePaymentListpageData',
+                              itemsPerPage: partnerOnlinePaymentdataitemsPerPage,
+                              currentPage: partnerpaymentCurrentPagepartnerListdata,
+                              totalItems: partnerOnlinePaymentListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      {{ payment.orderId }}
+                    </td>
+                    <td>{{ payment.payment }}</td>
+
+                    <td>
+                      <span *ngIf="payment.status === 'success'">
+                        <span class="badge badge-success">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="payment.status === 'Success'">
+                        <span class="badge badge-success">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="payment.status === 'Initiate'">
+                        <span class="badge badge-info">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="payment.status === 'failed'">
+                        <span class="badge badge-danger">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                    </td>
+                    <td>{{ payment.paymentDate | date: "dd-MM-YYYY HH:mm:ss" }}</td>
+                    <td>{{ payment.merchantName }}</td>
+                    <td>{{ payment.transactionDate | date: "dd-MM-YYYY HH:mm:ss" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="partnerOnlinePaymentListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="partnerPaymentPageChanged($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="partnerOnlinePaymentdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="partnerPaymentTotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment List -->
+<div *ngIf="isPaymentSubMenu" class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Partner Details"
+            (click)="particularALLDatashow('')"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ partnerDATA.name }} Payment Details</h3>
+        </div>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="showListPaymentData()">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            aria-controls="paymentPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#paymentPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="paymentPreCust">
+        <div *ngIf="viewPaymentData.length !== 0" class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Pay Details</th>
+                    <th>Receipt No/Credit Note No.</th>
+                    <th>Paymode</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Payment Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of viewPaymentData
+                        | paginate
+                          : {
+                              id: 'PayListpageDataID',
+                              itemsPerPage: PaymentdataitemsPerPage,
+                              currentPage: currentPagePaymentdata,
+                              totalItems: PaymentdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ data.paydetails4 }}</td>
+                    <td>
+                      <span *ngIf="data.receiptNo">
+                        {{ data.receiptNo }}
+                      </span>
+                      <span *ngIf="!data.receiptNo">-</span>
+                    </td>
+                    <td>{{ data.paymode }}</td>
+                    <td>{{ data.type }}</td>
+                    <td>
+                      {{ data.amount | number: "1.2-2" }}
+                    </td>
+                    <td>
+                      <span>
+                        <span *ngIf="data.paymentdate">
+                          {{ data.paymentdate }}
+                        </span>
+                        <span *ngIf="!data.paymentdate">-</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="data.status === 'Fully Adjusted'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'advance'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'approved'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'pending'">
+                        <span class="badge badge-info">
+                          {{ "Collected" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'Partialy Adjusted'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'rejected'">
+                        <span class="badge badge-danger">
+                          {{ data.status | titlecase }}
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  (pageChange)="pageChangedPaymentList($event)"
+                  directionLinks="true"
+                  id="PayListpageDataID"
+                  maxSize="10"
+                  nextLabel=""
+                  previousLabel=""
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    (onChange)="TotalPaymentItemPerPage($event)"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="viewPaymentData.length === 0" class="panel-body table-responsive">
+          Details are not available.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-customer-details
+  *ngIf="dialogId"
+  (closeSelectStaff)="closeSelectStaff()"
+  [custId]="custId"
+></app-customer-details>
+<p-dialog
+  header="Staff Details"
+  [(visible)]="childDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <fieldset style="margin-top: 0rem">
+      <legend>Basic Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Name :</label>
+            <span>{{ childPartnerDATA.name }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl"> Partner Code :</label>
+            <span>{{ childPartnerDATA.prcode }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Partner Type :</label>
+            <span>{{ childPartnerDATA.partnerType }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Tax Name :</label>
+            <span>{{ childPartnerDATA.taxName }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Balance :</label>
+            <span>{{ childPartnerDATA.outcomeBalance }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Credit :</label>
+            <span>{{ childPartnerDATA.credit }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Credit Consume :</label>
+            <span>{{ childPartnerDATA.creditConsume }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Parent Partner :</label>
+            <span>{{ childPartnerDATA.parentPartnerName }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Calendar Type :</label>
+            <span>{{ childPartnerDATA.calendarType }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Status :</label>
+            <span *ngIf="childPartnerDATA.status == 'ACTIVE'" class="badge badge-success">
+              Active
+            </span>
+            <span *ngIf="childPartnerDATA.status == 'INACTIVE'" class="badge badge-danger">
+              Inactive
+            </span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Contact Details & Service Area</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Mobile Number :</label>
+            <span>
+              <span *ngIf="partnerDATA.countryCode" title="Country Code">
+                ({{ childPartnerDATA.countryCode }})&nbsp;
+              </span>
+              {{ childPartnerDATA.mobile }}
+            </span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Email :</label>
+            <span>{{ childPartnerDATA.email }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Service Area :</label>
+            <!-- <span
+                  style="word-break: break-all;"
+                  *ngFor="let serviceName of partnerDATA.serviceAreaNameList"
+                >
+                  <span>{{ serviceName }},&nbsp;</span>
+                </span> -->
+            <span
+              class="HoverEffect"
+              data-target="#serviceareaModal"
+              data-toggle="modal"
+              data-backdrop="static"
+              data-keyboard="false"
+              title="Go To service Area List"
+              (click)="openServiceareaModal()"
+            >
+              Click here
+            </span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">PAN :</label>
+            <span>{{ childPartnerDATA.panName }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Contact Person Name :</label>
+            <span>{{ childPartnerDATA.cpName }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Company Name :</label>
+            <span>{{ childPartnerDATA.cname }}</span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <!--    Commission Details   -->
+    <fieldset>
+      <legend>{{ CommissionLabel }} Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">{{ CommissionLabel }} Type :</label>
+            <span>{{ childPartnerDATA.commtype }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">{{ CommissionLabel }} Day :</label>
+            <span>{{ childPartnerDATA.commdueday }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">{{ CommissionLabel }} :</label>
+            <span *ngIf="partnerDATA.commrelvalue">
+              {{ childPartnerDATA.commrelvalue }}
+            </span>
+            <span *ngIf="!partnerDATA.commrelvalue">-</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Plan Bundle Name :</label>
+            <span *ngIf="partnerDATA.pricebookname">
+              {{ childPartnerDATA.pricebookname }}
+            </span>
+            <span *ngIf="!partnerDATA.pricebookname">-</span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <!--    Address Details    -->
+    <fieldset>
+      <legend>Address Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Address Type :</label>
+            <span>{{ childPartnerDATA.addresstype }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Address1 :</label>
+            <span>{{ childPartnerDATA.address1 }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Address2 :</label>
+            <span>{{ childPartnerDATA.address2 }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">{{ pincodeTitle }} :</label>
+            <span *ngIf="partnerDATA.pincode">
+              {{ viewPincodeNumber }}
+            </span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">{{ cityTitle }} :</label>
+            <span>{{ childPartnerDATA.cityName }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">{{ countryTitle }} :</label>
+            <span>{{ childPartnerDATA.countryName }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">{{ stateTitle }} :</label>
+            <span>{{ childPartnerDATA.stateName }}</span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Customer Count Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">New Customer Count :</label>
+            <span>{{ childPartnerDATA.newCustomerCount }}</span>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Renew Customer Count :</label>
+            <span>{{ childPartnerDATA.renewCustomerCount }}</span>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Total Customer Count :</label>
+            <span>{{ childPartnerDATA.totalCustomerCount }}</span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <!-- partner hierarchy -->
+    <fieldset>
+      <legend>Partner Hierarchy Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Partner Hierarchy:</label>
+            <span
+              class="HoverEffect"
+              title="Go To Partner Hierarchy"
+              (click)="openPartnerModal(childPartnerDATA.id)"
+              >Click here
+            </span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeChildDetailModal()"
+      data-dismiss="modal"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Count Details Model -->
+<p-dialog
+  header="Customer Details"
+  [(visible)]="isCustomerCountDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Create Date</th>
+              <th class="myclass">Customer Name</th>
+              <th class="myclass">Customer Invoice Number</th>
+              <th class="myclass">Credit Note Number</th>
+              <th class="myclass">Plan/Bundle Name</th>
+              <th class="myclass">Plan Price</th>
+              <th class="myclass">{{ PartnerPayableCommission }}</th>
+              <th class="myclass">Category</th>
+              <th class="myclass">Debit</th>
+              <th class="myclass">Credit</th>
+              <th class="myclass">Settled Invoice Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of customerLedgerDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.createDate }}</td>
+
+              <td
+                *ngIf="data.customer_name"
+                class="HoverEffect myclass"
+                (click)="openModal('custmerDetailModal', data.custid)"
+              >
+                {{ data.customer_name }}
+              </td>
+              <td class="myclass" *ngIf="!data.customer_name">-</td>
+              <td class="myclass">{{ data.invoiceNo }}</td>
+              <td class="myclass">
+                <span *ngFor="let creditNote of data.creditDocNo">{{ creditNote }} </span><br />
+              </td>
+              <td class="myclass" *ngIf="data.planname">{{ data.planname }}</td>
+              <td class="myclass" *ngIf="!data.planname">-</td>
+              <td class="myclass">
+                {{ data.offerprice | number: "1.2-2" }}
+              </td>
+              <td
+                class="HoverEffect myclass"
+                data-target="#planBundle"
+                data-toggle="modal"
+                data-backdrop="static"
+                data-keyboard="false"
+                (click)="balanceAllDetails(data)"
+              >
+                {{ partnerFlag ? data.amount : (data.commission | customCurrency: currency) }}
+              </td>
+              <td class="myclass">{{ data.transcategory }}</td>
+              <td class="myclass" *ngIf="data.transtype == 'DR'">
+                {{
+                  data.transcategory == "Credit Note Commission"
+                    ? (data.commission | customCurrency: currency)
+                    : (data.amount | customCurrency: currency)
+                }}
+              </td>
+
+              <td class="myclass">-</td>
+              <td class="myclass" *ngIf="data.transtype == 'CR'">
+                {{
+                  data.transcategory == "Commision"
+                    ? (data.commission | customCurrency: currency)
+                    : (data.amount | customCurrency: currency)
+                }}
+              </td>
+              <td class="myclass">{{ data.partnerInvoiceId }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination_Dropdown">
+          <pagination-controls
+            id="customerDetailsData"
+            maxSize="10"
+            directionLinks="true"
+            previousLabel=""
+            nextLabel=""
+            (pageChange)="customerDetailsPageChanged($event)"
+          ></pagination-controls>
+          <div id="itemPerPageDropdown">
+            <p-dropdown
+              [(ngModel)]="customerDetailsItemPerPage"
+              [options]="pageLimitOptions"
+              optionLabel="value"
+              optionValue="value"
+              (onChange)="customerDetailsTotalItemPerPage($event)"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeCustomerCountDetailsModel()" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Revenue Details Model -->
+<p-dialog
+  header="Customer Revenue Details"
+  [(visible)]="isCustomerRevenueDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Base Price</th>
+              <th class="myclass">Plan Tax</th>
+              <th class="myclass">Total Price</th>
+              <th class="myclass">AGR</th>
+              <th class="myclass">Base Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of planCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.offerPrice - data.taxAmount }}</td>
+              <td class="myclass">{{ data.taxAmount }}</td>
+              <td class="myclass">{{ data.offerPrice }}</td>
+              <td class="myclass">{{ data.agrAmount }}</td>
+              <td class="myclass">{{ data.baseOfferPriceExcludeAgr }}</td>
+            </tr>
+            <tr>
+              <td class="myclass" colspan="5">Total</td>
+              <td class="myclass">
+                {{ getTotal(planCommissionDetailsList) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeCustomerRevenueDetailsModel()" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Commission Details Model -->
+<p-dialog
+  header="Customer Commission Details"
+  [(visible)]="isCustomerCommissionDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Net Commission Per Customer</th>
+              <th class="myclass">Partner Tax Per Customer</th>
+              <th class="myclass">TDS Per Customer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of planCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.netCommission }}</td>
+              <td class="myclass">{{ data.partnerTaxAmount }}</td>
+              <td class="myclass">{{ data.tdsAmount }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeCustomerCommissionDetailsModel()" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Net Commission Details Model -->
+<p-dialog
+  header="Customer Net Commission Details"
+  [(visible)]="isCustomerNetCommissionDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Base Revenue</th>
+              <th class="myclass">Commission On Plan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of planCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.baseOfferPriceExcludeAgr }}</td>
+              <td class="myclass">{{ data.netCommission }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeCustomerNetCommissionDetailsModel()"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Net Total Commission of Service Details Model For Service Level-->
+<p-dialog
+  header="Net Total Commission Details"
+  [(visible)]="isNetTotalCommissionOfServiceDetailsModelForServiceLevel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Service Name</th>
+              <th class="myclass">Total Base Revenue Of Service</th>
+              <th class="myclass">Commission</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="myclass">{{ netCommissionDetailsListForService.serviceName }}</td>
+              <td class="myclass">{{ netCommissionDetailsListForService.totalBaseRevenue }}</td>
+              <td class="myclass">{{ netCommissionDetailsListForService.commission }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeNetTotalCommissionOfServiceDetailsModelForServiceLevel()"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Total Commission Details Model For Service Level-->
+<p-dialog
+  header="Customer Commission Details"
+  [(visible)]="isCustomerTotalCommissionDetailsModelForServiceLevel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Commission Per Plan</th>
+              <th class="myclass">Royalty</th>
+              <th class="myclass">Partner Tax</th>
+              <th class="myclass">TDS</th>
+              <th class="myclass">Commission Without Royalty Charge</th>
+              <th class="myclass">Final Commission</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of customerCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerServiceDetailsData',
+                        itemsPerPage: customerServiceDetailsItemPerPage,
+                        currentPage: customerServiceDetailsCurrentPage,
+                        totalItems: customerServiceDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.partnerCommission }}</td>
+              <td class="myclass">{{ data.royalty }}</td>
+              <td class="myclass">{{ data.partnerTax }}</td>
+              <td class="myclass">{{ data.tds }}</td>
+              <td class="myclass">{{ data.netCommission }}</td>
+              <td class="myclass">{{ data.payableCommission }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination_Dropdown">
+          <pagination-controls
+            id="customerServiceDetailsData"
+            maxSize="10"
+            directionLinks="true"
+            previousLabel=""
+            nextLabel=""
+            (pageChange)="customerServiceDetailsPageChanged($event)"
+          ></pagination-controls>
+          <div id="itemPerPageDropdown">
+            <p-dropdown
+              [(ngModel)]="customerServiceDetailsItemPerPage"
+              [options]="pageLimitOptions"
+              optionLabel="value"
+              optionValue="value"
+              (onChange)="customerServiceDetailsTotalItemPerPage($event)"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeCustomerTotalCommissionDetailsModelForServiceLevel()"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Invoice details"
+  [(visible)]="modalToggle"
+  [modal]="true"
+  [style]="{ width: '40vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [responsive]="true"
+  [closable]="true"
+>
+  <div *ngIf="invoice" style="padding-top: 20px">
+    <p><strong>Document Number:</strong> {{ invoice.docnumber }}</p>
+    <p><strong>Bill Date:</strong> {{ invoice.billdate | date: "medium" }}</p>
+    <p><strong>Create Date:</strong> {{ invoice.createdate | date: "medium" }}</p>
+    <p><strong>Start Date:</strong> {{ invoice.startdate | date: "medium" }}</p>
+    <p><strong>End Date:</strong> {{ invoice.endate | date: "medium" }}</p>
+    <p><strong>Due Date:</strong> {{ invoice.duedate | date: "medium" }}</p>
+    <p><strong>Late Payment Date:</strong> {{ invoice.latepaymentdate | date: "medium" }}</p>
+    <p><strong>Subtotal:</strong> {{ invoice.subtotal | customCurrency: currency }}</p>
+    <p><strong>Tax:</strong> {{ invoice.tax | customCurrency: currency }}</p>
+    <p><strong>Discount:</strong> {{ invoice.discount | customCurrency: currency }}</p>
+    <p><strong>Total Amount:</strong> {{ invoice.totalamount | customCurrency: currency }}</p>
+    <p>
+      <strong>Previous Balance:</strong> {{ invoice.previousbalance | customCurrency: currency }}
+    </p>
+    <p>
+      <strong>Late Payment Fee:</strong> {{ invoice.latepaymentfee | customCurrency: currency }}
+    </p>
+    <p><strong>Current Payment:</strong> {{ invoice.currentpayment | customCurrency: currency }}</p>
+    <p><strong>Current Debit:</strong> {{ invoice.currentdebit | customCurrency: currency }}</p>
+    <p><strong>Current Credit:</strong> {{ invoice.currentcredit | customCurrency: currency }}</p>
+    <p><strong>Total Due:</strong> {{ invoice.totaldue | customCurrency: currency }}</p>
+    <p><strong>Amount in Words:</strong> {{ invoice.amountinwords }}</p>
+    <p><strong>Due in Words:</strong> {{ invoice.dueinwords }}</p>
+    <p><strong>Bill Run Status:</strong> {{ invoice.billrunstatus }}</p>
+    <p><strong>Adjusted Amount:</strong> {{ invoice.adjustedamount | customCurrency: currency }}</p>
+    <p><strong>Payment Status:</strong> {{ invoice.paymentStatus }}</p>
+    <p><strong>Partner Phone:</strong> {{ invoice.phone }}</p>
+    <p><strong>Email:</strong> {{ invoice.email }}</p>
+    <p><strong>Operator Name:</strong> {{ invoice.toOperatorName }}</p>
+    <p><strong>Partner Tax:</strong> {{ invoice.partnerTax | customCurrency: currency }}</p>
+    <p><strong>TDS:</strong> {{ invoice.tds | customCurrency: currency }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="closeInvoiceDetailsModel()">
+      Close
+    </button>
+  </div>
+</p-dialog>

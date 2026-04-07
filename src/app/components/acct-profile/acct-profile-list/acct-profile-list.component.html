@@ -1,0 +1,361 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel mb-15">
+      <div class="panel-heading">
+        <h3 class="panel-title">Radius Profile Management</h3>
+        <div class="right">
+          <button
+            aria-controls="searchPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#searchPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="acctProfileSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchProfileForm">
+              <div class="row">
+                <div class="col-md-3" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px">Radius Profile Name:</label>
+                </div>
+                <div class="col-md-5" style="padding-left: 0%">
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Radius Profile Name"
+                    formControlName="name"
+                    (keydown.enter)="searchProfileByName()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchProfileForm.controls.name.errors
+                    }"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search Profile"
+                    data-toggle="tooltip"
+                    (click)="searchProfileByName()"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Radius Profiles List</h3>
+        <div class="right">
+          <button
+            aria-controls="listPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#listPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="listPreCust">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th width="17%">Name</th>
+                    <th width="10%">Status</th>
+                    <th width="20%">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let profile of profileData
+                        | paginate
+                          : {
+                              id: 'listing_groupdata',
+                              itemsPerPage: itemsPerPage,
+                              currentPage: currentPage,
+                              totalItems: totalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <a
+                        style="color: #f7b206"
+                        href="javascript:void(0)"
+                        title="Click To See Radius Profile Detail"
+                        class="curson_pointer"
+                        (click)="getRadiusProfileDetail(profile.radiusProfileId, profile.mvnoId)"
+                      >
+                        {{ profile.name }}
+                      </a>
+                    </td>
+                    <td *ngIf="profile.status == 'Active'">
+                      <label class="switch">
+                        <input
+                          *ngIf="!modalToggle"
+                          type="checkbox"
+                          checked
+                          [disabled]="!editAccess"
+                        />
+                        <input
+                          *ngIf="modalToggle"
+                          type="checkbox"
+                          checked
+                          [disabled]="!editAccess"
+                          (click)="
+                            changeStatus(profile.name, profile.status, profile.mvnoId, $event)
+                          "
+                        />
+                        <span class="slider round"></span>
+                      </label>
+                    </td>
+                    <td *ngIf="profile.status == 'Inactive'">
+                      <label class="switch">
+                        <input *ngIf="!modalToggle" type="checkbox" [disabled]="!editAccess" />
+                        <input
+                          *ngIf="modalToggle"
+                          type="checkbox"
+                          [disabled]="!editAccess"
+                          (click)="
+                            changeStatus(profile.name, profile.status, profile.mvnoId, $event)
+                          "
+                        />
+                        <span class="slider round"></span>
+                      </label>
+                    </td>
+                    <td class="btnAction">
+                      <a
+                        *ngIf="editAccess"
+                        type="button"
+                        data-title="Edit"
+                        data-toggle="tooltip"
+                        class="curson_pointer"
+                        [routerLink]="[
+                          '/home/radiusProfile/edit/',
+                          profile.radiusProfileId,
+                          profile.mvnoId
+                        ]"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        type="button"
+                        data-title="Delete"
+                        data-toggle="tooltip"
+                        class="curson_pointer"
+                        (click)="deleteConfirm(profile.radiusProfileId, profile.mvnoId, i)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="display: flex">
+                <pagination-controls
+                  id="listing_groupdata"
+                  [maxSize]="10"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChanged($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Details Model -->
+<p-dialog
+  header="Radius Profile Detail"
+  [(visible)]="isProfileDetailsModelVisible"
+  [modal]="true"
+  [style]="{ width: '40vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [responsive]="true"
+  [closable]="true"
+  (onHide)="closeProfileDetailsModel()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-6">
+        <label for="status">Profile Name :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">{{ radiusProfileDetail.name }}</label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="type">Status :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="typeValue">{{ radiusProfileDetail.status }}</label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="noOfVoucher">Check Item :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="noOfVoucherValue">{{ checkItem }}</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <label for="planName">Acct Cdr Status :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="planNameValue">
+          {{ radiusProfileDetail.accountCdrStatus }}
+        </label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="preValue">Session Status :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="preValuevalue">
+          {{ radiusProfileDetail.sessionStatus }}
+        </label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="length">Priority :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="lengthValue">
+          {{ radiusProfileDetail.priority }}
+        </label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="postValue">Request Type :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="postValueValue">
+          {{ radiusProfileDetail.requestType }}
+        </label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="status">Auth Audit :{{ radiusProfileDetail.authAudit }}</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">
+          {{ radiusProfileDetail.authAudit }}
+        </label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="status">Proxy Server :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">{{ proxyServerName }}</label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="status">CoA/DM :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">{{ radiusProfileDetail.coadm }}</label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="status">CoA/DM Profile :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">{{ coaDMProfileName }}</label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="status">Authentication Mode :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">{{ radiusProfileDetail.authenticationMode }}</label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="status">Authentication Type :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">{{ radiusProfileDetail.authenticationType }}</label>
+      </div>
+    </div>
+    <div class="row" id="viewDetail">
+      <div class="col-md-6">
+        <label for="status">Authentication Sub Type :</label>
+      </div>
+      <div class="col-md-6">
+        <label for="statusValue">{{
+          radiusProfileDetail.authenticationSubType
+            ? radiusProfileDetail.authenticationSubType
+            : "-"
+        }}</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="closeProfileDetailsModel()">
+      Close
+    </button>
+  </div>
+</p-dialog>

@@ -1,0 +1,1757 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Network Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#netwokSearch"
+            aria-expanded="false"
+            aria-controls="netwokSearch"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="netwokSearch" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <p-dropdown
+                [options]="searchNetworkDeviceData"
+                optionValue="text"
+                optionLabel="text"
+                filter="true"
+                filterBy="text"
+                placeholder="Select a Device Type"
+                [(ngModel)]="searchDeviceType"
+              ></p-dropdown>
+            </div>
+            <div class="col-md-3" *ngIf="searchDeviceType">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search by Display Name"
+                [(ngModel)]="searchDeatil"
+                (keyup.enter)="searchnetworkDevice()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                [disabled]="!searchDeatil"
+                (click)="searchnetworkDevice()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchnetworkDevice()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Network Device</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listnetwork"
+            aria-expanded="false"
+            aria-controls="listnetwork"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listnetwork" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Display Name</th>
+                    <th>Device Type</th>
+                    <!-- <th>Service Area</th> -->
+                    <th>Status</th>
+                    <th *ngIf="editAccess || deleteAccess || parentMappingAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of networkDeviceListData
+                        | paginate
+                          : {
+                              id: 'networkDeviceListpageData',
+                              itemsPerPage: networkDeviceListdataitemsPerPage,
+                              currentPage: currentPagenetworkDeviceListdata,
+                              totalItems: networkDeviceListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      style="color: #f7b206"
+                      class="curson_pointer"
+                      data-target="#networkDevi"
+                      data-toggle="modal"
+                      data-backdrop="static"
+                      data-keyboard="false"
+                      (click)="getnetworkData(data.id)"
+                    >
+                      {{ data.displayname }}
+                    </td>
+                    <td>{{ data.devicetype || "-" }}</td>
+                    <!-- <td *ngIf="data.serviceAreaName">{{ data.serviceAreaIdsList }}</td>
+                  <td *ngIf="!data.serviceAreaName">-</td> -->
+                    <!-- <td>{{ data.status }}</td> -->
+                    <td *ngIf="data.status == 'Active' || data.status == 'ACTIVE'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="data.status == 'Inactive' || data.status == 'INACTIVE'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess || parentMappingAccess">
+                      <a
+                        *ngIf="parentMappingAccess"
+                        data-toggle="tooltip"
+                        type="button"
+                        title="Parent Device Mapping"
+                        id="editbutton"
+                        href="javascript:void(0)"
+                        (click)="parentDeviceMapping(data)"
+                      >
+                        <img src="assets/img/parent_device_mapping.png" />
+
+                        <!-- <i class="fa fa-map"></i> -->
+                      </a>
+                      <a
+                        data-toggle="tooltip"
+                        title="Edit Network Device"
+                        id="editbutton"
+                        type="button"
+                        href="javascript:void(0)"
+                        *ngIf="editAccess"
+                        (click)="editnetworkDevice(data.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        (click)="deleteConfirmonnetworkDevice(data)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                      <a
+                        id="hierarchy-button"
+                        title="Hierarchy Details"
+                        href="javascript:void(0)"
+                        (click)="networkHierarchyDevice(data)"
+                      >
+                        <img src="assets/img/diagram.png" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="networkDeviceListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangednetworkDeviceList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="networkDeviceListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title" *ngIf="!isnetworkDeviceEdit">Create Network</h3>
+        <h3 class="panel-title" *ngIf="isnetworkDeviceEdit">Update Network</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createNetwork"
+            aria-expanded="false"
+            aria-controls="createNetwork"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createNetwork" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !isnetworkDeviceEdit">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (isnetworkDeviceEdit && editAccess)">
+          <form [formGroup]="networkDeviceGroupForm">
+            <div>
+              <label>Name *</label>
+              <input
+                id="name"
+                type="text"
+                class="form-control"
+                placeholder="Enter Name"
+                formControlName="name"
+                [readonly]="isnetworkDeviceEdit"
+                [ngClass]="{
+                  'is-invalid': submitted && networkDeviceGroupForm.controls.name.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && networkDeviceGroupForm.controls.name.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && networkDeviceGroupForm.controls.name.errors.required"
+                >
+                  Name is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>Display Name *</label>
+              <input
+                id="displayname"
+                type="text"
+                class="form-control"
+                placeholder="Enter Display Name"
+                formControlName="displayname"
+                [ngClass]="{
+                  'is-invalid': submitted && networkDeviceGroupForm.controls.displayname.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && networkDeviceGroupForm.controls.displayname.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && networkDeviceGroupForm.controls.displayname.errors.required"
+                >
+                  Display Name is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>Device Type</label>
+              <p-dropdown
+                [options]="networkDeviceData"
+                optionValue="text"
+                optionLabel="text"
+                filter="true"
+                filterBy="text"
+                placeholder="Select a  Device Type"
+                formControlName="devicetype"
+                [disabled]="isnetworkDeviceEdit"
+                (onChange)="networkDeviceTypeEvent($event)"
+              ></p-dropdown>
+            </div>
+            <br />
+            <div>
+              <label>Product *</label>
+              <p-dropdown
+                [options]="productDeviceData"
+                optionValue="id"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select Product"
+                formControlName="productId"
+                [disabled]="isnetworkDeviceEdit"
+                (onChange)="productTypeEvent($event)"
+                [ngClass]="{
+                  'is-invalid': submitted && networkDeviceGroupForm.controls.productId.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && networkDeviceGroupForm.controls.productId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && networkDeviceGroupForm.controls.productId.errors.required"
+                >
+                  Product is required.
+                </div>
+              </div>
+              <br />
+            </div>
+            <!-- <div>
+              <label>Select Inward</label>
+              <p-dropdown [options]="SelectInwardData" optionValue="id" optionLabel="inwardNumber" filter="true"
+                filterBy="text" placeholder="Select Inward" formControlName="inwardId" [disabled]="isnetworkDeviceEdit"
+                [ngClass]="{
+                  'is-invalid': submitted && networkDeviceGroupForm.controls.inwardId.errors
+                }"></p-dropdown>
+              <div class="errorWrap text-danger" *ngIf="submitted && networkDeviceGroupForm.controls.inwardId.errors">
+                <div class="error text-danger"
+                  *ngIf="submitted && networkDeviceGroupForm.controls.inwardId.errors.required">
+                  Select Inward is required.
+                </div>
+              </div>
+              <br />
+            </div>
+            <br /> -->
+            <!-- <div *ngIf="ifSpliterInputShow">
+              <br />
+              <div style="display: flex">
+                <div style="width: 50%">
+                  <label>Total ports</label>
+                  <div>
+                    <input
+                      id="totalPorts"
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      placeholder="Enter Total Ports"
+                      formControlName="totalPorts"
+                      (keyup)="onKeyTotalPort($event)"
+                      (keypress)="totalPortValidation($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && networkDeviceGroupForm.controls.totalPorts.errors
+                      }"
+                      [readonly]="!isTotalPort"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && networkDeviceGroupForm.controls.totalPorts.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && networkDeviceGroupForm.controls.totalPorts.errors.required
+                        "
+                      >
+                        Total In Ports is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && networkDeviceGroupForm.controls.totalPorts.errors.pattern
+                        "
+                      >
+                        Only numeric charcter allowed.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                &nbsp; &nbsp;
+                <div style="width: 50%">
+                  <label>Available ports</label>
+                  <div>
+                    <input
+                      id="availablePorts"
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      placeholder="Enter Available Ports"
+                      formControlName="availablePorts"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && networkDeviceGroupForm.controls.availablePorts.errors
+                      }"
+                      readonly
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && networkDeviceGroupForm.controls.availablePorts.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted &&
+                          networkDeviceGroupForm.controls.availablePorts.errors.required
+                        "
+                      >
+                        Available ports is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && networkDeviceGroupForm.controls.availablePorts.errors.pattern
+                        "
+                      >
+                        Only numeric charcter allowed.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <br *ngIf="networkDeviceGroupForm.value.productId" />
+            <div style="display: flex" *ngIf="networkDeviceGroupForm.value.productId">
+              <div style="width: 50%">
+                <label>Total IN ports</label>
+                <div>
+                  <input
+                    id="totalPorts"
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    placeholder="Enter Total Ports"
+                    formControlName="totalInPorts"
+                    readonly
+                  />
+                </div>
+              </div>
+              &nbsp; &nbsp;
+              <div style="width: 50%">
+                <label>Available IN ports</label>
+                <div>
+                  <input
+                    id="availablePorts"
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    placeholder="Enter Available Ports"
+                    formControlName="availableInPorts"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <br *ngIf="networkDeviceGroupForm.value.productId" />
+            <div style="display: flex" *ngIf="networkDeviceGroupForm.value.productId">
+              <div style="width: 50%">
+                <label>Total OUT ports</label>
+                <div>
+                  <input
+                    id="totalPorts"
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    placeholder="Enter Total Ports"
+                    formControlName="totalOutPorts"
+                    readonly
+                  />
+                </div>
+              </div>
+              &nbsp; &nbsp;
+              <div style="width: 50%">
+                <label>Available OUT ports</label>
+                <div>
+                  <input
+                    id="availablePorts"
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    placeholder="Enter Available Ports"
+                    formControlName="availableOutPorts"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label>Service Area *</label>
+              <p-multiSelect
+                id="id"
+                [options]="serviceAreaList"
+                formControlName="serviceAreaIdsList"
+                defaultLabel="Select Area"
+                optionLabel="name"
+                optionValue="id"
+                [disabled]="isnetworkDeviceEdit"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && networkDeviceGroupForm.controls.serviceAreaIdsList.errors
+                }"
+              ></p-multiSelect>
+              <br />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && networkDeviceGroupForm.controls.serviceAreaIdsList.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="
+                    submitted && networkDeviceGroupForm.controls.serviceAreaIdsList.errors.required
+                  "
+                >
+                  Service Area is required.
+                </div>
+              </div>
+              <br />
+            </div>
+
+            <div>
+              <label>Latitude *</label>
+              <input
+                id="latitude"
+                type="text"
+                class="form-control"
+                placeholder="Enter latitude"
+                formControlName="latitude"
+                [readonly]="iflocationFill"
+                [ngClass]="{
+                  'is-invalid': submitted && networkDeviceGroupForm.controls.latitude.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && networkDeviceGroupForm.controls.latitude.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && networkDeviceGroupForm.controls.latitude.errors.required"
+                >
+                  Latitude is required.
+                </div>
+              </div>
+              <br />
+            </div>
+
+            <div>
+              <label>Longitude *</label>
+              <input
+                id="longitude"
+                type="text"
+                class="form-control"
+                placeholder="Enter longitude"
+                formControlName="longitude"
+                [readonly]="iflocationFill"
+                [ngClass]="{
+                  'is-invalid': submitted && networkDeviceGroupForm.controls.longitude.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && networkDeviceGroupForm.controls.longitude.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && networkDeviceGroupForm.controls.longitude.errors.required"
+                >
+                  Longitude is required.
+                </div>
+              </div>
+              <br />
+            </div>
+            <div style="margin-bottom: 1rem">
+              <span
+                class="HoverEffect"
+                (click)="mylocation()"
+                title="Get Current Location"
+                style="border-bottom: 1px solid #f7b206"
+              >
+                <img class="LocationIcon" src="assets/img/B_Find-My-current-location_Y.png" />
+              </span>
+              <span
+                class="HoverEffect"
+                title="Search Location"
+                data-target="#searchLocationModal"
+                data-toggle="modal"
+                data-backdrop="static"
+                data-keyboard="false"
+                style="margin-left: 8px; border-bottom: 1px solid #f7b206"
+                (click)="openSearchModel()"
+              >
+                <img class="LocationIcon" src="assets/img/C_Search-location_Y.png" />
+              </span>
+            </div>
+
+            <div>
+              <label>Status *</label>
+              <p-dropdown
+                [options]="statusOptions"
+                optionValue="label"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                placeholder="Select a Status"
+                formControlName="status"
+                [ngClass]="{
+                  'is-invalid': submitted && networkDeviceGroupForm.controls.status.errors
+                }"
+              ></p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && networkDeviceGroupForm.controls.status.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && networkDeviceGroupForm.controls.status.errors.required"
+                >
+                  Status is required.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditnetworkDevice('')"
+                *ngIf="!isnetworkDeviceEdit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Network
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="isnetworkDeviceEdit"
+                (click)="addEditnetworkDevice(viewnetworkDeviceListData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Network
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="ifsearchLocationModal">
+  <div class="modal fade" id="searchLocationModal" role="dialog">
+    <div class="modal-dialog searchLocationModalWidth">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="panel-title">Search Location</h3>
+        </div>
+        <div class="modal-body">
+          <form name="searchLocationForm" [formGroup]="searchLocationForm">
+            <div class="form-group">
+              <label for="searchLocationname">Search Location Name:</label>
+              <div class="row">
+                <div class="col-lg-7 col-md-6">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="searchLocationname"
+                    placeholder="Enter Location Name"
+                    formControlName="searchLocationname"
+                  />
+                </div>
+                <div class="col-lg-5 col-md-6" style="padding: 0 10px !important">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-sm"
+                    id="closeModal"
+                    (click)="searchLocation()"
+                    [disabled]="!searchLocationForm.valid"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    id="btn"
+                    type="button"
+                    class="btn btn-default btn-sm"
+                    (click)="clearLocationForm()"
+                    style="margin-left: 8px"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="row">
+            <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 35%">Name</th>
+                    <th style="width: 65%">Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of searchLocationData
+                        | paginate
+                          : {
+                              id: 'searchpageData',
+                              itemsPerPage: searchLocationItemPerPage,
+                              currentPage: currentPagesearchLocationList,
+                              totalItems: searchLocationtotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="HoverEffect"
+                      (click)="filedLocation(data.placeId)"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      data-dismiss="modal"
+                      title="Set value Latitude & Longitude"
+                      style="width: 35%"
+                    >
+                      {{ data.name }}
+                    </td>
+                    <td style="width: 65%">{{ data.address }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <pagination-controls
+                id="searchpageData"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChangedSearchLocationList($event)"
+              ></pagination-controls>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="addUpdateBtn">
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              #closebutton
+              data-dismiss="modal"
+              (click)="clearLocationForm()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="ifNetwortDetails">
+  <div class="modal fade" id="networkDevi" role="dialog">
+    <div
+      class="modal-dialog"
+      [ngClass]="{
+        networkdetailsWidth: IfPersonalNetworkDataShow,
+        networkHiearachyWidth: ifPersonalPerentDeviceShow
+      }"
+    >
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" (click)="NetworkDeatilsClear()">
+            &times;
+          </button>
+          <div style="display: flex; justify-content: center; align-items: center">
+            <h3 *ngIf="IfPersonalNetworkDataShow" class="panel-title">
+              {{ networkDeviceDetails.name }} Network Device
+            </h3>
+
+            <div
+              class="backbtn"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Go to Network Details"
+              *ngIf="ifPersonalPerentDeviceShow || ifServiceAreaListShow || ifChildListShow"
+              (click)="personalNetworkData()"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: black !important; font-size: 28px"
+              ></i>
+            </div>
+            <h3 style="margin-left: 1.5rem" *ngIf="ifPersonalPerentDeviceShow" class="panel-title">
+              {{ networkDeviceDetails.name }} Hierarchy Diagram
+            </h3>
+            <h3 style="margin-left: 1.5rem" *ngIf="ifServiceAreaListShow" class="panel-title">
+              {{ networkDeviceDetails.name }} Service Area List
+            </h3>
+            <h3 style="margin-left: 1.5rem" *ngIf="ifChildListShow" class="panel-title">
+              {{ networkDeviceDetails.name }} Child Device List
+            </h3>
+          </div>
+        </div>
+        <div class="modal-body" style="min-height: 40rem; max-height: 65rem">
+          <div
+            *ngIf="IfPersonalNetworkDataShow"
+            class="panel-body table-responsive"
+            id="networkDeviceTabel"
+          >
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td><label class="networkLabel">Name :</label></td>
+                  <td>
+                    <span>{{ networkDeviceDetails.name }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Parent Network Device :</label>
+                  </td>
+                  <td>
+                    <span *ngIf="networkDeviceDetails.parentDeviceName">
+                      {{ networkDeviceDetails.parentDeviceName }}
+                    </span>
+                    <span *ngIf="networkDeviceDetails.parentDeviceName == null">-</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Child Network Device :</label>
+                  </td>
+                  <td>
+                    <span
+                      class="HoverEffect"
+                      (click)="childDeviceListShow()"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Go to Service Area List"
+                    >
+                      Click here
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Device Type :</label>
+                  </td>
+                  <td>
+                    <span>{{ networkDeviceDetails.devicetype }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Total In ports :</label>
+                  </td>
+                  <td>
+                    <span>{{ networkDeviceDetails.totalInPorts }}</span>
+                  </td>
+                  <td>
+                    <label class="networkLabel">Total Out ports :</label>
+                  </td>
+                  <td>
+                    <span>{{ networkDeviceDetails.totalOutPorts }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Available In ports :</label>
+                  </td>
+                  <td>
+                    <span>{{ networkDeviceDetails.availableInPorts }}</span>
+                  </td>
+                  <td>
+                    <label class="networkLabel">Available Out ports :</label>
+                  </td>
+                  <td>
+                    <span>{{ networkDeviceDetails.availableOutPorts }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Service Area :</label>
+                  </td>
+                  <td>
+                    <!-- <span
+                      *ngFor="
+                        let serviceName of networkDeviceDetails.serviceAreaNameList
+                      "
+                    >
+                      <span>{{ serviceName.name }} ,</span>
+                    </span> -->
+                    <span
+                      class="HoverEffect"
+                      (click)="serviceareListShow()"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Go to Service Area List"
+                    >
+                      Click here
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Latitude :</label>
+                  </td>
+                  <td>
+                    <span>{{ networkDeviceDetails.latitude }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="networkLabel">Longitude :</label>
+                  </td>
+                  <td>
+                    <span>{{ networkDeviceDetails.longitude }}</span>
+                  </td>
+                </tr>
+                <!-- <tr>
+                  <td>
+                    <label class="networkLabel">Hierarchy :</label>
+                  </td>
+                  <td>
+                    <span
+                      *ngIf="!parentNameNetwork"
+                      class="HoverEffect"
+                      (click)="networkHierarchyDevice(networkDeviceDetails.id)"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Open to Hierarchy Diagram"
+                    >
+                      Click here
+                    </span>
+                  </td>
+                </tr> -->
+
+                <tr>
+                  <td>
+                    <label class="networkLabel">Status :</label>
+                  </td>
+                  <td>
+                    <span
+                      *ngIf="networkDeviceDetails.status == 'Active'"
+                      class="badge badge-success"
+                    >
+                      Active
+                    </span>
+                    <span
+                      *ngIf="networkDeviceDetails.status == 'Inactive'"
+                      class="badge badge-danger"
+                    >
+                      Inactive
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- <div class="dataGroup"> -->
+          </div>
+          <div *ngIf="ifPersonalPerentDeviceShow" style="padding: 0">
+            <!-- <div style="margin: 6px 0 3rem 0;">
+              <h3 class="panel-title">
+                {{ networkDeviceDetails.name }} Hierarchy Diagram
+              </h3>
+            </div> -->
+            <div class="graphbody">
+              <ng-container *ngIf="show">
+                <p-organizationChart [value]="data1">
+                  <ng-template let-node pTemplate="Network">
+                    <div class="p-2 text-center">
+                      <img [src]="node.data.image" class="mb-3 w-3rem h-3rem" />
+                      <div class="font-bold">{{ node.data.name }}</div>
+                      <div>Type - {{ node.data.title }}</div>
+                    </div>
+                  </ng-template>
+                </p-organizationChart>
+              </ng-container>
+            </div>
+          </div>
+          <div *ngIf="ifChildListShow">
+            <div class="panel-body table-responsive" id="networkDeviceTabel">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td><label class="networkLabel">Child Davices :</label></td>
+                    <td>
+                      <span
+                        style="word-break: break-all"
+                        *ngFor="let childDeviceName of networkDeviceDetails.childDeviceName"
+                      >
+                        <span>
+                          {{ childDeviceName }},
+                          <br />
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div *ngIf="ifServiceAreaListShow">
+            <div class="panel-body table-responsive" id="networkDeviceTabel">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td><label class="networkLabel">Service Area :</label></td>
+                    <td>
+                      <span
+                        style="word-break: break-all"
+                        *ngFor="let serviceName of networkDeviceDetails.serviceAreaNameList"
+                      >
+                        <span>
+                          {{ serviceName.name }},
+                          <br />
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<p-dialog
+    header="Device Mapping : {{ deviceName }}"
+    [(visible)]="selectParentModal"
+    [modal]="true"
+    [style]="{ width: '700px' }"
+    [closable]="true"
+    [draggable]="false"
+  >
+  <div class="modal-body">
+        <!-- Parent Device Connection -->
+        <h5>Parent Connection Mapping</h5>
+        <form [formGroup]="inForm">
+          <div class="row">
+            <div class="col-md-3">
+              <p-dropdown
+                [options]="basicInPorts"
+                placeholder="Current Device In-Port"
+                formControlName="inBind"
+                [editable]="true"
+                [ngClass]="{
+                  'is-invalid': submittedIn && inForm.controls.inBind.errors
+                }"
+              >
+              </p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submittedIn && inForm.controls.inBind.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submittedIn && inForm.controls.inBind.errors.required"
+                >
+                  Current Device In-Port is required.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <p-dropdown
+                [options]="availableParentList"
+                optionLabel="name"
+                optionValue="id"
+                filter="true"
+                filterBy="name"
+                placeholder="Select Parent Device"
+                formControlName="parentDeviceId"
+                (onChange)="selectParent($event, 'OUT')"
+                styleClass="disableDropdown"
+                [disabled]="true"
+              >
+              </p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submittedIn && inForm.controls.parentDeviceId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submittedIn && inForm.controls.parentDeviceId.errors.required"
+                >
+                  Parent is required.
+                </div>
+              </div>
+              <button
+                id="opencust"
+                type="button"
+                (click)="modalOpenParentDevice('Parent')"
+                class="btn btn-primary"
+                style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+              >
+                <i class="fa fa-plus-square"></i>
+              </button>
+              <button
+                id="remove"
+                type="button"
+                class="btn btn-danger"
+                style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                (click)="removeSelectedparentDevice('Parent')"
+              >
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <p-dropdown
+                [options]="availableOutPorts"
+                placeholder="Select Parent Device Out-Port"
+                formControlName="outBind"
+                [disabled]="!inFlag"
+                [editable]="true"
+                [ngClass]="{
+                  'is-invalid': submittedIn && inForm.controls.outBind.errors
+                }"
+              >
+              </p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submittedIn && inForm.controls.outBind.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submittedIn && inForm.controls.outBind.errors.required"
+                >
+                  Parent Device Out-Port is required.
+                </div>
+              </div>
+            </div>
+            <div *ngIf="basicInPorts.length > 0">
+              <button
+                style="object-fit: cover; padding: 5px 8px"
+                class="btn btn-primary"
+                (click)="connectParent($event)"
+              >
+                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                Add ({{ basicInPorts.length }})
+              </button>
+            </div>
+            <div style="margin-left: 7px">
+              <button
+                style="object-fit: cover; padding: 5px 8px"
+                class="btn btn-primary"
+                (click)="updateNameAndPort($event, true)"
+              >
+                View
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div
+          *ngIf="totalInPorts.value.length > 0"
+          style="border: 1px solid #ddd; padding: 5px; margin-top: 20px"
+        >
+          <div
+            style="margin-bottom: 10px"
+            *ngFor="let port of totalInPorts.controls; let i = index"
+          >
+            <label style="margin-right: 20px; width: 2%"> {{ port.get("inBind").value }}: </label>
+            <p-dropdown
+              *ngIf="port.get('flag').value"
+              [style]="{ width: '60%' }"
+              [options]="allNetworkDeviceData"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Parent Device"
+              [formControl]="port.get('parentDeviceId')"
+              (onChange)="selectParent($event, 'in')"
+              [disabled]="port.get('flag').value"
+            >
+            </p-dropdown>
+            <p-dropdown
+              *ngIf="!port.get('flag').value"
+              [style]="{ width: '60%' }"
+              [options]="availableParentList"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Parent Device"
+              [formControl]="port.get('parentDeviceId')"
+              (onChange)="selectParent($event, 'in'); port.get('flag').value = true"
+              [disabled]="port.get('flag').value"
+            >
+            </p-dropdown>
+
+            <input
+              disabled
+              type="text"
+              style="width: 30% !important; display: inline-block !important; margin-left: 10px"
+              class="form-control"
+              [formControl]="port.get('outBind')"
+              id="inports"
+              placeholder="Enter OUT Port"
+            />
+          </div>
+        </div>
+
+        <!-- Child Device Connection  -->
+        <h5 style="margin-top: 20px">Child Connection Mapping</h5>
+        <form [formGroup]="outForm">
+          <div class="row">
+            <div class="col-md-3">
+              <p-dropdown
+                [options]="basicOutPorts"
+                placeholder="Current Device Out-Port"
+                formControlName="outBind"
+                [editable]="true"
+                [ngClass]="{
+                  'is-invalid': submittedIn && outForm.controls.outBind.errors
+                }"
+              >
+              </p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submittedIn && outForm.controls.outBind.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submittedIn && outForm.controls.outBind.errors.required"
+                >
+                  Current Device Out-Port is required.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <p-dropdown
+                [options]="availableParentList"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select Child Device"
+                formControlName="parentDeviceId"
+                (onChange)="selectParent($event, 'IN')"
+                [ngClass]="{
+                  'is-invalid': submittedIn && outForm.controls.parentDeviceId.errors
+                }"
+                styleClass="disableDropdown"
+                [disabled]="true"
+              >
+              </p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submittedIn && outForm.controls.parentDeviceId.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submittedIn && outForm.controls.parentDeviceId.errors.required"
+                >
+                  Child Device is required.
+                </div>
+              </div>
+              <button
+                id="opencust"
+                type="button"
+                (click)="modalOpenParentDevice('Child')"
+                class="btn btn-primary"
+                style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+              >
+                <i class="fa fa-plus-square"></i>
+              </button>
+              <button
+                id="remove"
+                type="button"
+                class="btn btn-danger"
+                style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                (click)="removeSelectedparentDevice('Child')"
+              >
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <p-dropdown
+                [options]="availableInPorts"
+                placeholder="Select Child Device In-Port"
+                formControlName="inBind"
+                [disabled]="!outFlag"
+                [editable]="true"
+                [ngClass]="{
+                  'is-invalid': submittedIn && outForm.controls.inBind.errors
+                }"
+              >
+              </p-dropdown>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submittedIn && outForm.controls.inBind.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submittedIn && outForm.controls.inBind.errors.required"
+                >
+                  Child Device In-Port is required.
+                </div>
+              </div>
+            </div>
+            <div *ngIf="basicOutPorts.length > 0">
+              <button
+                style="object-fit: cover; padding: 5px 8px"
+                class="btn btn-primary"
+                (click)="connectChild('OUT')"
+              >
+                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                Add ({{ basicOutPorts.length }})
+              </button>
+            </div>
+            <div style="margin-left: 7px">
+              <button
+                style="object-fit: cover; padding: 5px 8px"
+                class="btn btn-primary"
+                (click)="updateNameAndPort($event, false)"
+              >
+                View
+              </button>
+            </div>
+          </div>
+        </form>
+        <div
+          *ngIf="totalOutPorts.value.length > 0"
+          style="border: 1px solid #ddd; padding: 5px; margin-top: 20px"
+        >
+          <div
+            style="margin-bottom: 10px"
+            *ngFor="let port of totalOutPorts.controls; let i = index"
+          >
+            <label style="margin-right: 20px; width: 2%">{{ port.get("outBind").value }}:</label>
+            <p-dropdown
+              *ngIf="port.get('flag').value"
+              [style]="{ width: '60%' }"
+              [options]="allNetworkDeviceData"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Parent Device"
+              [formControl]="port.get('parentDeviceId')"
+              (onChange)="selectParent($event, 'out')"
+              [disabled]="port.get('flag').value"
+            >
+            </p-dropdown>
+            <p-dropdown
+              *ngIf="!port.get('flag').value"
+              [style]="{ width: '60%' }"
+              [options]="availableParentList"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Parent Device"
+              [formControl]="port.get('parentDeviceId')"
+              (onChange)="selectParent($event, 'out'); port.get('flag').value = true"
+              [disabled]="port.get('flag').value"
+            >
+            </p-dropdown>
+            <input
+              disabled
+              type="text"
+              style="width: 30% !important; display: inline-block !important; margin-left: 10px"
+              class="form-control"
+              [formControl]="port.get('inBind')"
+              id="inports"
+              placeholder="Enter IN Port"
+            />
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px">
+          <button
+            id="btn"
+            type="button"
+            class="btn btn-default btn-sm"
+            (click)="clearParentDeviceMapping()"
+            style="margin-left: 8px"
+          >
+            <i class="fa fa-refresh"></i>
+            Clear
+          </button>
+          <button
+            id="btn"
+            type="button"
+            class="btn btn-default btn-sm"
+            (click)="closeParentMappingModel()"
+            style="margin-left: 8px"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+</p-dialog>
+<p-dialog
+  header="Port Detail"
+  [(visible)]="parentChildPortModal"
+  [style]="{ width: '65%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  [baseZIndex]="10000"
+  (onHide)="closePortDetailsModel()"
+  [contentStyle]="{ overflow: 'visible' }"
+>
+  <div id="inwardDetail" class="panel-collapse collapse in">
+    <div class="panel-body table-responsive">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Port Details</legend>
+        <div class="boxWhite">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table" *ngIf="isParent">
+                <thead>
+                  <tr>
+                    <th>Child Device Port</th>
+                    <th>Parent Device Port</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let param of parentPortData
+                        | paginate
+                          : {
+                              id: 'productDetailPageData',
+                              itemsPerPage: productDeatilItemPerPage,
+                              currentPage: productPageChargeDeatilList,
+                              totalItems: productDeatiltotalRecords
+                            };
+                      let i = index
+                    "
+                  >
+                    <td *ngIf="!isEditing(i)">{{ param.currentDevicePort }}</td>
+                    <td *ngIf="isEditing(i)">
+                      <p-dropdown
+                        [options]="updateParentInPortdata"
+                        optionValue="id"
+                        optionLabel="name"
+                        [(ngModel)]="selectedParentInPortdata"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Parent Device Port"
+                        [disabled]="isEditing(i)"
+                      ></p-dropdown>
+                    </td>
+                    <td *ngIf="!isEditing(i)">{{ param.otherDevicePort }}</td>
+                    <td *ngIf="isEditing(i)">
+                      <p-dropdown
+                        [options]="updateParentOutPortdata"
+                        [(ngModel)]="selectedParentOutPortdata"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Parent Device Port"
+                      ></p-dropdown>
+                    </td>
+
+                    <td>
+                      <button
+                        *ngIf="!isEditing(i)"
+                        id="remove"
+                        type="button"
+                        class="btn btn-danger"
+                        (click)="deletePort(param.id)"
+                        [disabled]="!param.canDelete"
+                        style="
+                          border-radius: 5px;
+                          padding: 5px 10px;
+                          line-height: 1.5;
+                          margin-left: 10px;
+                        "
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                      <button
+                        *ngIf="!isEditing(i)"
+                        type="button"
+                        class="approve-btn"
+                        title="Edit"
+                        style="
+                          border-radius: 5px;
+                          padding: 5px 10px;
+                          line-height: 1.5;
+                          margin-left: 10px;
+                        "
+                        (click)="editValue(i, param, isParent)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </button>
+                      <button
+                        *ngIf="isEditing(i)"
+                        type="submit"
+                        id="delete-button"
+                        class="btn btn-primary btn-sm"
+                        (click)="updateValue(i, param, isParent)"
+                        style="padding: 5px 10px; margin-left: 10px"
+                      >
+                        Save
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table" *ngIf="!isParent">
+                <thead>
+                  <tr>
+                    <th>Parent Device Port</th>
+                    <th>Child Device Port</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let param of childPortData
+                        | paginate
+                          : {
+                              id: 'productDetailPageData',
+                              itemsPerPage: productDeatilItemPerPage,
+                              currentPage: productPageChargeDeatilList,
+                              totalItems: productDeatiltotalRecords
+                            };
+                      let i = index
+                    "
+                  >
+                    <td *ngIf="!isEditing(i)">{{ param.currentDevicePort }}</td>
+                    <td *ngIf="isEditing(i)">
+                      <p-dropdown
+                        [options]="updateChildInPortdata"
+                        optionValue="id"
+                        optionLabel="name"
+                        [(ngModel)]="selectedChildInPortdata"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Parent Device Port"
+                      ></p-dropdown>
+                    </td>
+                    <td *ngIf="!isEditing(i)">{{ param.otherDevicePort }}</td>
+                    <td *ngIf="isEditing(i)">
+                      <p-dropdown
+                        [options]="updateChildOutPortdata"
+                        [(ngModel)]="selectedChildOutPortdata"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Parent Device Port"
+                      ></p-dropdown>
+                    </td>
+
+                    <td>
+                      <button
+                        id="remove"
+                        type="button"
+                        class="btn btn-danger"
+                        (click)="deletePort(param.id)"
+                        style="
+                          border-radius: 5px;
+                          padding: 5px 10px;
+                          line-height: 1.5;
+                          margin-left: 10px;
+                        "
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                      <button
+                        *ngIf="!isEditing(i)"
+                        type="button"
+                        class="approve-btn"
+                        title="Edit"
+                        style="
+                          border-radius: 5px;
+                          padding: 5px 10px;
+                          line-height: 1.5;
+                          margin-left: 10px;
+                        "
+                        (click)="editValue(i, param, isParent)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </button>
+                      <button
+                        *ngIf="isEditing(i)"
+                        type="submit"
+                        id="delete-button"
+                        class="btn btn-primary btn-sm"
+                        (click)="updateValue(i, param, isParent)"
+                        style="padding: 5px 10px; margin-left: 10px"
+                      >
+                        Save
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+  <!-- <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        (click)="saveInventorySpecificationParams()"
+        class="btn btn-primary btn-sm"
+        data-dismiss="modal"
+      >
+        Save
+      </button>
+
+      <button
+        type="button"
+        (click)="closeInventorySpecificationDetailModal()"
+        class="btn btn-danger btn-sm"
+        data-dismiss="modal"
+      >
+        Close
+      </button>
+    </div>
+  </div> -->
+</p-dialog>
+
+<p-dialog
+  header="{{ netWorkHierarchyName }} Hierarchy Details"
+  [(visible)]="isHierarchyDiagramVisible"
+  [style]="{ width: '80%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  [baseZIndex]="10000"
+  (onHide)="closeNetworkDiagramModel()"
+  [contentStyle]="{ 'max-height': '600px' }"
+>
+  <ng-template pTemplate="header">
+    <div class="d-flex flex-wrap justify-content-between align-items-center w-100">
+      <div *ngIf="showDiagram" class="d-flex gap-2 ms-auto">
+        <button class="btn btn-default" (click)="showHierarchyMappingList(networkDeviceId)">
+          Show Hierarchy Mapping List
+        </button>
+      </div>
+    </div>
+  </ng-template>
+  <div class="panel-body table-responsive">
+    <div *ngIf="showDiagram" class="graphbody mb-4">
+      <ng-container *ngIf="show">
+        <div class="zoom-scroll-container">
+          <div #zoomWrapper class="zoom-wrapper">
+            <p-organizationChart [value]="data1">
+              <ng-template let-node pTemplate="Network">
+                <div class="p-2 text-center">
+                  <img [src]="node.data.image" class="mb-3 w-3rem h-3rem" />
+                  <div class="font-bold">{{ node.data.name }}</div>
+                  <div>Type - {{ node.data.title }}</div>
+                </div>
+              </ng-template>
+            </p-organizationChart>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div *ngIf="!showDiagram">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+        "
+      >
+        <h5 style="margin: 0">Hierarchy Mapping List</h5>
+        <button class="btn btn-success" (click)="exportNetMapping()">
+          <i class="fa fa-file-excel-o"></i>Export
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead>
+            <tr>
+              <th colspan="8" class="bg-light"><b>Parent Device Details</b></th>
+              <th colspan="8" class="bg-light"><b>Child Device Details</b></th>
+            </tr>
+            <tr>
+              <th>Name</th>
+              <th>Port Type</th>
+              <th>Port Number</th>
+              <th>Device Type</th>
+              <th>Owner Type</th>
+              <th>Owner Name</th>
+              <th>MAC Address</th>
+              <th>Serial Number</th>
+
+              <th>Name</th>
+              <th>Port Type</th>
+              <th>Port Number</th>
+              <th>Device Type</th>
+              <th>Owner Type</th>
+              <th>Owner Name</th>
+              <th>MAC Address</th>
+              <th>Serial Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="hierarchyMappingList.length === 0 && mappingLoaded">
+              <td colspan="16">No record found.</td>
+            </tr>
+            <tr *ngFor="let item of hierarchyMappingList">
+              <td>{{ item.parentDeviceName || "-" }}</td>
+              <td>{{ item.parentDevicePortType || "-" }}</td>
+              <td>{{ item.parentDevicePortNumber || "-" }}</td>
+              <td>{{ item.parentDeviceType || "-" }}</td>
+              <td>{{ item.parentDeviceOwnerType || "-" }}</td>
+              <td>{{ item.parentOwnerName || "-" }}</td>
+              <td>{{ item.parentDeviceMacAddress || "-" }}</td>
+              <td>{{ item.parentDeviceSerialNumber || "-" }}</td>
+
+              <td>{{ item.childDeviceName || "-" }}</td>
+              <td>{{ item.childDevicePortType || "-" }}</td>
+              <td>{{ item.childDevicePortNumber || "-" }}</td>
+              <td>{{ item.childDeviceType || "-" }}</td>
+              <td>{{ item.childDeviceOwnerType || "-" }}</td>
+              <td>{{ item.childOwnerName || "-" }}</td>
+              <td>{{ item.childDeviceMacAddress || "-" }}</td>
+              <td>{{ item.childDeviceSerialNumber || "-" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Parent Child Selection Model -->
+<app-select-device
+  *ngIf="isparentChildDeviceModelOpen"
+  [selectedDevice]="selectedDevice"
+  [selectedDeviceId]="selectedDeviceId"
+  [deviceType]="deviceType"
+  (selectedDeviceChange)="selectedDeviceChange($event)"
+  (modalCloseParentDevice)="modalCloseParentDevice()"
+></app-select-device>

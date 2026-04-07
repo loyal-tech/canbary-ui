@@ -1,0 +1,580 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Access Level Group List</h3>
+      </div>
+      <div class="panel-body no-padding panel-udata">
+        <div class="pcol col-md-6" *ngIf="createAccess">
+          <div class="dbox">
+            <a (click)="createACL()" class="curson_pointer">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Create Access Level Group</h5>
+              <!-- <p>Create Partner </p> -->
+            </a>
+          </div>
+        </div>
+        <div class="pcol col-md-6">
+          <div class="dbox">
+            <a (click)="this.clearSearch()" class="curson_pointer">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Search Access Level Group</h5>
+              <!-- <p>Search Partner </p> -->
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="this.listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Access Level Group List</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listInwards"
+            aria-expanded="false"
+            aria-controls="listInwards"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataSector" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>AccessLevelGroupId</th>
+                    <th>AccessLevelGroupName</th>
+                    <th>Access Level Group Desc</th>
+                    <th>AuditLogging</th>
+                    <th>ValidFrom</th>
+                    <th>ValidUntil</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let Device of deviceList
+                        | paginate
+                          : {
+                              id: 'casListDataID',
+                              itemsPerPage: deviceitemsPerPage,
+                              currentPage: currentPageDevice,
+                              totalItems: devicetotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <span
+                        class="HoverEffect"
+                        data-target="#IdIcCodeModal"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        data-keyboard="false"
+                        title="BU Details"
+                        (click)="IcCodeOpenModel(Device.id)"
+                        >{{ Device.accessLevelGroupId }}</span
+                      >
+                    </td>
+                    <td>{{ Device.accessLevelGroupName }}</td>
+                    <td>{{ Device.accessLevelGroupDesc }}</td>
+                    <td>{{ Device.auditLogging }}</td>
+                    <td>{{ Device.validFrom }}</td>
+                    <td>{{ Device.validUntil }}</td>
+
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        (click)="editDevice(Device)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonSector(Device)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="casListDataID"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCasList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="this.createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ this.editMode ? "Update" : "Create" }} Access Level Group</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="createAccess || (editMode && editAccess)">
+          <form [formGroup]="deviceFormGroup">
+            <fieldset style="margin-top: 0px">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Access Level Group Id*</label>
+                      <input
+                        id="accessLevelGroupId"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Access Level Group Id"
+                        formControlName="accessLevelGroupId"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && deviceFormGroup.controls.accessLevelGroupId.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.accessLevelGroupId.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && deviceFormGroup.controls.accessLevelGroupId.errors.required
+                          "
+                        >
+                          {{ title }} accessLevelGroupId is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Access Level Group Name*</label>
+                      <input
+                        id="accessLevelGroupName"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Access Level Group Name"
+                        formControlName="accessLevelGroupName"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && deviceFormGroup.controls.accessLevelGroupName.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.accessLevelGroupName.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            deviceFormGroup.controls.accessLevelGroupName.errors.required
+                          "
+                        >
+                          {{ title }} accessLevelGroupName is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Access Level Group Desc*</label>
+                      <input
+                        id="accessLevelGroupDesc"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Access Level Group Desc"
+                        formControlName="accessLevelGroupDesc"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && deviceFormGroup.controls.accessLevelGroupDesc.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.accessLevelGroupDesc.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            deviceFormGroup.controls.accessLevelGroupDesc.errors.required
+                          "
+                        >
+                          {{ title }} accessLevelGroupDesc is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Privilege Level*</label>
+                      <p-dropdown
+                        [options]="privilegeLevelOptions"
+                        formControlName="privilegeLevel"
+                        optionValue="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select Privilege Level"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.privilegeLevel.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.privilegeLevel.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && deviceFormGroup.controls.privilegeLevel.errors.required
+                          "
+                        >
+                          {{ title }} privilegeLevel is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label> Audit Logging*</label>
+                      <p-dropdown
+                        [options]="auditLoggingOpt"
+                        formControlName="auditLogging"
+                        optionLabel="label"
+                        optionValue="value"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select Audit Logging"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.auditLogging.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.auditLogging.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && deviceFormGroup.controls.auditLogging.errors.required"
+                        >
+                          {{ title }} auditLogging is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>valid From*</label>
+                      <p-calendar
+                        formControlName="validFrom"
+                        placeholder="Enter valid From"
+                        [showTime]="true"
+                        [showIcon]="true"
+                        [showSeconds]="true"
+                        inputId="time"
+                        [numberOfMonths]="3"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.validFrom.errors
+                        }"
+                      ></p-calendar>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.validFrom.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && deviceFormGroup.controls.validFrom.errors.required"
+                        >
+                          {{ title }} validFrom is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>valid Until*</label>
+                      <p-calendar
+                        formControlName="validUntil"
+                        placeholder="Enter valid Unti "
+                        [showIcon]="true"
+                        [showTime]="true"
+                        [showSeconds]="true"
+                        inputId="time"
+                        [numberOfMonths]="3"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.validUntil.errors
+                        }"
+                      ></p-calendar>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.validUntil.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && deviceFormGroup.controls.validUntil.errors.required"
+                        >
+                          {{ title }} validUntil is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <br />
+            <br />
+            <fieldset style="margin-top: 0px">
+              <legend>DeviceGroup and CommandSet</legend>
+              <div class="boxWhite">
+                <div formArrayName="tacacsDeviceGroups">
+                  <div
+                    *ngFor="
+                      let group of deviceFormGroup.get('tacacsDeviceGroups').controls;
+                      let i = index
+                    "
+                    [formGroupName]="i"
+                  >
+                    <div class="row">
+                      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                          <div class="col">
+                            <label>Device Group Name*</label>
+                            <p-dropdown
+                              [options]="TacacsDeviceList"
+                              formControlName="tacacsDeviceGroupName"
+                              optionLabel="tacacsDeviceGroupName"
+                              optionValue="tacacsDeviceGroupName"
+                              placeholder="Select TacacsDeviceGroup"
+                              filter="true"
+                              filterBy="name"
+                              (onChange)="tacacsDeviceGroup($event)"
+                              [disabled]="isApproved"
+                            ></p-dropdown>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="col-lg-4 col-md-4 col-sm-6 col-xs-12"
+                        formGroupName="tacacsCommandSetDto"
+                      >
+                        <div class="form-group">
+                          <label>Command Set*</label>
+                          <p-dropdown
+                            [options]="TacacsCommandSetList"
+                            formControlName="commandSetName"
+                            optionLabel="commandSetName"
+                            optionValue="commandSetName"
+                            placeholder="Select TacacsCommandSet"
+                            filter="true"
+                            filterBy="name"
+                            (onChange)="tacacsCommandSet($event)"
+                            [disabled]="isApproved"
+                          ></p-dropdown>
+                        </div>
+                      </div>
+                      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                          <label>Actions</label><br />
+                          <a href="javascript:void(0)" (click)="editDeviceGroup(i)">
+                            <img src="assets/img/ioc01.jpg" /> </a
+                          >&nbsp;
+                          <a href="javascript:void(0)" (click)="removeDeviceGroup(i)">
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                          &nbsp;
+                          <a href="javascript:void(0)" (click)="approveCommand(i)">
+                            <img src="assets/img/assign.jpg" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <br />
+            <div class="col-lg-1 col-md-1">
+              <button type="submit" class="btn btn-primary" id="submit" (click)="addDeviceGroup()">
+                <i class="fa fa-plus-square"></i>
+                ADD Device Group
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="addUpdateBtn">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        id="submit"
+        (click)="addEditCommandSet(deviceFormGroup.get('id').value)"
+      >
+        <i class="fa fa-check-circle"></i>
+        {{ editMode ? "Update" : "Add" }} {{ title }} Access Level Group
+      </button>
+      <br />
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="detailView">
+    <div class="panel squircle">
+      <div class="panel-heading">
+        <div style="display: flex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Driver Details"
+            (click)="ProductCategoryList()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 35px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ ALGList.accessLevelGroupName }}</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#driverDetail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="driverDetail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Access Level GroupName :&nbsp; </label>
+                  <span>{{ ALGList.accessLevelGroupName || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Access Level GroupId :&nbsp; </label>
+                  <span>{{ ALGList.accessLevelGroupId || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Access Level GroupDesc :&nbsp; </label>
+                  <span>{{ ALGList.accessLevelGroupDesc || "-" }}</span>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Privilege Level :&nbsp; </label>
+                  <span>{{ ALGList.privilegeLevel || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">auditLogging : &nbsp;</label>
+                  <span>{{
+                    ALGList.auditLogging ? "true" : ALGList.auditLogging === false ? "false" : "-"
+                  }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Submitted Date : &nbsp;</label>
+                  <span>{{ ALGList.submittedDate || "-" }}</span>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">last Modified Date :&nbsp; </label>
+                  <span>{{ ALGList.lastModifiedDate || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Valid From :&nbsp; </label>
+                  <span>{{ ALGList.validFrom || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Valid Until : &nbsp;</label>
+                  <span>{{ ALGList.validUntil || "-" }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Tacacs DeviceGroups</legend>
+            <div class="boxWhite">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Tacacs Device Group Name</th>
+                    <th>Tacacs Device Group Description</th>
+                    <th>Tacacs CommandSet Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let Device of ALGList.tacacsDeviceGroups">
+                    <td>{{ Device.id }}</td>
+                    <td>{{ Device.tacacsDeviceGroupName || "-" }}</td>
+                    <td>{{ Device.tacacsDeviceGroupDescription || "-" }}</td>
+                    <td>{{ Device.commandSetName || "-" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

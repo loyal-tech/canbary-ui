@@ -1,0 +1,242 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ type }} Bill Run Master</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading" style="min-height: 2rem">
+        <!-- <h3 class="panel-title">Bill Run Master </h3> -->
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="getbillRunMasterList('')">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#runMaster"
+            aria-expanded="false"
+            aria-controls="runMaster"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="runMaster" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Bill Run ID</th>
+                    <th>Amount</th>
+                    <th>Bill Run Count</th>
+                    <th>Run Date</th>
+                    <th>Finish Date</th>
+                    <th style="width: 16%">Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of filterBillRunMasterListData
+                        | paginate
+                          : {
+                              id: 'billRunMasterListpageData',
+                              itemsPerPage: billRunMasterListdataitemsPerPage,
+                              currentPage: currentPagebillRunMasterListdata,
+                              totalItems: billRunMasterListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <div
+                        class="curson_pointer"
+                        style="color: #f7b206"
+                        (click)="invoicemasterDetails(data.id)"
+                      >
+                        {{ data.id }}
+                      </div>
+                    </td>
+                    <td>
+                      <div *ngIf="data.amount">
+                        {{ data.amount }}
+                      </div>
+                      <div *ngIf="!data.amount">-</div>
+                    </td>
+                    <td>
+                      <div *ngIf="data.billruncount">
+                        {{ data.billruncount }}
+                      </div>
+                      <div *ngIf="!data.billruncount">-</div>
+                    </td>
+                    <td>{{ data.rundate | date : "yyyy-MM-dd" }}</td>
+                    <td>{{ data.billrunfinishdate | date : "yyyy-MM-dd" }}</td>
+                    <td>
+                      <div *ngIf="data.status == 'Y'">
+                        <span class="badge badge-success">Active</span>
+                      </div>
+                      <div *ngIf="data.status == 'N'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </div>
+                      <div *ngIf="data.status !== 'Y'">
+                        <span class="badge badge-info">{{ data.status }}</span>
+                      </div>
+                    </td>
+                    <td class="btnAction">
+                      <a
+                        id="download-button"
+                        type="button"
+                        class="displayflex curson_pointer"
+                        (click)="generatePDF(data.id)"
+                        title="Generate"
+                        *ngIf="data.status === 'Generated' && type == 'Postpaid'"
+                      >
+                        <img
+                          style="width: 25px; height: 25px; border-radius: 3px"
+                          src="assets/img/pdf.png"
+                        />
+                      </a>
+                      <a
+                        id="download-button"
+                        type="button"
+                        class="displayflex curson_pointer"
+                        (click)="generatePDF(data.id)"
+                        title="Generate"
+                        *ngIf="
+                          (data.status === 'Generated' || data.status === 'Exported') &&
+                          type == 'Prepaid'
+                        "
+                      >
+                        <img
+                          style="width: 25px; height: 25px; border-radius: 3px"
+                          src="assets/img/pdf.png"
+                        />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="billRunMasterListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedbillRunMasterList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                  [(ngModel)]="billRunMasterListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="col-md-6 right">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title" *ngIf="!isbillRunMasterEdit">Create Bill Run </h3>
+                <h3 class="panel-title" *ngIf="isbillRunMasterEdit">Update Bill Run</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse">
+                        <i class="fa fa-minus-circle"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form [formGroup]="billRunMasterGroupForm">
+
+                    <div>
+                        <label>Amount *</label>
+                        <input id="amount" type="text" class="form-control" placeholder="Enter Amount" formControlName="amount">
+                                                <br />
+                    </div>
+                    <div>
+                        <label>Bill Run Count *</label>
+                        <input id="billruncount" type="text" class="form-control" placeholder="Enter Bill Run Count" formControlName="billruncount" [ngClass]="{'is-invalid': submitted && billRunMasterGroupForm.controls.billruncount.errors}" />
+                        <div class="errorWrap text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.billruncount.errors">
+                            <div class="error text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.billruncount.errors.required">
+                                Bill Run Count is required.
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                    <div>
+                        <label>Run Date *</label>
+                        <input id="rundate" type="datetime-local" class="form-control" formControlName="rundate" placeholder="DD/MM/YYYY" [ngClass]="{'is-invalid': submitted && billRunMasterGroupForm.controls.rundate.errors}" />
+                        <div class="errorWrap text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.rundate.errors">
+                            <div class="error text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.rundate.errors.required">
+                                Run Date is required.
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                    <div>
+                        <label>Bill Run Finish Date*</label>
+                        <input type="datetime-local" formControlName="billrunfinishdate" placeholder="DD/MM/YYYY" class="form-control" [ngClass]="{'is-invalid': submitted && billRunMasterGroupForm.controls.billrunfinishdate.errors}" />
+                        <div class="errorWrap text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.billrunfinishdate.errors">
+                            <div class="error text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.billrunfinishdate.errors.required">
+                                Bill Run Finish Date is required.
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                    <div>
+                        <label>Status *</label>
+
+                        <select class="form-control" name="status" id="status" formControlName="status" style="width: 100%" [ngClass]="{'is-invalid': submitted && billRunMasterGroupForm.controls.status.errors}">
+                            <option value="">
+                                Select Status
+                            </option>
+                            <option value="Y">
+                                Active
+                            </option>
+                            <option value="N">
+                                Inactive
+                            </option>
+                        </select>
+                        <div class="errorWrap text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.status.errors">
+                            <div class="error text-danger" *ngIf="submitted && billRunMasterGroupForm.controls.status.errors.required">
+                                Status is required.
+                            </div>
+                        </div>
+                        <br />
+
+                    </div>
+
+                    <div class="addUpdateBtn">
+                        <button type="submit" class="btn btn-primary" *ngIf="!isbillRunMasterEdit" id="submit" (click)="addEditbillRunMaster('')">
+                            <i class="fa fa-check-circle"></i>
+                            Add Bill Run
+                        </button>
+                        <button type="submit" class="btn btn-primary" *ngIf="isbillRunMasterEdit" id="submit" (click)='addEditbillRunMaster(viewbillRunMasterListData.id)'>
+                            <i class="fa fa-check-circle"></i>
+                            Update Bill Run
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> -->
+</div>

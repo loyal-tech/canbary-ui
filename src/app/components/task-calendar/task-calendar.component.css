@@ -1,0 +1,515 @@
+::ng-deep full-calendar {
+  max-height: 600px;
+  max-width: 1000px;
+  margin: 40px auto;
+}
+
+::ng-deep .fc {
+  max-height: 700px;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+::ng-deep .fc .fc-more-popover .fc-popover-body {
+  overflow-y: scroll;
+  min-width: 220px;
+  max-height: calc(5 * 2.5em);
+  padding: 10px;
+}
+::ng-deep.fc .fc-popover {
+  position: absolute !important;
+  z-index: 1 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+::ng-deep .fc .fc-toolbar-chunk button {
+  background-color: #f7b206 !important;
+  color: #f1f1f1 !important;
+  border: none !important;
+  padding: 5px 10px;
+  font-size: 15px !important;
+  font-weight: 500;
+  text-transform: capitalize;
+  box-shadow: none !important;
+}
+
+::ng-deep .fc .fc-toolbar-chunk button:hover {
+  background-color: #fff !important;
+  color: black !important;
+}
+
+::ng-deep .fc .fc-toolbar-chunk .fc-button.fc-button-active {
+  background-color: #f1f1f1 !important;
+  color: #000 !important;
+}
+
+::ng-deep .p-dialog {
+  margin-left: 204px;
+}
+
+::ng-deep .fc-daygrid-event {
+  white-space: normal;
+  display: block;
+}
+
+::ng-deep .fc-daygrid-day-events {
+  max-height: none;
+}
+
+::ng-deep .fc-scrollgrid {
+  overflow: visible;
+}
+
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.calendar-wrapper {
+  transition: all 0.3s ease-in-out;
+  flex: 4;
+  max-width: 100%;
+}
+
+::ng-deep .fc .fc-scrollgrid,
+::ng-deep .fc .fc-scrollgrid table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+::ng-deep .calendar-wrapper-expanded full-calendar {
+  transition: all 0.3s ease-in-out;
+  flex: 4;
+  min-height: 600px;
+}
+
+::ng-deep .calendar-wrapper-expanded {
+  width: 75%;
+}
+
+:ng-deep .calendar-wrapper-expanded .fc .fc-scrollgrid,
+::ng-deep .calendar-wrapper-expanded .fc .fc-scrollgrid table {
+  width: 70% !important;
+  table-layout: fixed !important;
+}
+
+::ng-deep .calendar-wrapper-expanded .fc .fc-daygrid-body {
+  width: 100% !important;
+}
+
+::ng-deep .calendar-wrapper-full {
+  flex: 1;
+  max-width: 100%;
+}
+
+.agenda-pane {
+  width: 25%;
+  background-color: #fff;
+  padding-left: 15px;
+  border-left: 1px solid #ccc;
+  transition: transform 0.3s ease-in-out;
+  position: relative;
+  z-index: 10;
+  overflow-y: scroll;
+}
+
+.event-details-scrollable {
+  max-height: 100vh;
+}
+
+.toggle-button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background-color: #f7b206;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 20;
+}
+
+.toggle-button:hover {
+  background-color: #fff;
+  color: #f7b206;
+  border: 1px solid #f7b206;
+}
+
+.toggle-button i {
+  font-size: 20px;
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid #3788d8;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 12px;
+  color: #333;
+  width: 96%;
+  transition: all 0.3s ease;
+}
+
+.event-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.event-card-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.event-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.left-side,
+.right-side {
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+  min-width: 80px;
+}
+
+.event-time {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-weight: 600;
+  color: #0078d4;
+  min-width: 80px;
+}
+
+.event-title {
+  flex: 1;
+  font-weight: 500;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.event-duration,
+.event-remark {
+  flex: 1;
+  text-align: left;
+  font-weight: 400;
+  color: #555;
+}
+
+.event-remark {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+::ng-deep .event-tooltip {
+  position: absolute;
+  background-color: #e7f3ff;
+  color: black !important;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1050 !important;
+  font-size: 14px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 250px;
+  word-wrap: break-word;
+  border: 1px solid #ccc;
+}
+
+::ng-deep .tooltip-content {
+  display: flex;
+  flex-direction: column !important;
+}
+
+::ng-deep .tooltip-title {
+  font-weight: bold !important;
+}
+
+::ng-deep .tooltip-date {
+  font-size: 12px !important;
+}
+
+.event-dropdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 300px;
+  max-height: 200px;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.event-dropdown-header {
+  padding: 10px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.tooltip-date {
+  font-size: 12px;
+}
+.event-dropdown-content {
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.event-dropdown-content p {
+  margin: 5px 0;
+}
+
+.nav-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 10px;
+}
+
+.nav-buttons-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.new-event-btn {
+  background-color: #0f6cbd;
+  color: white;
+}
+
+.view-btn {
+  background-color: #e7f3ff;
+  color: #0f6cbd;
+}
+
+.view-btn:hover {
+  background-color: #d4e9fc;
+}
+
+.nav-dropdown-search-section {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-dropdown-style {
+  min-width: 150px;
+  flex-shrink: 0;
+}
+
+.nav-search-clear-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.search-btn {
+  background-color: #f7b206;
+  color: white;
+}
+
+.clear-btn {
+  background-color: #000;
+  color: #fff;
+}
+
+.search-btn:hover,
+.clear-btn:hover {
+  opacity: 0.9;
+}
+
+.fa {
+  margin-right: 5px;
+}
+
+@media (max-width: 1200px) {
+  .nav-button-container {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  ::ng-deep full-calendar {
+    width: 100% !important;
+    max-height: 500px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .calendar-container {
+    display: block;
+  }
+  .agenda-pane {
+    width: 100%;
+  }
+  ::ng-deep full-calendar {
+    width: 100% !important;
+    max-height: 500px;
+  }
+  ::ng-deep .calendar-wrapper-expanded {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 850px) {
+  ::ng-deep .fc .fc-toolbar-title {
+    font-size: 1.35em;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-button-container {
+    flex-direction: column;
+  }
+  .nav-buttons-section,
+  .nav-dropdown-search-section {
+    justify-content: center;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 600px) {
+  ::ng-deep full-calendar {
+    max-height: 400px;
+    font-size: 10px !important;
+  }
+  ::ng-deep .fc .fc-toolbar-title {
+    font-size: 0.8em !important;
+  }
+  .toggle-button {
+    height: 40px;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+  }
+  .agenda-pane {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-btn {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+  .nav-dropdown-style {
+    min-width: 100px;
+  }
+  ::ng-deep full-calendar {
+    max-height: 200px;
+    font-size: 5px !important;
+    margin: 20px auto;
+  }
+  .calendar-wrapper {
+    padding: 10px;
+  }
+  /* .agenda-pane {
+    font-size: 8px;
+  } */
+  .toggle-button {
+    height: 37px;
+    right: 10px;
+    bottom: 10px;
+  }
+  ::ng-deep .fc .fc-toolbar-title {
+    font-size: 0.8em !important;
+  }
+  ::ng-deep .fc-event-start,
+  .fc-direction-rtl .fc-daygrid-event.fc-event-end {
+    font-size: 4px !important;
+    margin-left: 1px !important;
+  }
+  ::ng-deep .fc-h-event .fc-event-main-frame {
+    font-size: 6px !important;
+    display: flex;
+  }
+  .event-card {
+    flex-direction: column;
+    font-size: 5px;
+  }
+  .calendar-heading {
+    font-size: 15px;
+  }
+  .header-container h1 {
+    font-size: 17px;
+    font-weight: 400;
+    color: #333;
+    margin: 0;
+  }
+  ::ng-deep .fc .fc-toolbar {
+    font-size: 9px;
+    display: block !important;
+  }
+  ::ng-deep .fc-toolbar-chunk {
+    font-size: 9px;
+    display: block !important;
+    text-align: center;
+  }
+}
+
+.noeventtoday {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+}
+.header-container {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.header-container h1 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #333;
+  margin: 0;
+}
+.calendar-heading {
+  margin: 0px;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 25px;
+  font-weight: 400;
+  color: #000;
+  background-color: #f9f9f9;
+}

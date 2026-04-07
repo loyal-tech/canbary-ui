@@ -1,0 +1,2070 @@
+<!-- <p-confirmDialog [style]="{ width: '40vw' }" [baseZIndex]="10000"></p-confirmDialog>
+<div class="childComponent">
+    <ngx-spinner [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+        <p class="loading">Loading...</p>
+    </ngx-spinner>
+</div> -->
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Live User Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#liveUserSearchPanel"
+            aria-expanded="false"
+            aria-controls="liveUserSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="liveUserSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchForm">
+              <div class="col-md-3" style="margin-bottom: 2%">
+                <p-multiSelect
+                  id="roles"
+                  (onChange)="selSearchOption($event)"
+                  [options]="searchOptionSelect"
+                  placeholder="Select a Search Option"
+                  [(ngModel)]="searchOption"
+                  optionLabel="label"
+                  optionValue="value"
+                  filter="true"
+                  filterBy="label"
+                  [ngModelOptions]="{ standalone: true }"
+                ></p-multiSelect>
+              </div>
+              <!-- *ngIf="searchOption?.includes('fromDate')" -->
+              <div class="col-md-3" style="margin-bottom: 2%">
+                <p-calendar
+                  dateFormat="dd/mm/yy"
+                  [showIcon]="true"
+                  [showButtonBar]="true"
+                  [hideOnDateTimeSelect]="true"
+                  placeholder="Enter From Date"
+                  formControlName="fromDate"
+                  [style]="{ width: '100%' }"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.fromDate.errors
+                  }"
+                ></p-calendar>
+              </div>
+              <!-- *ngIf="searchOption?.includes('toDate')" -->
+              <div class="col-md-3" style="margin-bottom: 2%">
+                <p-calendar
+                  dateFormat="dd/mm/yy"
+                  [showIcon]="true"
+                  [showButtonBar]="true"
+                  [hideOnDateTimeSelect]="true"
+                  placeholder="Enter To Date"
+                  formControlName="toDate"
+                  [style]="{ width: '100%' }"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.toDate.errors
+                  }"
+                ></p-calendar>
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('userName')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Username"
+                  formControlName="userName"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.userName.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('framedIpAddress')"
+              >
+                <input
+                  type="text"
+                  name="framedIpAddress"
+                  class="form-control"
+                  placeholder="Enter Framed Ip"
+                  formControlName="framedIpAddress"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.framedIpAddress.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('nasIpAddress')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Nas Ip"
+                  formControlName="nasIpAddress"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.nasIpAddress.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('classAttribute')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Class Attribute"
+                  formControlName="classAttribute"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.classAttribute.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('acctStatusType')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Account Status Type"
+                  formControlName="acctStatusType"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.acctStatusType.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('nasIdentifier')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Nas Identifier"
+                  formControlName="nasIdentifier"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.nasIdentifier.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('framedRoute')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Framed Route"
+                  formControlName="framedRoute"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.framedRoute.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('nasPortType')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Nas Port Type"
+                  formControlName="nasPortType"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.nasPortType.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('nasPortId')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Nas Port Id"
+                  formControlName="nasPortId"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.nasPortId.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('acctMultiSessionId')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Account Multi SessionId"
+                  formControlName="acctMultiSessionId"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.acctMultiSessionId.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('framedIpv6Address')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Farmed IpV6 Address"
+                  formControlName="framedIpv6Address"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.framedIpv6Address.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('acctSessionId')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Account Session"
+                  formControlName="acctSessionId"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.acctSessionId.errors
+                  }"
+                />
+              </div>
+              <div
+                class="col-md-3"
+                style="margin-bottom: 2%"
+                *ngIf="searchOption?.includes('sourceIpAddress')"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter Source Ip Address"
+                  formControlName="sourceIpAddress"
+                  (keydown.enter)="search()"
+                  [ngClass]="{
+                    'is-invalid': searchSubmitted && searchForm.controls.sourceIpAddress.errors
+                  }"
+                />
+              </div>
+              <div class="col-md-12 searchbtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  title="Search User"
+                  data-toggle="tooltip"
+                  (click)="search()"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+                &nbsp;
+                <button
+                  type="reset"
+                  class="btn btn-default"
+                  title="Clear"
+                  data-toggle="tooltip"
+                  (click)="clearSearchForm()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+                <!-- &nbsp;
+                  <a
+                    title="Export Data to Excel"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="exportExcel()"
+                  >
+                    <img class="icon-ex" src="assets/img/icons-07.png" />
+                  </a> -->
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <div style="display: flex">
+          <h3 class="panel-title" style="display: inline-block">Live Users</h3>
+          <!-- <button
+            type="button"
+            title="Terminate Session"
+            class="curson_pointer"
+            (click)="terminateUsers()"
+            [disabled]="allIDs.length == 0"
+            style="margin-left: auto; margin-right: 5%"
+          >
+            <img src="assets/img/ioc02.jpg" style="width: 25px; height: 25px" />
+          </button> -->
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#liveUserTabelPanel"
+            aria-expanded="false"
+            aria-controls="liveUserTabelPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="liveUserTabelPanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <app-simple-search
+            #listing_groupdata
+            [instanceData]="
+              rootInstanceData
+                | paginate
+                  : {
+                      id: 'listing_liveuserdata',
+                      itemsPerPage: itemsPerPage,
+                      currentPage: currentPage,
+                      totalItems: totalRecords
+                    }
+            "
+            [cols]="cols"
+            [selectedCols]="selectedCols"
+            [function]="'live_user'"
+            [backUpCalls]="cols"
+            [value]="value"
+            [hideTable]="hideTable"
+            [exportColumns]="exportColumns"
+            (getRootInstanceData)="getRootInstanceData($event)"
+            (reloadTable)="search()"
+            (viewData)="this.getLiveUserDetail($event)"
+            (viewDataa)="this.open($event)"
+            (disconnect)="this.disconnectConfirm($event)"
+            (delete)="this.deleteConfirm($event)"
+            (showModalDetails)="openModal('custmerDetailModal', $event)"
+            [showbtn]="true"
+            [showCheckbox]="true"
+          ></app-simple-search>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_liveuserdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+</div>
+<p-dialog
+  header="CDR Detail"
+  [(visible)]="liveUserDetailModal"
+  [style]="{ width: '35%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+>
+  <div class="modal-body">
+    <div class="container-fluid">
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="type">Username :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="typeValue">{{ liveUserDetail.userName }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="noOfVoucher">Password :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="noOfVoucherValue">
+            {{ liveUserDetail.userPassword }}
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <label for="planName">Chap Password :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="planNameValue">
+            {{ liveUserDetail.chapPassword }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="length">Nas IP Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="lengthValue">{{ liveUserDetail.nasIpAddress }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="preValue">Nas Port :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="preValuevalue">{{ liveUserDetail.nasPort }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="postValue">Service Type :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="postValueValue">
+            {{ liveUserDetail.serviceType }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Protocol :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedProtocol }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IP Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedIpAddress }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IP Netmask :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedIpNetmask }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Routing :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedRouting }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Filter Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.filterId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Mtu :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.framedMtu }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Compression :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedCompression }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login IP Host :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.loginIpHost }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login Service :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.loginService }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login Tcp Port :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.loginTcpPort }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Reply Message :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.replyMessage }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Callback Number :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.callbackNumber }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Callback Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.callbackId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Route :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.framedRoute }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPx Network :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedIpxNetwork }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">State :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.state }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Class :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.acctClass }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Vendor Specific :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.vendorSpecific }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Session Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.sessionTimeout }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Idle Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.idleTimeout }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Termination Action :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.terminationAction }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Called Station Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.calledStationId }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Calling Station Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.callingStationId }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas Identifier :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.nasIdentifier }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Idle Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.idleTimeout }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Proxy State :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.proxyState }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">LoginLat Service :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.loginLatService }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">LoginLat Node :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.loginLatNode }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">LoginLat Group :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.loginLatGroup }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Apple TalkLink :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedAppleTalkLink }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Idle Timeout :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.idleTimeout }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Apple TalkNetwork :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedAppleTalkNetwork }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Apple TalkZone :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedAppleTalkZone }}
+          </label>
+        </div>
+      </div>
+
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Status Type :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctStatusType }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Delay Time :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctDelayTime }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct InputOctets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctInputOctets }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct OutputOctets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctOutputOctets }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Session Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctSessionId }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Authentic :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctAuthentic }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Session Time :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctSessionTime }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Input Packets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctInputPackets }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Output Packets :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctOutputPackets }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Terminate Cause :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctTerminateCause }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Multi Session Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctMultiSessionId }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Link Count :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctLinkCount }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Input Gigawords :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctInputGigawords }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Output Gigawords :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctOutputGigawords }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Event Timestamp :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.eventTimestamp }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Chap Challenge :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.chapChallenge }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas Port Type :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.nasPortType }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Session Time :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctSessionTime }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Port Limit :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.portLimit }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login LAT Port :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.loginLATPort }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Tunnel Connection :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctTunnelConnection }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Password :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.arapPassword }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Features :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.arapFeatures }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Zone Access :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.arapZoneAccess }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Security :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.arapSecurity }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Security Data :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.arapSecurityData }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Password Retry :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.passwordRetry }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Prompt :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.prompt }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Connect Info :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.connectInfo }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Configuration Token :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.configurationToken }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Eap Message :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.eapMessage }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Message Authenticator :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.messageAuthenticator }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Arap Challenge Response :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.arapChallengeResponse }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Acct Interim Interval :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.acctInterimInterval }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas Port Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.nasPortId }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Pool :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">{{ liveUserDetail.framedPool }}</label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Nas IPv6 Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.nasIPv6Address }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Interface Id :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedInterfaceId }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPv6 Prefix :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedIPv6Prefix }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Login IPv6 Host :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.loginIPv6Host }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPv6 Route :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedIPv6Route }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed IPv6 Pool :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedIPv6Pool }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Digest Response :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.digestResponse }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Digest Attributes :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.digestAttributes }}
+          </label>
+        </div>
+      </div>
+      <div class="row" id="viewDetail">
+        <div class="col-md-5">
+          <label for="status">Framed Ipv6 Address :</label>
+        </div>
+        <div class="col-md-7">
+          <label for="statusValue">
+            {{ liveUserDetail.framedipv6address }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  </div>
+</p-dialog>
+<!-- <div class="modal fade" id="liveUserDetailModal" role="dialog">
+  <div class="modal-dialog" style="width: 35%">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="panel-title">CDR Detail</h3>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="type">Username :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="typeValue">{{ liveUserDetail.userName }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="noOfVoucher">Password :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="noOfVoucherValue">
+                {{ liveUserDetail.userPassword }}
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-5">
+              <label for="planName">Chap Password :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="planNameValue">
+                {{ liveUserDetail.chapPassword }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="length">Nas IP Address :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="lengthValue">{{ liveUserDetail.nasIpAddress }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="preValue">Nas Port :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="preValuevalue">{{ liveUserDetail.nasPort }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="postValue">Service Type :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="postValueValue">
+                {{ liveUserDetail.serviceType }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Protocol :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedProtocol }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed IP Address :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedIpAddress }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed IP Netmask :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedIpNetmask }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Routing :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedRouting }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Filter Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.filterId }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Mtu :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.framedMtu }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Compression :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedCompression }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Login IP Host :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.loginIpHost }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Login Service :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.loginService }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Login Tcp Port :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.loginTcpPort }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Reply Message :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.replyMessage }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Callback Number :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.callbackNumber }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Callback Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.callbackId }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Route :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.framedRoute }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed IPx Network :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedIpxNetwork }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">State :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.state }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Class :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.acctClass }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Vendor Specific :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.vendorSpecific }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Session Timeout :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.sessionTimeout }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Idle Timeout :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.idleTimeout }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Termination Action :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.terminationAction }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Called Station Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.calledStationId }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Calling Station Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.callingStationId }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Nas Identifier :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.nasIdentifier }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Idle Timeout :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.idleTimeout }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Proxy State :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.proxyState }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">LoginLat Service :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.loginLatService }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">LoginLat Node :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.loginLatNode }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">LoginLat Group :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.loginLatGroup }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Apple TalkLink :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedAppleTalkLink }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Idle Timeout :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.idleTimeout }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Apple TalkNetwork :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedAppleTalkNetwork }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Apple TalkZone :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedAppleTalkZone }}
+              </label>
+            </div>
+          </div>
+
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Status Type :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctStatusType }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Delay Time :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctDelayTime }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct InputOctets :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctInputOctets }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct OutputOctets :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctOutputOctets }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Session Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctSessionId }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Authentic :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctAuthentic }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Session Time :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctSessionTime }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Input Packets :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctInputPackets }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Output Packets :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctOutputPackets }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Terminate Cause :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctTerminateCause }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Multi Session Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctMultiSessionId }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Link Count :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctLinkCount }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Input Gigawords :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctInputGigawords }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Output Gigawords :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctOutputGigawords }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Event Timestamp :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.eventTimestamp }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Chap Challenge :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.chapChallenge }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Nas Port Type :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.nasPortType }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Session Time :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctSessionTime }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Port Limit :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.portLimit }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Login LAT Port :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.loginLATPort }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Tunnel Connection :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctTunnelConnection }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Arap Password :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.arapPassword }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Arap Features :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.arapFeatures }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Arap Zone Access :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.arapZoneAccess }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Arap Security :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.arapSecurity }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Arap Security Data :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.arapSecurityData }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Password Retry :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.passwordRetry }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Prompt :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.prompt }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Connect Info :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.connectInfo }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Configuration Token :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.configurationToken }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Eap Message :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.eapMessage }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Message Authenticator :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.messageAuthenticator }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Arap Challenge Response :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.arapChallengeResponse }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Acct Interim Interval :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.acctInterimInterval }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Nas Port Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.nasPortId }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Pool :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">{{ liveUserDetail.framedPool }}</label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Nas IPv6 Address :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.nasIPv6Address }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Interface Id :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedInterfaceId }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed IPv6 Prefix :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedIPv6Prefix }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Login IPv6 Host :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.loginIPv6Host }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed IPv6 Route :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedIPv6Route }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed IPv6 Pool :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedIPv6Pool }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Digest Response :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.digestResponse }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Digest Attributes :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.digestAttributes }}
+              </label>
+            </div>
+          </div>
+          <div class="row" id="viewDetail">
+            <div class="col-md-5">
+              <label for="status">Framed Ipv6 Address :</label>
+            </div>
+            <div class="col-md-7">
+              <label for="statusValue">
+                {{ liveUserDetail.framedipv6address }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+<p-dialog
+  header="Add Concurrency"
+  [(visible)]="displayShiftLocationDetails"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeShiftLocation()"
+>
+  <div class="modal-body">
+    <div [formGroup]="presentGroupForm">
+      <fieldset>
+        <label>Add concurrency</label>
+        <input
+          type="number"
+          pInputText
+          formControlName="maxconcurrentsession"
+          pKeyFilter="int"
+          placeholder="Integers"
+        />
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        (click)="saveShiftLocation()"
+        class="btn btn-primary"
+        data-title="Shift Location"
+        type="button"
+      >
+        save
+      </button>
+      <button type="button" class="btn btn-default" (click)="closeShiftLocation()">Close</button>
+    </div>
+  </div>
+</p-dialog>
+<app-customer-details
+  *ngIf="dialogId"
+  (closeSelectStaff)="closeSelectStaff()"
+  [custId]="custId"
+></app-customer-details>

@@ -1,0 +1,1144 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Problem Domain Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataTicketReason"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchDataTicketReason" class="panel-collapse collapse in">
+        <div id="" class="panel-body" *ngIf="listView">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchTrcName"
+                class="form-control"
+                placeholder="Enter Ticket Problem Domain Name"
+                (keydown.enter)="searchTrc()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-3 marginTopSearchinput">
+              <p-dropdown
+                [options]="serviceData"
+                optionValue="name"
+                optionLabel="name"
+                [filter]="true"
+                filterBy="name"
+                placeholder="Select a Service"
+                [(ngModel)]="searchService"
+                (keydown.enter)="searchTrc()"
+              >
+              </p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchTrc()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchTrc()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body no-padding panel-udata">
+        <div class="col-md-6 pcol">
+          <div class="dbox">
+            <a (click)="createTrc()" class="curson_pointer" *ngIf="createAccess">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Create Ticket Problem Domain</h5>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-6 pcol">
+          <div class="dbox">
+            <a (click)="searchViewTrc()" class="curson_pointer">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Search Ticket Problem Domain</h5>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Ticket Problem Domain</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataTicketReason"
+            aria-expanded="false"
+            aria-controls="allDataTicketReason"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataTicketReason" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th *ngIf="editAccess || deleteAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let ticketReasonCat of ticketReasonCategoryListData
+                        | paginate
+                          : {
+                              id: 'ticketReasonCategoryData',
+                              itemsPerPage: ticketReasonCategoryListdataitemsPerPage,
+                              currentPage: currentPageTicketReasonCategoryListdata,
+                              totalItems: ticketReasonCategoryListDatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="curson_pointer"
+                      (click)="trcAllDetails(ticketReasonCat)"
+                      style="color: #f7b206"
+                    >
+                      {{ ticketReasonCat.categoryName }}
+                    </td>
+                    <td *ngIf="ticketReasonCat.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="ticketReasonCat.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        (click)="editTicketReasonCategory(ticketReasonCat.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonTicketReasonCat(ticketReasonCat)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="ticketReasonCategoryData"
+                  [maxSize]="10"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="
+                    pageChangedTrcList((currentPageTicketReasonCategoryListdata = $event))
+                  "
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="pageItem"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          {{ isTicketReasonCategoryEdit ? "Update" : "Create" }} Ticket Problem Domain
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataTicketReason"
+            aria-expanded="false"
+            aria-controls="createDataTicketReason"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataTicketReason" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="ticketReasonCatFormGroup">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6">
+                    <label>Ticket Problem Domain Name*</label>
+                    <input
+                      id="name"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Ticket Problem Domain Name"
+                      formControlName="categoryName"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && ticketReasonCatFormGroup.controls.categoryName.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ticketReasonCatFormGroup.controls.categoryName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted &&
+                          ticketReasonCatFormGroup.controls.categoryName.errors.required
+                        "
+                      >
+                        Ticket Problem Domain Name is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6">
+                    <label>Service *</label>
+                    <p-multiSelect
+                      [options]="serviceData"
+                      optionValue="id"
+                      optionLabel="name"
+                      [filter]="true"
+                      filterBy="name"
+                      placeholder="Select a Service"
+                      formControlName="service"
+                      [ngClass]="{
+                        'is-invalid': submitted && ticketReasonCatFormGroup.controls.service.errors
+                      }"
+                      (onChange)="onServiceChange($event)"
+                    >
+                    </p-multiSelect>
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ticketReasonCatFormGroup.controls.service.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && ticketReasonCatFormGroup.controls.service.errors.required
+                        "
+                      >
+                        Service is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6">
+                    <label> Department*</label>
+                    <div>
+                      <p-dropdown
+                        [options]="departmentTypeData"
+                        optionValue="value"
+                        optionLabel="text"
+                        [filter]="true"
+                        filterBy="text"
+                        placeholder="Select a Department"
+                        formControlName="department"
+                      ></p-dropdown>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ticketReasonCatFormGroup.controls.department.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && ticketReasonCatFormGroup.controls.department.errors.required
+                        "
+                      >
+                        Department is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6">
+                    <label>Status*</label>
+                    <div>
+                      <p-dropdown
+                        [options]="statusOptions"
+                        optionValue="label"
+                        optionLabel="label"
+                        [filter]="true"
+                        filterBy="label"
+                        placeholder="Select a Status"
+                        formControlName="status"
+                        [ngClass]="{
+                          'is-invalid': submitted && ticketReasonCatFormGroup.controls.status.errors
+                        }"
+                      ></p-dropdown>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && ticketReasonCatFormGroup.controls.status.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && ticketReasonCatFormGroup.controls.status.errors.required
+                        "
+                      >
+                        Status is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                 
+                </div>
+                <div class="row">
+                         <div class="col-lg-3 col-md-3 col-sm-6">
+                    <label>Type *</label>
+                    <p-multiSelect
+                    [filter]="true"
+                    [ngClass]="{
+                      'is-invalid': submitted && ticketReasonCatFormGroup.controls.types.errors
+                    }"
+                    [options]="caseTypeData"
+                    filterBy="text"
+                    formControlName="types"
+                    optionLabel="text"
+                    optionValue="value"
+                    placeholder="Select Type"
+                    ></p-multiSelect>
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="
+                        submitted && ticketReasonCatFormGroup.controls.types.errors
+                      "
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted &&
+                          ticketReasonCatFormGroup.controls.types.errors.required
+                        "
+                      >
+                        Type is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6">
+                    <div class="form-group form-check inputcheckboxCenter">
+                      <input
+                        class="inputcheckbox"
+                        formControlName="isDefaultProblemDomain"
+                        id="isDefaultProblemDomain"
+                        type="checkbox"
+                      />
+                      <label
+                        class="form-check-label"
+                        for="acceptTerms"
+                        style="margin-left: 1rem; margin-bottom: 0"
+                        >Default Problem Domain
+                      </label>
+                    </div>
+                  </div>
+                </div> 
+
+                <!-- <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-3">
+                    <label>SLA Time P1*</label>
+
+                    <div style="display: flex; justify-content: flex-start; align-items: center">
+                      <div style="width: 60%">
+                        <span class="p-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            placeholder="Enter SLA Time P1"
+                            formControlName="slaTimeP1"
+                            [ngClass]="{
+                              'is-invalid':
+                                submitted && ticketReasonCatFormGroup.controls.slaTimeP1.errors
+                            }"
+                          />
+                        </span>
+                      </div>
+                      <div style="width: 40%; height: 34px">
+                        <p-dropdown
+                          [options]="timeUnitData"
+                          optionValue="value"
+                          optionLabel="label"
+                          placeholder="Select Unit P1"
+                          formControlName="slaUnitP1"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && ticketReasonCatFormGroup.controls.slaUnitP1.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-start; align-items: center">
+                      <div style="width: 60%">
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && ticketReasonCatFormGroup.controls.slaTimeP1.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              ticketReasonCatFormGroup.controls.slaTimeP1.errors.required
+                            "
+                          >
+                            SLA Time P1 is required.
+                          </div>
+                        </div>
+                      </div>
+                      <div style="width: 40%">
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && ticketReasonCatFormGroup.controls.slaUnitP1.errors"
+                        >
+                          <div class="error text-danger">Unit is required.</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <br />
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-3">
+                    <label>SLA Time P2*</label>
+
+                    <div style="display: flex; justify-content: flex-start; align-items: center">
+                      <div style="width: 60%">
+                        <span class="p-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            placeholder="Enter SLA Time P2"
+                            formControlName="slaTimeP2"
+                            [ngClass]="{
+                              'is-invalid':
+                                submitted && ticketReasonCatFormGroup.controls.slaTimeP2.errors
+                            }"
+                          />
+                        </span>
+                      </div>
+                      <div style="width: 40%; height: 34px">
+                        <p-dropdown
+                          [options]="timeUnitData"
+                          optionValue="value"
+                          optionLabel="label"
+                          placeholder="Select Unit P2"
+                          formControlName="slaUnitP2"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && ticketReasonCatFormGroup.controls.slaUnitP2.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-start; align-items: center">
+                      <div style="width: 60%">
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && ticketReasonCatFormGroup.controls.slaTimeP2.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              ticketReasonCatFormGroup.controls.slaTimeP2.errors.required
+                            "
+                          >
+                            SLA Time P2 is required.
+                          </div>
+                        </div>
+                      </div>
+                      <div style="width: 40%">
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && ticketReasonCatFormGroup.controls.slaUnitP2.errors"
+                        >
+                          <div class="error text-danger">Unit is required.</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <br />
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-3">
+                    <label>SLA Time P3*</label>
+
+                    <div style="display: flex; justify-content: flex-start; align-items: center">
+                      <div style="width: 60%">
+                        <span class="p-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            placeholder="Enter SLA Time P3"
+                            formControlName="slaTimeP3"
+                            [ngClass]="{
+                              'is-invalid':
+                                submitted && ticketReasonCatFormGroup.controls.slaTimeP3.errors
+                            }"
+                          />
+                        </span>
+                      </div>
+                      <div style="width: 40%; height: 34px">
+                        <p-dropdown
+                          [options]="timeUnitData"
+                          optionValue="value"
+                          optionLabel="label"
+                          placeholder="Select Unit P3"
+                          formControlName="slaUnitP3"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && ticketReasonCatFormGroup.controls.slaUnitP3.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-start; align-items: center">
+                      <div style="width: 60%">
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && ticketReasonCatFormGroup.controls.slaTimeP3.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              ticketReasonCatFormGroup.controls.slaTimeP3.errors.required
+                            "
+                          >
+                            SLA Time P3 is required.
+                          </div>
+                        </div>
+                      </div>
+                      <div style="width: 40%">
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && ticketReasonCatFormGroup.controls.slaUnitP3.errors"
+                        >
+                          <div class="error text-danger">Unit is required.</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <br />
+                  </div>
+                </div> -->
+              </div>
+            </fieldset>
+
+            <!-- <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>TAT</legend>
+              <div class="boxWhite">
+                <div [formGroup]="ticketReasonCategoryTATForm" style="margin-top: 1.5rem">
+                  <table class="trcTATTabel">
+                    <tr>
+                      <td style="width: 7%">
+                        <span class="p-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            placeholder="Enter  Order Number"
+                            formControlName="orderNumber"
+                            [ngClass]="{
+                              'is-invalid':
+                                ticketReasonCategoryTATSubmitted &&
+                                ticketReasonCategoryTATForm.controls.orderNumber.errors
+                            }"
+                            readonly
+                          />
+
+                          <label
+                            for="customer"
+                            style="top: -7.75px; font-size: 12px"
+                            *ngIf="ticketReasonCategoryTATForm.value.orderNumber"
+                          >
+                            Order No. *
+                          </label>
+                        </span>
+
+                        
+                      </td>
+                      <td>
+                        <span class="p-float-label">
+                          <p-dropdown
+                            [options]="levelData"
+                            optionValue="label"
+                            optionLabel="label"
+                            [filter]="true"
+                            filterBy="label"
+                            placeholder="Select a Level"
+                            formControlName="level"
+                            [disabled]="true"
+                            [ngClass]="{
+                              'is-invalid':
+                                ticketReasonCategoryTATSubmitted &&
+                                ticketReasonCategoryTATForm.controls.level.errors
+                            }"
+                          ></p-dropdown>
+                          <label for="customer">Level *</label>
+                        </span>
+                        
+                      </td>
+                      <td>
+                        <span class="p-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            placeholder="Enter TAT time for P3"
+                            formControlName="time"
+                            [ngClass]="{
+                              'is-invalid':
+                                ticketReasonCategoryTATSubmitted &&
+                                ticketReasonCategoryTATForm.controls.time.errors
+                            }"
+                          />
+
+                          <label
+                            for="customer"
+                            style="top: -7.75px; font-size: 12px"
+                            *ngIf="ticketReasonCategoryTATForm.value.time"
+                          >
+                            Time P3*
+                          </label>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="p-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            placeholder="Enter TAT time for P2"
+                            formControlName="mediumTime"
+                            [ngClass]="{
+                              'is-invalid':
+                                ticketReasonCategoryTATSubmitted &&
+                                ticketReasonCategoryTATForm.controls.mediumTime.errors
+                            }"
+                          />
+
+                          <label
+                            for="customer"
+                            style="top: -7.75px; font-size: 12px"
+                            *ngIf="ticketReasonCategoryTATForm.value.mediumTime"
+                          >
+                            Time P2*
+                          </label>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="p-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            placeholder="Enter TAT time for P1"
+                            formControlName="escalatedTime"
+                            [ngClass]="{
+                              'is-invalid':
+                                ticketReasonCategoryTATSubmitted &&
+                                ticketReasonCategoryTATForm.controls.escalatedTime.errors
+                            }"
+                          />
+
+                          <label
+                            for="customer"
+                            style="top: -7.75px; font-size: 12px"
+                            *ngIf="ticketReasonCategoryTATForm.value.escalatedTime"
+                          >
+                            Time P1*
+                          </label>
+                        </span>
+                      </td>
+                      <td style="width: 12%">
+                        <span class="p-float-label">
+                          <p-dropdown
+                            [options]="timeUnitData"
+                            optionValue="value"
+                            optionLabel="label"
+                            placeholder="Unit"
+                            formControlName="timeUnit"
+                            [ngClass]="{
+                              'is-invalid':
+                                ticketReasonCategoryTATSubmitted &&
+                                ticketReasonCategoryTATForm.controls.timeUnit.errors
+                            }"
+                          >
+                          </p-dropdown>
+
+                          <label
+                            for="customer"
+                            style="top: -7.75px; font-size: 12px"
+                            *ngIf="ticketReasonCategoryTATForm.value.timeUnit"
+                          >
+                            Unit *
+                          </label>
+                        </span>
+                        
+                      </td>
+                      <td>
+                        <p-dropdown
+                          [options]="actionData"
+                          optionValue="value"
+                          optionLabel="label"
+                          placeholder="Select Action"
+                          formControlName="action"
+                          [ngClass]="{
+                            'is-invalid':
+                              ticketReasonCategoryTATSubmitted &&
+                              ticketReasonCategoryTATForm.controls.action.errors
+                          }"
+                        >
+                        </p-dropdown>
+                      </td>
+                      <td style="width: 10%">
+                        <button
+                          id="addAtt"
+                          style="object-fit: cover; padding: 5px 8px"
+                          class="btn btn-primary"
+                          (click)="onAddticketReasonCategoryTATField()"
+                        >
+                          <i class="fa fa-plus-square" aria-hidden="true"></i>
+                          Add
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width: 7%">                        
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            ticketReasonCategoryTATSubmitted &&
+                            ticketReasonCategoryTATForm.controls.orderNumber.errors
+                          "
+                        >
+                          <div class="error text-danger">Order Number is required.</div>
+                        </div>
+                      </td>
+                      <td>
+                        
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            ticketReasonCategoryTATSubmitted &&
+                            ticketReasonCategoryTATForm.controls.level.errors
+                          "
+                        >
+                          <div class="error text-danger">Level is required.</div>
+                        </div>
+                      </td>
+                      <td>
+                       
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            ticketReasonCategoryTATSubmitted &&
+                            ticketReasonCategoryTATForm.controls.time.errors
+                          "
+                        >
+                          <div class="error text-danger">Time P3 is required.</div>
+                        </div>
+                      </td>
+                      <td>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            ticketReasonCategoryTATSubmitted &&
+                            ticketReasonCategoryTATForm.controls.mediumTime.errors
+                          "
+                        >
+                          <div class="error text-danger">Time P2 is required.</div>
+                        </div>
+                      </td>
+                      <td>
+                        
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            ticketReasonCategoryTATSubmitted &&
+                            ticketReasonCategoryTATForm.controls.escalatedTime.errors
+                          "
+                        >
+                          <div class="error text-danger">Time P1 is required.</div>
+                        </div>
+                      </td>
+                      <td style="width: 12%">
+                        
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            ticketReasonCategoryTATSubmitted &&
+                            ticketReasonCategoryTATForm.controls.timeUnit.errors
+                          "
+                        >
+                          <div class="error text-danger">Unit is required.</div>
+                        </div>
+                      </td>
+                      <td>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            ticketReasonCategoryTATSubmitted &&
+                            ticketReasonCategoryTATForm.controls.action.errors
+                          "
+                        >
+                          <div class="error text-danger">Action is required.</div>
+                        </div>
+                      </td>
+                      <td style="width: 10%">
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <table class="table coa-table" style="margin-top: 10px">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center; width: 10%">Order*</th>
+                      <th style="text-align: center; width: 20%">Level*</th>
+                      <th style="text-align: center; width: 20%">TAT time for P3*</th>
+                      <th style="text-align: center; width: 20%">TAT time for P2*</th>
+                      <th style="text-align: center; width: 20%">TAT time for P3*</th>
+                      <th style="text-align: center; width: 10%">Unit*</th>
+                      <th style="text-align: center; width: 20%">Action*</th>
+                      <th style="text-align: right; width: 20%; padding: 8px">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let row of ticketReasonCategoryTAT.controls
+                          | paginate
+                            : {
+                                id: 'ticketReasonCategoryTATData',
+                                itemsPerPage: ticketReasonCategoryTATitemsPerPage,
+                                currentPage: currentPageTicketReasonCategoryTAT,
+                                totalItems: ticketReasonCategoryTATtotalRecords
+                              };
+                        let index = index
+                      "
+                    >
+                      <td style="padding-left: 5px">
+                        <input
+                          class="form-control"
+                          type="number"
+                          min="1"
+                          [formControl]="row.get('orderNumber')"
+                          [disabled]="true"
+                        />
+                      </td>
+                      <td style="padding-left: 8px">
+                        <p-dropdown
+                          [options]="levelData"
+                          optionValue="label"
+                          optionLabel="label"
+                          [filter]="true"
+                          filterBy="label"
+                          placeholder="Select a Level"
+                          [formControl]="row.get('level')"
+                          [disabled]="true"
+                        ></p-dropdown>
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          type="number"
+                          min="1"
+                          placeholder="Enter TAT time for P3"
+                          [formControl]="row.get('time')"
+                          [disabled]="true"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          type="number"
+                          min="1"
+                          placeholder="Enter TAT time for P2"
+                          [formControl]="row.get('mediumTime')"
+                          [disabled]="true"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          type="number"
+                          min="1"
+                          placeholder="Enter TAT time for P1"
+                          [formControl]="row.get('escalatedTime')"
+                          [disabled]="true"
+                        />
+                      </td>
+                      <td style="padding-left: 8px">
+                        <p-dropdown
+                          [options]="timeUnitData"
+                          optionValue="value"
+                          optionLabel="label"
+                          [filter]="true"
+                          filterBy="name"
+                          placeholder="Select a Team"
+                          [formControl]="row.get('timeUnit')"
+                          [disabled]="true"
+                        ></p-dropdown>
+                      </td>
+                      <td>
+                        <p-dropdown
+                          [options]="actionData"
+                          optionValue="value"
+                          optionLabel="label"
+                          [filter]="true"
+                          filterBy="name"
+                          placeholder="Select a Team"
+                          [formControl]="row.get('action')"
+                          [disabled]="true"
+                        ></p-dropdown>
+                      </td>
+                      <td style="text-align: right">
+                        <a
+                          id="deleteAtt"
+                          class="curson_pointer"
+                          (click)="deleteConfirmonTATField(index, row.get('mappingId').value)"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="row">
+                  <div class="col-md-12">
+                    <pagination-controls
+                      id="ticketReasonCategoryTATData"
+                      [maxSize]="10"
+                      [directionLinks]="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedticketReasonCategoryTATData($event)"
+                    ></pagination-controls>
+                  </div>
+                </div>
+              </div>
+            </fieldset>  -->
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditTicketReasonCat('')"
+                *ngIf="!isTicketReasonCategoryEdit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Ticket Problem Domain
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditTicketReasonCat(editTicketReasonCategoryData.id)"
+                *ngIf="isTicketReasonCategoryEdit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Ticket Problem Domain
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12 col-sm-12" *ngIf="detailView">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Tax Details"
+            (click)="searchViewTrc()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">Ticket Problem Domain Detail</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#trcData"
+            aria-expanded="false"
+            aria-controls="trcData"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="trcData" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ viewTrcData.categoryName }}</span>
+                </div>
+                <!-- <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Service :</label>
+                  <span>{{ viewTrcData.service.name }}</span>
+                </div> -->
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Service :</label>
+                  <ng-container *ngIf="viewTrcData.service?.length; else noService">
+                    <span *ngFor="let s of viewTrcData.service; let i = index">
+                      {{ s.name }}<span *ngIf="i < viewTrcData.service.length - 1">, </span>
+                    </span>
+                  </ng-container>
+                  <ng-template #noService>-</ng-template>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span *ngIf="viewTrcData.status == 'Active'" class="badge badge-success">
+                    Active
+                  </span>
+                  <span *ngIf="viewTrcData.status == 'Inactive'" class="badge badge-danger">
+                    Inactive
+                  </span>
+                </div>
+              </div>
+              <!-- <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">SLA Time P3 :</label>
+                  <span>{{ viewTrcData.slaTimeP3 }} {{ viewTrcData.slaUnitP3 }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">SLA Time P2 :</label>
+                  <span>{{ viewTrcData.slaTimeP2 }} {{ viewTrcData.slaUnitP2 }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">SLA Time P1 :</label>
+                  <span>{{ viewTrcData.slaTimeP1 }} {{ viewTrcData.slaUnitP1 }}</span>
+                </div>
+              </div> -->
+            </div>
+          </fieldset>
+          <!-- <fieldset *ngIf="viewTrcData.ticketReasonCategoryTATMappingList.length !== 0">
+            <legend>TAT Mapping Detail</legend>
+            <div class="boxWhite">
+              <div class="row table-responsive">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Order</th>
+                        <th>Level</th>
+                        <th>TAT time for P3</th>
+                        <th>TAT time for P2</th>
+                        <th>TAT time for P1</th>
+                        <th>Unit</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let tatData of viewTrcData.ticketReasonCategoryTATMappingList
+                            | paginate
+                              : {
+                                  id: 'tatPageData',
+                                  itemsPerPage: viewTATListdataitemsPerPage,
+                                  currentPage: currentPageViewTATListdata,
+                                  totalItems: viewTATListDatatotalRecords
+                                };
+                          index as i
+                        "
+                      >
+                        <td>{{ tatData.orderNumber }}</td>
+                        <td>{{ tatData.level }}</td>
+                        <td>{{ tatData.time }}</td>
+                        <td>{{ tatData.mediumTime }}</td>
+                        <td>{{ tatData.escalatedTime }}</td>
+                        <td>{{ tatData.timeUnit }}</td>
+                        <td>{{ tatData.action }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pagination-controls
+                    id="tatPageData"
+                    [maxSize]="10"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedViewTAT($event)"
+                  >
+                  </pagination-controls>
+                </div>
+              </div>
+            </div>
+          </fieldset> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

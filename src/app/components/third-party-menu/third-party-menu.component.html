@@ -1,0 +1,322 @@
+<div class="row">
+  <div class="col-md-6 left">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Third Party Integration Menu</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchEmail"
+            aria-expanded="false"
+            aria-controls="searchEmail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchEmail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Event Name</th>
+                <th>Client Name</th>
+                <th>Status</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let paymentConfig of thirdPartyMenuList
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ paymentConfig.name }}</td>
+                <td>{{ paymentConfig.eventName }}</td>
+                <td>{{ paymentConfig.clientName }}</td>
+                <!-- <td>{{ paymentConfig.status }}</td> -->
+                <td *ngIf="paymentConfig.status == 'ACTIVE' || paymentConfig.status == 'Active'">
+                  <span class="badge badge-success">Active</span>
+                </td>
+                <td
+                  *ngIf="paymentConfig.status == 'INACTIVE' || paymentConfig.status == 'InActive'"
+                >
+                  <span class="badge badge-danger">InActive</span>
+                </td>
+                <td class="btnAction">
+                  <a
+                    *ngIf="editAccess"
+                    (click)="editThirdPartyMenuById(paymentConfig.id, i)"
+                    class="curson_pointer"
+                    title="Edit"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    id="delete-button"
+                    href="javascript:void(0)"
+                    *ngIf="deleteAccess"
+                    title="Delete"
+                    (click)="deleteMenuConfirmation(paymentConfig.id)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="pagination_Dropdown">
+            <pagination-controls
+              id="listing_groupdata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-6 right">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          {{ editMode ? "Update" : "Create" }} Third Party Integration Menu
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#editEmail"
+            aria-expanded="false"
+            aria-controls="editEmail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="editEmail" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div *ngIf="createAccess || (editMode && editAccess)">
+            <form class="form-auth-small" [formGroup]="thirdPartyMenuFormGroup">
+              <label>Name*</label>
+              <br />
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Enter Name"
+                formControlName="name"
+                [ngClass]="{
+                  'is-invalid': submitted && thirdPartyMenuFormGroup.controls.name.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && thirdPartyMenuFormGroup.controls.name.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && thirdPartyMenuFormGroup.controls.name.errors.required"
+                >
+                  Name is required
+                </div>
+              </div>
+              <br />
+              <label>Status*</label>
+              <div>
+                <p-dropdown
+                  [options]="status"
+                  optionValue="label"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select a Status"
+                  formControlName="status"
+                  [ngClass]="{
+                    'is-invalid': submitted && thirdPartyMenuFormGroup.controls.status.errors
+                  }"
+                ></p-dropdown>
+              </div>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && thirdPartyMenuFormGroup.controls.status.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && thirdPartyMenuFormGroup.controls.status.errors.required"
+                >
+                  Status is required.
+                </div>
+              </div>
+              <br />
+
+              <div>
+                <label>Event Name*</label>
+                <br />
+                <p-dropdown
+                  [options]="eventNameList"
+                  placeholder="Select Event Name"
+                  optionLabel="displayName"
+                  optionValue="displayName"
+                  formControlName="eventName"
+                  (onChange)="onEventAndClientChange()"
+                  filter="true"
+                  filterBy="displayName"
+                  [disabled]="editMode"
+                  [ngClass]="{
+                    'is-invalid': submitted && thirdPartyMenuFormGroup.controls.eventName.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && thirdPartyMenuFormGroup.controls.eventName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && thirdPartyMenuFormGroup.controls.eventName.errors.required"
+                  >
+                    Event name is required
+                  </div>
+                </div>
+              </div>
+              <br />
+
+              <div>
+                <label>Client Name*</label>
+                <br />
+                <p-dropdown
+                  [options]="clientNameList"
+                  placeholder="Select Client Name"
+                  optionLabel="displayName"
+                  optionValue="displayName"
+                  formControlName="clientName"
+                  (onChange)="onEventAndClientChange()"
+                  filter="true"
+                  filterBy="displayName"
+                  [disabled]="editMode"
+                  [ngClass]="{
+                    'is-invalid': submitted && thirdPartyMenuFormGroup.controls.clientName.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && thirdPartyMenuFormGroup.controls.clientName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && thirdPartyMenuFormGroup.controls.clientName.errors.required"
+                  >
+                    Client name is required
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div *ngIf="isDropdownClick || editMode == true">
+                <fieldset style="margin-top: 0.5rem">
+                  <legend>Third Party Menu Configuration</legend>
+                  <div class="boxWhite">
+                    <div *ngFor="let controlName of thirdPartyMenuFormGroup?.controls | keyvalue">
+                      <div
+                        *ngIf="
+                          controlName.key !== 'id' &&
+                          controlName.key !== 'name' &&
+                          controlName.key !== 'eventName' &&
+                          controlName.key !== 'clientName' &&
+                          controlName.key !== 'status' &&
+                          controlName.key !== 'mvnoId'
+                        "
+                      >
+                        <label>{{ labelMap[controlName.key] }} *</label>
+                        <br />
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="{{ labelMap[controlName.key] }}"
+                          [formControlName]="controlName.key"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && thirdPartyMenuFormGroup.controls[controlName.key]?.errors
+                          }"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted && thirdPartyMenuFormGroup.controls[controlName.key]?.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              thirdPartyMenuFormGroup.controls[controlName.key]?.errors.required
+                            "
+                          >
+                            {{ labelMap[controlName.key] }} is required
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <!-- </div> -->
+
+              <div *ngIf="editMode == false" class="addUpdateBtn">
+                <button type="submit" class="btn btn-primary" (click)="addUpdateThirdPartyMenu()">
+                  <i class="fa fa-check-circle"></i>
+                  Add Third Party Integration Menu
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-danger" (click)="resetFormConfirm()">
+                  Clear
+                </button>
+                <br />
+              </div>
+              <div *ngIf="editMode == true" class="addUpdateBtn">
+                <button type="submit" class="btn btn-primary" (click)="addUpdateThirdPartyMenu()">
+                  <i class="fa fa-check-circle"></i>
+                  Update Third Party Integration Menu
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-danger" (click)="resetForm()">Cancel</button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

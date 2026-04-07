@@ -1,0 +1,371 @@
+<div class="">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- User Data -->
+      <div class="panel top">
+        <!-- <div *ngIf="alert_search_error_message" class="alert alert-warning alert-dismissible" role="alert">
+            <strong><i class="fa fa-warning"></i></strong> {{ errorMsg }}
+            <button type="button" (click)="clearMessageAlert()" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div> -->
+        <div class="panel-heading">
+          <h3 class="panel-title">Email Notification Management</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#searchemailConf"
+              aria-expanded="false"
+              aria-controls="searchemailConf"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="searchemailConf" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="searchForm">
+              <form class="form-auth-small" [formGroup]="searchForm">
+                <div class="col-md-2" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px">Email Address:</label>
+                </div>
+                <div class="col-md-6" style="padding-left: 0%">
+                  <input
+                    type="text"
+                    name="sourceName"
+                    class="form-control"
+                    placeholder="Enter Email Address"
+                    formControlName="emailAddress"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchForm.controls.emailAddress.errors
+                    }"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button type="submit" class="btn btn-primary" (click)="searchBySourceName()">
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button type="reset" class="btn btn-default" (click)="clearSearchForm()">
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="panel-body no-padding panel-udata">
+            <div class="col-md-6 pcol">
+              <div class="dbox">
+                <a class="detailOnAnchorClick" (click)="createEmailNotification()">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Create Email Details</h5>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 pcol">
+              <div class="dbox">
+                <a class="detailOnAnchorClick" (click)="clearSearchForm()">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Search Email Details</h5>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 left">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Email Details</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#listEmailConfig"
+              aria-expanded="false"
+              aria-controls="listEmailConfig"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="listEmailConfig" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Event Type</th>
+                  <th>Email Address</th>
+                  <th>Event Time</th>
+                  <th>Status</th>
+                  <th *ngIf="editAccess || deleteAccess || sendAccess">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let group of groupData
+                      | paginate
+                        : {
+                            id: 'listing_groupdata',
+                            itemsPerPage: itemsPerPage,
+                            currentPage: currentPage,
+                            totalItems: totalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td *ngIf="group.eventName">{{ group.eventName }}</td>
+                  <td *ngIf="!group.eventName"></td>
+                  <td>{{ group.emailAddress }}</td>
+                  <td>{{ group.date }}</td>
+                  <td>{{ group.status }}</td>
+                  <td class="btnAction" *ngIf="editAccess || deleteAccess || sendAccess">
+                    <a
+                      *ngIf="editAccess"
+                      (click)="editEmailById(group.emailId, i)"
+                      class="curson_pointer"
+                      title="Edit"
+                    >
+                      <img src="assets/img/ioc01.jpg" />
+                    </a>
+                    <a
+                      *ngIf="deleteAccess"
+                      (click)="deleteConfirm(group.emailId)"
+                      class="curson_pointer"
+                      title="Delete"
+                    >
+                      <img src="assets/img/ioc02.jpg" />
+                    </a>
+                    <!-- <a mwlConfirmationPopover [popoverTitle]="popoverTitle" [popoverMessage]="popoverMessage"
+                      placement="right" [closeOnOutsideClick]="closeOnOutsideClick"
+                      (confirm)="deleteEmailById(group.emailId)" (cancel)="cancelClicked = true">
+                      <img src="assets/img/ioc02.jpg" /></a> -->
+                    <!-- <a data-toggle="modal" data-target="#myModal">
+                                        <i class="fa fa-trash"></i></a> -->
+                    <span *ngIf="group.status != 'Sent' && sendAccess">
+                      <a
+                        type="button"
+                        (click)="sendEmailById(group.emailId)"
+                        class="curson_pointer"
+                        title="Send Email"
+                      >
+                        <img
+                          class="icon"
+                          src="assets/img/icons-02.png"
+                          style="display: inline-flex"
+                        />
+                      </a>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <div class="pagination_Dropdown">
+              <pagination-controls
+                id="listing_groupdata"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+
+    <div class="col-md-6 right">
+      <!-- Form Design -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Email Details</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#editEmailconfig"
+              aria-expanded="false"
+              aria-controls="editEmailconfig"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="editEmailconfig" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+              Sorry you have not privilege to create operation!
+            </div>
+            <div *ngIf="createAccess || (editMode && editAccess)">
+              <form class="form-auth-small" [formGroup]="emailDetailsForm">
+                <div>
+                  <label>Event Type *</label>
+                  <p-dropdown
+                    [options]="eventTypeValue.eventList"
+                    placeholder="Select Event Type"
+                    optionLabel="eventName"
+                    optionValue="eventId"
+                    formControlName="eventId"
+                    filter="true"
+                    filterBy="eventName"
+                    [ngClass]="{
+                      'is-invalid': submitted && emailDetailsForm.controls.eventId.errors
+                    }"
+                  ></p-dropdown>
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && emailDetailsForm.controls.eventId.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="submitted && emailDetailsForm.controls.eventId.errors.required"
+                    >
+                      Event Type is required
+                    </div>
+                  </div>
+                </div>
+                <br />
+                <div>
+                  <label>Source Name *</label>
+                  <p-dropdown
+                    [options]="sourceNameValue"
+                    placeholder="Select Group Status"
+                    optionLabel="label"
+                    optionValue="label"
+                    formControlName="sourceName"
+                    filter="true"
+                    filterBy="label"
+                    [ngClass]="{
+                      'is-invalid': submitted && emailDetailsForm.controls.sourceName.errors
+                    }"
+                  ></p-dropdown>
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && emailDetailsForm.controls.sourceName.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="submitted && emailDetailsForm.controls.sourceName.errors.required"
+                    >
+                      Source Name is required
+                    </div>
+                  </div>
+                  <!-- <select class="form-control" name="sourceName" id="sourceName" #t ngModel>
+                <option value="" selected>Select source name</option>
+                <option *ngFor="let type of sourceNameValue; let i = index" [value]="type"
+                  [selected]="i == 0 ? true : false">
+                  {{ type }}
+                </option>
+              </select> -->
+                </div>
+                <br />
+                <label>Email Address *</label>
+                <input
+                  type="text"
+                  name="emailAddress"
+                  class="form-control"
+                  placeholder="Enter Email Address"
+                  formControlName="emailAddress"
+                  [ngClass]="{
+                    'is-invalid': submitted && emailDetailsForm.controls.emailAddress.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && emailDetailsForm.controls.emailAddress.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && emailDetailsForm.controls.emailAddress.errors.required"
+                  >
+                    Email Address is required
+                  </div>
+                </div>
+                <br />
+                <label>Message *</label>
+                <textarea
+                  name="message"
+                  class="form-control"
+                  placeholder="Enter message"
+                  formControlName="message"
+                  [ngClass]="{
+                    'is-invalid': submitted && emailDetailsForm.controls.message.errors
+                  }"
+                ></textarea>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && emailDetailsForm.controls.message.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && emailDetailsForm.controls.message.errors.required"
+                  >
+                    Message is required
+                  </div>
+                </div>
+                <!-- <input type="textarea" name="message" class="form-control" placeholder="Enter message" ngModel> -->
+                <br />
+                <!-- <input type="submit" class="form-control"> -->
+                <div class="addUpdateBtn">
+                  <button type="submit" class="btn btn-primary" (click)="addEmailDetails()">
+                    <i class="fa fa-check-circle"></i>
+                    {{ editMode ? "Update" : "Add" }} Email
+                  </button>
+                  <br />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Form Design -->
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Javascript -->
+<!-- <script src="../../../assets/scripts/radius-group.js"></script> -->

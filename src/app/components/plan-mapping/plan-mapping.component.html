@@ -1,0 +1,2581 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Special Plan Mapping Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchSpecial Plan Mapping"
+            aria-expanded="false"
+            aria-controls="searchSpecial Plan Mapping"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchSpecial Plan Mapping" class="panel-collapse collapse in">
+        <div *ngIf="searchView" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                type="text"
+                [(ngModel)]="searchSpecialPlanMappingName"
+                class="form-control"
+                placeholder="Enter Special Plan Mapping Name"
+                (keydown.enter)="searchSpecialPlanMapping()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchSpecialPlanMapping()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchSpecialPlanMapping()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="createMapping()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Special Plan Mapping</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="listMapping()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Special Plan Mapping</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="mappingDeatilsShow">
+    <div class="panel">
+      <div class="panel-heading">
+        <div style="display: flex">
+          <h3 class="panel-title">Special Plan Mapping</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#dataGridPlanMapping"
+            aria-expanded="false"
+            aria-controls="dataGridPlanMapping"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="dataGridPlanMapping" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div>
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Mapping Name</th>
+                      <th>Status</th>
+                      <th>ISP Name</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let planMapping of planMappingData
+                          | paginate
+                            : {
+                                id: 'planMappingListpageData',
+                                itemsPerPage: planMappingListdataitemsPerPage,
+                                currentPage: currentPagePlanMappingListdata,
+                                totalItems: planMappingListdatatotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td>
+                        <a
+                          (click)="planDetail(planMapping.id)"
+                          href="javascript:void(0)"
+                          style="color: #f7b206"
+                          >{{ planMapping.name }}
+                        </a>
+                      </td>
+                      <td *ngIf="planMapping.status == 'Active'">
+                        <span class="badge badge-success">Active</span>
+                      </td>
+                      <td *ngIf="planMapping.status == 'NewActivation'">
+                        <span class="badge badge-success">New Activation</span>
+                      </td>
+                      <td *ngIf="planMapping.status == 'Inactive'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </td>
+                      <td *ngIf="planMapping.status == 'Rejected'">
+                        <span class="badge badge-danger">Rejected</span>
+                      </td>
+                      <td>{{ planMapping.mvnoName }}</td>
+                      <td class="btnAction">
+                        <a
+                          *ngIf="editAccess"
+                          href="javascript:void(0)"
+                          id="edit-button"
+                          type="button"
+                          title="Edit"
+                          (click)="editmapping(planMapping.id)"
+                        >
+                          <img src="assets/img/ioc01.jpg" />
+                        </a>
+                        <a
+                          id="delete-button"
+                          href="javascript:void(0)"
+                          (click)="deleteConfirmon(planMapping.id)"
+                          *ngIf="deleteAccess"
+                          title="Delete"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+
+                        <span *ngIf="planMapping.status.toLowerCase() == 'newactivation'">
+                          <button
+                            class="approve-btn"
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                            "
+                            type="button"
+                            title="Pick"
+                            (click)="pickModalOpen(planMapping)"
+                            [disabled]="
+                              (planMapping.nextStaff != null &&
+                                planMapping.nextTeamHierarchyMapping == null) ||
+                              (planMapping.nextStaff == null &&
+                                planMapping.nextTeamHierarchyMapping == null) ||
+                              planMapping.status.toLowerCase() === 'active' ||
+                              planMapping.status.toLowerCase() == 'inactive' ||
+                              planMapping.status.toLowerCase() === 'expired' ||
+                              planMapping.status.toLowerCase() === 'rejected' ||
+                              (planMapping.nextStaff != null &&
+                                planMapping.nextTeamHierarchyMapping != null)
+                            "
+                          >
+                            <img src="assets/img/17_Pick-ticket-to-resolve_Y.png" />
+                          </button>
+                        </span>
+
+                        <!-- <button
+                          class="approve-btn"
+                          style="
+                            border: none;
+                            background: transparent;
+                            padding: 0;
+                            margin-right: 3px;
+                          "
+                          type="button"
+                          title="Pick"
+                          *ngIf="
+                            planMapping.nextStaff !== null &&
+                            planMapping.status == 'Active' ||
+                            planMapping.status == 'INACTIVE' ||
+                            planMapping.status == 'Expired' ||
+                            planMapping.status == 'Rejected'
+                          "
+                          [disabled]=" planMapping.nextStaff === null ||  planMapping.nextStaff !== staffIDSPMSPM"
+                          (click)="pickModalOpen(planMapping)"
+                        >
+                          <img src="assets/img/17_Pick-ticket-to-resolve_Y.png" />
+                        </button>
+                        <button
+                          class="approve-btn"
+                          style="
+                            border: none;
+                            background: transparent;
+                            padding: 0;
+                            margin-right: 3px;
+                          "
+                          type="button"
+                          title="Pick"
+                          *ngIf="
+                           planMapping.status == 'NewActivation'
+                          "
+                          [disabled]="  planMapping.nextStaff === null || planMapping.nextStaff == staffIDSPMSPM"
+                          (click)="pickModalOpen(planMapping)"
+                        >
+                          <img src="assets/img/17_Pick-ticket-to-resolve_Y.png" />
+                        </button> -->
+                        <button
+                          (click)="approvestatusSPMModalOpen(planMapping)"
+                          [disabled]="planMapping.nextStaff != staffIDSPMSPM"
+                          class="btn btn-success gridbtn"
+                          style="padding: 5px 1px"
+                          title="Approve"
+                          type="button"
+                        >
+                          <img src="assets/img/assign.jpg" />
+                        </button>
+
+                        <button
+                          (click)="rejectstatusSPMModalOpen(planMapping)"
+                          [disabled]="planMapping.nextStaff != staffIDSPMSPM"
+                          class="btn btn-danger gridbtn"
+                          style="padding: 5px 3px"
+                          title="Reject"
+                          type="button"
+                        >
+                          <img src="assets/img/reject.jpg" />
+                        </button>
+                        <button
+                          (click)="openPaymentWorkFlow('custauditWorkflowModal', planMapping.id)"
+                          class="approve-btn"
+                          style="padding: 5px 3px"
+                          title="Workflow Status Details"
+                          type="button"
+                        >
+                          <img src="assets/img/05_inventory-to-customer_Y.png" />
+                        </button>
+                        <button
+                          (click)="StaffReasignList(planMapping.id)"
+                          [disabled]="
+                            planMapping.status == 'Active' || planMapping.status == 'Rejected'
+                          "
+                          class="approve-btn"
+                          style="padding: 5px 3px"
+                          title="ReassignSpecialPlanMapping"
+                          type="button"
+                        >
+                          <img src="assets/img/icons-02.png" />
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="planMappingListpageData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedPlanMappingList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          {{ isPlanMappingEdit ? "Update" : "Create" }} Special Plan Mapping
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataPlanMapping"
+            aria-expanded="false"
+            aria-controls="allDataPlanMapping"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="allDataPlanMapping" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body">
+            <form [formGroup]="planMappingGroupForm">
+              <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+                <legend>Basic Information</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4">
+                      <div>
+                        <label>Mapping Name*</label>
+                        <input
+                          id="name"
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter Mapping Name"
+                          formControlName="name"
+                          [ngClass]="{
+                            'is-invalid': submitted && planMappingGroupForm.controls.name.errors
+                          }"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && planMappingGroupForm.controls.name.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && planMappingGroupForm.controls.name.errors.required"
+                          >
+                            Name is required.
+                          </div>
+                          <div
+                            class="position"
+                            *ngIf="
+                              submitted &&
+                              planMappingGroupForm.controls.name.errors?.cannotContainSpace
+                            "
+                          >
+                            <p class="error">White space are not allowed.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                      <div>
+                        <label>Status*</label>
+                        <p-dropdown
+                          [options]="status"
+                          optionValue="label"
+                          optionLabel="label"
+                          placeholder="Select Status"
+                          formControlName="status"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && planMappingGroupForm.controls.status.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && planMappingGroupForm.controls.status.errors.required
+                            "
+                          >
+                            Status is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                      [formGroup]="planCategoryForm"
+                    >
+                      <label>Plan Category *</label>
+                      <p-dropdown
+                        (onClick)="getParentCustomerData()"
+                        [options]="planDetailsCategory"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        formControlName="planCategory"
+                        placeholder="Select a Plan Group"
+                        (onChange)="planSelectType($event)"
+                        [disabled]="isPlanMappingEdit"
+                      ></p-dropdown>
+                      <div></div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && planCategoryForm.controls.planCategory.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && planCategoryForm.controls.planCategory.errors.required
+                          "
+                        >
+                          Plan Category is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <!-- <div class="col-lg-4 col-md-4">
+                                        <span class="p-float-label">
+                                          <p-dropdown
+                                            [options]="commondropdownService.planserviceData"
+                                            optionValue="id"
+                                            optionLabel="name"
+                                            filter="true"
+                                            filterBy="name"
+                                            [(ngModel)]="serviceValue"
+                                            (onChange)="serviceBasePlanDATA($event)"
+                                            [ngClass]="{
+                                              'is-invalid': planMappingGroupForm
+                                            }"
+                                            id="service"
+                                            [autoDisplayFirst]="false"
+                                          ></p-dropdown>
+                                          <label for="service">Service *</label>
+                                        </span>
+                                        <div></div>
+
+                                        <div
+                                          class="errorWrap text-danger"
+                                          *ngIf="planMappingGroupForm "
+                                        >
+                                          <div class="error text-danger">Service is required.</div>
+                                        </div>
+                                      </div> -->
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+
+            <fieldset
+              style="margin-top: 0rem; margin-bottom: 2rem"
+              *ngIf="ifPlanGroup || ifIndividualPlan"
+            >
+              <legend>Plan Mapping</legend>
+              <div class="boxWhite">
+                <div *ngIf="ifPlanGroup">
+                  <div class="row" [formGroup]="PlanGroupfromgroup">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                      <p-dropdown
+                        [options]="commondropdownService.SpecialPlanGroupDetails"
+                        optionValue="planGroupId"
+                        optionLabel="planGroupName"
+                        [filter]="true"
+                        filterBy="planGroupName"
+                        placeholder="Select a Special Plan Group "
+                        formControlName="specialPlanGroupId"
+                        (onChange)="onSpecialPlanChange($event)"
+                        [ngClass]="{
+                          'is-invalid':
+                            planGroupSubmitted &&
+                            PlanGroupfromgroup.controls.specialPlanGroupId.errors
+                        }"
+                      ></p-dropdown>
+                      <div></div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          planGroupSubmitted &&
+                          PlanGroupfromgroup.controls.specialPlanGroupId.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            planGroupSubmitted &&
+                            PlanGroupfromgroup.controls.specialPlanGroupId.errors.required
+                          "
+                        >
+                          Special Plan Group is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                      <p-dropdown
+                        [options]="commondropdownService.NormalPlanGroupDetailsBySpecialPlan"
+                        optionValue="planGroupId"
+                        optionLabel="planGroupName"
+                        [filter]="true"
+                        filterBy="planGroupName"
+                        placeholder="Select a Normal Plan Group "
+                        formControlName="normalPlanGroupId"
+                        [ngClass]="{
+                          'is-invalid':
+                            planGroupSubmitted &&
+                            PlanGroupfromgroup.controls.normalPlanGroupId.errors
+                        }"
+                      ></p-dropdown>
+                      <div></div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          planGroupSubmitted && PlanGroupfromgroup.controls.normalPlanGroupId.errors
+                        "
+                      >
+                        <div class="error text-danger">Normal Plan Group required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                      <button
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddplanGroupField()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  <table class="table coa-table" style="margin-top: 10px">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center">Special Plan Group</th>
+                        <th style="text-align: center">Normal Plan Group</th>
+                        <th style="text-align: right; padding: 8px">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of planGroupFromArray.controls
+                            | paginate
+                              : {
+                                  id: 'chargeFromArrayData',
+                                  itemsPerPage: planGroupitemsPerPage,
+                                  currentPage: currentPageplanGroup,
+                                  totalItems: planGrouptotalRecords
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            [options]="commondropdownService.SpecialPlanGroupDetails"
+                            optionValue="planGroupId"
+                            optionLabel="planGroupName"
+                            [filter]="true"
+                            filterBy="planGroupName"
+                            placeholder="Select a Plan Group"
+                            [formControl]="row.get('specialPlanGroupId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                          <div></div>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            [options]="commondropdownService.NormalPlanGroupDetails"
+                            optionValue="planGroupId"
+                            optionLabel="planGroupName"
+                            [filter]="true"
+                            filterBy="planGroupName"
+                            placeholder="Select a Plan Group"
+                            [formControl]="row.get('normalPlanGroupId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            *ngIf="planGroupFromArray.length > 1"
+                            id="deleteAtt"
+                            href="javascript:void(0)"
+                            (click)="deleteConfirmonplanField(index)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="chargeFromArrayData"
+                        [maxSize]="10"
+                        [directionLinks]="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageplanGroupCharge($event)"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                  <br />
+                </div>
+                <br />
+
+                <div *ngIf="ifIndividualPlan">
+                  <div class="row" style="margin-top: 20px">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <span class="p-float-label">
+                        <p-dropdown
+                          [options]="commondropdownService.planserviceData"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          [(ngModel)]="serviceValue"
+                          (onChange)="serviceBasePlanDATA($event)"
+                          [ngClass]="{
+                            'is-invalid': plansubmitted && !serviceValue
+                          }"
+                          id="service"
+                          [autoDisplayFirst]="false"
+                        ></p-dropdown>
+                        <label for="service">Service *</label>
+                      </span>
+                      <div></div>
+
+                      <div class="errorWrap text-danger" *ngIf="plansubmitted && !serviceValue">
+                        <div class="error text-danger">Service is required.</div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <span class="p-float-label">
+                        <p-dropdown
+                          [options]="specialPlanDD"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          [(ngModel)]="specialPlanId"
+                          (onChange)="specialPlanBasePlanDATA($event)"
+                          [ngClass]="{
+                            'is-invalid': plansubmitted && !specialPlanId
+                          }"
+                          [disabled]="!serviceValue"
+                          id="spacialPlan"
+                          [autoDisplayFirst]="false"
+                        ></p-dropdown>
+                        <label for="spacialPlan">Special Plan *</label>
+                      </span>
+                      <div></div>
+
+                      <div class="errorWrap text-danger" *ngIf="plansubmitted && !specialPlanId">
+                        <div class="error text-danger">Special Plan is required.</div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <span class="p-float-label">
+                        <p-multiSelect
+                          [(ngModel)]="normalPlanId"
+                          [options]="normalPlanDD"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          [ngClass]="{
+                            'is-invalid': plansubmitted && !normalPlanId
+                          }"
+                          [disabled]="!specialPlanId"
+                          id="normalplan"
+                        ></p-multiSelect>
+                        <label for="normalplan">Normal Plan*</label>
+                      </span>
+                      <div></div>
+
+                      <div class="errorWrap text-danger" *ngIf="plansubmitted && !normalPlanId">
+                        <div class="error text-danger">Normal Plan is required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" style="text-align: center">
+                      <button
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddPlanAttribute()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  <table class="table coa-table" style="margin-top: 3rem">
+                    <thead>
+                      <tr>
+                        <th style="padding-left: 8px; text-align: center">Special Plan*</th>
+                        <th style="text-align: center">Normal Plan*</th>
+                        <th style="width: 10%; text-align: center; padding-left: 8px !important">
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of planMapping.controls
+                            | paginate
+                              : {
+                                  id: 'payMappingListFromArrayData',
+                                  itemsPerPage: paymappingItemPerPage,
+                                  currentPage: currentPagePayMapping,
+                                  totalItems: payMappinftotalRecords
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="specialPlan"
+                            placeholder="Select Special Plan"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('specialPlanId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="normalPlan"
+                            placeholder="Select Special Plan"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('normalPlanId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            *ngIf="planMapping.length > 1"
+                            id="deleteAtt"
+                            href="javascript:void(0)"
+                            (click)="deletePlanConfirmAttribute(index)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="payMappingListFromArrayData"
+                        maxSize="5"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedpayMapping($event)"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset
+              *ngIf="ifPlanGroup || ifIndividualPlan"
+              style="margin-top: 0rem; margin-bottom: 2rem"
+            >
+              <legend>Customer Mapping</legend>
+              <div class="boxWhite">
+                <div *ngIf="ifIndividualPlan">
+                  <div class="row" style="margin-top: 20px">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <span class="p-float-label">
+                        <p-dropdown
+                          [options]="commondropdownService.planserviceData"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          [(ngModel)]="custServiceValue"
+                          (onChange)="serviceBasePlanDATA1($event)"
+                          [ngClass]="{
+                            'is-invalid': custsubmitted && !custServiceValue
+                          }"
+                          id="servicec"
+                          [autoDisplayFirst]="false"
+                        ></p-dropdown>
+                        <label for="servicec">Service *</label>
+                      </span>
+                      <div></div>
+
+                      <div class="errorWrap text-danger" *ngIf="custsubmitted && !custServiceValue">
+                        <div class="error text-danger">Service is required.</div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <span class="p-float-label">
+                        <p-dropdown
+                          [options]="specialPlanDD1"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          [(ngModel)]="custSpecialPlanId"
+                          (onChange)="specialPlanBasecustDATA($event)"
+                          [ngClass]="{
+                            'is-invalid': custsubmitted && !custSpecialPlanId
+                          }"
+                          [disabled]="!custServiceValue"
+                          id="spacialPlanc"
+                          [autoDisplayFirst]="false"
+                        ></p-dropdown>
+                        <label for="spacialPlanc">Special Plan *</label>
+                      </span>
+                      <div></div>
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="custsubmitted && !custSpecialPlanId"
+                      >
+                        <div class="error text-danger">Special Plan is required.</div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <div>
+                        <p-dropdown
+                          [disabled]="true"
+                          [options]="parentCustList"
+                          [showClear]="true"
+                          [filter]="true"
+                          filterBy="name"
+                          [(ngModel)]="customerid"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select a Customer"
+                          styleClass="disableDropdown"
+                        >
+                          <ng-template let-data pTemplate="item">
+                            <div class="item-drop1">
+                              <span class="item-value1"> {{ data.title }} {{ data.name }} </span>
+                            </div>
+                          </ng-template>
+                        </p-dropdown>
+                        <button
+                          type="button"
+                          (click)="modalOpenParentCustomer()"
+                          class="btn btn-primary"
+                          style="
+                            border-radius: 5px;
+                            padding: 5px 10px;
+                            line-height: 1.5;
+                            margin-left: 10px;
+                          "
+                        >
+                          <i class="fa fa-plus-square"></i>
+                        </button>
+                      </div>
+                      <br />
+
+                      <div></div>
+
+                      <div class="errorWrap text-danger" *ngIf="custsubmitted && !customerid">
+                        <div class="error text-danger">Customer is required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" style="text-align: center">
+                      <button
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddCustomerAttribute()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  <table class="table coa-table" style="margin-top: 3rem">
+                    <thead>
+                      <tr>
+                        <th style="padding-left: 8px; text-align: center">Special Plan*</th>
+                        <th style="text-align: center">Customer*</th>
+                        <th style="width: 10%; text-align: center; padding-left: 8px !important">
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of customerMapping.controls
+                            | paginate
+                              : {
+                                  id: 'payMappingListFromArrayDatac',
+                                  itemsPerPage: paymappingItemPerPagec,
+                                  currentPage: currentPagePayMappingc,
+                                  totalItems: payMappinftotalRecordsc
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="specialPlan"
+                            placeholder="Select Special Plan"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('specialPlanId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="parentCustList"
+                            placeholder="Select Customer"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('customerId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            id="deleteAtt"
+                            href="javascript:void(0)"
+                            (click)="deleteCustomerConfirmAttribute(index)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="payMappingListFromArrayDatac"
+                        maxSize="5"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedpayMappingc($event)"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="ifPlanGroup">
+                  <div class="row" [formGroup]="PlanCustfromgroup" style="margin-top: 20px">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                      <p-dropdown
+                        [options]="commondropdownService.SpecialPlanGroupDetails"
+                        optionValue="planGroupId"
+                        optionLabel="planGroupName"
+                        [filter]="true"
+                        filterBy="planGroupName"
+                        placeholder="Select a Special Plan Group "
+                        formControlName="specialCustPlanGroupId"
+                        [ngClass]="{
+                          'is-invalid':
+                            custGroupSubmitted &&
+                            PlanCustfromgroup.controls.specialCustPlanGroupId.errors
+                        }"
+                      ></p-dropdown>
+                      <div></div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          custGroupSubmitted &&
+                          PlanCustfromgroup.controls.specialCustPlanGroupId.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            custGroupSubmitted &&
+                            PlanCustfromgroup.controls.specialCustPlanGroupId.errors
+                          "
+                        >
+                          Special Plan Group is required.
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <p-multiSelect
+                        [(ngModel)]="custGroupId"
+                        [options]="customerList"
+                        optionValue="id"
+                        placeholder="Select Customer"
+                        optionLabel="username"
+                        filter="true"
+                        filterBy="username"
+                        [ngClass]="{
+                          'is-invalid': custsubmitted && !custId
+                        }"
+                        [disabled]="!specialPlanGroupId"
+                      ></p-multiSelect>
+                      <div></div>
+                      <div class="errorWrap text-danger" *ngIf="custsubmitted && !custId">
+                        <div class="error text-danger">Customer is required.</div>
+                      </div>
+                    </div> -->
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <div>
+                        <p-dropdown
+                          [disabled]="true"
+                          [options]="parentCustList"
+                          [showClear]="true"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="customerId"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select a Customer"
+                          styleClass="disableDropdown"
+                          [ngClass]="{
+                            'is-invalid':
+                              custGroupSubmitted && PlanCustfromgroup.controls.customerId.errors
+                          }"
+                        >
+                          <!-- <ng-template let-data pTemplate="item">
+                            <div class="item-drop1">
+                              <span class="item-value1"> {{ data.title }} {{ data.name }} </span>
+                            </div>
+                          </ng-template> -->
+                        </p-dropdown>
+                        <button
+                          (click)="modalOpenParentCustomer()"
+                          class="btn btn-primary"
+                          style="
+                            border-radius: 5px;
+                            padding: 5px 10px;
+                            line-height: 1.5;
+                            margin-left: 10px;
+                          "
+                        >
+                          <i class="fa fa-plus-square"></i>
+                        </button>
+                      </div>
+                      <br />
+
+                      <div></div>
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="custGroupSubmitted && PlanCustfromgroup.controls.customerId.errors"
+                      >
+                        <div class="error text-danger">Customer is required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" style="text-align: center">
+                      <button
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddCustomerGroupAttribute()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  <table class="table coa-table" style="margin-top: 3rem">
+                    <thead>
+                      <tr>
+                        <th style="padding-left: 8px; text-align: center">Special Plan Group*</th>
+                        <th style="text-align: center">Customer*</th>
+                        <th style="width: 10%; text-align: center; padding-left: 8px !important">
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of custGroupFromArray.controls
+                            | paginate
+                              : {
+                                  id: 'payMappingListFromArrayDatac',
+                                  itemsPerPage: paymappingItemPerPagec,
+                                  currentPage: currentPagePayMappingc,
+                                  totalItems: payMappinftotalRecordsc
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            [options]="commondropdownService.SpecialPlanGroupDetails"
+                            placeholder="Select Special Plan"
+                            optionLabel="planGroupName"
+                            optionValue="planGroupId"
+                            [formControl]="row.get('specialCustPlanGroupId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            [options]="parentCustList"
+                            placeholder="Select Customer"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('customerId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            id="deleteAtt"
+                            href="javascript:void(0)"
+                            (click)="deleteCustomerGroupConfirmAttribute(index)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="payMappingListFromArrayDatac"
+                        maxSize="5"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedpayMappingc($event)"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset
+              *ngIf="ifPlanGroup || ifIndividualPlan"
+              style="margin-top: 0rem; margin-bottom: 2rem"
+            >
+              <legend>Lead Mapping</legend>
+              <div class="boxWhite">
+                <div *ngIf="ifIndividualPlan">
+                  <div class="row" style="margin-top: 20px">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <span class="p-float-label">
+                        <p-dropdown
+                          [options]="commondropdownService.planserviceData"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          [(ngModel)]="leadServiceValue"
+                          (onChange)="serviceBasePlanLead($event)"
+                          [ngClass]="{
+                            'is-invalid': leadsubmitted && !leadServiceValue
+                          }"
+                          id="servicec"
+                          [autoDisplayFirst]="false"
+                        ></p-dropdown>
+                        <label for="servicec">Service *</label>
+                      </span>
+                      <div></div>
+
+                      <div class="errorWrap text-danger" *ngIf="leadsubmitted && !leadServiceValue">
+                        <div class="error text-danger">Service is required.</div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <span class="p-float-label">
+                        <p-dropdown
+                          [options]="specialPlanLead"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          [(ngModel)]="leadSpecialPlanId"
+                          (onChange)="specialPlanBasecustDATA($event)"
+                          [ngClass]="{
+                            'is-invalid': leadsubmitted && !leadSpecialPlanId
+                          }"
+                          [disabled]="!leadServiceValue"
+                          id="spacialPlanc"
+                          [autoDisplayFirst]="false"
+                        ></p-dropdown>
+                        <label for="spacialPlanc">Special Plan *</label>
+                      </span>
+                      <div></div>
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="leadsubmitted && !leadSpecialPlanId"
+                      >
+                        <div class="error text-danger">Special Plan is required.</div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <div>
+                        <p-dropdown
+                          [disabled]="true"
+                          [options]="selectedLeadList"
+                          [showClear]="true"
+                          [filter]="true"
+                          filterBy="name"
+                          [(ngModel)]="leadId"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select a Lead"
+                          styleClass="disableDropdown"
+                        >
+                          <ng-template let-data pTemplate="item">
+                            <div class="item-drop1">
+                              <span class="item-value1"> {{ data.title }} {{ data.name }} </span>
+                            </div>
+                          </ng-template>
+                        </p-dropdown>
+                        <button
+                          (click)="modalOpenLeadCustomer()"
+                          class="btn btn-primary"
+                          style="
+                            border-radius: 5px;
+                            padding: 5px 10px;
+                            line-height: 1.5;
+                            margin-left: 10px;
+                          "
+                        >
+                          <i class="fa fa-plus-square"></i>
+                        </button>
+                      </div>
+                      <br />
+
+                      <div></div>
+                      <div class="errorWrap text-danger" *ngIf="leadsubmitted && leadId">
+                        <div class="error text-danger">Customer is required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" style="text-align: center">
+                      <button
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddLeadAttribute()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  <table class="table coa-table" style="margin-top: 3rem">
+                    <thead>
+                      <tr>
+                        <th style="padding-left: 8px; text-align: center">Special Plan*</th>
+                        <th style="text-align: center">Lead*</th>
+                        <th style="width: 10%; text-align: center; padding-left: 8px !important">
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of leadMapping.controls
+                            | paginate
+                              : {
+                                  id: 'payMappingListFromArrayDatac',
+                                  itemsPerPage: paymappingItemPerPagec,
+                                  currentPage: currentPagePayMappingc,
+                                  totalItems: payMappinftotalRecordsc
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="specialPlan"
+                            placeholder="Select Special Plan"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('specialPlanId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="selectedLeadList"
+                            placeholder="Select Lead"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('leadCustId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            *ngIf="leadMapping.length > 1"
+                            id="deleteAtt"
+                            href="javascript:void(0)"
+                            (click)="deleteLeadConfirmAttribute(index)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="payMappingListFromArrayDatac"
+                        maxSize="5"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedpayMappingc($event)"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="ifPlanGroup">
+                  <div class="row" [formGroup]="planLeadGroupfromgroup" style="margin-top: 20px">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                      <p-dropdown
+                        [options]="commondropdownService.SpecialPlanGroupDetails"
+                        optionValue="planGroupId"
+                        optionLabel="planGroupName"
+                        [filter]="true"
+                        filterBy="planGroupName"
+                        placeholder="Select a Special Plan Group "
+                        formControlName="specialPlanLeadGroupId"
+                        [ngClass]="{
+                          'is-invalid':
+                            leadGroupSubmitted &&
+                            planLeadGroupfromgroup.controls.specialPlanLeadGroupId.errors
+                        }"
+                      ></p-dropdown>
+                      <div></div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          leadGroupSubmitted &&
+                          planLeadGroupfromgroup.controls.specialPlanLeadGroupId.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            leadGroupSubmitted &&
+                            planLeadGroupfromgroup.controls.specialPlanLeadGroupId.errors
+                          "
+                        >
+                          Special Plan Group is required.
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <p-multiSelect
+                        [(ngModel)]="custGroupId"
+                        [options]="customerList"
+                        optionValue="id"
+                        placeholder="Select Customer"
+                        optionLabel="username"
+                        filter="true"
+                        filterBy="username"
+                        [ngClass]="{
+                          'is-invalid': custsubmitted && !custId
+                        }"
+                        [disabled]="!specialPlanGroupId"
+                      ></p-multiSelect>
+                      <div></div>
+                      <div class="errorWrap text-danger" *ngIf="custsubmitted && !custId">
+                        <div class="error text-danger">Customer is required.</div>
+                      </div>
+                    </div> -->
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <div>
+                        <p-dropdown
+                          [disabled]="true"
+                          [options]="selectedLeadList"
+                          [showClear]="true"
+                          [filter]="true"
+                          filterBy="name"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select a Customer"
+                          styleClass="disableDropdown"
+                          formControlName="leadCustId"
+                          [ngClass]="{
+                            'is-invalid':
+                              leadGroupSubmitted &&
+                              planLeadGroupfromgroup.controls.leadCustId.errors
+                          }"
+                        >
+                          <ng-template let-data pTemplate="item">
+                            <div class="item-drop1">
+                              <span class="item-value1"> {{ data.title }} {{ data.name }} </span>
+                            </div>
+                          </ng-template>
+                        </p-dropdown>
+                        <button
+                          (click)="modalOpenLeadCustomer()"
+                          class="btn btn-primary"
+                          style="
+                            border-radius: 5px;
+                            padding: 5px 10px;
+                            line-height: 1.5;
+                            margin-left: 10px;
+                          "
+                        >
+                          <i class="fa fa-plus-square"></i>
+                        </button>
+                      </div>
+                      <br />
+
+                      <div></div>
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="leadsubmitted && planLeadGroupfromgroup.controls.leadCustId.errors"
+                      >
+                        <div class="error text-danger">Customer is required.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" style="text-align: center">
+                      <button
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddLeadGroupAttribute()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  <table class="table coa-table" style="margin-top: 3rem">
+                    <thead>
+                      <tr>
+                        <th style="padding-left: 8px; text-align: center">Special Plan Group*</th>
+                        <th style="text-align: center">Customer*</th>
+                        <th style="width: 10%; text-align: center; padding-left: 8px !important">
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of leadGroupFromArray.controls
+                            | paginate
+                              : {
+                                  id: 'payMappingListFromArrayDatac',
+                                  itemsPerPage: paymappingItemPerPagec,
+                                  currentPage: currentPagePayMappingc,
+                                  totalItems: payMappinftotalRecordsc
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="commondropdownService.SpecialPlanGroupDetails"
+                            placeholder="Select Special Plan"
+                            optionLabel="planGroupName"
+                            optionValue="planGroupId"
+                            [formControl]="row.get('specialPlanGroupId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="selectedLeadList"
+                            placeholder="Select Lead"
+                            optionLabel="name"
+                            optionValue="id"
+                            [formControl]="row.get('leadCustId')"
+                            [disabled]="true"
+                          ></p-dropdown>
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            id="deleteAtt"
+                            href="javascript:void(0)"
+                            (click)="deleteLeadGroupConfirmAttribute(index)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="payMappingListFromArrayDatac"
+                        maxSize="5"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedpayMappingc($event)"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <app-multiplecustomer-select
+              dialogId="multipleCUSTDataModal"
+              [custdata]="custdata"
+              (selectCustomerID)="SelectcustomerData($event)"
+            ></app-multiplecustomer-select>
+            <br />
+
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEdit('')"
+                *ngIf="!isPlanMappingEdit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Plan Mapping
+              </button>
+              <button
+                *ngIf="isPlanMappingEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEdit(viewPlanMappingData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Plan Mapping
+              </button>
+
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- customer model -->
+<p-dialog
+  header="Select Customer"
+  [(visible)]="selectParentCustomer"
+  [modal]="true"
+  [style]="{ width: '80%' }"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="modalCloseParentCustomer()"
+>
+  <div class="modal-body">
+    <h5>Search Customer</h5>
+    <div class="row">
+      <div class="col-lg-3 col-md-3 m-b-10">
+        <p-dropdown
+          (onChange)="selParentSearchOption($event)"
+          [(ngModel)]="searchParentCustOption"
+          [options]="searchOptionSelect"
+          [filter]="true"
+          filterBy="label"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select a Search Option"
+        ></p-dropdown>
+      </div>
+      <div
+        *ngIf="
+          parentFieldEnable &&
+          searchParentCustOption != 'status' &&
+          searchParentCustOption !== 'serviceareaName' &&
+          searchParentCustOption !== 'plan'
+        "
+        class="col-lg-3 col-md-3 m-b-10"
+      >
+        <input
+          [(ngModel)]="searchParentCustValue"
+          class="form-control"
+          id="username"
+          placeholder="Enter Search Detail"
+          type="text"
+          (keydown.enter)="searchParentCustomer()"
+        />
+      </div>
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption === 'status'">
+        <p-dropdown
+          [options]="commondropdownService.CustomerStatusValue"
+          optionValue="value"
+          optionLabel="text"
+          filter="true"
+          filterBy="text"
+          placeholder="Select a Status"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'serviceareaName'">
+        <p-dropdown
+          [options]="commondropdownService.serviceAreaList"
+          optionValue="id"
+          optionLabel="name"
+          filter="true"
+          filterBy="name"
+          placeholder="Select a Servicearea"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'plan'">
+        <p-dropdown
+          [options]="commondropdownService.postpaidplanData"
+          optionValue="id"
+          optionLabel="name"
+          filter="true"
+          filterBy="name"
+          placeholder="Select a Plan"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+      <div *ngIf="parentFieldEnable" class="col-lg-6 col-md-6 col-sm-12">
+        <button
+          (click)="searchParentCustomer()"
+          class="btn btn-primary"
+          id="searchbtn"
+          type="button"
+        >
+          <i class="fa fa-search"></i>
+          Search
+        </button>
+        <button
+          (click)="clearSearchParentCustomer()"
+          class="btn btn-default"
+          id="searchbtn"
+          type="reset"
+        >
+          <i class="fa fa-refresh"></i>
+          Clear
+        </button>
+      </div>
+    </div>
+    <h5 style="margin-top: 15px">Select Customer</h5>
+    <p-table
+      #dt
+      [(selection)]="selectedParentCust"
+      [value]="customerList"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 5rem"></th>
+          <th>Name</th>
+          <th>User Name</th>
+        </tr>
+      </ng-template>
+      <ng-template let-customerList let-rowIndex="rowIndex" pTemplate="body">
+        <tr>
+          <td>
+            <p-tableRadioButton [value]="customerList"></p-tableRadioButton>
+          </td>
+          <td>
+            {{ customerList.name }}
+            {{ customerList.lastname }}
+          </td>
+          <td>{{ customerList.username }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <p-paginator
+          (onPageChange)="paginate($event)"
+          [first]="newFirst"
+          [rows]="parentCustomerListdataitemsPerPage"
+          [totalRecords]="parentCustomerListdatatotalRecords"
+        ></p-paginator>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        (click)="saveSelCustomer(ifPlanGroup)"
+        class="btn btn-primary"
+        style="object-fit: cover; padding: 5px 8px"
+        [disabled]="selectedParentCust.length == 0"
+      >
+        <i class="fa fa-check-circle"></i>
+        Save
+      </button>
+      <button (click)="modalCloseParentCustomer()" class="btn btn-danger btn-sm" type="button">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- <div class="modal fade" id="selectParentCustomer" role="dialog">
+  <div class="modal-dialog" style="width: 80%">
+    
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="panel-title">Select Customer</h3>
+      </div>
+      <div class="modal-body">
+        <h5>Search Customer</h5>
+        <div class="row">
+          <div class="col-lg-3 col-md-3 m-b-10">
+            <p-dropdown
+              (onChange)="selParentSearchOption($event)"
+              [(ngModel)]="searchParentCustOption"
+              [options]="searchOptionSelect"
+              [filter]="true"
+              filterBy="label"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a Search Option"
+            ></p-dropdown>
+          </div>
+          <div
+            *ngIf="
+              parentFieldEnable &&
+              searchParentCustOption != 'status' &&
+              searchParentCustOption !== 'serviceareaName' &&
+              searchParentCustOption !== 'plan'
+            "
+            class="col-lg-3 col-md-3 m-b-10"
+          >
+            <input
+              [(ngModel)]="searchParentCustValue"
+              class="form-control"
+              id="username"
+              placeholder="Enter Search Detail"
+              type="text"
+              (keydown.enter)="searchParentCustomer()"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption === 'status'">
+            <p-dropdown
+              [options]="commondropdownService.CustomerStatusValue"
+              optionValue="value"
+              optionLabel="text"
+              filter="true"
+              filterBy="text"
+              placeholder="Select a Status"
+              [(ngModel)]="searchParentCustValue"
+            ></p-dropdown>
+          </div>
+
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'serviceareaName'">
+            <p-dropdown
+              [options]="commondropdownService.serviceAreaList"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              placeholder="Select a Servicearea"
+              [(ngModel)]="searchParentCustValue"
+            ></p-dropdown>
+          </div>
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'plan'">
+            <p-dropdown
+              [options]="commondropdownService.postpaidplanData"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              placeholder="Select a Plan"
+              [(ngModel)]="searchParentCustValue"
+            ></p-dropdown>
+          </div>
+          <div *ngIf="parentFieldEnable" class="col-lg-6 col-md-6 col-sm-12">
+            <button
+              (click)="searchParentCustomer()"
+              class="btn btn-primary"
+              id="searchbtn"
+              type="button"
+            >
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+            <button
+              (click)="clearSearchParentCustomer()"
+              class="btn btn-default"
+              id="searchbtn"
+              type="reset"
+            >
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+        <h5 style="margin-top: 15px">Select Customer</h5>
+        <p-table
+          #dt
+          [(selection)]="selectedParentCust"
+          [value]="customerList"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 5rem"></th>
+              <th>Name</th>
+              <th>User Name</th>
+            </tr>
+          </ng-template>
+          <ng-template let-customerList let-rowIndex="rowIndex" pTemplate="body">
+            <tr>
+              <td>
+                <p-tableRadioButton [value]="customerList"></p-tableRadioButton>
+              </td>
+              <td>
+                {{ customerList.name }}
+                {{ customerList.lastname }}
+              </td>
+              <td>{{ customerList.username }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+            <p-paginator
+              (onPageChange)="paginate($event)"
+              [first]="newFirst"
+              [rows]="parentCustomerListdataitemsPerPage"
+              [totalRecords]="parentCustomerListdatatotalRecords"
+            ></p-paginator>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            (click)="saveSelCustomer(ifPlanGroup)"
+            class="btn btn-primary"
+            style="object-fit: cover; padding: 5px 8px"
+            [disabled]="selectedParentCust.length == 0"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button (click)="modalCloseParentCustomer()" class="btn btn-danger btn-sm" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<p-dialog
+  header="{{ ifApproveSPMStatus ? 'Approve Status' : 'Reject Status' }}"
+  [(visible)]="ApproveRejectModal"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalApproveReject()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <label>Remark</label>
+        <textarea
+          [(ngModel)]="approveRejectSPMRemark"
+          placeholder="Remarks"
+          class="form-control"
+          name="remark"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      (click)="statusApporevedRejectedSPM()"
+      [disabled]="!approveRejectSPMRemark"
+      class="btn btn-primary"
+      id="submit"
+      type="submit"
+    >
+      <i class="fa fa-check-circle"></i>
+      Save
+    </button>
+
+    <button
+      class="btn btn-default"
+      (click)="closeModalApproveReject()"
+      data-dismiss="modal"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+<!-- <div
+  aria-labelledby="myModalLabel"
+  class="modal fade"
+  id="ApproveRejectModal"
+  role="dialog"
+  tabindex="-1"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4
+          class="modal-title"
+          id="myModalLabel"
+          style="color: #fff !important"
+          *ngIf="ifApproveSPMStatus"
+        >
+          Approve Status
+        </h4>
+        <h4
+          class="modal-title"
+          id="myModalLabel"
+          style="color: #fff !important"
+          *ngIf="!ifApproveSPMStatus"
+        >
+          Reject Status
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Remark</label>
+            <textarea
+              [(ngModel)]="approveRejectSPMRemark"
+              placeholder="Remarks"
+              class="form-control"
+              name="remark"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          (click)="statusApporevedRejectedSPM()"
+          [disabled]="!approveRejectSPMRemark"
+          class="btn btn-primary"
+          id="submit"
+          type="submit"
+        >
+          <i class="fa fa-check-circle"></i>
+          Save
+        </button>
+
+        <button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+<p-dialog
+  header="Approve Mapping"
+  [(visible)]="assignCustomerDocumentForApproval"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalApproval()"
+>
+  <div class="modal-body" style="margin: 10px">
+    <form [formGroup]="assignDocForm">
+      <div class="row">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <h5>Select Staff</h5>
+              <p-table
+                [(selection)]="assignedStaffSPM"
+                [value]="assignStaffListDataSPM"
+                responsiveLayout="scroll"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 3rem"></th>
+                    <th>Name</th>
+                    <th>Username</th>
+                  </tr>
+                </ng-template>
+                <ng-template let-product pTemplate="body">
+                  <tr>
+                    <td>
+                      <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                    </td>
+                    <td>{{ product.fullName }}</td>
+                    <td>
+                      {{ product.username }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+          <br />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-primary"
+      id="submitButtonForApprove"
+      type="submit"
+      (click)="assignToStaffSPMapping()"
+    >
+      <i class="fa fa-check-circle"></i>
+      Assign
+    </button>
+    <button
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="closeModalApproval()"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- <div
+  aria-labelledby="myModalLabel"
+  class="modal fade"
+  id="assignCustomerDocumentForApproval"
+  role="dialog"
+  tabindex="-1"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabelForAssign" style="color: #fff !important">
+          Approve Mapping
+        </h4>
+      </div>
+      <div class="modal-body" style="margin: 10px">
+        <form [formGroup]="assignDocForm">
+          <div class="row">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                  <h5>Select Staff</h5>
+                  <p-table
+                    [(selection)]="assignedStaffSPM"
+                    [value]="assignStaffListDataSPM"
+                    responsiveLayout="scroll"
+                  >
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th style="width: 3rem"></th>
+                        <th>Name</th>
+                        <th>Username</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template let-product pTemplate="body">
+                      <tr>
+                        <td>
+                          <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                        </td>
+                        <td>{{ product.fullName }}</td>
+                        <td>
+                          {{ product.username }}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+              <br />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary"
+          id="submitButtonForApprove"
+          type="submit"
+          (click)="assignToStaffSPMapping()"
+        >
+          <i class="fa fa-check-circle"></i>
+          Assign
+        </button>
+        <button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+<p-dialog
+  header="Select Lead"
+  [(visible)]="selectLeadModal"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="modalCloseLeadCustomer()"
+>
+  <div class="modal-body">
+    <h5>Search Lead</h5>
+    <div class="row">
+      <div class="col-lg-3 col-md-3">
+        <p-dropdown
+          [options]="searchOptionSelectLead"
+          optionValue="value"
+          optionLabel="label"
+          filter="true"
+          filterBy="label"
+          [(ngModel)]="searchLeadOption"
+          (ngModelChange)="selSearchOption($event)"
+          placeholder="Select a search option"
+        >
+        </p-dropdown>
+      </div>
+
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="leadFieldEnable && searchLeadOption === 'name'">
+        <input
+          id="namesearch"
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchDeatil"
+          (keydown.enter)="searchLead()"
+          placeholder="Enter Customer Name"
+        />
+      </div>
+      <div
+        class="col-lg-3 col-md-3 m-b-10"
+        *ngIf="leadFieldEnable && searchLeadOption === 'mobile'"
+      >
+        <input
+          id="mobilesearch"
+          (keydown.enter)="searchLead()"
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchDeatil"
+          placeholder="Enter Mobile"
+        />
+      </div>
+      <div
+        class="col-lg-3 col-md-3 m-b-10"
+        *ngIf="leadFieldEnable && searchLeadOption === 'createdBy'"
+      >
+        <p-dropdown
+          id="createdbysearch"
+          [options]="getStaffUsers"
+          optionValue="id"
+          optionLabel="firstname"
+          type="text"
+          [(ngModel)]="searchDeatil"
+          placeholder="Select Staff User"
+        ></p-dropdown>
+      </div>
+      <div
+        class="col-lg-3 col-md-3 m-b-10"
+        *ngIf="leadFieldEnable && searchLeadOption === 'lastUpdateOn'"
+      >
+        <!-- <input id="lastmodifiedonsearch" type="text" class="form-control" [(ngModel)]="searchDeatil"
+                          placeholder="Select the date" /> -->
+        <p-calendar
+          inputId="date"
+          [numberOfMonths]="3"
+          [(ngModel)]="searchDeatil"
+          placeholder="Select the date"
+        >
+        </p-calendar>
+      </div>
+      <div
+        class="col-lg-3 col-md-3 m-b-10"
+        *ngIf="leadFieldEnable && searchLeadOption === 'status'"
+      >
+        <p-dropdown
+          id="leadstatussearch"
+          [options]="leadStatusOptions"
+          type="text"
+          [(ngModel)]="searchDeatil"
+          placeholder="Select Any Status"
+        ></p-dropdown>
+      </div>
+
+      <div class="col-lg-3 col-md-4 marginTopSearchBtn" *ngIf="leadFieldEnable">
+        <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchLead()">
+          <i class="fa fa-search"></i>
+          Search
+        </button>
+        <button type="reset" class="btn btn-default" id="searchbtn" (click)="clearSearchLead()">
+          <i class="fa fa-refresh"></i>
+          Clear
+        </button>
+      </div>
+    </div>
+    <h5 style="margin-top: 15px">Select Lead</h5>
+    <p-table #dt [(selection)]="selectedLead" [value]="leadList" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 5rem"></th>
+          <th>Customer Name</th>
+          <th>Username</th>
+        </tr>
+      </ng-template>
+      <ng-template let-lead let-rowIndex="rowIndex" pTemplate="body">
+        <tr>
+          <td>
+            <p-tableRadioButton [value]="lead"></p-tableRadioButton>
+          </td>
+          <td>{{ lead.title }} {{ lead.firstname }} {{ lead.lastname }}</td>
+          <td>{{ lead.username ? lead.username : "-" }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <p-paginator
+          (onPageChange)="paginateLead($event)"
+          [first]="newFirst"
+          [rows]="parentLeadListdataitemsPerPage"
+          [totalRecords]="parentLeadListdatatotalRecords"
+        ></p-paginator>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        (click)="saveLeadCustomer(ifPlanGroup)"
+        class="btn btn-primary"
+        style="object-fit: cover; padding: 5px 8px"
+        [disabled]="selectedLead.length == 0"
+      >
+        <i class="fa fa-check-circle"></i>
+        Save
+      </button>
+      <button (click)="modalCloseLeadCustomer()" class="btn btn-danger btn-sm" type="button">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- <div class="modal fade" id="selectLead" role="dialog">
+  <div class="modal-dialog" style="width: 80%">
+   
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="panel-title">Select Lead</h3>
+      </div>
+    </div>
+  </div>
+</div> -->
+<app-workflow-audit-details-modal
+  *ngIf="ifModelIsShow"
+  [auditcustid]="auditcustid"
+  dialogId="custauditWorkflowModal"
+  (closeParentCustt)="closeParentCustt()"
+></app-workflow-audit-details-modal>
+
+<p-dialog
+  header="Approve Customer"
+  [(visible)]="approveCustomerModal"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalForApproveCustomer()"
+>
+  <div class="modal-body">
+    <form [formGroup]="assignPlanForm">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="card">
+            <h5>Select Staff</h5>
+            <p-table
+              [value]="assignStaffListDataSPM"
+              [(selection)]="selectStaff"
+              responsiveLayout="scroll"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 3rem"></th>
+                  <th>Name</th>
+                  <th>Username</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-product>
+                <tr>
+                  <td>
+                    <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                  </td>
+                  <td>{{ product.fullName }}</td>
+                  <td>
+                    {{ product.username }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <label>Remark</label>
+          <textarea
+            class="form-control"
+            name="remark"
+            formControlName="remark"
+            [ngClass]="{
+              'is-invalid': assignPlansubmitted && assignPlansubmitted.controls.remark.errors
+            }"
+          ></textarea>
+          <div
+            class="errorWrap text-danger"
+            *ngIf="assignPlansubmitted && assignPlansubmitted.controls.remark.errors"
+          ></div>
+          <br />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      id="submit"
+      (click)="reassignWorkflow()"
+      [disabled]="!selectStaff"
+    >
+      <i class="fa fa-check-circle"></i>
+      Assign
+    </button>
+
+    <button
+      type="button"
+      (click)="closeAssignsDialog()"
+      class="btn btn-default"
+      data-dismiss="modal"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- <div
+  class="modal fade"
+  id="reasignPlanGroup"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel" style="color: #fff !important">
+          Approve Customer
+        </h4>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="assignPlanForm">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <div class="card">
+                <h5>Select Staff</h5>
+                <p-table
+                  [value]="assignStaffListDataSPM"
+                  [(selection)]="selectStaff"
+                  responsiveLayout="scroll"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width: 3rem"></th>
+                      <th>Name</th>
+                      <th>Username</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-product>
+                    <tr>
+                      <td>
+                        <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                      </td>
+                      <td>{{ product.fullName }}</td>
+                      <td>
+                        {{ product.username }}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <label>Remark</label>
+              <textarea
+                class="form-control"
+                name="remark"
+                formControlName="remark"
+                [ngClass]="{
+                  'is-invalid': assignPlansubmitted && assignPlansubmitted.controls.remark.errors
+                }"
+              ></textarea>
+              <div
+                class="errorWrap text-danger"
+                *ngIf="assignPlansubmitted && assignPlansubmitted.controls.remark.errors"
+              ></div>
+              <br />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          id="submit"
+          (click)="reassignWorkflow()"
+          [disabled]="!selectStaff"
+        >
+          <i class="fa fa-check-circle"></i>
+          Assign
+        </button>
+
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<p-dialog
+  header="Plan Details"
+  [(visible)]="isPlanDetilsDialog"
+  [baseZIndex]="10000"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closePlanDetailsDialog()"
+>
+  <div class="modal-body">
+    <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+      <legend>Basic Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Name :</label>
+            <span>{{ viewPlanMappingData.name }} </span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Status :</label>
+            <span>{{ viewPlanMappingData.status }}</span>
+          </div>
+
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Plan Category :</label>
+            <span *ngIf="viewPlanMappingData?.planGroupMapping">PlanGroup</span>
+            <span *ngIf="!viewPlanMappingData?.planGroupMapping">Individual</span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <div *ngIf="viewPlanMappingData?.planMapping?.length > 0">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Plan Mapping Details</legend>
+        <div class="boxWhite">
+          <table class="table coa-table" style="margin-top: 3rem">
+            <thead>
+              <tr>
+                <th style="padding-left: 8px; text-align: center">Special Plan</th>
+                <th style="text-align: center">Normal Plan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let plan of viewPlanMappingData.planMapping">
+                <td style="text-align: center">
+                  {{ plan.specialPlanName }}
+                </td>
+                <td style="text-align: center">{{ plan.normalPlanName }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+    </div>
+    <div *ngIf="viewPlanMappingData?.planGroupMapping?.length > 0">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Plan Mapping Details</legend>
+        <div class="boxWhite">
+          <table class="table coa-table" style="margin-top: 3rem">
+            <thead>
+              <tr>
+                <th style="padding-left: 8px; text-align: center">Special Plan Group</th>
+                <th style="text-align: center">Normal Plan Group</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let plan of viewPlanMappingData.planGroupMapping">
+                <td style="text-align: center">
+                  {{ plan.specialPlanGroupName }}
+                </td>
+                <td style="text-align: center">{{ plan.normalPlanGroupName }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+    </div>
+    <div *ngIf="viewPlanMappingData?.custMapping?.length > 0">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Customer Mapping Details</legend>
+        <div class="boxWhite">
+          <table class="table coa-table" style="margin-top: 3rem">
+            <thead>
+              <tr>
+                <th style="padding-left: 8px; text-align: center">Special Plan</th>
+                <th style="text-align: center">Customer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let customer of viewPlanMappingData.custMapping">
+                <td style="text-align: center">
+                  {{ customer.specialPlanName }}
+                </td>
+                <td style="text-align: center">{{ customer.customerName }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+    </div>
+    <div *ngIf="viewPlanMappingData?.leadCustMapping?.length > 0">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Lead Mapping Details</legend>
+        <div class="boxWhite">
+          <table class="table coa-table" style="margin-top: 3rem">
+            <thead>
+              <tr>
+                <th style="padding-left: 8px; text-align: center">Special Plan</th>
+                <th style="text-align: center">Lead</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let lead of viewPlanMappingData.leadCustMapping">
+                <td style="text-align: center">
+                  {{ lead.specialPlanName }}
+                </td>
+                <td style="text-align: center">{{ lead.leadCustName }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="closePlanDetailsDialog()" class="btn btn-default">Close</button>
+  </div>
+</p-dialog>

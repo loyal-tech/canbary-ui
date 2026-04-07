@@ -1,0 +1,1369 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Warehouse Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchwarehouse"
+            aria-expanded="false"
+            aria-controls="searchwarehouse"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchwarehouse" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchWarehouseName"
+                class="form-control"
+                placeholder="Enter warehouse Name"
+                (keydown.enter)="searchWareHouse()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchWareHouse()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchWarehouse()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="pcol col-md-6" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createWareHouse()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Warehouse</h5>
+                <!-- <p>Create Partner </p> -->
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-6">
+            <div class="dbox">
+              <a (click)="this.clearSearchWarehouse()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Warehouse</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="this.listview">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Warehouses</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listWarehouse"
+            aria-expanded="false"
+            aria-controls="listWarehouse"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listWarehouse" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div>
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Warehouse Type</th>
+                      <th>Address1</th>
+                      <th>Address2</th>
+                      <th>Status</th>
+                      <th *ngIf="deleteAccess || editAccess">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let warehouse of this.warehouseListData
+                          | paginate
+                            : {
+                                id: 'warehouseListData',
+                                itemsPerPage: productListdataitemsPerPage,
+                                currentPage: currentPageProductListdata,
+                                totalItems: productListdatatotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td
+                        class="curson_pointer"
+                        (click)="getWarehouseDetails(warehouse.id)"
+                        style="color: #f7b206"
+                      >
+                        {{ warehouse.name }}
+                      </td>
+                      <td>{{ warehouse.warehouseType }}</td>
+                      <td>{{ warehouse.address1 }}</td>
+                      <td>{{ warehouse.address2 }}</td>
+                      <td *ngIf="warehouse.status == 'ACTIVE'">
+                        <span class="badge badge-success">Active</span>
+                      </td>
+                      <td *ngIf="warehouse.status == 'INACTIVE'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </td>
+                      <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                        <a
+                          *ngIf="editAccess"
+                          id="edit-button"
+                          type="button"
+                          href="javascript:void(0)"
+                          (click)="editWareHouse(warehouse.id)"
+                          title="Edit"
+                        >
+                          <img src="assets/img/ioc01.jpg" />
+                        </a>
+                        <a
+                          *ngIf="deleteAccess"
+                          id="delete-button"
+                          href="javascript:void(0)"
+                          (click)="deleteConfirmWarehouse(warehouse.id)"
+                          title="Delete"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="warehouseListData"
+                    [maxSize]="10"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedProductList((currentPageProductListdata = $event))"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="productListdataitemsPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="this.createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Warehouse</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createWarehouse"
+            aria-expanded="false"
+            aria-controls="createWarehouse"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createWarehouse" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div>
+            <form [formGroup]="wareHouseFormGroup">
+              <fieldset style="margin-top: 0px">
+                <legend>Basic Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label>WareHouse Name*</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter WareHouse Name"
+                          formControlName="name"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.name.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && wareHouseFormGroup.controls.name.errors.required"
+                          >
+                            WareHouse name is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label style="display: block">WareHouse Type*</label>
+                        <p-dropdown
+                          [options]="WareHouseType"
+                          formControlName="warehouseType"
+                          optionLabel="text"
+                          optionValue="text"
+                          placeholder="Please Select WareHouse type"
+                          filter="true"
+                          filterBy="text"
+                          [disabled]="editMode"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && wareHouseFormGroup.controls.warehouseType.errors
+                          }"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.warehouseType.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && wareHouseFormGroup.controls.warehouseType.errors"
+                          >
+                            WareHouse Type is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label style="display: block">Parent Service Area</label>
+                        <p-multiSelect
+                          [options]="parentServiceArea"
+                          formControlName="parentServiceAreaIdsList"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a parent service area"
+                          [disabled]="editMode"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted &&
+                              wareHouseFormGroup.controls.parentServiceAreaIdsList.errors
+                          }"
+                        >
+                        </p-multiSelect>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted && wareHouseFormGroup.controls.parentServiceAreaIdsList.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              wareHouseFormGroup.controls.parentServiceAreaIdsList.errors
+                            "
+                          >
+                            WareHouse Type is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label>WareHouse Code</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter WareHouse Code"
+                          formControlName="warehouseCode"
+                          (keypress)="allowAlphaNumeric($event)"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.warehouseCode.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && wareHouseFormGroup.controls.warehouseCode.errors.required
+                            "
+                          >
+                            WareHouse code is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label>Team*</label>
+                        <p-multiSelect
+                          [options]="allTeanBasedonStaff"
+                          formControlName="teamsIdsList"
+                          optionLabel="name"
+                          optionValue="id"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select Team"
+                        ></p-multiSelect>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.teamsIdsList.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && wareHouseFormGroup.controls.teamsIdsList.errors.required
+                            "
+                          >
+                            Team is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label>Status*</label>
+                        <p-dropdown
+                          [options]="status"
+                          formControlName="status"
+                          optionLabel="label"
+                          optionValue="value"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select status"
+                        ></p-dropdown>
+
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.status.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && wareHouseFormGroup.controls.status.errors.required"
+                          >
+                            WareHouse status is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <label>Description *</label>
+                        <textarea
+                          name="description"
+                          class="form-control"
+                          placeholder="Enter description"
+                          rows="3"
+                          data-title=""
+                          formControlName="description"
+                        ></textarea>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.description.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && wareHouseFormGroup.controls.description.errors.required
+                            "
+                          >
+                            Description is required.
+                          </div>
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && wareHouseFormGroup.controls.description.errors.maxlength
+                            "
+                          >
+                            Maximum 250 characters allowed.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset class="m-0">
+                <legend>Location Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Latitude</label>
+                      <input
+                        id="latitude"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter latitude"
+                        formControlName="latitude"
+                        [readonly]="iflocationFill"
+                      />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Longitude</label>
+                      <input
+                        id="longitude"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter longitude"
+                        formControlName="longitude"
+                        [readonly]="iflocationFill"
+                      />
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                      <div style="margin-bottom: 1rem">
+                        <span
+                          class="HoverEffect"
+                          (click)="mylocation()"
+                          title="Get Current Location"
+                          style="border-bottom: 1px solid #f7b206"
+                        >
+                          <img
+                            class="LocationIcon LocationIconMargin"
+                            src="assets/img/B_Find-My-current-location_Y.png"
+                          />
+                        </span>
+                        <span
+                          class="HoverEffect"
+                          title="Search Location"
+                          data-target="#searchLocationModal"
+                          data-toggle="modal"
+                          data-backdrop="static"
+                          data-keyboard="false"
+                          style="margin-left: 8px; border-bottom: 1px solid #f7b206"
+                          (click)="openSearchModel()"
+                        >
+                          <img
+                            class="LocationIcon LocationIconMargin"
+                            src="assets/img/C_Search-location_Y.png"
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Address Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <form name="wareHouseFormGroup" [formGroup]="wareHouseFormGroup">
+                      <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                          <label>Branch</label>
+                          <p-dropdown
+                            [options]="this.branchList"
+                            formControlName="branchId"
+                            optionLabel="name"
+                            optionValue="id"
+                            filter="true"
+                            filterBy="name"
+                            [disabled]="this.editMode"
+                            placeholder="Select Branch"
+                          >
+                          </p-dropdown>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && wareHouseFormGroup.controls.branchId.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                submitted && wareHouseFormGroup.controls.branchId.errors.required
+                              "
+                            ></div>
+                          </div>
+                        </div>
+                      </div> -->
+                    </form>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Service Area *</label>
+                      <p-multiSelect
+                        id="roles"
+                        [options]="serviceAreaList"
+                        formControlName="serviceAreaIdsList"
+                        defaultLabel="Select Area"
+                        optionLabel="name"
+                        optionValue="id"
+                        (onChange)="selectServicePin($event)"
+                        optionDisabled="flag"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && wareHouseFormGroup.controls.serviceAreaIdsList.errors
+                        }"
+                      ></p-multiSelect>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.serviceAreaIdsList.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            wareHouseFormGroup.controls.serviceAreaIdsList.errors.required
+                          "
+                        >
+                          Service Area is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Branch </label>
+                      <p-dropdown
+                        [options]="branchId"
+                        formControlName="branchId"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select Branch"
+                        filter="true"
+                        filterBy="branchId"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.branchId.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.branchId.errors.required"
+                        >
+                          Branch is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Address1 *</label>
+                      <input
+                        id="address1"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Address1"
+                        formControlName="address1"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.address1.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.address1.errors.required"
+                        >
+                          Address1 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Address2 *</label>
+                      <input
+                        id="address2"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Address2"
+                        formControlName="address2"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.address2.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.address2.errors.required"
+                        >
+                          Address2 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ pincodeTitle }} *</label>
+                      <p-dropdown
+                        [options]="pincodes"
+                        formControlName="pincode"
+                        optionLabel="pincode"
+                        optionValue="pincodeid"
+                        placeholder="Select Pincode"
+                        (onChange)="selectPINCODEChange($event)"
+                        filter="true"
+                        filterBy="pincode"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.pincode.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.pincode.errors.required"
+                        >
+                          {{ pincodeTitle }} is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ cityTitle }} *</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.cityListData"
+                        formControlName="city"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select city"
+                        [readonly]="true"
+                        [disabled]="true"
+                        filter="true"
+                        filterBy="name"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.city.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.city.errors.required"
+                        >
+                          {{ cityTitle }} is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ stateTitle }} *</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.stateListData"
+                        formControlName="state"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select {{ stateTitle }}"
+                        [readonly]="true"
+                        [disabled]="true"
+                        filter="true"
+                        filterBy="name"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.state.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.state.errors.required"
+                        >
+                          state is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ countryTitle }} *</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.countryListData"
+                        formControlName="country"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select {{ countryTitle }}"
+                        [readonly]="true"
+                        [disabled]="true"
+                        filter="true"
+                        filterBy="name"
+                      ></p-dropdown>
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && wareHouseFormGroup.controls.country.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && wareHouseFormGroup.controls.country.errors.required"
+                        >
+                          {{ countryTitle }} is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+                <legend>Threshold Details</legend>
+                <div class="boxWhite">
+                  <form [formGroup]="productWarehouseMappingDTO">
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                        <div class="form-group custom">
+                          <div style="display: block">
+                            <label for="paramName">Product</label>
+                          </div>
+                        </div>
+                        <div style="display: block">
+                          <p-dropdown
+                            [options]="commondropdownService.activeProductList"
+                            formControlName="productId"
+                            optionLabel="name"
+                            optionValue="id"
+                            placeholder="Select Product"
+                            filter="true"
+                            filterBy="name"
+                            (onChange)="onProductChange($event.value)"
+                          ></p-dropdown>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                        <div class="form-group custom">
+                          <div style="display: block">
+                            <label for="thresholdQty">thresholdQty</label>
+                          </div>
+                        </div>
+                        <div style="display: block">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="thresholdQty"
+                            placeholder="threshold Qty"
+                            formControlName="thresholdQty"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                        <div class="form-group custom">
+                          <div style="display: block">
+                            <label for="thresholdQty">Unit</label
+                            ><i
+                              class="fa fa-info-circle text-info"
+                              style="cursor: pointer; margin-left: 5px"
+                              title="If the Unit of Measurement (UOM) is Kilometer, please enter the Threshold Quantity in Meters."
+                            ></i>
+                          </div>
+                        </div>
+                        <div style="display: block">
+                          <input
+                            type="text"
+                            class="form-control"
+                            [value]="selectedUnit"
+                            formControlName="unit"
+                            disabled
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                        <div class="form-group">
+                          <div>
+                            <label>Actions</label>
+                          </div>
+                          <div>
+                            <button
+                              type="button"
+                              class="btn btn-primary"
+                              [disabled]="!productWarehouseMappingDTO.valid"
+                              (click)="addProductWarehouseMapping()"
+                              style="
+                                border-radius: 5px;
+                                padding: 5px 10px;
+                                line-height: 1.5;
+                                margin-left: 10px;
+                                margin-top: 15px;
+                              "
+                            >
+                              <i class="fa fa-plus-square"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Product Type</th>
+                        <th>Threshold Quantity</th>
+                        <th>
+                          Unit<i
+                            class="fa fa-info-circle text-info"
+                            style="cursor: pointer; margin-left: 5px"
+                            title="If the Unit of Measurement (UOM) is Kilometer, please enter the Threshold Quantity in Meters."
+                          ></i>
+                        </th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="let mapping of productWarehouseMappingDTOS.controls; let i = index"
+                        [formGroup]="mapping"
+                      >
+                        <td>{{ getProductNameById(mapping.get("productId")?.value) }}</td>
+                        <td>
+                          <ng-container
+                            *ngIf="!mapping.get('isEditing')?.value; else editThreshold"
+                          >
+                            {{ mapping.get("thresholdQty")?.value }}
+                          </ng-container>
+                          <ng-template #editThreshold>
+                            <input
+                              type="text"
+                              formControlName="thresholdQty"
+                              class="form-control"
+                              style="max-width: 100px"
+                            />
+                          </ng-template>
+                        </td>
+                        <td>{{ mapping.get("unit")?.value }}</td>
+                        <td>
+                          <ng-container *ngIf="!mapping.get('isEditing')?.value; else saveBtn">
+                            <button
+                              id="edit-button"
+                              href="javascript:void(0)"
+                              class="approve-btn"
+                              (click)="editMapping(i)"
+                            >
+                              <img src="assets/img/ioc01.jpg" />
+                            </button>
+                          </ng-container>
+                          <ng-template #saveBtn>
+                            <button
+                              id="edit-button"
+                              href="javascript:void(0)"
+                              class="approve-btn"
+                              (click)="saveMapping(i)"
+                            >
+                              <img src="assets/img/assign.jpg" />
+                            </button>
+                          </ng-template>
+                          <button
+                            id="delete-button"
+                            href="javascript:void(0)"
+                            class="approve-btn"
+                            (click)="removeMapping(i)"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </fieldset>
+              <br />
+              <div class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  (click)="submit()"
+                  [disabled]="!wareHouseFormGroup.valid"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  {{ editMode ? "Update" : "Add" }} Warehouse
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="detailView">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Tax Details"
+            (click)="WarehouseList()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ viewWarehouseDetails.name }} Warehouse</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#outwardDetail"
+            aria-expanded="false"
+            aria-controls="taxalldea"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="outwardDetail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Warehouse Name :</label>
+                  <span>{{ viewWarehouseDetails.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">WareHouse Type :</label>
+                  <span>{{ viewWarehouseDetails.warehouseType }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Parent Service Area :</label>
+                  <span
+                    class="HoverEffect"
+                    (click)="parentserviceareListShoww()"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Go to Service Area List"
+                  >
+                    Click here
+                  </span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Warehouse Code :</label>
+                  <span>{{ viewWarehouseDetails.warehouseCode }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Teams :</label>
+                  <span
+                    class="HoverEffect"
+                    (click)="teamListShow()"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Go to Service Area List"
+                  >
+                    Click here
+                  </span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span>{{ viewWarehouseDetails.status }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Description :</label>
+                  <span>{{ viewWarehouseDetails.description }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Location Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Latitude :</label>
+                  <span>{{ viewWarehouseDetails.latitude }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Longitude :</label>
+                  <span>{{ viewWarehouseDetails.longitude }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Address Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl">ServiceArea Name :</label>
+                  <span
+                    class="HoverEffect"
+                    (click)="serviceareListShow()"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Go to Service Area List"
+                  >
+                    Click here
+                  </span>
+                </div>
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl"> Branch :</label>
+                  <span>{{ viewWarehouseDetails.barnchName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl"> Address1 :</label>
+                  <span>{{ viewWarehouseDetails.address1 }}</span>
+                </div>
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl">Address2 :</label>
+                  <span>{{ viewWarehouseDetails.address2 }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl">Pincode :</label>
+                  <span>{{ viewWarehouseDetails.pincode }}</span>
+                </div>
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl">City :</label>
+                  <span>{{ viewWarehouseDetails.city }}</span>
+                </div>
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl">State :</label>
+                  <span>{{ viewWarehouseDetails.state }}</span>
+                </div>
+                <div class="col-lg-3 col-md-4 dataGroup">
+                  <label class="datalbl">Country :</label>
+                  <span>{{ viewWarehouseDetails.country }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <div class="panel-body table-responsive">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Threshold Details</legend>
+              <div class="boxWhite">
+                <div class="row table-responsive">
+                  <div class="col-lg-12 col-md-12">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Product</th>
+                          <th>Threshold</th>
+                          <th>
+                            Unit
+                            <i
+                              class="fa fa-info-circle text-info"
+                              style="cursor: pointer; margin-left: 2px"
+                              title="If the Unit of Measurement (UOM) is Kilometer, the Threshold Quantity is displayed in Meters."
+                            ></i>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="let mapping of viewWarehouseDetails?.productWarehouseMapViewDTOS"
+                        >
+                          <td>{{ mapping?.productName }}</td>
+                          <td>{{ mapping?.thresholdQty }}</td>
+                          <td>{{ mapping?.unit }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="ServiceArea List"
+  [(visible)]="servicearealists"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeServicearealists()"
+>
+  <div class="modal-body">
+    <div *ngIf="ifServiceAreaListShow">
+      <div class="panel-body table-responsive" id="networkDeviceTabel">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><label class="networkLabel">ServiceArea :</label></td>
+              <td>
+                <span
+                  style="word-break: break-all"
+                  *ngFor="let serviceName of viewWarehouseDetails.serviceAreaNameList"
+                >
+                  <span>
+                    {{ serviceName.name }},
+                    <br />
+                  </span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        #closebutton
+        data-dismiss="modal"
+        (click)="closeServicearealists()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header=" Parent ServiceArea List"
+  [(visible)]="parentservicearealists"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeParentservicearealists()"
+>
+  <div class="modal-body">
+    <div *ngIf="ifParentServiceAreaListShow">
+      <div class="panel-body table-responsive" id="networkDeviceTabel">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><label class="networkLabel">Parent ServiceArea :</label></td>
+              <td>
+                <span
+                  style="word-break: break-all"
+                  *ngFor="let serviceName of viewWarehouseDetails.parenetServiceAreaNameList"
+                >
+                  <span>
+                    {{ serviceName.name }},
+                    <br />
+                  </span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        #closebutton
+        data-dismiss="modal"
+        (click)="closeParentservicearealists()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Teams List"
+  [(visible)]="teamlists"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeTeamlists()"
+>
+  <div class="modal-body">
+    <div *ngIf="ifTeamListShow">
+      <div class="panel-body table-responsive" id="networkDeviceTabel">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><label class="networkLabel">Teams :</label></td>
+              <td>
+                <span
+                  style="word-break: break-all"
+                  *ngFor="let serviceName of viewWarehouseDetails.teamsList"
+                >
+                  <span>
+                    {{ serviceName.name }},
+                    <br />
+                  </span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        #closebutton
+        data-dismiss="modal"
+        (click)="closeTeamlists()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<div *ngIf="ifsearchLocationModal">
+  <p-dialog
+    header="Search Location"
+    [(visible)]="searchLocationModal"
+    [style]="{ width: '50%' }"
+    [modal]="true"
+    [responsive]="true"
+    [draggable]="false"
+    [closable]="true"
+    (onHide)="this.clearsearchLocationData()"
+  >
+    <div class="modal-body">
+      <form name="searchLocationForm" [formGroup]="searchLocationForm">
+        <div class="form-group">
+          <label for="searchLocationname">Search Location Name:</label>
+          <div class="row">
+            <div class="col-lg-7 col-md-6">
+              <input
+                type="searchLocationname"
+                class="form-control"
+                id="searchLocationname"
+                placeholder="Enter Location Name"
+                formControlName="searchLocationname"
+              />
+            </div>
+            <div class="col-lg-5 col-md-6" style="padding: 0 10px !important">
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm"
+                id="closeModal"
+                (click)="this.searchLocation()"
+                [disabled]="!searchLocationForm.valid"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                id="btn"
+                type="button"
+                class="btn btn-default btn-sm"
+                (click)="this.clearLocationForm()"
+                style="margin-left: 8px"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 35%">Name</th>
+                <th style="width: 65%">Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let data of this.searchLocationData
+                    | paginate
+                      : {
+                          id: 'searchpageData',
+                          itemsPerPage: searchLocationItemPerPage,
+                          currentPage: currentPagesearchLocationList,
+                          totalItems: searchLocationtotalRecords
+                        };
+                  index as i
+                "
+              >
+                <td
+                  class="HoverEffect"
+                  (click)="this.filedLocation(data.placeId)"
+                  data-toggle="tooltip"
+                  data-placement="bottom"
+                  data-dismiss="modal"
+                  title="Set value Latitude & Longitude"
+                  style="width: 35%"
+                >
+                  {{ data.name }}
+                </td>
+                <td style="width: 65%">{{ data.address }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            id="searchpageData"
+            [maxSize]="10"
+            [directionLinks]="true"
+            previousLabel=""
+            nextLabel=""
+            (pageChange)="this.pageChangedSearchLocationList($event)"
+          ></pagination-controls>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="addUpdateBtn">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm"
+          #closebutton
+          data-dismiss="modal"
+          (click)="this.clearsearchLocationData()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </p-dialog>
+</div>

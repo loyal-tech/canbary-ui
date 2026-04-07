@@ -1,0 +1,179 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="customerDetailOpen()"
+            class="btn btn-secondary backbtn"
+            data-placement="bottom"
+            data-toggle="tooltip"
+            title="Go to Customer Details"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ custData.title }}
+            {{ custData.firstname }} {{ custData.lastname }} Audit Details
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            aria-controls="custStatus"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#custStatus"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="searchPreCust">
+    <div class="panel-body table-responsive">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 m-b-10">
+          <p-dropdown
+            [(ngModel)]="searchOption"
+            [options]="searchOptions"
+            placeholder="Select Search Option"
+            optionLabel="label"
+            optionValue="value"
+          ></p-dropdown>
+        </div>
+
+        <div
+          class="col-lg-3 col-md-3 m-b-10"
+          *ngIf="searchOption === 'employeename' || searchOption === 'username' || searchOption === 'module' || searchOption === 'operation'"
+        >
+          <input
+            [(ngModel)]="searchInput"
+            class="form-control"
+            placeholder="Enter Search Detail"
+            type="text"
+          />
+        </div>
+
+           <div class="col-lg-3 col-md-3 m-b-10">
+              <p-calendar
+                [hideOnDateTimeSelect]="true"
+                [showButtonBar]="true"
+                [showIcon]="true"
+                [style]="{ width: '100%' }"
+                dateFormat="yy-MM-dd"
+                [(ngModel)]="fromDate"
+                placeholder="Select Start Date"
+              ></p-calendar>
+            </div>
+
+            <div class="col-lg-3 col-md-3 m-b-10">
+              <p-calendar
+                [hideOnDateTimeSelect]="true"
+                [showButtonBar]="true"
+                [showIcon]="true"
+                [style]="{ width: '100%' }"
+                dateFormat="yy-MM-dd"
+                [(ngModel)]="toDate"
+                placeholder="Select End Date"
+              ></p-calendar>
+            </div>  
+      </div>
+    <br/>
+      <div class="row">
+         <div class="col-lg-6 col-md-6 col-sm-12 m-b-10">
+                <button
+                    (click)="searchAudit()"
+                    class="btn btn-primary"
+                    type="button"
+                    style="margin-right: 10px"
+                >
+                    <i class="fa fa-search"></i> Search
+                </button>
+                <button (click)="clearAuditSearch()" class="btn btn-default">
+                    <i class="fa fa-refresh"></i> Clear
+                </button>
+                </div>
+
+      </div>
+    </div>
+  </div>
+      <div class="panel-collapse collapse in" id="custStatus">
+        <div class="panel-body table-responsive">
+          <div style="margin: 20px">
+            <h3>Workflow Audit</h3>
+            <div class="table-responsive">
+              <div class="row">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Audit Date</th>
+                        <th>Enployee Name</th>
+                        <th>Module</th>
+                        <th>Operation</th>
+                        <th>Remark</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let audit of auditData
+                            | paginate
+                              : {
+                                  id: 'searchAuditPageData',
+                                  itemsPerPage: AudititemsPerPage1,
+                                  currentPage: currentPageAuditSlab1,
+                                  totalItems: AudittotalRecords1
+                                };
+                          index as i
+                        "
+                      >
+                        <td style="width: 5%">{{ audit.auditDate }}</td>
+                        <td style="width: 5%">{{ audit.employeeName }}</td>
+                        <td style="width: 5%">{{ audit.module }}</td>
+                        <td style="width: 5%">{{ audit.operation }}</td>
+                        <td>
+                          <div style="text-overflow: ellipsis; color: blue; cursor: pointer;" (click)="openRemarkDialog(audit.remark) ">click here</div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <br />
+                  <br />
+                  <div class="pagination_Dropdown">
+                    <pagination-controls
+                      (pageChange)="pageChangedAuditList($event)"
+                      directionLinks="true"
+                      id="searchAuditPageData"
+                      maxSize="10"
+                      nextLabel=""
+                      previousLabel=""
+                    ></pagination-controls>
+                    <div id="itemPerPageDropdown">
+                      <p-dropdown
+                        (onChange)="TotalItemPerPageAudit($event)"
+                        [(ngModel)]="showItemPerPage"
+                        [options]="pageLimitOptions"
+                        optionLabel="value"
+                        optionValue="value"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog header="Remark Details"
+ [(visible)]="remarkDialogVisible" [modal]="true" [style]="{ width: '500px'}">
+  <p style="padding-top: 20px;">{{ selectedRemark }}</p>
+</p-dialog>

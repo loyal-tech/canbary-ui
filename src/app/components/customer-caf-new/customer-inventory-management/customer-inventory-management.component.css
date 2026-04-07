@@ -1,0 +1,197 @@
+button[type="reset"] {
+  padding: 0;
+  margin-left: 5px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: #000 !important;
+  vertical-align: middle;
+  margin-top: 10px;
+}
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #f7b206;
+}
+:host ::ng-deep .p-tabview-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  list-style-type: none;
+  margin: 0;
+  margin-top: 15px;
+  padding: 0;
+}
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav li {
+  width: unset !important;
+  margin-right: unset !important;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link:hover,
+:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+.closeBtn {
+  text-align: center;
+}
+:host ::ng-deep .second-tabView .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  border-bottom: none !important; 
+  padding: 10px;
+  box-shadow: none !important;
+}
+:host ::ng-deep .second-tabView .p-tabview .p-tabview-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  list-style-type: none;
+  margin: 0;
+  margin-top: 15px;
+  padding: 0;
+}
+
+
+:host ::ng-deep .second-tabView .p-tabview .p-tabview-nav li {
+  width: unset !important;
+  margin-right: unset !important;
+}
+
+:host ::ng-deep .second-tabView .p-tabview .p-tabview-nav li .p-tabview-nav-link:hover,
+:host ::ng-deep .second-tabView .p-tabview .p-tabview-nav li .p-tabview-nav-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid #f7b206 !important;
+
+}
+
+/* ----------------------------------------------------------------- */
+.networkPerent {
+    /* margin: 20px auto; */
+    width: 100%;
+    min-height: auto;
+    overflow-y: hidden;
+    overflow-x: auto;
+  }
+  
+  /* .row {
+    display: flex;
+    flex-wrap: wrap;
+  } */
+  
+  .header {
+    font-size: 20px;
+    font-weight: bolder;
+  }
+  
+  :host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    border: 1px solid;
+    padding: 10px;
+    box-shadow: 2px 2px #f7b206 !important;
+  }
+  
+  :host ::ng-deep .p-dialog .p-dialog-header {
+    background: #f7b206 !important ;
+  }
+  
+  :host ::ng-deep .bg-indigo-500 {
+    background-color: #6366f1;
+    border-radius: 5px;
+  }
+  
+  :host ::ng-deep .text-white {
+    color: #fff !important;
+  }
+  
+  :host ::ng-deep .myClass {
+    border: 2px solid green;
+  }
+  
+  :host ::ng-deep .bg-purple-500 {
+    background-color: #a855f7;
+    border-radius: 5px;
+  }
+  
+  :host ::ng-deep .bg-teal-500 {
+    background-color: #14b8a6;
+    border-radius: 5px;
+  }
+  
+  :host ::ng-deep .bg-grey-500 {
+    background-color: #475569;
+    border-radius: 5px;
+  }
+  
+  :host ::ng-deep .bg-green-500 {
+    background-color: #686d69;
+    border-radius: 5px;
+  }
+  
+  :host ::ng-deep .bg-orange-500 {
+    background-color: #7f91ad;
+    border-radius: 5px;
+  }
+  
+  :host ::ng-deep .p-organizationchart-node-content .p-node-toggler {
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    bottom: -1.9rem;
+    cursor: pointer;
+    height: 2.7rem;
+    left: 50%;
+    margin-left: -1.35rem;
+    position: absolute;
+    -moz-user-select: none;
+    user-select: none;
+    width: 2.7rem;
+    z-index: 4;
+  }
+  
+  .graphbody {
+    height: 65vh;
+    overflow: auto;
+  }
+  :host ::ng-deep .p-dialog .p-dialog-header .p-dialog-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    /* margin-left: auto;
+    margin-right: auto; */
+    width: 40%;
+  }
+  
+  :host ::ng-deep .selected-node {
+    /* border-style: solid; */
+    border-width: 3px;
+    border-color: black;
+  }
+  
+  .org-zoom-wrapper {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  
+  .zoom-scroll-container {
+    max-height: 500px;
+    overflow: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background: #f9f9f9;
+    text-align: center; 
+  }
+  
+  .zoom-wrapper {
+    display: inline-block;
+    transform-origin: 0 0;
+  }
+  /* ------------------------------------------------------------ */
+
+  ::ng-deep .p-confirm-dialog .pi-question-circle:before {
+    position: relative;
+    top: 34px; /* adjust as per your need */
+  }
+  

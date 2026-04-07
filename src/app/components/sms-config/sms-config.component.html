@@ -1,0 +1,276 @@
+<div class="row">
+  <div class="col-md-6 left">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">SMS Configuration Parameters</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchSMSCON"
+            aria-expanded="false"
+            aria-controls="searchSMSCON"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchSMSCON" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <!-- <th>Account SID</th>
+                <th>Authentication Token</th>
+                <th>From Number</th> -->
+                <th>SMS URL</th>
+                <th>Status</th>
+                <th>ISP Name</th>
+                <th *ngIf="editAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let group of groupData.smsConfigList
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ group.smsUrl }}</td>
+                <!-- <td>{{ group.value2 }}</td>
+                <td>{{ group.value3 }}</td> -->
+                <td>
+                  <span *ngIf="group.configStatus === true">
+                    <span class="badge badge-success">Active</span>
+                  </span>
+                  <span *ngIf="group.configStatus === false">
+                    <span class="badge badge-danger">Inactive</span>
+                  </span>
+                </td>
+
+                <td>{{ group.mvnoName }}</td>
+                <td class="btnAction" *ngIf="editAccess">
+                  <!-- <button mat-fab color="primary" aria-label="Example icon button with a delete icon">
+                                                            <mat-icon>delete</mat-icon>
+                                                        </button> -->
+                  <a
+                    *ngIf="editAccess"
+                    (click)="editConfigById(group.smsConfigId, i)"
+                    class="curson_pointer"
+                    title="Edit"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <!-- <a data-toggle="modal" data-target="#myModal">
+                                        <i class="fa fa-trash"></i></a> -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="pagination_Dropdown">
+            <pagination-controls
+              id="listing_groupdata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+            <!-- <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-6 right">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} SMS Config</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#editSMS"
+            aria-expanded="false"
+            aria-controls="editSMS"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="editSMS" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+            Sorry you have not privilege to create operation!
+          </div>
+          <div *ngIf="createAccess || (editMode && editAccess)">
+            <form class="form-auth-small" [formGroup]="editForm">
+              <label>SMS URL</label>
+              <input
+                type="text"
+                name="smsUrl"
+                class="form-control"
+                placeholder="Enter SMS URL"
+                formControlName="smsUrl"
+                [ngClass]="{
+                  'is-invalid': submitted && editForm.controls.smsUrl.errors
+                }"
+              />
+
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && editForm.controls.smsUrl.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && editForm.controls.smsUrl.errors.required"
+                >
+                  SMS URL is required
+                </div>
+              </div>
+              <br />
+              <div>
+                <label> Configuration Status</label>
+                <p-dropdown
+                  [options]="dropdownOptions"
+                  filterBy="label"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select a Config status"
+                  formControlName="configStatus"
+                ></p-dropdown>
+                <br />
+              </div>
+              <div>
+                <label>SMS Parameter</label>
+                <table class="table coa-table" style="margin-top: 10px">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center; width: 41%">SMS Parameter</th>
+                      <th style="text-align: center; width: 41%">Value</th>
+                      <th style="text-align: right; width: 18%; padding: 8px">
+                        <button
+                          id="addAtt"
+                          style="object-fit: cover; padding: 5px 8px"
+                          class="btn btn-primary"
+                          (click)="onAddAttribute()"
+                        >
+                          <i class="fa fa-plus-square" aria-hidden="true"></i>
+                          Add
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let row of attribute.controls
+                          | paginate
+                            : {
+                                id: 'listing_groupdata',
+                                itemsPerPage: itemsPerPage,
+                                currentPage: currentPage,
+                                totalItems: totalRecords
+                              };
+                        let index = index
+                      "
+                    >
+                      <td style="padding-left: 8px">
+                        <input
+                          id="parameter"
+                          class="form-control"
+                          placeholder="Enter Parameter"
+                          [formControl]="row.get('parameter')"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          id="value"
+                          class="form-control"
+                          placeholder="Enter  Parameter value"
+                          [formControl]="row.get('value')"
+                        />
+                      </td>
+                      <td style="text-align: right">
+                        <a
+                          id="deleteAtt"
+                          class="curson_pointer"
+                          (click)="
+                            deleteConfirmAttribute(index, row.get('smsConfigMappingId').value)
+                          "
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br />
+                <div class="row">
+                  <div class="col-md-12">
+                    <pagination-controls
+                      id="listing_groupdata_1"
+                      maxSize="10"
+                      directionLinks="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChanged($event)"
+                    ></pagination-controls>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div *ngIf="editMode == false" class="addUpdateBtn">
+                <button type="submit" class="btn btn-primary" (click)="editSmsConfig()">
+                  <i class="fa fa-check-circle"></i>
+                  Add SMS Config
+                </button>
+                <br />
+              </div>
+              <div *ngIf="editMode == true" class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="editSmsConfig()"
+                  [disabled]="isSmsConfigEdit"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update SMS Config
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <p-confirmDialog [style]="{ width: '50vw' }" key="positionDialog" [baseZIndex]="10000"></p-confirmDialog> -->
+    <!-- END Form Design -->
+  </div>
+</div>
+
+<!-- Javascript -->
+<!-- <script src="../../../assets/scripts/radius-group.js"></script> -->

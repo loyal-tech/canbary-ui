@@ -1,0 +1,1032 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Record Payment</h3>
+        <div class="right">
+          <!-- <button type="button" class="btn-toggle-collapse">
+                      <i class="fa fa-minus-circle"></i>
+                    </button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Payment</h3>
+        <div class="right">
+          <button
+            aria-controls="recordPayment"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#recordPayment"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="recordPayment">
+        <div class="panel-body">
+          <form [formGroup]="paymentFormGroup">
+            <div class="row" style="margin-bottom: 20px">
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Customer*</label>
+                <br />
+                <p-dropdown
+                  [disabled]="true"
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.customerid.errors
+                  }"
+                  [options]="parentCustList"
+                  [showClear]="true"
+                  [filter]="true"
+                  filterBy="name"
+                  formControlName="customerid"
+                  optionLabel="name"
+                  optionValue="id"
+                  placeholder="Select a Customer"
+                  styleClass="disableDropdown"
+                >
+                  <ng-template let-data pTemplate="item">
+                    <div class="item-drop1">
+                      <span class="item-value1"> {{ data.title }} {{ data.name }} </span>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+                <button
+                  type="button"
+                  (click)="modalOpenParentCustomer()"
+                  class="btn btn-primary"
+                  style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                >
+                  <i class="fa fa-plus-square"></i>
+                </button>
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.customerid.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.customerid.errors.required"
+                    class="error text-danger"
+                  >
+                    Customer is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Invoice*</label>
+                <br />
+                <p-dropdown
+                  [options]="invoiceList"
+                  optionValue="id"
+                  optionLabel="docnumber"
+                  filter="true"
+                  filterBy="docnumber"
+                  placeholder="Select a Invoice"
+                  formControlName="invoiceId"
+                  styleClass="disableDropdown"
+                  [disabled]="true"
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.invoiceId.errors
+                  }"
+                ></p-dropdown>
+                <button
+                  class="btn btn-primary"
+                  style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                  (click)="modalOpenInvoice()"
+                >
+                  <i class="fa fa-plus-square"></i>
+                </button>
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.invoiceId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.invoiceId.errors.required"
+                    class="error text-danger"
+                  >
+                    Invoice is required.
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Payment Mode*</label>
+                <p-dropdown
+                  (onChange)="selPayModeRecord($event)"
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.paymode.errors
+                  }"
+                  [options]="paymentMode"
+                  [filter]="true"
+                  filterBy="text"
+                  formControlName="paymode"
+                  optionLabel="text"
+                  optionValue="value"
+                  placeholder="Select a Payment Mode"
+                ></p-dropdown>
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.paymode.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.paymode.errors.required"
+                    class="error text-danger"
+                  >
+                    Pay Mode is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Source {{ onlineSourceData?.length > 0 ? "*" : "" }}</label>
+                <p-dropdown
+                  [disabled]="!onlineSourceData?.length > 0"
+                  [options]="onlineSourceData"
+                  [filter]="true"
+                  filterBy="text"
+                  optionLabel="text"
+                  optionValue="value"
+                  placeholder="Select a Payment Mode"
+                  formControlName="onlinesource"
+                  (onChange)="selPaySourceRecord($event)"
+                ></p-dropdown>
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.onlinesource.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.onlinesource.errors.required"
+                    class="error text-danger"
+                  >
+                    Source is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Amount*</label>
+                <input
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.amount.errors
+                  }"
+                  class="form-control"
+                  formControlName="amount"
+                  min="1"
+                  placeholder="Enter Amount"
+                  step=".01"
+                  type="number"
+                  customDecimal
+                  (keypress)="keypressId($event)"
+                  [readonly]="isShowInvoiceList"
+                />
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.amount.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.amount.errors.required"
+                    class="error text-danger"
+                  >
+                    Amount is required.
+                  </div>
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.amount.errors.pattern"
+                    class="error text-danger"
+                  >
+                    Only numeric characters allowed.
+                  </div>
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.amount.errors.min"
+                    class="error text-danger"
+                  >
+                    Amount should be greater than 0.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Select File</label>
+                <input
+                  (change)="onFileChange($event)"
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.file.errors
+                  }"
+                  class="form-control"
+                  formControlName="file"
+                  type="file"
+                />
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.file.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.file.errors.required"
+                    class="error text-danger"
+                  >
+                    file is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Cheque No.*</label>
+                <input
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.chequeno.errors
+                  }"
+                  class="form-control"
+                  formControlName="chequeno"
+                  min="1"
+                  placeholder="Enter Cheque No."
+                  type="text"
+                />
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.chequeno.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.chequeno.errors.required"
+                    class="error text-danger"
+                  >
+                    Cheque No. is required.
+                  </div>
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.chequeno.errors.pattern"
+                    class="error text-danger"
+                  >
+                    Only numeric characters allowed.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>{{ chequeDateName }}*</label>
+
+                <input
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.chequedate.errors
+                  }"
+                  class="form-control"
+                  formControlName="chequedate"
+                  [placeholder]="'Enter' + chequeDateName"
+                  type="date"
+                  [min]="today"
+                />
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.chequedate.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.chequedate.errors.required"
+                    class="error text-danger"
+                  >
+                    {{ chequeDateName }} is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>
+                  Source Bank
+                  {{
+                    paymentFormGroup.value.paymode !== null &&
+                    (paymentFormGroup.value.paymode.toLowerCase() == "cheque" ||
+                      paymentFormGroup.value.paymode.toLowerCase() == "neft_rtgs")
+                      ? "*"
+                      : ""
+                  }}
+                </label>
+
+                <select
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.bankManagement.errors
+                  }"
+                  class="form-control"
+                  formControlName="bankManagement"
+                  style="width: 100%"
+                >
+                  <option value="">Select Source Bank</option>
+                  <option *ngFor="let bank of bankDataList" value="{{ bank.id }}">
+                    {{ bank.bankname }} - {{ bank.accountnum }}
+                  </option>
+                </select>
+
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.bankManagement.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.bankManagement.errors.required"
+                    class="error text-danger"
+                  >
+                    Bank is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Destination Bank*</label>
+                <select
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.destinationBank.errors
+                  }"
+                  class="form-control"
+                  formControlName="destinationBank"
+                  style="width: 100%"
+                >
+                  <option value="">Select Destination Bank</option>
+                  <option *ngFor="let bankDest of bankDestination" value="{{ bankDest.id }}">
+                    {{ bankDest.bankname }} - {{ bankDest.accountnum }}
+                  </option>
+                </select>
+
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.destinationBank.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.destinationBank.errors.required"
+                    class="error text-danger"
+                  >
+                    Bank Destination is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Branch</label>
+                <input
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.branch.errors
+                  }"
+                  class="form-control"
+                  formControlName="branch"
+                  placeholder="Enter Branch"
+                  type="text"
+                />
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.branch.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.branch.errors.required"
+                    class="error text-danger"
+                  >
+                    Branch is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label
+                  >Reference No.{{
+                    paymentFormGroup.value.paymode?.toLowerCase() === "online" ? "*" : ""
+                  }}</label
+                >
+                <input
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.referenceno.errors
+                  }"
+                  class="form-control"
+                  formControlName="referenceno"
+                  placeholder="Enter Reference No."
+                  type="text"
+                />
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.referenceno.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.referenceno.errors.required"
+                    class="error text-danger"
+                  >
+                    Reference No. is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Receipt No</label>
+                <input
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.reciptNo.errors
+                  }"
+                  class="form-control"
+                  formControlName="reciptNo"
+                  placeholder="Enter Recipt No."
+                  type="text"
+                />
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.reciptNo.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.reciptNo.errors.required"
+                    class="error text-danger"
+                  >
+                    Recipt No. is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>
+                  <span>TDS</span>
+                </label>
+                <input
+                  type="number"
+                  step=".01"
+                  formControlName="tdsAmount"
+                  placeholder="Please enter TDS amount"
+                  class="form-control"
+                  [readonly]="isShowInvoiceList"
+                />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>
+                  <span>ABBS</span>
+                </label>
+                <input
+                  type="number"
+                  step=".01"
+                  formControlName="abbsAmount"
+                  placeholder="Please enter ABBS amount"
+                  class="form-control"
+                  [readonly]="isShowInvoiceList"
+                />
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                <label>Remark*</label>
+                <textarea
+                  [ngClass]="{
+                    'is-invalid': submitted && paymentFormGroup.controls.remark.errors
+                  }"
+                  class="form-control"
+                  formControlName="remark"
+                  placeholder="Enter Remark"
+                  rows="3"
+                ></textarea>
+                <div
+                  *ngIf="submitted && paymentFormGroup.controls.remark.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div
+                    *ngIf="submitted && paymentFormGroup.controls.remark.errors.required"
+                    class="error text-danger"
+                  >
+                    Remark is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+            </div>
+            <div class="addUpdateBtn" style="margin-top: 1.5rem">
+              <button
+                (click)="addPayment('')"
+                [disabled]="!paymentFormGroup.valid"
+                class="btn btn-primary"
+                id="submit"
+                type="submit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Payment
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="isShowInvoiceList">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Invoice List</h3>
+        <div class="row">
+          <div class="modal-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Doc Number</th>
+                  <th>Created BY</th>
+                  <th>Tax Amount</th>
+                  <th>Total Invoice</th>
+                  <th>Pending Amount</th>
+                  <th>Refundable Amount</th>
+                  <th *ngIf="isDisplayConvertedAmount">Collected Amount</th>
+                  <th>Amount</th>
+                  <th>TDS</th>
+                  <th>ABBS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of checkedList">
+                  <td>{{ data.docnumber }}</td>
+                  <td>{{ data.createdByName }}</td>
+                  <td>
+                    <a (click)="openTaxModal(data.id)">{{
+                      data.tax | customCurrency: currency : selectedParentCust?.mvnoId
+                    }}</a>
+                  </td>
+                  <td>
+                    {{ data.totalamount | customCurrency: currency : selectedParentCust?.mvnoId }}
+                  </td>
+                  <td *ngIf="data.adjustedAmount == null">
+                    {{ data.totalamount | customCurrency: currency : selectedParentCust?.mvnoId }}
+                  </td>
+                  <td *ngIf="data.adjustedAmount != null">
+                    {{
+                      data.totalamount - data.adjustedAmount
+                        | customCurrency: currency : selectedParentCust?.mvnoId
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      data.refundAbleAmount | customCurrency: currency : selectedParentCust?.mvnoId
+                    }}
+                  </td>
+                  <td *ngIf="isDisplayConvertedAmount">
+                    {{
+                      data.convertedAmount
+                        | customCurrency: collectedCurrency : selectedParentCust?.mvnoId
+                    }}
+                  </td>
+                  <td>
+                    {{ data.testamount | customCurrency: currency : selectedParentCust?.mvnoId }}
+                  </td>
+                  <td>{{ data.tds }}</td>
+                  <td>{{ data.abbs }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog
+  header="Select Customer"
+  [(visible)]="selectParentCustomer"
+  [style]="{ width: '80%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="clearSearchParentCustomer()"
+>
+  <div class="modal-body">
+    <h5>Search Customer</h5>
+    <div class="row">
+      <div class="col-lg-3 col-md-3 m-b-10">
+        <p-dropdown
+          (onChange)="selParentSearchOption($event)"
+          [(ngModel)]="searchParentCustOption"
+          [options]="searchOptionSelect"
+          [filter]="true"
+          filterBy="label"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select a Search Option"
+        ></p-dropdown>
+      </div>
+      <div
+        *ngIf="
+          parentFieldEnable &&
+          searchParentCustOption != 'status' &&
+          searchParentCustOption !== 'serviceareaName' &&
+          searchParentCustOption !== 'plan'
+        "
+        class="col-lg-3 col-md-3 m-b-10"
+      >
+        <input
+          [(ngModel)]="searchParentCustValue"
+          class="form-control"
+          id="username"
+          placeholder="Enter Search Detail"
+          type="text"
+          (keydown.enter)="searchParentCustomer()"
+        />
+      </div>
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption === 'status'">
+        <p-dropdown
+          [options]="commondropdownService.CustomerStatusValue"
+          optionValue="value"
+          optionLabel="text"
+          filter="true"
+          filterBy="text"
+          placeholder="Select a Status"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'serviceareaName'">
+        <p-dropdown
+          [options]="commondropdownService.serviceAreaList"
+          optionValue="id"
+          optionLabel="name"
+          filter="true"
+          filterBy="name"
+          placeholder="Select a Servicearea"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+      <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'plan'">
+        <p-dropdown
+          [options]="commondropdownService.postpaidplanData"
+          optionValue="id"
+          optionLabel="name"
+          filter="true"
+          filterBy="name"
+          placeholder="Select a Plan"
+          [(ngModel)]="searchParentCustValue"
+        ></p-dropdown>
+      </div>
+      <div *ngIf="parentFieldEnable" class="col-lg-6 col-md-6 col-sm-12">
+        <button
+          (click)="searchParentCustomer()"
+          class="btn btn-primary"
+          id="searchbtn"
+          type="button"
+        >
+          <i class="fa fa-search"></i>
+          Search
+        </button>
+        <button
+          (click)="clearSearchParentCustomer()"
+          class="btn btn-default"
+          id="searchbtn"
+          type="reset"
+        >
+          <i class="fa fa-refresh"></i>
+          Clear
+        </button>
+      </div>
+    </div>
+    <h5 style="margin-top: 15px">Select Customer</h5>
+    <p-table
+      #dt
+      [(selection)]="selectedParentCust"
+      [value]="customerList"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 5rem"></th>
+          <th>Name</th>
+          <th>User Name</th>
+        </tr>
+      </ng-template>
+      <ng-template let-customerList let-rowIndex="rowIndex" pTemplate="body">
+        <tr>
+          <td>
+            <p-tableRadioButton [value]="customerList"></p-tableRadioButton>
+          </td>
+          <td>
+            {{ customerList.name }}
+            <!--            {{ customerList.lastname }}-->
+          </td>
+          <td>{{ customerList.username }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <p-paginator
+          (onPageChange)="paginate($event)"
+          [first]="newFirst"
+          [rows]="parentCustomerListdataitemsPerPage"
+          [totalRecords]="parentCustomerListdatatotalRecords"
+        ></p-paginator>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        (click)="saveSelCustomer()"
+        class="btn btn-primary"
+        style="object-fit: cover; padding: 5px 8px"
+        [disabled]="selectedParentCust.length == 0"
+      >
+        <i class="fa fa-check-circle"></i>
+        Save
+      </button>
+      <button (click)="modalCloseParentCustomer()" class="btn btn-danger btn-sm" type="button">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- <div class="modal fade" id="selectParentCustomer" role="dialog">
+  <div class="modal-dialog" style="width: 80%"> -->
+<!-- Modal content-->
+<!-- <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="panel-title">Select Customer</h3>
+      </div> -->
+
+<!-- </div>
+  </div>
+</div> -->
+<p-dialog
+  header="Select Invoices"
+  [(visible)]="selectInvoice"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeInvoiceListModel()"
+>
+  <div class="modal-body">
+    <div class="p-d-flex p-ac-center p-ai-center mb-15">
+      <label>Collected Amount Currency : </label>
+      &nbsp;
+      <p-dropdown
+        class="ms-1"
+        [options]="this.commondropdownService.currency"
+        optionValue="value"
+        optionLabel="displayName"
+        filter="true"
+        filterBy="displayName"
+        placeholder="Select a Currency"
+        [(ngModel)]="collectedCurrency"
+        (onChange)="onCurrencyChange($event, data)"
+      ></p-dropdown>
+      <div class="ms-1" style="margin-left: 10px">
+        <label>Converted Rate : </label>
+        &nbsp;
+        <input
+          type="number"
+          placeholder="Enter Converted Rate"
+          appNumberValidator
+          [allowNegative]="false"
+          [allowDecimal]="true"
+          [minValue]="0"
+          [(ngModel)]="convertedExchangeRate"
+          (blur)="onConvertedRateChange()"
+        />
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            <input
+              (change)="checkUncheckAll()"
+              [(ngModel)]="this.masterSelected"
+              name="master-checkbox"
+              type="checkbox"
+            />
+          </th>
+          <th>Doc Number</th>
+          <th>Created BY</th>
+          <th>Tax Amount</th>
+          <th>Total Invoice</th>
+          <th>Pending Amount</th>
+          <th>Refundable Amount</th>
+          <th *ngIf="isDisplayConvertedAmount">Collected Amount ({{ collectedCurrency }})</th>
+          <th>Amount ({{ currency }})</th>
+          <th>TDS</th>
+          <th>ABBS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of invoiceList">
+          <td>
+            <input
+              (change)="isAllSelected()"
+              [(ngModel)]="data.isSelected"
+              name="master-checkbox"
+              type="checkbox"
+            />
+          </td>
+          <td>{{ data.docnumber }}</td>
+          <td>{{ data.createdByName }}</td>
+          <td>
+            <a (click)="openTaxModal(data.id)">{{
+              data.tax | customCurrency: currency : selectedParentCust?.mvnoId
+            }}</a>
+          </td>
+          <td>
+            {{ data.totalamount | customCurrency: currency : selectedParentCust?.mvnoId }}
+          </td>
+          <td *ngIf="data.adjustedAmount == null">
+            {{ data.totalamount | customCurrency: currency : selectedParentCust?.mvnoId }}
+          </td>
+          <td *ngIf="data.adjustedAmount != null">
+            {{
+              data.totalamount - data.adjustedAmount
+                | customCurrency: currency : selectedParentCust?.mvnoId
+            }}
+          </td>
+          <td>
+            {{ data.refundAbleAmount | customCurrency: currency : selectedParentCust?.mvnoId }}
+          </td>
+          <td *ngIf="isDisplayConvertedAmount">
+            <input
+              pInputText
+              [(ngModel)]="data.convertedAmount"
+              type="number"
+              class="form-control"
+              (ngModelChange)="onConvertedAmountChange($event, data)"
+              appNumberValidator
+              [allowNegative]="false"
+              [allowDecimal]="true"
+              [minValue]="0"
+            />
+          </td>
+          <td>
+            <input
+              [(ngModel)]="data.testamount"
+              class="form-control"
+              type="number"
+              name="testamount"
+              appNumberValidator
+              [allowNegative]="false"
+              [allowDecimal]="true"
+              [minValue]="0"
+              (keypress)="keypressId($event)"
+              (ngModelChange)="this.onSelectedInvoice($event, data)"
+            />
+          </td>
+          <td>
+            <input
+              [(ngModel)]="data.includeTds"
+              name="tds-checkbox"
+              type="checkbox"
+              [disabled]="!data.testamount"
+              (ngModelChange)="this.onChangeOFTDSTest($event, data)"
+            />
+            <input
+              type="text"
+              name="name"
+              [readonly]="!data.testamount"
+              [(ngModel)]="data.tdsCheck"
+              class="form-control"
+            />
+          </td>
+          <td>
+            <input
+              [(ngModel)]="data.includeAbbs"
+              name="abbs-checkbox"
+              type="checkbox"
+              [disabled]="!data.testamount"
+              (ngModelChange)="this.onChangeOFABBSTest($event, data)"
+            />
+            <input
+              type="text"
+              name="name"
+              [disabled]="!data.testamount"
+              [(ngModel)]="data.abbsCheck"
+              class="form-control"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        id="addAtt"
+        style="object-fit: cover; padding: 5px 8px"
+        class="btn btn-primary"
+        data-dismiss="modal"
+        (click)="bindInvoice()"
+      >
+        <i class="fa fa-check-circle"></i>
+        Save
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" (click)="closeInvoiceListModel()">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- <div class="modal fade" id="selectInvoice" role="dialog">
+  <div class="modal-dialog" style="width: 65%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="panel-title">Select Invoices</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>
+                <input
+                  (change)="checkUncheckAll()"
+                  [(ngModel)]="this.masterSelected"
+                  name="master-checkbox"
+                  type="checkbox"
+                />
+              </th>
+              <th>Doc Number</th>
+              <th>Created BY</th>
+              <th>Tax Amount</th>
+              <th>Total Invoice</th>
+              <th>Pending Amount</th>
+              <th>Refundable Amount</th>
+              <th>Amount</th>
+              <th>TDS</th>
+              <th>ABBS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of invoiceList">
+              <td>
+                <input
+                  (change)="isAllSelected()"
+                  [(ngModel)]="data.isSelected"
+                  name="master-checkbox"
+                  type="checkbox"
+                />
+              </td>
+              <td>{{ data.docnumber }}</td>
+              <td>{{ data.createdByName }}</td>
+              <td>
+                <a (click)="openTaxModal(data.id)">{{ data.tax }}</a>
+              </td>
+              <td>{{ data.totalamount | number: "1.2-2" }}</td>
+              <td *ngIf="data.adjustedAmount == null">
+                {{ data.totalamount | number: "1.2-2" }}
+              </td>
+              <td *ngIf="data.adjustedAmount != null">
+                {{ data.totalamount - data.adjustedAmount | number: "1.2-2" }}
+              </td>
+              <td>{{ data.refundAbleAmount | number: "1.2-2" }}</td>
+              <td>
+                <input
+                  [(ngModel)]="data.testamount"
+                  class="form-control"
+                  type="number"
+                  name="testamount"
+                  (keypress)="keypressId($event)"
+                  (ngModelChange)="this.onSelectedInvoice($event, data)"
+                />
+              </td>
+              <td>
+                <input
+                  [(ngModel)]="data.includeTds"
+                  name="tds-checkbox"
+                  type="checkbox"
+                  [disabled]="!data.testamount"
+                  (ngModelChange)="this.onChangeOFTDSTest($event, data)"
+                />
+                <input
+                  type="text"
+                  name="name"
+                  [readonly]="!data.testamount"
+                  [(ngModel)]="data.tdsCheck"
+                  class="form-control"
+                />
+              </td>
+              <td>
+                <input
+                  [(ngModel)]="data.includeAbbs"
+                  name="abbs-checkbox"
+                  type="checkbox"
+                  [disabled]="!data.testamount"
+                  (ngModelChange)="this.onChangeOFABBSTest($event, data)"
+                />
+                <input
+                  type="text"
+                  name="name"
+                  [disabled]="!data.testamount"
+                  [(ngModel)]="data.abbsCheck"
+                  class="form-control"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            id="addAtt"
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            data-dismiss="modal"
+            (click)="bindInvoice()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="closeInvoiceListModel()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

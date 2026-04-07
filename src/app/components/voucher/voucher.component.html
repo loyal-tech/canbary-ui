@@ -1,0 +1,538 @@
+<div class="childComponent">
+  <!-- <ngx-spinner
+    [fullScreen]="false"
+    type="ball-clip-rotate-multiple"
+    size="medium"
+  >
+    <p class="loading">Loading...</p>
+  </ngx-spinner> -->
+  <div class="row">
+    <div class="col-md-12">
+      <!-- Voucher Data -->
+      <div class="panel top">
+        <div class="panel-heading">
+          <h3 class="panel-title">Voucher Management</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#collapse1"
+              aria-expanded="false"
+              aria-controls="collapse1"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="collapse1" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="searchForm">
+              <form
+                class="form-inline"
+                [formGroup]="searchVoucherForm"
+                (ngSubmit)="searchVoucher()"
+              >
+                <div>
+                  <label for="batchName">Batch Name : &nbsp;</label>
+                  <input
+                    type="text"
+                    id="batchName"
+                    placeholder="Batch Name"
+                    formControlName="batchName"
+                    class="form-control"
+                    (keyup)="getUserIdsFirstWay($event)"
+                    list="dynamicBatchNames"
+                    autocomplete="off"
+                  />
+                  <datalist id="dynamicBatchNames">
+                    <option *ngFor="let item of batchNameList" [value]="item">
+                      {{ item }}
+                    </option>
+                  </datalist>
+                  &nbsp; &nbsp;
+                  <label>Status : &nbsp;</label>
+                  <div style="width: 20%; display: inline-block">
+                    <p-dropdown
+                      [options]="status"
+                      placeholder="Select Status"
+                      optionLabel="label"
+                      optionValue="label"
+                      formControlName="status"
+                    ></p-dropdown>
+                  </div>
+                  &nbsp; &nbsp;
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    data-title="Search Voucher "
+                    id="searchbtn"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    data-title="Clear"
+                    (click)="clearSearchForm()"
+                    id="searchbtn"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                  &nbsp;
+                  <a
+                    *ngIf="downloadAccess"
+                    data-title="Export Data to Excel"
+                    data-toggle="tooltip"
+                    (click)="exportExcel()"
+                  >
+                    <img class="icon-ex" src="assets/img/icons-07.png" />
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="panel-body no-padding panel-udata">
+            <div class="col-md-4 pcol">
+              <div class="dbox">
+                <a href="javascript:void(0)" [routerLink]="['/home/voucherManagement']">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Show Voucher Profile</h5>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-4 pcol" *ngIf="voucherBatchAccess">
+              <div class="dbox">
+                <a href="javascript:void(0)" [routerLink]="['/home/voucherBatch']">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Show Voucher Batch</h5>
+                </a>
+              </div>
+            </div>
+            <div
+              *ngIf="voucherManageAccess"
+              class="col-md-4 pcol"
+              [ngClass]="{
+                'is-active': this.showBatch
+              }"
+            >
+              <div class="dbox">
+                <a href="javascript:void(0)" [routerLink]="['/home/voucher']">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Show Manage Vouchers</h5>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Vouchers</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#voucherTable"
+              aria-expanded="false"
+              aria-controls="voucherTable"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div id="voucherTable" class="panel-collapse collapse in">
+          <div
+            style="margin-left: 5px"
+            *ngIf="this.accessData.voucher.createUpdateAccess"
+            class="row panel-body"
+          >
+            <button
+              *ngIf="activeAccess"
+              type="submit"
+              class="btn btn-primary statusbtn"
+              (click)="changeStatusToActive()"
+            >
+              <i class="fa fa-check"></i>
+              Active
+            </button>
+            <button
+              *ngIf="blockAccess"
+              type="submit"
+              class="btn btn-primary statusbtn"
+              (click)="changeStatusToBlock()"
+            >
+              <i class="fa fa-lock"></i>
+              Block
+            </button>
+            <button
+              *ngIf="unblockAccess"
+              type="submit"
+              class="btn btn-primary statusbtn"
+              (click)="changeStatusToUnblock()"
+            >
+              <i class="fa fa-unlock"></i>
+              Unblock
+            </button>
+            <button
+              *ngIf="scrap"
+              type="submit"
+              class="btn btn-primary statusbtn"
+              (click)="changeStatusToScrap()"
+            >
+              <i class="fa fa-trash-o"></i>
+              Scrap
+            </button>
+          </div>
+          <!-- <div class="panel-body table-responsive">
+                    <p-checkbox name="checkVoucher" (onChange)="addVoucher('1',$event)">
+                    </p-checkbox>
+                </div> -->
+          <div class="panel-body table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th *ngIf="this.accessData.voucher.createUpdateAccess" style="width: 5%">
+                    <p-checkbox
+                      name="checkVoucher"
+                      [(ngModel)]="isChecked"
+                      [binary]="true"
+                      (onChange)="addAllVoucher($event)"
+                    ></p-checkbox>
+                  </th>
+                  <th>Voucher Profile Name</th>
+                  <th>Serial Number</th>
+                  <th>Batch Name</th>
+                  <th>Plan</th>
+                  <th>Code</th>
+                  <th>Status</th>
+                  <th>Price</th>
+                  <th>Create On</th>
+                  <th *ngIf="smsAccess">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let voucher of voucherData
+                      | paginate
+                        : {
+                            id: 'listing_voucherdata',
+                            itemsPerPage: itemsPerPage,
+                            currentPage: currentPage,
+                            totalItems: totalElements
+                          };
+                    index as i
+                  "
+                >
+                  <td *ngIf="this.accessData.voucher.createUpdateAccess" style="width: 5%">
+                    <p-checkbox
+                      class="p-field-checkbox"
+                      name="checkVoucher"
+                      [value]="voucher.id"
+                      [inputId]="voucher.id"
+                      [(ngModel)]="voucher.isChecked"
+                      (onChange)="addVoucher(voucher.id, $event)"
+                      [binary]="true"
+                    ></p-checkbox>
+                    <!-- <p-checkbox [(ngModel)]="checked" binary="true" inputId="binary"></p-checkbox> -->
+                    <!--     -->
+                  </td>
+                  <td>{{ voucher.voucherBatch.voucherConfiguration.name }}</td>
+                  <td>{{ voucher.serial_number || "-" }}</td>
+                  <td>{{ voucher.voucherBatch.batchName }}</td>
+                  <td>{{ voucher.voucherBatch?.plan ? voucher.voucherBatch.plan.name : "-" }}</td>
+                  <td>{{ voucher.code }}</td>
+                  <td>{{ voucher.status }}</td>
+                  <td>
+                    {{
+                      voucher?.voucherBatch?.plan?.currency
+                        ? (voucher?.voucherBatch?.price
+                          | customCurrency: voucher?.voucherBatch?.plan?.currency)
+                        : (voucher?.voucherBatch?.price | customCurrency: currency)
+                    }}
+                  </td>
+                  <td>{{ voucher.createDate | date: "dd-MM-yyy HH:mm" }}</td>
+                  <td class="btnAction">
+                    <a
+                      data-title="Send SMS"
+                      data-toggle="modal"
+                      type="button"
+                      (click)="showSendSms(voucher.id, voucher.code)"
+                      title="Send Sms"
+                    >
+                      <img
+                        class="icon"
+                        src="assets/img/icons-02.png"
+                        style="display: inline-flex"
+                      />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <div class="row">
+              <div class="col-md-12" style="display: flex">
+                <pagination-controls
+                  id="listing_voucherdata"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChanged($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    [(ngModel)]="showItemPerPage"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+  </div>
+</div>
+<p-dialog
+  header="Send Voucher Details"
+  [(visible)]="modalToggle"
+  [modal]="true"
+  [style]="{ width: '40%' }"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalSendSMS()"
+>
+  <div class="modal-body">
+    <div class="container-fluid">
+      <form class="form-auth-small" [formGroup]="customerGroupForm">
+        <div class="row" id="viewDetail">
+          <div class="col-lg-12 co-md-12 col-sm-12 col-xs-12">
+            <input
+              type="hidden"
+              class="form-control"
+              id="id"
+              name="id"
+              disabled="disabled"
+              value="{{ voucherIdSms }}"
+              hidden
+            />
+            <label>Mobile No</label>
+            <div style="width: 100%; display: flex">
+              <div style="width: 20%; height: 3.5rem">
+                <p-dropdown
+                  id="countryCode"
+                  [filter]="true"
+                  [options]="countries"
+                  optionLabel="dial_code"
+                  optionValue="dial_code"
+                  formControlName="countryCode"
+                  appendTo="body"
+                ></p-dropdown>
+              </div>
+              <div style="width: 80%">
+                <input
+                  type="text"
+                  name="mobileNo"
+                  min="0"
+                  class="form-control"
+                  placeholder="Enter Mobile No"
+                  formControlName="mobileNo"
+                  [ngClass]="{
+                    'is-invalid':
+                      submitted &&
+                      customerGroupForm.controls.mobileNo.errors &&
+                      customerGroupForm.controls.mobileNo.touched
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="
+                    customerGroupForm.controls.mobileNo.touched &&
+                    customerGroupForm.controls.mobileNo.invalid
+                  "
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="customerGroupForm.controls.mobileNo.touched"
+                  >
+                    only numbers are allowed between 0-9.
+                  </div>
+                </div>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && customerGroupForm.controls.mobileNo.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="customerGroupForm.controls.mobileNo.errors.required"
+                  >
+                    Mobile number is required.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm"
+        data-dismiss="modal"
+        (click)="sendSms(voucherIdSms)"
+        [disabled]="!customerGroupForm.valid"
+      >
+        <i class="fa fa-check-circle"></i>
+        Send
+      </button>
+      <button
+        id="btn"
+        type="button"
+        class="btn btn-default btn-sm"
+        (click)="clearcustomerGroupForm()"
+      >
+        <i class="fa fa-refresh"></i>
+        Clear
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        (click)="closeModalSendSMS()"
+        data-dismiss="modal"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- <div class="row" *ngIf="modalToggle">
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" style="width: 35%">
+     
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          
+          <h3 class="panel-title">Send Voucher Details</h3>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <form class="form-auth-small" [formGroup]="customerGroupForm">
+              <div class="row" id="viewDetail">
+                <div class="col-lg-12 co-md-12 col-sm-12 col-xs-12">
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    id="id"
+                    name="id"
+                    disabled="disabled"
+                    value="{{ voucherIdSms }}"
+                    hidden
+                  />
+                  <label>Mobile No</label>
+                  <div style="width: 100%; display: flex">
+                    <div style="width: 20%; height: 3.5rem">
+                      <p-dropdown
+                        id="countryCode"
+                        [filter]="true"
+                        [options]="countries"
+                        optionLabel="dial_code"
+                        optionValue="dial_code"
+                        formControlName="countryCode"
+                      ></p-dropdown>
+                    </div>
+                    <div style="width: 80%">
+                      <input
+                        type="text"
+                        name="mobileNo"
+                        min="0"
+                        class="form-control"
+                        placeholder="Enter Mobile No"
+                        formControlName="mobileNo"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted &&
+                            customerGroupForm.controls.mobileNo.errors &&
+                            customerGroupForm.controls.mobileNo.touched
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          customerGroupForm.controls.mobileNo.touched &&
+                          customerGroupForm.controls.mobileNo.invalid
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="customerGroupForm.controls.mobileNo.touched"
+                        >
+                          only numbers are allowed between 0-9.
+                        </div>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && customerGroupForm.controls.mobileNo.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="customerGroupForm.controls.mobileNo.errors.required"
+                        >
+                          Mobile number is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="addUpdateBtn">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm"
+              data-dismiss="modal"
+              (click)="sendSms(voucherIdSms)"
+              [disabled]="!customerGroupForm.valid"
+            >
+              <i class="fa fa-check-circle"></i>
+              Send
+            </button>
+            <button
+              id="btn"
+              type="button"
+              class="btn btn-default btn-sm"
+              (click)="clearcustomerGroupForm()"
+            >
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

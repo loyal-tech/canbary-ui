@@ -1,0 +1,293 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Access Response Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <!-- <div id="searchDataCountry" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchCountryName"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchCountry()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchCountry()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchCountry()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Access Response</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataCountry"
+            aria-expanded="false"
+            aria-controls="allDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let accessResponse of accessResponseListData
+                        | paginate
+                          : {
+                              id: 'accessResponseListData',
+                              itemsPerPage: accessResponseitemsPerPage,
+                              currentPage: currentPageAccessResponseSlab,
+                              totalItems: accessResponsetotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ accessResponse.name }}</td>
+                    <td class="btnAction">
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        *ngIf="editAccess"
+                        (click)="editAccessResponse(accessResponse.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        (click)="deleteConfirmonAccessResponse(accessResponse.id)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="accessResponseListData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCountryList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          {{ isAccessResponseEdit ? "Update" : "Create" }} Access Response
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !isAccessResponseEdit">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (isAccessResponseEdit && editAccess)">
+          <form [formGroup]="accessResponseFormGroup">
+            <label> Name*</label>
+            <input
+              id="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter Name"
+              formControlName="name"
+              [ngClass]="{
+                'is-invalid': submitted && accessResponseFormGroup.controls.name.errors
+              }"
+              maxLength="250"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && accessResponseFormGroup.controls.name.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && accessResponseFormGroup.controls.name.errors.required"
+              >
+                Name is required.
+              </div>
+              <div
+                class="position"
+                *ngIf="
+                  submitted && accessResponseFormGroup.controls.name.errors?.cannotContainSpace
+                "
+              >
+                <p class="error">White space are not allowed.</p>
+              </div>
+            </div>
+            <br />
+            <label>Message*</label>
+            <div>
+              <input
+                id="message"
+                type="text"
+                class="form-control"
+                placeholder="Enter Message"
+                formControlName="message"
+                [ngClass]="{
+                  'is-invalid': submitted && accessResponseFormGroup.controls.message.errors
+                }"
+                maxLength="250"
+              />
+            </div>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && accessResponseFormGroup.controls.message.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && accessResponseFormGroup.controls.message.errors.required"
+              >
+                Message is required.
+              </div>
+            </div>
+            <br />
+            <label>Event*</label>
+            <div>
+              <p-dropdown
+                id="event"
+                [options]="eventListData"
+                formControlName="event"
+                optionLabel="displayName"
+                optionValue="value"
+                placeholder="Select Event"
+              >
+              </p-dropdown>
+            </div>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && accessResponseFormGroup.controls.event.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && accessResponseFormGroup.controls.event.errors.required"
+              >
+                Event is required.
+              </div>
+            </div>
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                *ngIf="!isAccessResponseEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditAccessResponse('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Access response
+              </button>
+              <button
+                *ngIf="isAccessResponseEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditAccessResponse(viewAccessResponseData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Access response
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchCountry()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+.displayflex {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+a#download-button[disabled=true] {
+    cursor: not-allowed;
+    opacity: 0.5;
+}

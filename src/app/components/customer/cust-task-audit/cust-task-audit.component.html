@@ -1,0 +1,219 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="customerDetailOpen()"
+            class="btn btn-secondary backbtn"
+            data-placement="bottom"
+            data-toggle="tooltip"
+            title="Go to Diary Audit Details"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ custData.title }}
+            {{ custData.custname }} Diary Audit List
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            aria-controls="inventoryListPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#inventoryListPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+        <!-- <button
+          *ngIf="removeAccess"
+          (click)="removeFromParent()"
+          [disabled]="this.checkedList.length == 0"
+          class="right"
+          class="btn btn-primary statusbtn"
+          data-backdrop="static"
+          data-keyboard="false"
+          data-target="#removeParent"
+          data-toggle="modal"
+          style="
+            background-color: #f7b206 !important;
+            font-size: 16px;
+            padding: 3px 12px;
+            margin-top: 10px;
+          "
+          title="Remove parent"
+          type="submit"
+        >
+          Remove
+        </button> -->
+        <!-- <button
+          *ngIf="makeParentAccess"
+          (click)="makeParent(custData.id)"
+          [disabled]="this.checkedList.length == 0"
+          class="right"
+          class="btn btn-primary statusbtn"
+          data-backdrop="static"
+          data-keyboard="false"
+          data-target="#removeParent"
+          data-toggle="modal"
+          style="
+            background-color: #f7b206 !important;
+            font-size: 16px;
+            padding: 3px 12px;
+            margin-top: 10px;
+          "
+          title="Remove parent"
+          type="submit"
+        >
+          Make Parent
+        </button> -->
+      </div>
+
+      <div class="panel-collapse collapse in" id="inventoryListPreCust">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <!-- <th width="2%">
+                      <input
+                        (change)="checkUncheckAll()"
+                        [(ngModel)]="this.masterSelected"
+                        name="master-checkbox"
+                        type="checkbox"
+                      />
+                    </th> -->
+                    <th>Task Number</th>
+                    <th>Task Title</th>
+                    <th>Assigne Name</th>
+                    <th>Task Status</th>
+                    <th>Task Priority</th>
+                    <th>Task StartDate</th>
+                    <th>Task EndDate</th>
+                    <th>View Task History</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of taskAuditList
+                        | paginate
+                          : {
+                              id: 'taskAuditList',
+                              itemsPerPage: pageSizeForTaskAuditPage,
+                              currentPage: pageNumberForTaskAuditPage,
+                              totalItems: taskAuditTotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ data.caseNumber }}</td>
+                    <td>{{ data.caseTitle }}</td>
+                    <td>{{ data.assigneeName }}</td>
+                    <td>{{ data.caseStatus }}</td>
+                    <td>{{ data.priority }}</td>
+                    <td>{{ data.startDate }}</td>
+                    <td style="text-align: center">
+                      {{ data.endDate == null ? "-" : data.endDate }}
+                    </td>
+                    <td>
+                      <button
+                        (click)="getTaskDetails(data.caseId)"
+                        class="btn btn-primary"
+                        style="
+                          border-radius: 5px;
+                          padding: 5px 10px;
+                          line-height: 1.5;
+                          margin-left: 5px;
+                        "
+                      >
+                        <i class="fa fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="display: flex">
+                <pagination-controls
+                  (pageChange)="pageChangeEventForChildCustomers($event)"
+                  [directionLinks]="true"
+                  [maxSize]="10"
+                  id="taskAuditList"
+                  nextLabel=""
+                  previousLabel=""
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    (onChange)="itemPerPageChangeEvent($event)"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Task History"
+  [(visible)]="isTaskDetail"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeTaskDetail()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+          <legend>Task History</legend>
+          <div class="boxWhite">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup m-0">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Create By</th>
+                      <th>Create Date</th>
+                      <th>Update Date</th>
+                      <th>Update By</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let caseUpdate of taskDetailsData?.caseUpdateList">
+                      <td>{{ caseUpdate?.createdByName }}</td>
+                      <td>{{ caseUpdate?.createdate }}</td>
+                      <td>{{ caseUpdate?.updatedate }}</td>
+                      <td>{{ caseUpdate?.lastModifiedByName }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeTaskDetail()" data-dismiss="modal" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>

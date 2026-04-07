@@ -1,0 +1,484 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Open Opportunity Email Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataTicketReason"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchDataTicketReason" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <p-dropdown
+                (onChange)="selSearchOption()"
+                [(ngModel)]="searchOption"
+                [filter]="true"
+                [options]="searchOptionSelect"
+                filterBy="label"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select a Search Option"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-3 marginTopSearchinput">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchSenderKey"
+                class="form-control"
+                placeholder="Enter sender email"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchSender('')"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchTrc()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Open Opportunity Email</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataTicketReason"
+            aria-expanded="false"
+            aria-controls="allDataTicketReason"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataTicketReason" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Sender</th>
+                    <th>Subject</th>
+                    <th>Description</th>
+                    <th>Mailtype</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let email of emailListData
+                        | paginate
+                          : {
+                              id: 'ticketReasonCategoryData',
+                              itemsPerPage: emailListdataitemsPerPage,
+                              currentPage: currentPageEmailListdata,
+                              totalItems: emailListDatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      {{ email.sender }}
+                    </td>
+                    <td>{{ email.summary }}</td>
+                    <td>
+                      <a
+                        (click)="openDescriptionModal(email.desc)"
+                        style="color: #f7b206; cursor: pointer"
+                      >
+                        Message</a
+                      >
+                    </td>
+                    <td>{{ email.mailType }}</td>
+                    <td class="btnAction">
+                      <button
+                        *ngIf="createAccess"
+                        type="button"
+                        (click)="createTicketClick(email)"
+                        class="btn btn-primary"
+                        title="Create"
+                        style="
+                          border-radius: 5px;
+                          padding: 3px 8px;
+                          line-height: 1.5;
+                          margin-left: 5px;
+                        "
+                      >
+                        <i class="fa fa-plus-square"></i>
+                      </button>
+                      <button
+                        *ngIf="deleteAccess"
+                        type="button"
+                        (click)="deleteConfirmonEmail(email.id)"
+                        class="btn btn-primary"
+                        title="Delete"
+                        style="
+                          border-radius: 5px;
+                          padding: 3px 8px;
+                          line-height: 1.5;
+                          margin-left: 5px;
+                        "
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="ticketReasonCategoryData"
+                  [maxSize]="10"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedTrcList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    [(ngModel)]="emailListdataitemsPerPage"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Modal -->
+<p-dialog
+  header="Create Customer"
+  [(visible)]="createTicketModal"
+  [modal]="true"
+  [style]="{ width: '40vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [responsive]="true"
+  [closable]="true"
+  (onHide)="closeCreateTicket()"
+>
+  <div class="modal-body-junk" style="height: 70rem">
+    <form [formGroup]="ticketCreateFormGroup">
+      <br />
+      <div class="form-group">
+        <div class="row">
+          <!-- Email -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Email*</label>
+            <div>
+              <input
+                [ngClass]="{
+                  'is-invalid': createTicketSubmitted && ticketCreateFormGroup.controls.email.errors
+                }"
+                class="form-control"
+                formControlName="email"
+                placeholder="Enter Email"
+                type="text"
+              />
+            </div>
+            <div
+              *ngIf="createTicketSubmitted && ticketCreateFormGroup.controls.email.errors"
+              class="errorWrap text-danger"
+            >
+              <div
+                *ngIf="
+                  createTicketSubmitted && ticketCreateFormGroup.controls.email.errors.required
+                "
+                class="error text-danger"
+              >
+                Email is required.
+              </div>
+            </div>
+            <br />
+          </div>
+          <!-- Support Domain -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Support Domain</label>
+            <div>
+              <input
+                class="form-control"
+                formControlName="domain"
+                placeholder="Enter Support Domain"
+                type="text"
+              />
+            </div>
+            <br />
+          </div>
+          <!-- Name -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Name*</label>
+            <div>
+              <input
+                [ngClass]="{
+                  'is-invalid': createTicketSubmitted && ticketCreateFormGroup.controls.name.errors
+                }"
+                class="form-control"
+                formControlName="name"
+                placeholder="Enter Name"
+                type="text"
+              />
+            </div>
+            <div
+              *ngIf="createTicketSubmitted && ticketCreateFormGroup.controls.name.errors"
+              class="errorWrap text-danger"
+            >
+              <div
+                *ngIf="createTicketSubmitted && ticketCreateFormGroup.controls.name.errors.required"
+                class="error text-danger"
+              >
+                Name is required.
+              </div>
+            </div>
+            <br />
+          </div>
+
+          <!-- Service Area -->
+          <div
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            *ngIf="isServiceNotAvailable === true && this.isCustomerAvailable === false"
+          >
+            <label>Service Area*</label>
+            <div>
+              <p-dropdown
+                (onChange)="selServiceArea($event)"
+                [ngClass]="{
+                  'is-invalid': submitted && customerGroupForm.controls.serviceareaid.errors
+                }"
+                id="servicear"
+                [options]="commondropdownService.serviceAreaList"
+                filter="true"
+                filterBy="name"
+                formControlName="serviceareaid"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a Servicearea"
+              ></p-dropdown>
+            </div>
+            <div
+              *ngIf="submitted && customerGroupForm.controls.serviceareaid.errors"
+              class="errorWrap text-danger"
+            >
+              <div class="error text-danger">Service Area is required.</div>
+            </div>
+            <br />
+          </div>
+          <!-- Service -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Service*</label>
+            <div>
+              <p-dropdown
+                (onChange)="onServiceChange($event, ddlService)"
+                [filter]="true"
+                [ngClass]="{
+                  'is-invalid':
+                    createTicketSubmitted && ticketCreateFormGroup.controls.service.errors
+                }"
+                [options]="serviceData"
+                #ddlService
+                filterBy="name"
+                formControlName="service"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a Service"
+              >
+                <ng-template let-data pTemplate="item">
+                  <div class="item-drop1">
+                    <span class="item-value1">
+                      {{ data.isAssigned ? data.name + " ( Assigned )" : data.name }}
+                    </span>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+            <div
+              *ngIf="createTicketSubmitted && ticketCreateFormGroup.controls.service.errors"
+              class="errorWrap text-danger"
+            >
+              <div
+                *ngIf="
+                  createTicketSubmitted && ticketCreateFormGroup.controls.service.errors.required
+                "
+                class="error text-danger"
+              >
+                Service is required.
+              </div>
+            </div>
+            <br />
+          </div>
+          <!-- Plan -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Plan*</label>
+            <div>
+              <p-dropdown
+                (onChange)="onPlanChange($event, ddlPlan)"
+                #ddlPlan
+                [filter]="true"
+                [ngClass]="{
+                  'is-invalid': createTicketSubmitted && ticketCreateFormGroup.controls.plan.errors
+                }"
+                [options]="planData"
+                filterBy="name"
+                formControlName="plan"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a Plan"
+              ></p-dropdown>
+            </div>
+            <div
+              *ngIf="createTicketSubmitted && ticketCreateFormGroup.controls.plan.errors"
+              class="errorWrap text-danger"
+            >
+              <div
+                *ngIf="createTicketSubmitted && ticketCreateFormGroup.controls.plan.errors.required"
+                class="error text-danger"
+              >
+                Plan is required.
+              </div>
+            </div>
+            <br />
+          </div>
+          <!-- Problem Domain -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Problem Domain*</label>
+            <div>
+              <p-dropdown
+                (onChange)="onProblemDomainChange($event, ddlProblemDomain)"
+                [filter]="true"
+                [ngClass]="{
+                  'is-invalid':
+                    createTicketSubmitted && ticketCreateFormGroup.controls.problemdomain.errors
+                }"
+                [options]="problemDomainList"
+                filterBy="name"
+                #ddlProblemDomain
+                formControlName="problemdomain"
+                optionLabel="categoryName"
+                optionValue="id"
+                placeholder="Select a Problem Domain"
+              ></p-dropdown>
+            </div>
+            <div
+              *ngIf="createTicketSubmitted && ticketCreateFormGroup.controls.problemdomain.errors"
+              class="errorWrap text-danger"
+            >
+              <div
+                *ngIf="
+                  createTicketSubmitted &&
+                  ticketCreateFormGroup.controls.problemdomain.errors.required
+                "
+                class="error text-danger"
+              >
+                Problem Domain is required.
+              </div>
+            </div>
+            <br />
+          </div>
+          <!-- Sub Problem Domain -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Sub Problem Domain*</label>
+            <div>
+              <p-dropdown
+                [filter]="true"
+                [ngClass]="{
+                  'is-invalid':
+                    createTicketSubmitted && ticketCreateFormGroup.controls.subproblemdomain.errors
+                }"
+                [options]="subProblemDomainList"
+                filterBy="name"
+                formControlName="subproblemdomain"
+                optionLabel="subCategoryName"
+                optionValue="id"
+                placeholder="Select a Problem Domain"
+                #ddlSubProblemDomain
+              >
+              </p-dropdown>
+            </div>
+            <div
+              *ngIf="
+                createTicketSubmitted && ticketCreateFormGroup.controls.subproblemdomain.errors
+              "
+              class="errorWrap text-danger"
+            >
+              <div
+                *ngIf="
+                  createTicketSubmitted &&
+                  ticketCreateFormGroup.controls.subproblemdomain.errors.required
+                "
+                class="error text-danger"
+              >
+                Sub Problem Domain is required.
+              </div>
+            </div>
+            <br />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button (click)="createTicket()" class="btn btn-primary" id="submit" type="submit">
+        <i class="fa fa-check-circle"></i>
+        Submit
+      </button>
+      <button (click)="closeCreateTicket()" class="btn btn-default" type="button">Close</button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Description"
+  [(visible)]="descriptionModal"
+  [modal]="true"
+  [breakpoints]="{ '1024px': '75vw', '767px': '90vw' }"
+  [style]="{ width: '40vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="true"
+>
+  <div class="description">
+    <p style="font-size: 18px">
+      {{ description }}
+    </p>
+  </div>
+</p-dialog>

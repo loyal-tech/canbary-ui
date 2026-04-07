@@ -1,0 +1,1153 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Product Category Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchProduct"
+            aria-expanded="false"
+            aria-controls="searchProduct"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchProduct" class="panel-collapse collapse in">
+        <div class="panel-body">
+        <div class="row" *ngIf="showSearchBar">
+
+  <!-- Search Option -->
+  <div class="col-lg-3 col-md-4">
+    <p-dropdown
+      (onChange)="selSearchOption($event)"
+      [(ngModel)]="searchProductCat"
+      [filter]="true"
+      [options]="searchOptionSelect"
+      filterBy="label"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select a Search Option"
+    ></p-dropdown>
+  </div>
+
+  <!-- Dynamic Field -->
+  <div class="col-lg-3 col-md-4">
+
+    <!-- Input -->
+    <input
+      *ngIf="searchProductCat !== 'Type'"
+      id="taxName"
+      type="text"
+      [(ngModel)]="searchProductCatName"
+      class="form-control"
+      placeholder="Search a Product Category"
+      (keydown.enter)="searchProduct()"
+    />
+
+    <!-- Dropdown -->
+    <p-dropdown
+      *ngIf="searchProductCat === 'Type'"
+      [options]="productCatType"
+      [(ngModel)]="searchProductCatName"
+      optionLabel="text"
+      optionValue="value"
+      placeholder="Select Product Category Type"
+      [filter]="true"
+      styleClass="w-100"
+    ></p-dropdown>
+
+  </div>
+
+  <!-- Buttons -->
+  <div class="col-lg-3 col-md-4">
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="searchProduct()"
+    >
+      <i class="fa fa-search"></i> Search
+    </button>
+
+    <button
+      type="reset"
+      class="btn btn-default"
+      (click)="clearSearchProduct()"
+    >
+      <i class="fa fa-refresh"></i> Clear
+    </button>
+  </div>
+
+</div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="pcol col-md-6" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createProductCategory()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Product Category</h5>
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-6">
+            <div class="dbox">
+              <a (click)="clearSearchProduct()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Product Category</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="this.listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Product Category</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listProduct"
+            aria-expanded="false"
+            aria-controls="listProduct"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listProduct" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <!-- <th>Product Id</th> -->
+                    <th>UOM</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let product of productListData
+                        | paginate
+                          : {
+                              id: 'stateListData',
+                              itemsPerPage: productListdataitemsPerPage,
+                              currentPage: currentPageProductListdata,
+                              totalItems: productListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="curson_pointer"
+                      (click)="getProductDetails(product.id)"
+                      style="color: #f7b206"
+                    >
+                      {{ product.name }}
+                    </td>
+                    <!-- <td>{{ product.productId }}</td> -->
+                    <td>{{ product.unit }}</td>
+                    <td *ngIf="product.status == 'ACTIVE' || product.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="product.status == 'INACTIVE' || product.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td>{{ product.type }}</td>
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        (click)="editProduct(product.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmProduct(product.id)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="stateListData"
+                  [maxSize]="10"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedProductList((currentPageProductListdata = $event))"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="productListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12" *ngIf="this.createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ this.editMode ? "Update" : "Create" }} Product Category</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createProduct"
+            aria-expanded="false"
+            aria-controls="createProduct"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createProduct" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div>
+            <form [formGroup]="productCategoryFormGroup">
+              <fieldset style="margin-top: 0px">
+                <legend>Basic Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Product Category Name*</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter Product Category Name"
+                          formControlName="name"
+                          [ngClass]="{
+                            'is-invalid': submitted && productCategoryFormGroup.controls.name.errors
+                          }"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productCategoryFormGroup.controls.name.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && productCategoryFormGroup.controls.name.errors.required
+                            "
+                          >
+                            Product Category Name is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Product Id</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter Product Id"
+                          formControlName="productId"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && productCategoryFormGroup.controls.productId.errors
+                          }"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productCategoryFormGroup.controls.productId.errors"
+                        ></div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label style="display: block">Status*</label>
+                        <p-dropdown
+                          [options]="status"
+                          formControlName="status"
+                          optionLabel="label"
+                          optionValue="value"
+                          placeholder="Select status"
+                          filter="true"
+                          filterBy="label"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productCategoryFormGroup.controls.status.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && productCategoryFormGroup.controls.status.errors.required
+                            "
+                          >
+                            Product Category Status is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>UOM *</label>
+                        <p-dropdown
+                          [options]="uomType"
+                          formControlName="unit"
+                          optionLabel="text"
+                          optionValue="text"
+                          placeholder="Select UOM"
+                          filter="true"
+                          filterBy="text"
+                          [disabled]="editMode"
+                          [ngClass]="{
+                            'is-invalid': submitted && productCategoryFormGroup.controls.unit.errors
+                          }"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productCategoryFormGroup.controls.unit.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && productCategoryFormGroup.controls.unit.errors.required
+                            "
+                          >
+                            Product Category unit is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <div *ngIf="!editMode">
+                          <label>Type*</label>
+                          <p-multiSelect
+                            (onChange)="typeChange($event)"
+                            [(ngModel)]="selectedTypes"
+                            [options]="productCatType"
+                            formControlName="type"
+                            optionLabel="text"
+                            optionValue="text"
+                            placeholder="Select type"
+                            filter="true"
+                            filterBy="text"
+                            *ngIf="!editMode"
+                            [ngClass]="{
+                              'is-invalid':
+                                submitted && productCategoryFormGroup.controls.type.errors
+                            }"
+                          ></p-multiSelect>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && productCategoryFormGroup.controls.type.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                submitted && productCategoryFormGroup.controls.type.errors.required
+                              "
+                            >
+                              Product Category Type is required.
+                            </div>
+                          </div>
+                        </div>
+                        <div *ngIf="editMode">
+                          <label>Type*</label>
+                          <input
+                            class="form-control"
+                            formControlName="type"
+                            disabled="editMode"
+                            [ngClass]="{
+                              'is-invalid':
+                                submitted && productCategoryFormGroup.controls.type.errors
+                            }"
+                          />
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && productCategoryFormGroup.controls.type.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                submitted && productCategoryFormGroup.controls.type.errors.required
+                              "
+                            >
+                              Product Category Type is required.
+                            </div>
+                          </div>
+                          <br />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" *ngIf="isDeviceTypeVisible">
+                      <div class="form-group">
+                        <label>Device Type *</label>
+                        <p-dropdown
+                          [options]="networkDeviceData"
+                          formControlName="deviceType"
+                          optionLabel="text"
+                          optionValue="text"
+                          placeholder="Select Device Type"
+                          filter="true"
+                          filterBy="text"
+                          [disabled]="editMode"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && productCategoryFormGroup.controls.deviceType.errors
+                          }"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productCategoryFormGroup.controls.deviceType.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              productCategoryFormGroup.controls.deviceType.errors.required
+                            "
+                          >
+                            Device Type is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top: 0px">
+                <legend>Conditions</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label class="field-checkbox">
+                          Has MAC Address :-
+                          <p-checkbox
+                            [disabled]="this.editMode"
+                            formControlName="hasMac"
+                            [binary]="true"
+                            name="binary"
+                            (onChange)="this.macAction()"
+                          ></p-checkbox>
+                          <!-- <label for="binary">Has Mac</label> -->
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label class="field-checkbox">
+                          Has Serial Number:-
+                          <p-checkbox
+                            formControlName="hasSerial"
+                            [binary]="true"
+                            name="binary"
+                            (onChange)="this.serialAction()"
+                            [disabled]="this.editMode"
+                          ></p-checkbox>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label class="field-checkbox">
+                          Has Trackable:-
+                          <p-checkbox
+                            formControlName="hasTrackable"
+                            [binary]="true"
+                            name="binary"
+                            [disabled]="this.editMode"
+                          ></p-checkbox>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label class="field-checkbox">
+                          Has Port:-
+                          <p-checkbox
+                            formControlName="hasPort"
+                            [binary]="true"
+                            name="binary"
+                            [disabled]="this.editMode"
+                          ></p-checkbox>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label class="field-checkbox">
+                          Has CAS:-
+                          <p-checkbox
+                            (onChange)="checkHasCas($event)"
+                            formControlName="hasCas"
+                            [binary]="true"
+                            name="binary"
+                            [disabled]="this.editMode"
+                          ></p-checkbox>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <div *ngIf="ifDTVCateShow">
+                          <label style="display: block">DTV Category*</label>
+                          <p-dropdown
+                            [options]="dtvCategory"
+                            formControlName="dtvCategory"
+                            optionLabel="text"
+                            optionValue="text"
+                            placeholder="Select DTV Category"
+                            filter="true"
+                            filterBy="text"
+                            [disabled]="this.editMode"
+                          ></p-dropdown>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted && productCategoryFormGroup.controls.dtvCategory.errors
+                            "
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                submitted &&
+                                productCategoryFormGroup.controls.dtvCategory.errors.required
+                              "
+                            >
+                              DTV Category Type is required.
+                            </div>
+                          </div>
+                          <br />
+                          <br />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+            <fieldset style="margin-top: 0px">
+              <legend>Specification Parameter Details</legend>
+              <div class="boxWhite">
+                <form [formGroup]="specificationParametersDTO">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                      <div class="form-group custom">
+                        <div style="display: block">
+                          <label for="paramName">Input Type</label>
+                        </div>
+                      </div>
+                      <div style="display: block">
+                        <p-dropdown
+                          [options]="inputTypeList"
+                          formControlName="inputType"
+                          optionLabel="label"
+                          optionValue="value"
+                          placeholder="Select Input Type"
+                          filter="true"
+                          filterBy="label"
+                          (onChange)="onInputTypeChange($event)"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                      <div class="form-group custom">
+                        <div style="display: block">
+                          <label for="paramName">Parameter</label>
+                        </div>
+                      </div>
+                      <div style="display: block">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="paramName"
+                          formControlName="paramName"
+                          (input)="
+                            checkForDuplicates(specificationParametersDTO.get('paramName').value)
+                          "
+                        />
+                      </div>
+                      <div
+                        class="col-lg-2 col-md-2 col-sm-2 col-xs-3"
+                        class="alert alert-danger"
+                        *ngIf="duplicateErrorMessage"
+                      >
+                        {{ duplicateErrorMessage }}
+                      </div>
+                    </div>
+                    <div class="col-lg-1 col-md-3 col-sm-3 col-xs-6">
+                      <div style="display: block">
+                        <label for="listValue">List Value</label>
+                      </div>
+                      <button
+                        class="btn btn-primary"
+                        type="button"
+                        style="
+                          border-radius: 5px;
+                          padding: 2px 5px;
+                          line-height: 1.5;
+                          margin-left: 10px;
+                          margin-top: 20px;
+                        "
+                        [disabled]="
+                          !isButtonDisabled || !specificationParametersDTO.get('paramName').value
+                        "
+                        (click)="openDialogOnClick()"
+                      >
+                        <i class="fa fa-plus-square"></i>
+                      </button>
+                    </div>
+                    <div class="col-lg-1 col-md-3 col-sm-3 col-xs-6">
+                      <div class="form-group">
+                        <div>
+                          <label for="isMandatory">Mandatory</label>
+                        </div>
+                        <div>
+                          <p-checkbox
+                            class="big-checkbox customm"
+                            formControlName="isMandatory"
+                            [binary]="true"
+                            (ngModelChange)="onCheckboxChange($event)"
+                          ></p-checkbox>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                      <div class="form-group">
+                        <div>
+                          <label>Actions</label>
+                        </div>
+                        <div>
+                          <!-- <button
+                            type="button"
+                            class="btn btn-primary custommm"
+                            (click)="saveParameter()"
+                            [disabled]="
+                              !specificationParametersDTO.get('paramName').value ||
+                              duplicateErrorMessage
+                            "
+                          >
+                            Add
+                          </button> -->
+                          <button
+                            type="button"
+                            (click)="saveParameter()"
+                            class="btn btn-primary"
+                            style="
+                              border-radius: 5px;
+                              padding: 5px 10px;
+                              line-height: 1.5;
+                              margin-left: 10px;
+                              margin-top: 15px;
+                            "
+                            [disabled]="
+                              specificationParametersDTO.get('inputType').value === 'List'
+                                ? !specificationParametersDTO.get('paramName').value ||
+                                  specificationListData.length == 0 ||
+                                  duplicateErrorMessage
+                                : !specificationParametersDTO.get('paramName').value ||
+                                  !specificationParametersDTO.get('inputType').value ||
+                                  duplicateErrorMessage
+                            "
+                          >
+                            <i class="fa fa-plus-square"></i>
+                          </button>
+                          <!-- <button
+                            *ngIf="specificationListData.length > 0"
+                            type="button"
+                            (click)="showSpecificationListData()"
+                            class="btn btn-primary"
+                            style="
+                              border-radius: 5px;
+                              padding: 5px 10px;
+                              line-height: 1.5;
+                              margin-left: 10px;
+                            "
+                          >
+                            <i class="fa fa-eye"></i>
+                          </button> -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <table class="table" *ngIf="showTable">
+                  <thead>
+                    <tr>
+                      <th>Parameter</th>
+                      <th>Mandatory</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let item of productCategoryFormGroup.controls.specificationParametersDTOList
+                          .controls;
+                        let index = index
+                      "
+                    >
+                      <td *ngIf="!item.value.isMultiValueParam">
+                        <ng-container *ngIf="!item.value.isEditing; else editField">
+                          {{ item.get("paramName")?.value }}
+                        </ng-container>
+                        <ng-template #editField>
+                          <input
+                            type="text"
+                            *ngIf="item.value.isEditing"
+                            [formControl]="item.get('paramName')"
+                            (keydown.enter)="saveChanges(item)"
+                            (blur)="saveChanges(item)"
+                          />
+                        </ng-template>
+                      </td>
+                      <td *ngIf="item.value.isMultiValueParam">
+                        <ng-container *ngIf="!item.value.isEditing; else editField">
+                          <a
+                            href="javascript:void(0)"
+                            style="color: #f7b206"
+                            (click)="particularSpecificationListView(item, index)"
+                            >{{
+                              item.get("paramName")?.value ? item.get("paramName")?.value : "List"
+                            }}
+                          </a>
+                        </ng-container>
+                        <ng-template #editField>
+                          <input
+                            type="text"
+                            *ngIf="item.value.isEditing"
+                            [formControl]="item.get('paramName')"
+                            (keydown.enter)="saveChanges(item)"
+                            (blur)="saveChanges(item)"
+                          />
+                        </ng-template>
+                      </td>
+                      <td class="custom-checkbox-cell" style="padding-inline: 33px">
+                        <p-checkbox
+                          [binary]="true"
+                          [formControl]="item.get('isMandatory')"
+                          (keydown.enter)="saveChanges(item)"
+                          (blur)="saveChanges(item)"
+                          [disabled]="!item.value.isEditing"
+                        ></p-checkbox>
+                      </td>
+                      <!-- <td>{{ item.value.isMandatory ? "true" : "false" }}</td> -->
+                      <td class="btnAction">
+                        <button
+                          id="delete-button"
+                          href="javascript:void(0)"
+                          class="approve-btn"
+                          (click)="editRaw(item, index)"
+                        >
+                          <img src="assets/img/ioc01.jpg" />
+                        </button>
+                        <button
+                          id="delete-button"
+                          href="javascript:void(0)"
+                          class="approve-btn"
+                          (click)="deleteRaw(index)"
+                          [disabled]="isEditMode && item?.controls.isNew?.value"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+            <!-- </form> -->
+            <!-- <form [formGroup]="productCategoryFormGroup"> -->
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="submit()"
+                [disabled]="!this.productCategoryFormGroup.valid"
+              >
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update" : "Add" }} Product Category
+              </button>
+              <br />
+            </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="detailView">
+    <div class="col-md-12 col-sm-12">
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <button
+              type="button"
+              class="btn btn-secondary backbtn"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Go to Tax Details"
+              (click)="ProductCategoryList()"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: #f7b206 !important; font-size: 28px"
+              ></i>
+            </button>
+            <h3 class="panel-title">{{ viewProductCategoryDetails.name }} Product Category</h3>
+          </div>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#outwardDetail"
+              aria-expanded="false"
+              aria-controls="taxalldea"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="outwardDetail" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Name :</label>
+                    <span>{{ viewProductCategoryDetails.name }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Product Id :</label>
+                    <span>{{ viewProductCategoryDetails.productId }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">UOM :</label>
+                    <span>{{ viewProductCategoryDetails.unit }}</span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Status :</label>
+                    <span>{{ viewProductCategoryDetails.status }}</span>
+                  </div>
+                  <!-- <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl"> :</label>
+                  <span>{{ viewProductCategoryDetails.mvnoId }}</span>
+                </div> -->
+                  <div class="col-lg-4 col-md- dataGroup">
+                    <label class="datalbl">Type :</label>
+                    <span>{{ viewProductCategoryDetails.type }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md- dataGroup">
+                    <label class="datalbl">Device Type :</label>
+                    <span>{{ viewProductCategoryDetails.deviceType }}</span>
+                  </div>
+
+                  <!-- <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Destination Type :</label>
+                  <span>{{ viewPopDetails.destinationType }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Source :</label>
+                  <span>{{ viewPopDetails.source }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Source Type :</label>
+                  <span>{{ viewPopDetails.sourceType }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Outward Date :</label>
+                  <span>{{ viewPopDetails.outwardDateTime | date: "dd-MM-yyy h:mm a " }}</span>
+                </div> -->
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <div id="outwardDetail" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Conditions</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Has MAC Address :</label>
+                    <span>{{ viewProductCategoryDetails.hasMac }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Has Serial Number :</label>
+                    <span>{{ viewProductCategoryDetails.hasSerial }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Has Trackable :</label>
+                    <span>{{ viewProductCategoryDetails.hasTrackable }}</span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Has Port :</label>
+                    <span>{{ viewProductCategoryDetails.hasPort }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Has CAS :</label>
+                    <span>{{ viewProductCategoryDetails.hasCas }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">DTV Category :</label>
+                    <span>{{ viewProductCategoryDetails.dtvCategory }}</span>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <div id="outwardDetail" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Specification Parameter Details</legend>
+              <div class="boxWhite">
+                <div class="row table-responsive">
+                  <div class="col-lg-12 col-md-12">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th id="parameter">Parameter</th>
+                          <th id="mandatory">Mandatory</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let param of viewProductCategoryDetails.specificationParametersDTOList
+                              | paginate
+                                : {
+                                    id: 'productDetailPageData',
+                                    itemsPerPage: productDeatilItemPerPage,
+                                    currentPage: productPageChargeDeatilList,
+                                    totalItems: productDeatiltotalRecords
+                                  };
+                            index as i
+                          "
+                        >
+                          <td>{{ param.paramName }}</td>
+                          <td>{{ param.isMandatory }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="pagination_Dropdown">
+                      <pagination-controls
+                        (pageChange)="pageChangedProductPlanMappingDetailList($event)"
+                        directionLinks="true"
+                        id="productDetailPageData"
+                        maxSize="10"
+                        nextLabel=""
+                        previousLabel=""
+                      ></pagination-controls>
+                      <div id="itemPerPageDropdown" style="margin-left: 5px">
+                        <p-dropdown
+                          [options]="pageLimitOptions"
+                          optionLabel="value"
+                          optionValue="value"
+                          (onChange)="TotalItemPerPageParameter($event)"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Input List Model -->
+<p-dialog
+  header="Specification List"
+  [(visible)]="showSpecificationListPopup"
+  [style]="{ width: '75vw' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body-location" style="height: 35vh">
+    <fieldset style="margin-top: 0.5rem">
+      <legend>Specification List</legend>
+      <div class="boxWhite">
+        <table [formGroup]="specificationListForm" style="width: 100%">
+          <td style="text-align: center; padding: 0 10px 0 0">
+            <input
+              type="text"
+              name="value"
+              class="form-control"
+              id="value"
+              placeholder="Enter value"
+              formControlName="value"
+            />
+            <div
+              class="error text-danger"
+              *ngIf="
+                addValueSubmit &&
+                specificationListForm.controls.value.errors &&
+                specificationListForm.controls.value.errors.maxlength
+              "
+            >
+              Allowed maximum 40 characters only.
+            </div>
+          </td>
+          <td style="text-align: center; padding: 0 10px 0 0">
+            <button
+              id="opencust"
+              type="button"
+              [disabled]="!specificationListForm.value.value"
+              (click)="addValue()"
+              class="btn btn-primary"
+              style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+            >
+              <i class="fa fa-plus-square"></i>
+            </button>
+          </td>
+        </table>
+
+        <table class="table coa-table" style="margin-top: 3rem">
+          <thead>
+            <tr>
+              <th style="text-align: center">Value</th>
+              <th style="text-align: center">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let row of specificationListArray.controls
+                  | paginate
+                    : {
+                        id: 'overChargeListFromArrayData',
+                        itemsPerPage: overChargeListItemPerPage,
+                        currentPage: currentPageoverChargeList,
+                        totalItems: overChargeListtotalRecords
+                      };
+                let index = index
+              "
+            >
+              <td>
+                <input
+                  [formControl]="row.get('value')"
+                  class="form-control"
+                  id="value"
+                  name="value"
+                  placeholder="Enter value"
+                  type="text"
+                />
+              </td>
+              <td style="text-align: center">
+                <span>
+                  <button
+                    class="approve-btn"
+                    id="deleteAtt"
+                    style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                    type="button"
+                    (click)="deleteValueFromArray(row, index)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </button>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br />
+      </div>
+    </fieldset>
+  </div>
+  <ng-template pTemplate="footer">
+    <button
+      *ngIf="!isFromList"
+      type="button"
+      class="btn btn-primary btn-sm"
+      (click)="saveSpecificationListData()"
+      [disabled]="specificationListArray.controls.length == 0"
+    >
+      Save
+    </button>
+    <button
+      *ngIf="isFromList"
+      type="button"
+      class="btn btn-primary btn-sm"
+      (click)="saveSpecificationListDataFromList()"
+      [disabled]="specificationListArray.controls.length == 0"
+    >
+      Save
+    </button>
+    <button
+      *ngIf="isFromList"
+      data-dismiss="modal"
+      class="btn btn-danger btn-sm"
+      type="button"
+      (click)="specificationListModelClose()"
+    >
+      Close
+    </button>
+    <button
+      *ngIf="!isFromList"
+      data-dismiss="modal"
+      class="btn btn-danger btn-sm"
+      type="button"
+      (click)="specificationModelClose()"
+    >
+      Close
+    </button>
+  </ng-template>
+</p-dialog>

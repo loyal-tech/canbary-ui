@@ -1,0 +1,16 @@
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #f7b206 !important ;
+}
+
+.description {
+  white-space: pre-line;
+}
+
+pre {
+  background-color: transparent; /* or the desired background color */
+  border: none;
+  outline: none;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: #726f6f;
+  font-size: 1.5rem;
+}

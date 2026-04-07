@@ -1,0 +1,4516 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Enterprise Lead Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchLeadM"
+            aria-expanded="false"
+            aria-controls="searchLeadM"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchLeadM" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="listView && (viewAccess || editAccess || closeAccess)">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <p-dropdown
+                [options]="searchOptionSelect"
+                optionValue="value"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                [(ngModel)]="searchOption"
+                (ngModelChange)="selSearchOption($event)"
+                placeholder="Select a search option"
+              >
+              </p-dropdown>
+            </div>
+            <!-- *ngIf="fieldEnable" -->
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'name'">
+              <input
+                id="namesearch"
+                type="text"
+                class="form-control"
+                [(ngModel)]="searchDeatil"
+                (keydown.enter)="searchLead()"
+                placeholder="Enter Customer Name"
+              />
+            </div>
+            <!-- *ngIf="fieldEnable" -->
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'mobile'">
+              <input
+                id="mobilesearch"
+                (keydown.enter)="searchLead()"
+                type="text"
+                class="form-control"
+                [(ngModel)]="searchDeatil"
+                placeholder="Enter Mobile"
+              />
+            </div>
+            <!-- *ngIf="fieldEnable" -->
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'serviceNames'">
+              <input
+                id="mobilesearch"
+                (keydown.enter)="searchLead()"
+                type="text"
+                class="form-control"
+                [(ngModel)]="searchDeatil"
+                placeholder="Enter Service Name"
+              />
+            </div>
+            <!-- *ngIf="fieldEnable" -->
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'createdBy'">
+              <p-dropdown
+                id="createdbysearch"
+                [options]="getStaffUsers"
+                optionValue="id"
+                optionLabel="firstname"
+                type="text"
+                [(ngModel)]="searchDeatil"
+                placeholder="Select Staff User"
+              ></p-dropdown>
+            </div>
+            <!-- *ngIf="fieldEnable" -->
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'lastUpdateOn'">
+              <!-- <input id="lastmodifiedonsearch" type="text" class="form-control" [(ngModel)]="searchDeatil"
+                                  placeholder="Select the date" /> -->
+              <p-calendar
+                inputId="date"
+                [numberOfMonths]="3"
+                [(ngModel)]="searchDeatil"
+                placeholder="Select the date"
+              >
+              </p-calendar>
+            </div>
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'status'">
+              <p-dropdown
+                id="leadstatussearch"
+                [options]="leadStatusOptions"
+                type="text"
+                [(ngModel)]="searchDeatil"
+                placeholder="Select Any Status"
+              ></p-dropdown>
+            </div>
+            <!-- *ngIf="fieldEnable" -->
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchLead()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchLead()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="!isLeadDetailOpen && (createView || listView)">
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: createView
+              }"
+            >
+              <a class="curson_pointer" (click)="checkExit('create')" *ngIf="createAccess">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Enterprise Lead</h5>
+              </a>
+            </div>
+          </div>
+
+          <div [ngClass]="isLeadDetailOpen ? 'col-md-3' : 'col-md-6'" class="pcol">
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: listView
+              }"
+            >
+              <a (click)="checkExit('list')" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5
+                  *ngIf="
+                    !isLeadDetailOpen &&
+                    (createView || listView) &&
+                    (viewAccess || editAccess || closeAccess)
+                  "
+                >
+                  Search Enterprise Lead
+                </h5>
+                <h5 *ngIf="isLeadDetailOpen">Home</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3 pcol" *ngIf="isLeadDetailOpen && auditTrailAccess">
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: openAuditTrailScreen
+              }"
+            >
+              <a (click)="auditTrailScreenOpen(leadId)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Audit Trail</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3 pcol" *ngIf="isLeadDetailOpen && leadStatusAccess">
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: openLeadStatusScreen
+              }"
+            >
+              <a (click)="viewLeadStatusPopupOpen(leadId)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Lead Status</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3 pcol" *ngIf="isLeadDetailOpen && leadNotesAccess">
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: openLeadNotesScreen
+              }"
+            >
+              <a (click)="leadNotesScreenOpen('', leadId)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Lead Notes</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-3 pcol" *ngIf="isLeadDetailOpen && circuitManagementAccess">
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: isServiceManagementOpen
+              }"
+            >
+              <a (click)="serviceManagementScreenOpen(leadId)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Circuit Management</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3 pcol" *ngIf="isLeadDetailOpen && quotationManagementAccess">
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: isQuotationDetailOpen
+              }"
+            >
+              <a (click)="quotationManagementScreenOpen(leadId)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Quotation Management</h5>
+              </a>
+            </div>
+          </div>
+          <div
+            class="col-md-3 pcol"
+            *ngIf="
+              myLead &&
+              myLead?.nextApproveStaffId === this.staffid &&
+              myLead?.leadStatus !== 'Converted' &&
+              isLeadDetailOpen &&
+              myFinalCheck
+            "
+          >
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: isLeadEdit
+              }"
+            >
+              <a class="curson_pointer" (click)="editLead(leadId, true)">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Approve & Convert Lead To CAF</h5>
+              </a>
+            </div>
+          </div>
+          <div
+            class="col-md-3 pcol"
+            *ngIf="
+              followUpAccess &&
+              myLead &&
+              myLead?.nextApproveStaffId === this.staffid &&
+              myLead?.leadStatus !== 'Converted' &&
+              myLead?.leadStatus !== 'Rejected' &&
+              isLeadDetailOpen
+            "
+          >
+            <div
+              class="dbox"
+              [ngClass]="{
+                activeSubMenu: openFollowUpSchedulling
+              }"
+            >
+              <a (click)="followUpScheduleScreenOpen(leadId)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Follow Up</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+        <!-- <div
+                class="col-md-3 pcol"
+                *ngIf="
+                  myLead &&
+                  myLead?.nextApproveStaffId === this.staffid &&
+                  myLead?.leadStatus !== 'Converted' &&
+                  isLeadDetailOpen &&
+                  !myFinalCheck
+                "
+              >
+                <div
+                  class="dbox"
+                  [ngClass]="{
+                    activeSubMenu: isLeadEdit,
+                    inactiveSubMenu: !isLeadEdit
+                  }"
+                >
+                  <a class="curson_pointer" (click)="editLead(leadId, false)">
+                    <img src="../../../assets/img/i01.png" style="width: 32px" />
+                    <h5>Manage Lead</h5>
+                  </a>
+                </div>
+              </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 col-sm-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title" *ngIf="!isLeadEdit && !myFinalCheck">Create a lead</h3>
+        <h3 class="panel-title" *ngIf="isLeadEdit && !myFinalCheck">Update a lead</h3>
+        <h3 class="panel-title" *ngIf="myFinalCheck">Approve & Convert Lead To CAF</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#leadDetails"
+            aria-expanded="false"
+            aria-controls="leadDetails"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="leadDetails" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="customerGroupForm" (keydown.enter)="$event.preventDefault()">
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>LeadNo *</label>
+                    <input
+                      disabled
+                      class="form-control"
+                      name="leadNo"
+                      id="leadNo"
+                      formControlName="leadNo"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.leadNo.errors
+                      }"
+                      placeholder="Enter the leadNo"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.leadNo.errors"
+                    >
+                      <div class="error text-danger">LeadNo is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Lead Category *</label>
+                    <p-dropdown
+                      [options]="leadCategoryist"
+                      formControlName="leadCategory"
+                      placeholder="Select Lead Category"
+                      optionLabel="label"
+                      optionValue="label"
+                      [filter]="true"
+                      id="leadCategory"
+                      filterBy="label"
+                      (onChange)="
+                        selectLeadCategory(
+                          customerGroupForm.controls.leadCategory.value,
+                          customerGroupForm.controls.mobile.value
+                        )
+                      "
+                      [disabled]="ifReadonlyExtingInput && isLeadEdit"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.leadCategory.errors
+                      }"
+                    >
+                    </p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.leadCategory.errors"
+                    >
+                      <div class="error text-danger">Lead Category is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Title {{ myFinalCheck ? "*" : "" }}</label>
+                    <!-- <label>Title</label> -->
+                    <p-dropdown
+                      [options]="selectTitile"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a title"
+                      formControlName="title"
+                      [disabled]="customerGroupForm.value.title && ifReadonlyExtingInput"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.title.errors"
+                    >
+                      <div class="error text-danger">Title is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>First Name *</label>
+                    <input
+                      id="firstname"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter First Name"
+                      formControlName="firstname"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.firstname.errors
+                      }"
+                      [readonly]="ifReadonlyExtingInput"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.firstname.errors"
+                    >
+                      <div class="error text-danger">First Name is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Last Name {{ myFinalCheck ? "*" : "" }}</label>
+                    <input
+                      id="lastname"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Last Name"
+                      formControlName="lastname"
+                      [readonly]="ifReadonlyExtingInput && customerGroupForm.value.lastname"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.lastname.errors"
+                    >
+                      <div class="error text-danger">Last Name is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Contact Person {{ myFinalCheck ? "*" : "" }}</label>
+                    <input
+                      id="contactperson"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Contact Person"
+                      formControlName="contactperson"
+                      [readonly]="ifReadonlyExtingInput && customerGroupForm.value.contactperson"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.contactperson.errors"
+                    >
+                      <div class="error text-danger">Contact person is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Service Area * {{ myFinalCheck ? "" : "" }}</label>
+
+                    <p-dropdown
+                      (onChange)="selServiceArea($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.serviceareaid.errors
+                      }"
+                      [options]="commondropdownService.serviceAreaList"
+                      filter="true"
+                      filterBy="name"
+                      formControlName="serviceareaid"
+                      optionLabel="name"
+                      optionValue="id"
+                      placeholder="Select a Servicearea"
+                      [disabled]="ifReadonlyExtingInput"
+                    ></p-dropdown>
+
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.serviceareaid.errors"
+                    >
+                      <div class="error text-danger">Service area is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" *ngIf="isBranchAvailable">
+                    <label for="branchId">Branch *</label>
+                    <p-dropdown
+                      [options]="branchData"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a Branch"
+                      formControlName="branchId"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.branchId.errors
+                      }"
+                      [disabled]="customerGroupForm.value.branchId && ifReadonlyExtingInput"
+                    >
+                    </p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.branchId.errors"
+                    >
+                      <div class="error text-danger">Branch Is required</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" *ngIf="!isBranchAvailable">
+                    <label>Partner *</label>
+
+                    <p-dropdown
+                      [disabled]="partnerId !== 1"
+                      [options]="partnerList"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a Partner"
+                      formControlName="partnerid"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.partnerid.errors
+                      }"
+                      [disabled]="ifReadonlyExtingInput"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.partnerid.errors"
+                    >
+                      <div class="error text-danger">Partner is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>CAF No.</label>
+                    <input
+                      id="cafno"
+                      min="0"
+                      class="form-control"
+                      placeholder="Enter CAF No"
+                      formControlName="cafno"
+                      [readonly]="ifReadonlyExtingInput && customerGroupForm.value.cafno"
+                    />
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>TIN/PAN</label>
+                    <input
+                      id="pan"
+                      type="text"
+                      min="0"
+                      class="form-control"
+                      placeholder="Enter TIN/PAN Number"
+                      formControlName="pan"
+                    />
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.pan.errors"
+                    >
+                      <div class="error text-danger">PAN is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Feasibility *</label>
+                    <p-dropdown
+                      name="feasibility"
+                      id="feasibility"
+                      [options]="feasibilityOptions"
+                      (ngModelChange)="
+                        selectFeasibility(customerGroupForm.controls.feasibility.value)
+                      "
+                      formControlName="feasibility"
+                      placeholder="Select the feasibility check..."
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.feasibility.errors
+                      }"
+                    >
+                    </p-dropdown>
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.feasibility.errors"
+                    >
+                      <div class="error text-danger">Lead Feasibility is required.</div>
+                    </div>
+
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Lead Source *</label>
+                    <p-dropdown
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.leadSourceId.errors
+                      }"
+                      [options]="leadSourceArr"
+                      filter="true"
+                      filterBy="leadSourceName"
+                      formControlName="leadSourceId"
+                      optionLabel="leadSourceName"
+                      optionValue="id"
+                      placeholder="Select a lead source"
+                      (onChange)="selectLeadSource($event.value)"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.leadSourceId.errors"
+                    >
+                      <div class="error text-danger">Lead Source is required.</div>
+                    </div>
+
+                    <div></div>
+                    <br />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Organisation</label>
+                    <input
+                      id="organisation"
+                      min="0"
+                      class="form-control"
+                      placeholder="Enter organisation"
+                      formControlName="organisation"
+                    />
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15">
+                    <label>Customer Type*</label>
+                    <p-dropdown
+                      [options]="CustomerTypeValue"
+                      filter="true"
+                      filterBy="label"
+                      formControlName="custlabel"
+                      optionLabel="label"
+                      optionValue="value"
+                      placeholder="Select a Customer Type"
+                      [disabled]="true"
+                    ></p-dropdown>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Nation</label>
+                    <p-dropdown
+                      [filter]="true"
+                      name="name"
+                      id="nation"
+                      optionValue="id"
+                      optionLabel="name"
+                      formControlName="nation"
+                      [options]="commondropdownService.countryListData"
+                      placeholder="Select a Nation"
+                    >
+                    </p-dropdown>
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Sales Representative</label>
+                    <p-dropdown
+                      [filter]="true"
+                      name="salesrepid"
+                      id="salesrepid"
+                      optionValue="id"
+                      optionLabel="fullName"
+                      formControlName="salesrepid"
+                      [options]="commondropdownService.BUFromStaffList"
+                      placeholder="Select a sales Representative"
+                    >
+                    </p-dropdown>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                    *ngIf="customerGroupForm.value.leadSourceId"
+                  >
+                    <label>Lead Sub Source</label>
+                    <p-dropdown
+                      *ngIf="!myViewFlag && leadSourceTitle === 'Customer'"
+                      [filter]="true"
+                      name="leadCustomerId"
+                      id="leadCustomerId"
+                      optionValue="id"
+                      optionLabel="firstname"
+                      formControlName="leadCustomerId"
+                      [options]="commondropdownService.customersFromSalesCRMS"
+                      placeholder="Select a lead sub source"
+                    >
+                    </p-dropdown>
+                    <p-dropdown
+                      *ngIf="!myViewFlag && leadSourceTitle === 'Branch'"
+                      [filter]="true"
+                      name="leadBranchId"
+                      id="leadBranchId"
+                      optionValue="id"
+                      optionLabel="name"
+                      formControlName="leadBranchId"
+                      [options]="commondropdownService.branchesFromSalesCRMS"
+                      placeholder="Select a lead sub source"
+                    >
+                    </p-dropdown>
+                    <p-dropdown
+                      *ngIf="!myViewFlag && leadSourceTitle === 'Partner'"
+                      [filter]="true"
+                      name="leadPartnerId"
+                      id="leadPartnerId"
+                      optionValue="id"
+                      optionLabel="name"
+                      formControlName="leadPartnerId"
+                      [options]="commondropdownService.partnersFromSalesCRMS"
+                      placeholder="Select a lead sub source"
+                    >
+                    </p-dropdown>
+                    <p-dropdown
+                      *ngIf="!myViewFlag && leadSourceTitle === 'Staff'"
+                      [filter]="true"
+                      filterBy="firstname"
+                      name="leadStaffId"
+                      id="leadStaffId"
+                      optionValue="id"
+                      formControlName="leadStaffId"
+                      [options]="commondropdownService.staffsFromSalesCRMS"
+                      placeholder="Select a lead sub source"
+                    >
+                      <ng-template let-item pTemplate="optionLabel">
+                        {{ item.firstname + " " + item.lastname }}
+                      </ng-template>
+                      <ng-template let-item pTemplate="selectedItem">
+                        {{ item.firstname + " " + item.lastname }}
+                      </ng-template>
+                    </p-dropdown>
+                    <p-dropdown
+                      *ngIf="!myViewFlag && leadSourceTitle === 'Outlet/ SA'"
+                      [filter]="true"
+                      name="leadServiceAreaId"
+                      id="leadServiceAreaId"
+                      optionValue="id"
+                      optionLabel="name"
+                      formControlName="leadServiceAreaId"
+                      [options]="commondropdownService.serviceAreasFromSalesCRMS"
+                      placeholder="Select a lead sub source"
+                    >
+                    </p-dropdown>
+                    <p-dropdown
+                      *ngIf="!myViewFlag && leadSourceTitle === 'Agent'"
+                      [filter]="true"
+                      name="leadAgentId"
+                      id="leadAgentId"
+                      optionValue="id"
+                      optionLabel="name"
+                      formControlName="leadAgentId"
+                      [options]="agentArr"
+                      placeholder="Select a lead sub source"
+                    >
+                    </p-dropdown>
+                    <p-dropdown
+                      *ngIf="myViewFlag"
+                      [filter]="true"
+                      name="leadSubSourceId"
+                      id="leadSubSourceName"
+                      optionValue="id"
+                      optionLabel="name"
+                      formControlName="leadSubSourceId"
+                      [options]="leadSubSourceArr"
+                      placeholder="Select a lead sub source"
+                    >
+                    </p-dropdown>
+
+                    <div></div>
+                    <br />
+                  </div>
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                    *ngIf="customerGroupForm.controls.feasibility.value === 'N/A'"
+                  >
+                    <label>Feasibility Remark *</label>
+                    <input
+                      class="form-control"
+                      name="feasibilityRemark"
+                      id="feasibilityRemark"
+                      formControlName="feasibilityRemark"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && customerGroupForm.controls.feasibilityRemark.errors
+                      }"
+                      placeholder="Enter the feasibility remark..."
+                    />
+                    <div></div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.feasibilityRemark.errors"
+                    >
+                      <div class="error text-danger">Feasibility Remark is required.</div>
+                    </div>
+
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Contact Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Mobile *</label>
+                    <div style="display: flex">
+                      <div style="width: 30%">
+                        <p-dropdown
+                          [filter]="true"
+                          id="countryCode"
+                          [filter]="true"
+                          [options]="countries"
+                          optionLabel="dial_code"
+                          optionValue="dial_code"
+                          formControlName="countryCode"
+                          placeholder="+977"
+                          [disabled]="ifReadonlyExtingInput"
+                        ></p-dropdown>
+                      </div>
+                      <div style="width: 70%">
+                        <input
+                          id="mobile"
+                          type="number"
+                          class="form-control"
+                          placeholder="Enter Mobile (Press 'Tab' to confirm for any duplications)"
+                          formControlName="mobile"
+                          (keydown.tab)="onKeymobilelength(customerGroupForm.controls.mobile.value)"
+                          (keyup)="onKeymobilelength(customerGroupForm.controls.mobile.value)"
+                          [ngClass]="{
+                            'is-invalid': submitted && customerGroupForm.controls.mobile.errors
+                          }"
+                          [readonly]="ifReadonlyExtingInput"
+                        />
+                      </div>
+                    </div>
+                    <div style="display: flex">
+                      <div style="width: 30%"></div>
+                      <div style="width: 70%">
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && customerGroupForm.controls.mobile.errors"
+                        >
+                          <div class="error text-danger">Mobile is required</div>
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            !submitted &&
+                            customerGroupForm.controls.mobile.errors &&
+                            customerGroupForm.controls.mobile.value
+                          "
+                        >
+                          <div class="error text-danger">Please enter 10-digit mobile no</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Telephone</label>
+                    <input
+                      id="phone"
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      placeholder="Enter Telephone "
+                      formControlName="phone"
+                      [readonly]="ifReadonlyExtingInput && customerGroupForm.value.phone"
+                    />
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>E-Mail {{ myFinalCheck ? "*" : "" }}</label>
+                    <input
+                      id="email"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Email"
+                      formControlName="email"
+                      [readonly]="ifReadonlyExtingInput && customerGroupForm.value.email"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.email.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.email.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && customerGroupForm.controls.email.errors.required"
+                      >
+                        Email is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && customerGroupForm.controls.email.errors.pattern"
+                      >
+                        Email is not valid.
+                      </div>
+                    </div>
+
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Additional E-Mail</label>
+                    <input
+                      id="secondaryEmail"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Additional E-Mail"
+                      formControlName="secondaryEmail"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.secondaryEmail.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.secondaryEmail.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && customerGroupForm.controls.secondaryEmail.errors.pattern
+                        "
+                      >
+                        Email is not valid.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Fax</label>
+                    <input
+                      id="fax"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter fax"
+                      formControlName="fax"
+                    />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Skype ID/IM ID</label>
+                    <input
+                      id="skypeid_imid"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Skype/IM ID"
+                      formControlName="skypeid_imid"
+                    />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Designation</label>
+                    <input
+                      id="designation"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Designation"
+                      formControlName="designation"
+                    />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Network Location Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <label>Reseller</label>
+                    <p-dropdown
+                      id="reseller"
+                      [options]="commondropdownService.resellerDropDown"
+                      placeholder="Select Reseller"
+                      optionLabel="resellerName"
+                      optionValue="resellerId"
+                      formControlName="resellerid"
+                    ></p-dropdown>
+                  </div>
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Associated Level</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.locationDetailsData"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Associated Level"
+                        formControlName="associatedLevel"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Location Level 1</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.locationDetailsData"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Location Level 1"
+                        formControlName="locationlevel1"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Location Level 2</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.locationDetailsData"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Location Level 2"
+                        formControlName="locationlevel2"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Location Level 3</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.locationDetailsData"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Location Level 3"
+                        formControlName="locationlevel3"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Location Level 4</label>
+                      <p-dropdown
+                        [options]="this.commondropdownService.locationDetailsData"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Location Level 4"
+                        formControlName="locationlevel4"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>POP</label>
+                    <p-dropdown
+                      [options]="commondropdownService.popListFromSalesCrms"
+                      filter="true"
+                      filterBy="popName"
+                      formControlName="popManagementId"
+                      optionLabel="popName"
+                      optionValue="id"
+                      placeholder="Select a POP"
+                      [disabled]="ifReadonlyExtingInput && customerGroupForm.value.popManagementId"
+                    ></p-dropdown>
+
+                    <div></div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- CAF Basic Details -->
+
+            <fieldset style="margin-top: 1.5rem">
+              <legend>Basic CAF Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Username {{ myFinalCheck ? "*" : "" }}</label>
+                    <input
+                      id="username"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Username"
+                      formControlName="username"
+                      (keydown.Tab)="onKey(customerGroupForm.controls.username.value)"
+                      (change)="validateUsername(customerGroupForm.controls.username.value)"
+                    />
+
+                    <!-- [readonly]="customerGroupForm.value.username && ifReadonlyExtingInput" -->
+                    <div class="errorWrap text-info">
+                      <div class="error text-info">
+                        Press "<b><i>Tab</i></b
+                        >" to check the existance of registered prepaid cust.
+                      </div>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.username.errors"
+                    >
+                      <div class="error text-danger">Username is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Password {{ myFinalCheck ? "*" : "" }}</label>
+                    <div class="form-control displayflex">
+                      <div style="width: 95%">
+                        <input
+                          *ngIf="customerGroupForm.value.password && ifReadonlyExtingInput"
+                          id="password"
+                          [type]="_passwordType"
+                          class="inputPassword"
+                          placeholder="Enter Password"
+                          formControlName="password"
+                        />
+                        <input
+                          id="password"
+                          [type]="_passwordType"
+                          class="inputPassword"
+                          placeholder="Enter Password"
+                          formControlName="password"
+                          *ngIf="!ifReadonlyExtingInput"
+                        />
+                      </div>
+                      <div style="width: 5%">
+                        <div *ngIf="showPassword">
+                          <i
+                            class="fa fa-eye"
+                            (click)="showPassword = false; _passwordType = 'password'"
+                          ></i>
+                        </div>
+                        <div *ngIf="!showPassword">
+                          <i
+                            class="fa fa-eye-slash"
+                            (click)="showPassword = true; _passwordType = 'text'"
+                          ></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.password.errors"
+                    >
+                      <div class="error text-danger">Password is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Calendar Type {{ myFinalCheck ? "*" : "" }}</label>
+                    <p-dropdown
+                      [options]="celendarTypeData"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Calendar Type"
+                      formControlName="calendarType"
+                      [disabled]="ifReadonlyExtingInput"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.calendarType.errors"
+                    >
+                      <div class="error text-danger">Calender type is required.</div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <label>Lead Customer Type *</label>
+                    <p-dropdown
+                      [filter]="true"
+                      [options]="leadcustTypeList"
+                      optionValue="value"
+                      optionLabel="label"
+                      formControlName="custtype"
+                      placeholder="Select Customer Type"
+                      id="value"
+                      (onChange)="custTypeEvent($event.value)"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.custtype.errors
+                      }"
+                      [disabled]="
+                        (ifReadonlyExtingInput && customerGroupForm.value.custtype) || isLeadEdit
+                      "
+                    >
+                    </p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.custtype.errors"
+                    >
+                      <div class="error text-danger">Customer Type is required.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-15"
+                    *ngIf="customerGroupForm.controls.custtype.value === 'Postpaid'"
+                  >
+                    <label>Bill Day *</label>
+                    <p-dropdown
+                      [options]="days"
+                      optionValue="label"
+                      optionLabel="label"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Day"
+                      formControlName="billday"
+                      [ngClass]="{
+                        'is-invalid': submitted && customerGroupForm.controls.billday.errors
+                      }"
+                    ></p-dropdown>
+
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && customerGroupForm.controls.billday.errors"
+                    >
+                      <div class="error text-danger">Bill Day is required.</div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                    *ngIf="ifReadonlyExtingInput || this.customerGroupForm.value.parentCustomerId"
+                  >
+                    <label>Parent Customer</label>
+                    <p-dropdown
+                      [options]="commondropdownService.customerAllList"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      (onSelect)="getParentCust($event)"
+                      [showClear]="true"
+                      placeholder="Select a Parent Customer"
+                      formControlName="parentCustomerId"
+                      styleClass="disableDropdown"
+                      [disabled]="true"
+                    ></p-dropdown>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      style="
+                        border-radius: 5px;
+                        padding: 5px 10px;
+                        line-height: 1.5;
+                        margin-left: 10px;
+                      "
+                      type="button"
+                      (click)="modalOpenParentCustomer('parent')"
+                      [disabled]="
+                        ifReadonlyExtingInput && this.customerGroupForm.value.parentCustomerId
+                      "
+                    >
+                      <i class="fa fa-plus-square"></i>
+                    </button>
+                    <button
+                      class="btn btn-danger"
+                      style="
+                        border-radius: 5px;
+                        padding: 5px 10px;
+                        line-height: 1.5;
+                        margin-left: 10px;
+                      "
+                      (click)="removeSelParentCust('parent')"
+                    >
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                    *ngIf="this.customerGroupForm.value.parentCustomerId"
+                  >
+                    <label>Parent Experience*</label>
+                    <p-dropdown
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && customerGroupForm.controls.parentExperience.errors
+                      }"
+                      [options]="parentExperience"
+                      formControlName="parentExperience"
+                      optionLabel="label"
+                      optionValue="value"
+                      (onSelect)="parentExperienceSelect($event)"
+                      placeholder="Select a Parent Expirence"
+                    ></p-dropdown>
+                    <div
+                      *ngIf="submitted && customerGroupForm.controls.parentExperience.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div
+                        *ngIf="
+                          submitted &&
+                          customerGroupForm.controls.parentExperience.errors.required &&
+                          !isParantExpirenceEdit
+                        "
+                        class="error text-danger"
+                      >
+                        Parent Expirence is required.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                    *ngIf="this.customerGroupForm.value.parentCustomerId"
+                  >
+                    <label>Invoice Type *</label>
+                    <p-dropdown
+                      [options]="invoiceType"
+                      optionValue="value"
+                      optionLabel="label"
+                      placeholder="Select a Invoice Type"
+                      formControlName="invoiceType"
+                    >
+                    </p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Present Address Details -->
+
+            <fieldset>
+              <legend>Present Address Details</legend>
+              <div class="boxWhite">
+                <div [formGroup]="presentGroupForm">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>Landmark {{ myFinalCheck ? "*" : "" }}</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Enter Landmark"
+                        name="landmark"
+                        id="landmark"
+                        formControlName="landmark"
+                        [readonly]="ifReadonlyExtingInput && presentGroupForm.value.landmark"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && presentGroupForm.controls.landmark.errors"
+                      >
+                        <div class="error text-danger">Landmark is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>{{ pincodeTitle }} {{ myFinalCheck ? "*" : "" }}</label>
+                      <p-dropdown
+                        *ngIf="ifReadonlyExtingInput && presentGroupForm.value.pincodeId"
+                        [options]="pincodeDD"
+                        optionValue="pincodeid"
+                        optionLabel="pincode"
+                        filter="true"
+                        filterBy="pincode"
+                        placeholder="Select a {{ pincodeTitle }}"
+                        formControlName="pincodeId"
+                        (onChange)="selectPINCODEChange($event, 'present')"
+                        [disabled]="true"
+                      ></p-dropdown>
+                      <p-dropdown
+                        *ngIf="!ifReadonlyExtingInput"
+                        [options]="pincodeDD"
+                        optionValue="pincodeid"
+                        optionLabel="pincode"
+                        filter="true"
+                        filterBy="pincode"
+                        placeholder="Select a {{ pincodeTitle }}"
+                        formControlName="pincodeId"
+                        (onChange)="selectPINCODEChange($event, 'present')"
+                        [disabled]="serviceareaCheck"
+                      ></p-dropdown>
+
+                      <div *ngIf="serviceareaCheck" class="errorWrap text-danger">
+                        <div class="error text-danger">Please select Service Area first!</div>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && presentGroupForm.controls.pincodeId.errors"
+                      >
+                        <div class="error text-danger">{{ pincodeTitle }} is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>{{ areaTitle }} {{ myFinalCheck ? "*" : "" }}</label>
+                      <!-- <select class="form-control" style="width: 100%" name="areaId" id="areaId"
+                                                formControlName="areaId" (change)="selectAreaChange($event, 'present')">
+                                                <option value="">Select {{ areaTitle }}</option>
+                                                <option *ngFor="let item of "
+                                                    value="{{ item.id }}">
+                                                    {{ item.name }}
+                                                </option>
+                                            </select> -->
+                      <p-dropdown
+                        *ngIf="ifReadonlyExtingInput && presentGroupForm.value.pincodeId"
+                        [options]="AreaListDD"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="areaId"
+                        placeholder="Select a {{ areaTitle }}"
+                        formControlName="areaId"
+                        (onChange)="selectAreaChange($event, 'present')"
+                        [disabled]="!AreaListDD || AreaListDD.length === 0"
+                      ></p-dropdown>
+                      <p-dropdown
+                        *ngIf="!ifReadonlyExtingInput"
+                        [options]="AreaListDD"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="areaId"
+                        placeholder="Select a {{ areaTitle }}"
+                        formControlName="areaId"
+                        (onChange)="selectAreaChange($event, 'present')"
+                        [disabled]="!AreaListDD || AreaListDD.length === 0"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && presentGroupForm.controls.areaId.errors"
+                      >
+                        <div class="error text-danger">{{ areaTitle }} is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>{{ cityTitle }} {{ myFinalCheck ? "*" : "" }}</label>
+                      <select
+                        class="form-control"
+                        style="width: 100%"
+                        name="cityId"
+                        id="cityId"
+                        formControlName="cityId"
+                        disabled
+                      >
+                        <option value="">Select {{ cityTitle }}</option>
+                        <option
+                          *ngFor="let item of commondropdownService.cityListData"
+                          value="{{ item.id }}"
+                        >
+                          {{ item.name }}
+                        </option>
+                      </select>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && presentGroupForm.controls.cityId.errors"
+                      >
+                        <div class="error text-danger">{{ cityTitle }} is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>{{ stateTitle }} {{ myFinalCheck ? "*" : "" }}</label>
+                      <select
+                        class="form-control"
+                        style="width: 100%"
+                        name="stateId"
+                        id="stateId"
+                        formControlName="stateId"
+                        disabled
+                      >
+                        <option value="">Select {{ stateTitle }}</option>
+                        <option
+                          *ngFor="let item of commondropdownService.stateListData"
+                          value="{{ item.id }}"
+                        >
+                          {{ item.name }}
+                        </option>
+                      </select>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && presentGroupForm.controls.stateId.errors"
+                      >
+                        <div class="error text-danger">{{ stateTitle }} is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>{{ countryTitle }} {{ myFinalCheck ? "*" : "" }}</label>
+                      <select
+                        class="form-control"
+                        style="width: 100%"
+                        name="countryId"
+                        id="countryId"
+                        formControlName="countryId"
+                        disabled
+                      >
+                        <option value="">Select {{ countryTitle }}</option>
+                        <option
+                          *ngFor="let item of commondropdownService.countryListData"
+                          value="{{ item.id }}"
+                        >
+                          {{ item.name }}
+                        </option>
+                      </select>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && presentGroupForm.controls.countryId.errors"
+                      >
+                        <div class="error text-danger">{{ countryTitle }} is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>Street Name</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Enter Street Name"
+                        name="streetName"
+                        id="streetName"
+                        formControlName="streetName"
+                        [readonly]="ifReadonlyExtingInput && presentGroupForm.value.streetName"
+                      />
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                      <label>House No</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Enter House No"
+                        name="houseNo"
+                        id="houseNo"
+                        formControlName="houseNo"
+                        [readonly]="ifReadonlyExtingInput && presentGroupForm.value.houseNo"
+                      />
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Payment Address Details -->
+
+            <fieldset>
+              <legend>Payment Address Details</legend>
+              <div class="boxWhite">
+                <div class="form-group form-check">
+                  <input
+                    type="checkbox"
+                    id="acceptTerms"
+                    class="form-check-input"
+                    [checked]="presentCheckForPayment"
+                    (change)="samepresentAddress($event, 'payment')"
+                  />
+                  <label for="acceptTerms" class="form-check-label" style="margin-left: 1rem">
+                    Same as a present address
+                  </label>
+                </div>
+                <div class="row" [formGroup]="paymentGroupForm">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>Landmark</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Enter Landmark"
+                      name="landmark"
+                      id="landmark"
+                      formControlName="landmark"
+                      [readonly]="ifReadonlyExtingInput && paymentGroupForm.value.landmark"
+                    />
+                  </div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>{{ pincodeTitle }}</label>
+
+                    <p-dropdown
+                      [options]="pincodeDD"
+                      optionValue="pincodeid"
+                      optionLabel="pincode"
+                      filter="true"
+                      filterBy="pincode"
+                      placeholder="Select a {{ pincodeTitle }}"
+                      formControlName="pincodeId"
+                      (onChange)="selectPINCODEChange($event, 'payment')"
+                      [readonly]="ifReadonlyExtingInput && paymentGroupForm.value.pincodeId"
+                    ></p-dropdown>
+                    <div></div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>{{ areaTitle }}</label>
+                    <p-dropdown
+                      [options]="paymentareaAvailableList"
+                      *ngIf="selectAreaListPayment"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a {{ areaTitle }}"
+                      formControlName="areaId"
+                      (onChange)="selectAreaChange($event, 'payment')"
+                      [disabled]="ifReadonlyExtingInput && paymentGroupForm.value.pincodeId"
+                    ></p-dropdown>
+                    <div></div>
+                    <p-dropdown
+                      *ngIf="!selectAreaListPayment"
+                      [options]="AreaListDD"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="name"
+                      placeholder="Select a {{ areaTitle }}"
+                      formControlName="areaId"
+                      (onChange)="selectAreaChange($event, 'payment')"
+                      [disabled]="ifReadonlyExtingInput && paymentGroupForm.value.pincodeId"
+                    ></p-dropdown>
+                    <div></div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>{{ cityTitle }}</label>
+                    <select
+                      class="form-control"
+                      style="width: 100%"
+                      name="cityId"
+                      id="cityId"
+                      formControlName="cityId"
+                      disabled
+                    >
+                      <option value="">Select {{ cityTitle }}</option>
+                      <option
+                        *ngFor="let item of commondropdownService.cityListData"
+                        value="{{ item.id }}"
+                      >
+                        {{ item.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>{{ stateTitle }}</label>
+                    <select
+                      class="form-control"
+                      style="width: 100%"
+                      name="stateId"
+                      id="stateId"
+                      formControlName="stateId"
+                      disabled
+                    >
+                      <option value="">Select {{ stateTitle }}</option>
+                      <option
+                        *ngFor="let item of commondropdownService.stateListData"
+                        value="{{ item.id }}"
+                      >
+                        {{ item.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>{{ countryTitle }}</label>
+                    <select
+                      class="form-control"
+                      style="width: 100%"
+                      name="countryId"
+                      id="countryId"
+                      formControlName="countryId"
+                      disabled
+                    >
+                      <option value="">Select {{ countryTitle }}</option>
+                      <option
+                        *ngFor="let item of commondropdownService.countryListData"
+                        value="{{ item.id }}"
+                      >
+                        {{ item.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>Street Name</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Enter Street Name"
+                      name="streetName"
+                      id="streetName"
+                      formControlName="streetName"
+                    />
+                    <br />
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 top">
+                    <label>House No</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Enter House No"
+                      name="houseNo"
+                      id="houseNo"
+                      formControlName="houseNo"
+                    />
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Save and Edit Button -->
+            <div class="addUpdateBtn" style="margin-top: 3.5rem">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="!myFinalCheck && !isLeadEdit && createAccess"
+                id="submit"
+                (click)="addEditLead('', '')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Lead
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="!myFinalCheck && isLeadEdit && editAccess"
+                id="submit"
+                (click)="addEditLead(customerGroupForm.controls.id.value, '')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Lead
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="myFinalCheck && isLeadEdit && editAccess"
+                id="submit"
+                (click)="leadToCAFConversion()"
+              >
+                <i class="fa fa-check-circle"></i>
+                Approve & Convert Lead To CAF
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Follow up schedulling screen Start -->
+
+<div class="row" *ngIf="openFollowUpSchedulling">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="'displayflex">
+          <div class="panel-title">Follow Up List</div>
+        </div>
+        <div class="right" *ngIf="scheduleFollowUpAccess">
+          <button
+            class="btn btn-primary statusbtn"
+            style="
+              padding: 12px;
+              margin-left: 5px;
+              background-color: #f7b206;
+              border: none;
+              outline: none;
+            "
+            (click)="scheduleFollowupPopupOpen()"
+          >
+            <i class="fa fa-calendar" style="font-size: 19px"></i>
+            &nbsp; Schedule Follow Up
+          </button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 text-center" *ngIf="followUpList.length === 0">
+            No Records Found
+          </div>
+          <div class="col-lg-12 col-md-12" *ngIf="followUpList.length > 0">
+            <div [id]="tableWrapper">
+              <div [id]="scrollId">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>FollowUp Name</th>
+                      <th>FollowUp Date & Time</th>
+                      <th>Remarks</th>
+                      <th>Status</th>
+                      <th
+                        *ngIf="
+                          rescheduleFollowUpAccess ||
+                          closeFollowUpAccess ||
+                          remarkFollowUpAccess ||
+                          callAccess
+                        "
+                      >
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngFor="let followUpDetails of followUpList">
+                      <tr
+                        [ngStyle]="{
+                          'background-color': checkFollowUpDatetimeOutDate(followUpDetails)
+                            ? '#ffff0096'
+                            : ''
+                        }"
+                      >
+                        <td>{{ followUpDetails?.followUpName }}</td>
+                        <td>
+                          {{ followUpDetails?.followUpDatetime | date: "dd/MM/yyyy HH:mm:ss" }}
+                        </td>
+                        <td *ngIf="followUpDetails?.remarks != 'null'">
+                          {{ followUpDetails?.remarks }}
+                        </td>
+                        <td *ngIf="followUpDetails?.remarks == 'null'">-</td>
+                        <td>
+                          <span
+                            *ngIf="
+                              followUpDetails?.status == 'Closed' ||
+                              followUpDetails?.status == 'closed'
+                            "
+                            class="badge badge-info"
+                            >Closed</span
+                          >
+                          <span
+                            *ngIf="
+                              followUpDetails?.status == 'Pending' ||
+                              followUpDetails?.status == 'pending'
+                            "
+                            class="badge badge-danger"
+                            >Pending</span
+                          >
+                          <span
+                            *ngIf="
+                              followUpDetails?.status == 'ReSchedule' ||
+                              followUpDetails?.status == 'reschedule'
+                            "
+                            class="badge badge-info"
+                            >ReSchedule</span
+                          >
+                        </td>
+                        <td
+                          class="btnAction"
+                          *ngIf="
+                            rescheduleFollowUpAccess ||
+                            closeFollowUpAccess ||
+                            remarkFollowUpAccess ||
+                            callAccess
+                          "
+                        >
+                          <button
+                            *ngIf="rescheduleFollowUpAccess"
+                            [disabled]="
+                              this.staffid != this.leadMasterObj?.nextApproveStaffId ||
+                              followUpDetails?.status == 'Closed' ||
+                              followUpDetails?.status == 'closed'
+                            "
+                            type="button"
+                            class="approve-btn"
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                            "
+                            title="Reschedule FollowUp"
+                            (click)="rescheduleFollowUp(followUpDetails)"
+                          >
+                            <img
+                              style="width: 25px; height: 25px"
+                              src="assets/img/D_Extend-Expiry-Date_Y.png"
+                            />
+                          </button>
+                          <button
+                            *ngIf="closeFollowUpAccess"
+                            [disabled]="
+                              this.staffid != this.leadMasterObj?.nextApproveStaffId ||
+                              followUpDetails?.status == 'Closed' ||
+                              followUpDetails?.status == 'closed'
+                            "
+                            type="button"
+                            class="approve-btn"
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                            "
+                            title="Close FollowUp"
+                            (click)="closeFollowUp(followUpDetails)"
+                          >
+                            <img style="width: 25px; height: 25px" src="assets/img/reject.jpg" />
+                          </button>
+                          <button
+                            *ngIf="remarkFollowUpAccess"
+                            type="button"
+                            class="approve-btn"
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                            "
+                            title="Remark FollowUp"
+                            (click)="remarkFollowUp(followUpDetails)"
+                          >
+                            <img style="width: 25px; height: 25px" src="assets/img/icons-03.png" />
+                          </button>
+                          <button
+                            *ngIf="callAccess"
+                            type="button"
+                            class="approve-btn"
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                            "
+                            title="Call"
+                            (click)="makeACall()"
+                          >
+                            <img
+                              style="width: 25px; height: 25px"
+                              src="assets/img/phone-icon.png"
+                            />
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Follow up schedulling screen end -->
+
+<!-- Audit Trail screen Start -->
+
+<div class="row" *ngIf="openAuditTrailScreen">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="panel-title">Audit Trail List</div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <div [id]="tableWrapperAudit">
+                <div [id]="scrollIdAudit">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Created On</th>
+                        <th>Action</th>
+                        <th>Log</th>
+                        <th>Staff Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let leadAudit of leadAuditList">
+                        <td>{{ leadAudit?.createdOn | date: "dd/MM/yyyy HH:mm:ss" }}</td>
+                        <td>{{ leadAudit?.auditName }}</td>
+                        <td>{{ leadAudit?.name }}</td>
+                        <td>{{ leadAudit?.staffName }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Trial screen end -->
+
+<!-- View Lead Details Grid -->
+<div class="row" *ngIf="listView">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Enterprise Lead List</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#leadList"
+            aria-expanded="false"
+            aria-controls="leadList"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="leadList" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive" *ngIf="viewAccess || editAccess || closeAccess">
+          <div class="row">
+            <div class="col-lg-12 col-md-12" *ngIf="leadListData?.length > 0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th width="14%">Customer Name</th>
+                    <th width="13%">Mobile Number</th>
+                    <th width="10%">Lead Source</th>
+                    <th width="18%">Lead Sub Source</th>
+                    <th width="14%">Status</th>
+                    <th width="18%">Assignee Name</th>
+                    <th width="14%">Converted Date</th>
+                    <th width="14%">Converted By</th>
+                    <th width="28%" *ngIf="editAccess || closeAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of leadListData
+                        | paginate
+                          : {
+                              id: 'leadListpageData',
+                              itemsPerPage: leadListdataitemsPerPage,
+                              currentPage: currentPageLeadListdata,
+                              totalItems: leadListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td *ngIf="data.firstname || data.lastname">
+                      <a
+                        href="javascript:void(0)"
+                        style="color: #f7b206"
+                        (click)="leadDetailOpen(data.id)"
+                      >
+                        {{ data.title }} {{ data.firstname }} {{ data.lastname }}
+                      </a>
+                    </td>
+                    <td *ngIf="!data.firstname && !data.lastname">-</td>
+                    <td *ngIf="data.mobile">{{ data.mobile }}</td>
+                    <td *ngIf="!data.mobile">-</td>
+
+                    <td *ngIf="data.leadSourceName">{{ data.leadSourceName }}</td>
+                    <td *ngIf="!data.leadSourceName">-</td>
+
+                    <td *ngIf="data.leadSubSourceId">{{ data.leadSubSourceName }}</td>
+                    <td *ngIf="data.leadAgentId">{{ data.leadAgentName }}</td>
+                    <td *ngIf="data.leadBranchId">{{ data.leadBranchName }}</td>
+                    <td *ngIf="data.leadCustomerId">{{ data.leadCustomerName }}</td>
+                    <td *ngIf="data.leadPartnerId">{{ data.leadPartnerName }}</td>
+                    <td *ngIf="data.leadServiceAreaId">{{ data.leadServiceAreaName }}</td>
+                    <td *ngIf="data.leadStaffId && !data.leadSubSourceId && !data.leadPartnerId">
+                      {{ data.leadStaffName }}
+                    </td>
+                    <td
+                      *ngIf="
+                        !data.leadSubSourceId &&
+                        !data.leadAgentId &&
+                        !data.leadBranchId &&
+                        !data.leadCustomerId &&
+                        !data.leadPartnerId &&
+                        !data.leadServiceAreaId &&
+                        !data.leadStaffId
+                      "
+                    >
+                      -
+                    </td>
+
+                    <td *ngIf="data.leadStatus === 'Inquiry'">
+                      <span class="badge badge-success">{{ data.leadStatus }}</span>
+                    </td>
+                    <td *ngIf="data.leadStatus === 'Rejected'">
+                      <span class="badge badge-danger">{{ data.leadStatus }}</span>
+                    </td>
+                    <td *ngIf="data.leadStatus === 'Re-Inquiry'">
+                      <span class="badge badge-info">{{ data.leadStatus }}</span>
+                    </td>
+                    <td *ngIf="data.leadStatus === 'Converted'">
+                      <span class="badge badge-success">{{ data.leadStatus }}</span>
+                    </td>
+                    <td *ngIf="!data.leadStatus">-</td>
+                    <td *ngIf="data.assigneeName">{{ data.assigneeName }}</td>
+                    <td
+                      *ngIf="
+                        !data.assigneeName &&
+                        (data.leadStatus === 'Inquiry' || data.leadStatus === 'Re-Inquiry')
+                      "
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Lead Assignee process is running. Please wait for few seconds and refresh the lead data and try again."
+                    >
+                      In Progress
+                    </td>
+                    <td
+                      *ngIf="
+                        !data.assigneeName &&
+                        (data.leadStatus === 'Converted' || data.leadStatus === 'Rejected')
+                      "
+                    >
+                      -
+                    </td>
+                    <td *ngIf="!data.cafConvertedDate">-</td>
+                    <td *ngIf="data.cafConvertedDate">{{ data.cafConvertedDate }}</td>
+                    <td *ngIf="!data.cafCovertedStaffName">-</td>
+                    <td *ngIf="data.cafCovertedStaffName">{{ data.cafCovertedStaffName }}</td>
+                    <td
+                      class="btnAction"
+                      *ngIf="
+                        editAccess ||
+                        closeAccess ||
+                        uploadAccess ||
+                        leadNotesAccess ||
+                        leadStatusAccess ||
+                        reassignAccess
+                      "
+                    >
+                      <button
+                        *ngIf="leadNotesAccess"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        aria-label="Add Notes"
+                        id=" addNotes"
+                        (click)="addNotesSetFunction(data.id)"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Add Notes"
+                      >
+                        <img src="assets/img/icons-03.png" />
+                      </button>
+
+                      <button
+                        *ngIf="editAccess"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        aria-label="Edit Lead"
+                        id="edit-button"
+                        [disabled]="
+                          !(this.staffid === data.nextApproveStaffId) ||
+                          data.leadStatus === 'Converted' ||
+                          data.leadStatus === 'Rejected'
+                        "
+                        (click)="editLead(data.id, false)"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Manage Lead"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </button>
+                      <!-- <button
+                          *ngIf="deleteAccess"
+                          style="
+                            border: none;
+                            background: transparent;
+                            padding: 0;
+                            margin-right: 3px;
+                            cursor: pointer;
+                          "
+                          aria-label="Delete Lead"
+                          id="delete-button"
+                          [disabled]="
+                            data.leadStatus === 'Converted' ||
+                            !(this.staffid === data.nextApproveStaffId)
+                          "
+                          (click)="deleteConfirmonLeadData(data.id)"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="Delete Lead"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </button> -->
+                      <button
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        type="button"
+                        title="Pick"
+                        [disabled]="
+                          (data.nextApproveStaffId != null &&
+                            (data.leadStatus !== 'Inquiry' || data.leadStatus !== 'Re-Inquiry')) ||
+                          (data.nextApproveStaffId == null && data.leadStatus === 'Rejected')
+                        "
+                        (click)="pickModalOpen(data)"
+                      >
+                        <img src="assets/img/17_Pick-ticket-to-resolve_Y.png" />
+                      </button>
+                      <button
+                        *ngIf="editAccess && data.nextApproveStaffId"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        aria-label="Approve Lead Workflow"
+                        id="approveLead"
+                        [disabled]="
+                          this.staffid != data.nextApproveStaffId ||
+                          data.leadStatus === 'Rejected' ||
+                          data.leadStatus === 'Converted'
+                        "
+                        (click)="approveOrRejectLeadPopup(data, 'Approve')"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Approve Lead Workflow"
+                      >
+                        <img src="assets/img/assign.jpg" />
+                      </button>
+
+                      <button
+                        *ngIf="editAccess && data.nextApproveStaffId"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        aria-label="Reject Lead Workflow"
+                        id="rejectLead"
+                        [disabled]="
+                          !(this.staffid === data.nextApproveStaffId) ||
+                          data.leadStatus === 'Rejected' ||
+                          data.leadStatus === 'Converted'
+                        "
+                        (click)="approveOrRejectLeadPopup(data, 'Reject')"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Reject Lead Workflow"
+                      >
+                        <img src="assets/img/reject.jpg" />
+                      </button>
+
+                      <button
+                        *ngIf="leadStatusAccess"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        aria-label="View Lead Status"
+                        [disabled]="data.leadStatus === 'Rejected'"
+                        id="operateLeadStatus"
+                        (click)="viewLeadStatusPopupOpen(data.id)"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="View Lead Status"
+                      >
+                        <img src="assets/img/E_Status_Y.png" />
+                      </button>
+
+                      <button
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        aria-label="ReOpen Lead"
+                        *ngIf="reopenLeadAccess && data.leadStatus === 'Rejected'"
+                        [disabled]="!data.leadReopenAllow"
+                        (click)="reopenLeadConfirmation(data.id, data.leadStatus)"
+                        id="reopenLead"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="ReOpen Lead"
+                      >
+                        <img src="assets/img/icons-04.png" />
+                      </button>
+                      <button
+                        *ngIf="closeAccess"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        aria-label="Close Lead"
+                        id="closeLead"
+                        [disabled]="
+                          data.leadStatus === 'Rejected' ||
+                          data.leadStatus === 'Converted' ||
+                          !(this.staffid === data.nextApproveStaffId)
+                        "
+                        (click)="rejectLeadPopupOpen(data.id)"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Close Lead"
+                      >
+                        <img src="assets/img/01_Lead_Close_Y.png" alt="Close Lead" />
+                      </button>
+                      <button
+                        *ngIf="uploadAccess"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        [disabled]="
+                          !(this.staffid === data.nextApproveStaffId) ||
+                          data.leadStatus === 'Converted'
+                        "
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Upload Documents"
+                        id="edit-button"
+                        [routerLink]="['/home/lead-documents', data.id]"
+                      >
+                        <img width="32" height="32" src="assets/img/up.jpg" />
+                      </button>
+                      <button
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        (click)="assignWorkflow(data.id)"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Assign Workflow"
+                        id="edit-button"
+                        *ngIf="
+                          editAccess &&
+                          !data.nextApproveStaffId &&
+                          !data.nextTeamMappingId &&
+                          data.leadStatus === 'Inquiry'
+                        "
+                      >
+                        <img width="32" height="32" src="assets/img/diagram.png" />
+                      </button>
+
+                      <button
+                        *ngIf="reassignAccess"
+                        class="disable-button"
+                        style="
+                          border: none;
+                          background: transparent;
+                          padding: 0;
+                          margin-right: 3px;
+                          cursor: pointer;
+                        "
+                        [disabled]="data.leadStatus === 'Rejected' ? true : false"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        id="assign-button"
+                        title="Reassign Lead"
+                        (click)="onClickAssignLead(data.id, data.leadStatus)"
+                      >
+                        <img src="assets/img/icons-02.png" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="display: flex">
+                <pagination-controls
+                  id="leadListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedLeadList($event)"
+                >
+                </pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12" *ngIf="leadListData && leadListData?.length === 0">
+              No Records Found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Lead Details End -->
+
+<!-- select Parent Customer popup-->
+<p-dialog
+    header="Select Customer"
+    [(visible)]="selectParentCustomer"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="modalCloseParentCustomer()"
+  >
+
+ <div class="modal-body">
+        <h5>Search Parent Customer</h5>
+        <div class="row">
+          <div class="col-lg-3 col-md-3 m-b-10">
+            <p-dropdown
+              (onChange)="selParentSearchOption($event)"
+              [(ngModel)]="searchParentCustOption"
+              [options]="searchOptionSelect"
+              [filter]="true"
+              filterBy="label"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a Search Option"
+            ></p-dropdown>
+          </div>
+          <div
+            *ngIf="
+              parentFieldEnable &&
+              searchParentCustOption != 'status' &&
+              searchParentCustOption !== 'serviceareaName' &&
+              searchParentCustOption !== 'plan'
+            "
+            class="col-lg-3 col-md-3 m-b-10"
+          >
+            <input
+              [(ngModel)]="searchParentCustValue"
+              class="form-control"
+              id="username"
+              placeholder="Enter Search Detail"
+              type="text"
+              (keydown.enter)="searchParentCustomer()"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption === 'status'">
+            <p-dropdown
+              [options]="commondropdownService.CustomerStatusValue"
+              optionValue="value"
+              optionLabel="text"
+              filter="true"
+              filterBy="text"
+              placeholder="Select a Status"
+              [(ngModel)]="searchParentCustValue"
+            ></p-dropdown>
+          </div>
+
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'serviceareaName'">
+            <p-dropdown
+              [options]="commondropdownService.serviceAreaList"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              placeholder="Select a Servicearea"
+              [(ngModel)]="searchParentCustValue"
+            ></p-dropdown>
+          </div>
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchParentCustOption == 'plan'">
+            <p-dropdown
+              [options]="commondropdownService.postpaidplanData"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              placeholder="Select a Plan"
+              [(ngModel)]="searchParentCustValue"
+            ></p-dropdown>
+          </div>
+          <div *ngIf="parentFieldEnable" class="col-lg-6 col-md-6 col-sm-12">
+            <button
+              (click)="searchParentCustomer()"
+              class="btn btn-primary"
+              id="searchbtn"
+              type="button"
+            >
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+            <button
+              (click)="clearSearchParentCustomer()"
+              class="btn btn-default"
+              id="searchbtn"
+              type="reset"
+            >
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+        <h5 style="margin-top: 15px">Select Parent Customer</h5>
+        <p-table
+          #dt
+          [value]="prepaidParentCustomerList"
+          responsiveLayout="scroll"
+          [(selection)]="selectedParentCust"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 5rem"></th>
+              <th>Name</th>
+              <th>User Name</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-prepaidParentCustomerList let-rowIndex="rowIndex">
+            <tr>
+              <td>
+                <p-tableRadioButton [value]="prepaidParentCustomerList"></p-tableRadioButton>
+              </td>
+              <td>{{ prepaidParentCustomerList.name }}</td>
+              <td>{{ prepaidParentCustomerList.username }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+            <p-paginator
+              [rows]="parentCustomerListdataitemsPerPage"
+              [first]="newFirst"
+              [totalRecords]="parentCustomerListdatatotalRecords"
+              (onPageChange)="paginate($event)"
+            >
+            </p-paginator>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            (click)="saveSelCustomer()"
+            [disabled]="this.selectedParentCust.length == 0"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="modalCloseParentCustomer()">
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+<!-- Add Notes Model Start-->
+<p-dialog
+    header="Add Notes"
+    [(visible)]="addNotesPopup"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeNotesModal()"
+  >
+
+   <div class="modal-body">
+        <form [formGroup]="addNotesForm">
+          <div>
+            <label class="datalbl">Notes: </label>
+            <textarea
+              type="text"
+              class="form-control"
+              id="notes"
+              placeholder="Enter Notes..."
+              formControlName="notes"
+              [ngClass]="{
+                'is-invalid': notesSubmitted && addNotesForm.controls.notes.errors
+              }"
+            ></textarea>
+
+            <div
+              class="errorWrap text-danger"
+              *ngIf="notesSubmitted && addNotesForm.controls.notes.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="notesSubmitted && addNotesForm.controls.notes.errors.required"
+              >
+                Notes is required.
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            type="submit"
+            id="submit"
+            (click)="saveNotes(this.leadIdForNotes)"
+            class="btn btn-success btn-sm"
+          >
+            Save
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="closeNotesModal()">Close</button>
+        </div>
+      </div>
+</p-dialog>
+<!-- Follow up schedulling popup start -->
+
+
+<p-dialog
+    header="Schedule a followup"
+    [(visible)]="scheduleFollowup"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeFolloupPopup()"
+  >
+ <div class="modal-body">
+        <form [formGroup]="followupScheduleForm">
+          <label style="font-weight: bold"> Follow Up Name * </label>
+          <input
+            disabled
+            type="text"
+            class="form-control"
+            placeholder="Enter the follow up name"
+            formControlName="followUpName"
+            [ngClass]="{
+              'is-invalid':
+                followupFormsubmitted && followupScheduleForm.controls.followUpName.errors
+            }"
+          />
+          <div
+            class="error text-danger"
+            *ngIf="followupFormsubmitted && followupScheduleForm.controls.followUpName.errors"
+          >
+            Name is required.
+          </div>
+          <br />
+          <label style="font-weight: bold">Follow Up Date & Time *</label>
+          <p-calendar
+            formControlName="followUpDatetime"
+            [showTime]="true"
+            [showSeconds]="true"
+            inputId="time"
+            [numberOfMonths]="3"
+            [minDate]="dateTime"
+            [ngClass]="{
+              'is-invalid':
+                followupFormsubmitted && this.followupScheduleForm.controls.followUpDatetime.errors
+            }"
+          >
+          </p-calendar>
+          <div
+            class="error text-danger"
+            *ngIf="followupFormsubmitted && followupScheduleForm.controls.followUpDatetime.errors"
+          >
+            Date & Time is required.
+          </div>
+          <br /><br />
+          <label style="font-weight: bold">Remarks *</label>
+          <textarea
+            type="text"
+            class="form-control"
+            placeholder="Enter the Remarks"
+            formControlName="remarks"
+            [ngClass]="{
+              'is-invalid':
+                followupFormsubmitted && this.followupScheduleForm.controls.remarks.errors
+            }"
+          >
+          </textarea>
+          <div
+            class="error text-danger"
+            *ngIf="followupFormsubmitted && this.followupScheduleForm.controls.remarks.errors"
+          >
+            Remarks is required.
+          </div>
+          <!-- <br />
+                      <label style="font-weight: bold">Status*</label>
+                      <p-dropdown [options]="this.status" formControlName="status" optionLabel="label" optionValue="value"
+                          filter="true" filterBy="label" placeholder="Select follow up status">
+                      </p-dropdown>
+                      <div class="errorWrap text-danger" *ngIf="followupFormsubmitted && followupScheduleForm.controls.status.errors">
+                          <div class="error text-danger" *ngIf="followupFormsubmitted && followupScheduleForm.controls.status.errors.required">Status is required.
+                          </div>
+                     </div> -->
+          <br />
+          <div class="addUpdateBtn">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submit"
+              (click)="saveFollowup()"
+              [disabled]="this.showQtyError"
+            >
+              <i class="fa fa-check-circle"></i>
+              Schedule
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            class="btn btn-danger btn-sm"
+             type="button"            
+             data-dismiss="modal"
+            (click)="closeFolloupPopup()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+<!-- Follow up schedulling popup end -->
+
+<!-- Follow up close popup start -->
+<p-dialog
+    header="Close Followup"
+    [(visible)]="closeFollowup"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeActionFolloupPopup()"
+  >
+  <div class="modal-body">
+        <form [formGroup]="closeFollowupForm">
+          <label style="font-weight: bold">Remarks *</label>
+          <textarea
+            type="text"
+            class="form-control"
+            placeholder="Enter the Remarks"
+            formControlName="remarks"
+            [ngClass]="{
+              'is-invalid':
+                closeFollowupFormsubmitted && this.closeFollowupForm.controls.remarks.errors
+            }"
+          >
+          </textarea>
+          <div
+            class="error text-danger"
+            *ngIf="closeFollowupFormsubmitted && this.closeFollowupForm.controls.remarks.errors"
+          >
+            Remarks is required.
+          </div>
+          <br />
+          <div class="addUpdateBtn">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submit"
+              (click)="saveCloseFollowUp()"
+              [disabled]="this.showQtyError"
+            >
+              <i class="fa fa-check-circle"></i>
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            class="btn btn-danger btn-sm"
+            data-dismiss="modal"
+            (click)="closeActionFolloupPopup()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+<!-- Follow up close popup end -->
+
+<!-- Follow up reschedulling popup start -->
+
+<p-dialog
+    header="ReSchedule a followup"
+    [(visible)]="reScheduleFollowup"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeReFolloupPopup()"
+  >
+  <div class="modal-body">
+        <form [formGroup]="reFollowupScheduleForm">
+          <label style="font-weight: bold">Current Follow Up Close Remarks *</label>
+          <p-dropdown
+            [options]="rescheduleRemarks"
+            placeholder="Select the specific remark"
+            formControlName="remarks"
+          >
+          </p-dropdown>
+          <br />
+          <label style="font-weight: bold"> ReSchedule Follow Up Name * </label>
+          <input
+            disabled
+            type="text"
+            class="form-control"
+            placeholder="Enter the follow up name"
+            formControlName="followUpName"
+            [ngClass]="{
+              'is-invalid':
+                reFollowupFormsubmitted && reFollowupScheduleForm.controls.followUpName.errors
+            }"
+          />
+          <div
+            class="error text-danger"
+            *ngIf="reFollowupFormsubmitted && reFollowupScheduleForm.controls.followUpName.errors"
+          >
+            ReSchedule ReSchedule Name is required.
+          </div>
+          <br />
+          <label style="font-weight: bold">ReSchedule Follow Up Date & Time *</label>
+          <p-calendar
+            formControlName="followUpDatetime"
+            [showTime]="true"
+            [showSeconds]="true"
+            inputId="time"
+            [numberOfMonths]="3"
+            [minDate]="dateTime"
+            [ngClass]="{
+              'is-invalid':
+                reFollowupFormsubmitted &&
+                this.reFollowupScheduleForm.controls.followUpDatetime.errors
+            }"
+          >
+          </p-calendar>
+          <div
+            class="error text-danger"
+            *ngIf="
+              reFollowupFormsubmitted && reFollowupScheduleForm.controls.followUpDatetime.errors
+            "
+          >
+            ReSchedule Date & Time is required.
+          </div>
+          <br /><br />
+          <label style="font-weight: bold">ReSchedule Remarks</label>
+          <textarea
+            type="text"
+            class="form-control"
+            placeholder="Enter the Remarks"
+            formControlName="remarksTemp"
+          >
+          </textarea>
+          <!--          <div-->
+          <!--            class="error text-danger"-->
+          <!--            *ngIf="-->
+          <!--              reFollowupFormsubmitted && this.reFollowupScheduleForm.controls.remarksTemp.errors-->
+          <!--            "-->
+          <!--          >-->
+          <!--            Remarks is required.-->
+          <!--          </div>-->
+
+          <br />
+          <div class="addUpdateBtn">
+            <br />
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submit"
+              (click)="saveReFollowup()"
+              [disabled]="this.showQtyError"
+            >
+              <i class="fa fa-check-circle"></i>
+              ReSchedule
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            class="btn btn-danger btn-sm"
+            #closebutton
+            data-dismiss="modal"
+            (click)="closeReFolloupPopup()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+<!-- Follow up reschedulling popup end -->
+
+<!-- remarkScheduleFollowup popup end start -->
+
+
+<p-dialog
+    header="Remarks Followup"
+    [(visible)]="remarkScheduleFollowup"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeRemarkPopup()"
+  >
+  <div class="modal-body">
+        <form [formGroup]="remarkFollowupForm">
+          <label style="font-weight: bold">Remarks *</label>
+          <textarea
+            type="text"
+            class="form-control"
+            placeholder="Enter the remark"
+            formControlName="remark"
+            [ngClass]="{
+              'is-invalid':
+                remarkFollowupFormsubmitted && this.remarkFollowupForm.controls.remark.errors
+            }"
+          >
+          </textarea>
+          <div
+            class="error text-danger"
+            *ngIf="remarkFollowupFormsubmitted && this.remarkFollowupForm.controls.remark.errors"
+          >
+            Remarks is required.
+          </div>
+          <br />
+          <div class="addUpdateBtn">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submit"
+              (click)="saveRemarkFollowUp()"
+              [disabled]="this.staffid != this.leadMasterObj?.nextApproveStaffId"
+            >
+              <i class="fa fa-check-circle"></i>
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-body">
+        <h3 class="panel-title">Remarks List</h3>
+        <hr />
+        <div [id]="tableWrapperRemarks">
+          <div [id]="scrollIdRemarks">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Remarks</th>
+                  <th>Created On</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let remarkDetails of followUpRemarkList">
+                  <td>{{ remarkDetails?.remark }}</td>
+                  <td>{{ remarkDetails?.createdOn | date: "dd/MM/yyyy HH:mm:ss" }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button class="btn btn-danger btn-sm" data-dismiss="modal" (click)="closeRemarkPopup()">
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+<!-- remarkScheduleFollowup popup end -->
+
+<!-- approveOrRejectLeadPopup popup end start -->
+
+<p-dialog
+    [header]="leadApproveRejectDto.flag + ' Remarks'"
+    [(visible)]="approveOrRejectLeadPopupModel"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeApproveOrRejectLeadPopup()"
+  >
+  
+   <div class="modal-body">
+        <form [formGroup]="leadApproveRejectForm">
+          <div class="row">
+            <div
+              *ngIf="approved && leadApproveRejectDto.approveRequest"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            >
+              <div class="card">
+                <h5>Select Staff</h5>
+                <p-table
+                  [value]="approveLeadList"
+                  [(selection)]="selectStaff"
+                  responsiveLayout="scroll"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width: 3rem"></th>
+                      <th>Name</th>
+                      <th>Username</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-product>
+                    <tr>
+                      <td>
+                        <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                      </td>
+                      <td>{{ product.fullName }}</td>
+                      <td>
+                        {{ product.username }}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+              <br />
+            </div>
+            <div
+              *ngIf="approved && !leadApproveRejectDto.approveRequest"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            >
+              <div class="card">
+                <h5>Select Staff</h5>
+                <p-table
+                  [value]="approveLeadList"
+                  [(selection)]="selectStaffReject"
+                  responsiveLayout="scroll"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width: 3rem"></th>
+                      <th>Name</th>
+                      <th>Username</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-product>
+                    <tr>
+                      <td>
+                        <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                      </td>
+                      <td>{{ product.fullName }}</td>
+                      <td>
+                        {{ product.username }}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+              <br />
+            </div>
+            <div *ngIf="!approved" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <label style="font-weight: bold">Remarks *</label>
+              <textarea
+                type="text"
+                class="form-control"
+                placeholder="Enter the remark"
+                formControlName="remark"
+                [ngClass]="{
+                  'is-invalid':
+                    leadApproveRejectFormsubmitted &&
+                    this.leadApproveRejectForm.controls.remark.errors
+                }"
+              >
+              </textarea>
+              <div
+                class="error text-danger"
+                *ngIf="
+                  leadApproveRejectFormsubmitted &&
+                  this.leadApproveRejectForm.controls.remark.errors
+                "
+              >
+                Remarks is required.
+              </div>
+              <br />
+            </div>
+            <div
+              *ngIf="leadApproveRejectDto.flag == 'Reject'"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            >
+              <div class="form-group">
+                <label>Rejected Reason List*</label>
+                <p-dropdown
+                  [options]="this.rejectedReasons"
+                  formControlName="rejectedReasonMasterId"
+                  optionLabel="name"
+                  optionValue="id"
+                  filter="true"
+                  filterBy="name"
+                  placeholder="Select Rejected Reason "
+                >
+                </p-dropdown>
+                <div
+                  class="error text-danger"
+                  *ngIf="
+                    leadApproveRejectFormsubmitted &&
+                    this.leadApproveRejectForm.controls.rejectedReasonMasterId.errors
+                  "
+                >
+                  Rejected Reason is required.
+                </div>
+                <!-- <div
+                  class="error text-danger"
+                  *ngIf="
+                    leadApproveRejectFormsubmitted &&
+                    this.leadApproveRejectForm.controls.rejectedReasonMasterId.errors
+                  "
+                >
+                Rejected Reason is required.
+                </div> -->
+              </div>
+            </div>
+            <div *ngIf="!approved" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <div class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  (click)="approveOrRejectLead(leadObj)"
+                  [disabled]="this.showQtyError"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  {{ labelFlag }}
+                </button>
+                <br />
+              </div>
+            </div>
+
+            <!--            <div>-->
+            <!--              <div class="addUpdateBtn">-->
+            <!--                <button-->
+            <!--                  type="submit"-->
+            <!--                  class="btn btn-primary"-->
+            <!--                  id="submit"-->
+            <!--                  (click)="assignToStaff(labelFlag)"-->
+            <!--                >-->
+            <!--                  <i class="fa fa-check-circle"></i>-->
+            <!--                  Assign-->
+            <!--                </button>-->
+            <!--                <br />-->
+            <!--              </div>-->
+            <!--            </div>-->
+            <!-- <div
+                *ngIf="approved && !leadApproveRejectDto.approveRequest && !selectStaffReject"
+                class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              >
+                <div class="addUpdateBtn">
+                  <button
+                    disabled
+                    type="submit"
+                    class="btn btn-primary"
+                    id="submit"
+                    (click)="assignToStaff(labelFlag)"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    Assign
+                  </button>
+                  <br />
+                </div>
+              </div> -->
+            <!-- <div
+                *ngIf="approved && !leadApproveRejectDto.approveRequest && selectStaffReject"
+                class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              >
+                <div class="addUpdateBtn">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="submit"
+                    (click)="assignToStaff(labelFlag)"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    Assign
+                  </button>
+                  <br />
+                </div>
+              </div> -->
+            <!-- <div
+                *ngIf="approved && leadApproveRejectDto.approveRequest && selectStaff"
+                class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              >
+                <div class="addUpdateBtn">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="submit"
+                    (click)="assignToStaff(labelFlag)"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    Assign
+                  </button>
+                  <br />
+                </div>
+              </div> -->
+            <div *ngIf="approved" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <div class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  (click)="assignToStaff(labelFlag)"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Assign
+                </button>
+                <br />
+              </div>
+            </div>
+            <!-- <div
+                *ngIf="approved && !leadApproveRejectDto.approveRequest && selectStaffReject"
+                class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              >
+                <div class="addUpdateBtn">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="submit"
+                    (click)="assignToStaff(labelflag)"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    Assign
+                  </button>
+                  <br />
+                </div>
+              </div> -->
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            class="btn btn-danger btn-sm"
+            data-dismiss="modal"
+            (click)="closeApproveOrRejectLeadPopup()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+</p-dialog>
+<!-- approveOrRejectLeadPopup popup end -->
+
+<!-- Open close lead popup START -->
+
+<p-dialog
+    header="Close a lead"
+    [(visible)]="openRejectLeadPopup"
+    [modal]="true"
+    [style]="{ width: '800px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeRejectLeadPopup()"
+  >
+
+ <div class="modal-body">
+        <form [formGroup]="rejectLeadFormGroup">
+          <div>
+            <label style="font-weight: bold"> Rejected Reason * </label>
+            <p-dropdown
+              [options]="rejectedReasonList"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Rejected reason for the lead."
+              formControlName="rejectReasonId"
+              (ngModelChange)="
+                selectRejectedReason(rejectLeadFormGroup.controls.rejectReasonId.value)
+              "
+              [ngClass]="{
+                'is-invalid':
+                  rejectedLeadFormSubmitted && rejectLeadFormGroup.controls.rejectReasonId.errors
+              }"
+            >
+            </p-dropdown>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="
+                rejectedLeadFormSubmitted && rejectLeadFormGroup.controls.rejectReasonId.errors
+              "
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  rejectedLeadFormSubmitted &&
+                  rejectLeadFormGroup.controls.rejectReasonId.errors.required
+                "
+              >
+                Rejection reason is required.
+              </div>
+            </div>
+          </div>
+          <br />
+          <div *ngIf="rejectedSubReasonArr?.length !== 0">
+            <label style="font-weight: bold">Rejected Sub Reason</label>
+            <p-dropdown
+              formControlName="rejectSubReasonId"
+              [options]="rejectedSubReasonArr"
+              optionValue="id"
+              optionLabel="name"
+              placeholder="Select Rejected sub reason for the lead."
+            >
+            </p-dropdown>
+          </div>
+          <br />
+          <div>
+            <label style="font-weight: bold">Remarks *</label>
+            <textarea
+              type="text"
+              class="form-control"
+              placeholder="Enter the Remarks"
+              formControlName="remark"
+              [ngClass]="{
+                'is-invalid':
+                  rejectedLeadFormSubmitted &&
+                  this.rejectLeadFormGroup.controls.remark.errors.required
+              }"
+            >
+            </textarea>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="rejectedLeadFormSubmitted && this.rejectLeadFormGroup.controls.remark.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  rejectedLeadFormSubmitted &&
+                  this.rejectLeadFormGroup.controls.remark.errors.required
+                "
+              >
+                Remark is required.
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="addUpdateBtn">
+            <button
+              class="btn btn-primary"
+              id="submit"
+              [disabled]="this.showQtyError"
+              (click)="rejectLead(leadId)"
+            >
+              <i class="fa fa-check-circle"></i>
+              Apply
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            class="btn btn-danger btn-sm"
+            #closebutton
+            data-dismiss="modal"
+            (click)="closeRejectLeadPopup()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+<!-- Open close lead popup END -->
+
+<!-- View Specific Lead Details Screen START -->
+<div class="row" *ngIf="isSpecificLeadOpen">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to View Lead List"
+            (click)="viewLead()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ leadDetailData.firstname }} {{ leadDetailData.lastname }} Enterprise Lead Details
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#leadDetails"
+            aria-expanded="false"
+            aria-controls="leadDetails"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="leadDetails" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <!-- Lead Basic Details -->
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem" class="col-md-12 col-sm-12">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Lead No:&nbsp;&nbsp;&nbsp;</label>
+                  <span>{{ leadDetailData.leadNo }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Title:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.title">{{ leadDetailData.title }}</span>
+                  <span *ngIf="!leadDetailData.title">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">First Name:&nbsp;&nbsp;&nbsp;</label>
+                  <span>{{ leadDetailData.firstname }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Last Name:&nbsp;&nbsp;&nbsp;</label>
+                  <span>{{ leadDetailData.lastname }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Contact Person:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.contactperson">{{
+                    leadDetailData.contactperson
+                  }}</span>
+                  <span *ngIf="!leadDetailData.contactperson">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Lead Status:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.leadStatus">{{ leadDetailData.leadStatus }}</span>
+                  <span *ngIf="!leadDetailData.leadStatus">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Branch Name:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.branchName">{{ leadDetailData.branchName }}</span>
+                  <span *ngIf="!leadDetailData.branchName">-</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">TPIN No/PAN No.</label>
+                  <span *ngIf="leadDetailData.pan">{{ leadDetailData.pan }}</span>
+                  <span *ngIf="!leadDetailData.pan">-</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">CAF No:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.cafno">{{ leadDetailData.cafno }}</span>
+                  <span *ngIf="!leadDetailData.cafno">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Username:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.username">{{ leadDetailData.username }}</span>
+                  <span *ngIf="!leadDetailData.username">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Calendar Type:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.calendarType">{{ leadDetailData.calendarType }}</span>
+                  <span *ngIf="!leadDetailData.calendarType">-</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Feasibility *:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.feasibility">{{ leadDetailData.feasibility }}</span>
+                  <span *ngIf="!leadDetailData.feasibility">-</span>
+                </div>
+              </div>
+              <div class="row">
+                <div
+                  *ngIf="leadDetailData.feasibility === 'N/A'"
+                  class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0"
+                >
+                  <label class="datalbl">Feasibility Remark:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.feasibilityRemark">{{
+                    leadDetailData.feasibilityRemark
+                  }}</span>
+                  <span *ngIf="!leadDetailData.feasibilityRemark">-</span>
+                </div>
+                <div
+                  class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0"
+                  *ngIf="leadDetailData.leadCategory === 'Existing Customer'"
+                >
+                  <label class="datalbl">Existing Customer Name:&nbsp;</label>
+                  <span *ngIf="existingCustName">{{ existingCustName }}</span>
+                  <span *ngIf="!existingCustName">-</span>
+                </div>
+                <div
+                  class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0"
+                  *ngIf="
+                    leadDetailData.feasibility === 'N/A' &&
+                    leadDetailData.leadCategory === 'Existing Customer'
+                  "
+                >
+                  <label class="datalbl">Lead Category:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.leadCategory">{{ leadDetailData.leadCategory }}</span>
+                  <span *ngIf="!leadDetailData.leadCategory">-</span>
+                </div>
+
+                <div
+                  class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0"
+                  *ngIf="
+                    leadDetailData.feasibility !== 'N/A' ||
+                    leadDetailData.leadCategory !== 'Existing Customer'
+                  "
+                >
+                  <label class="datalbl">Lead Category:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.leadCategory">{{ leadDetailData.leadCategory }}</span>
+                  <span *ngIf="!leadDetailData.leadCategory">-</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Contact Details -->
+          <fieldset>
+            <legend>Contact Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Mobile:&nbsp;&nbsp;&nbsp;</label>
+                  <span
+                    ><span *ngIf="leadDetailData.countryCode">
+                      ( {{ leadDetailData.countryCode }} )&nbsp; </span
+                    >{{ leadDetailData.mobile }}</span
+                  >
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Telephone:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.phone">{{ leadDetailData.phone }}</span>
+                  <span *ngIf="!leadDetailData.phone">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">E_mail:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.email">{{ leadDetailData.email }}</span>
+                  <span *ngIf="!leadDetailData.email">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Additional E_mail:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.secondaryEmail">{{
+                    leadDetailData.secondaryEmail
+                  }}</span>
+                  <span *ngIf="!leadDetailData.secondaryEmail">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Skype:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.skypeid_imid">{{ leadDetailData.skypeid_imid }}</span>
+                  <span *ngIf="!leadDetailData.skypeid_imid">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Fax:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.fax">{{ leadDetailData.fax }}</span>
+                  <span *ngIf="!leadDetailData.fax">-</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Network Details -->
+          <fieldset>
+            <legend>Network Location Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Reseller:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.reseller">{{ leadDetailData.reseller }}</span>
+                  <span *ngIf="!leadDetailData.reseller">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Reseller:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.resellerid">{{ leadDetailData.resellerid }}</span>
+                  <span *ngIf="!leadDetailData.resellerid">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Associated Level :&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.associatedLevel">{{
+                    leadDetailData.associatedLevel
+                  }}</span>
+                  <span *ngIf="!leadDetailData.associatedLevel">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Location Level 1:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.locationLevel1">{{
+                    leadDetailData.locationLevel1
+                  }}</span>
+                  <span *ngIf="!leadDetailData.locationLevel1">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Location Level 2:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.locationLevel2">{{
+                    leadDetailData.locationLevel2
+                  }}</span>
+                  <span *ngIf="!leadDetailData.locationLevel2">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Location Level 3:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.locationLevel3">{{
+                    leadDetailData.locationLevel3
+                  }}</span>
+                  <span *ngIf="!leadDetailData.locationLevel3">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Location Level 4:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.locationLevel4">{{
+                    leadDetailData.locationLevel4
+                  }}</span>
+                  <span *ngIf="!leadDetailData.locationLevel4">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Organisation:&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.organisation">{{ leadDetailData.organisation }}</span>
+                  <span *ngIf="!leadDetailData.organisation">-</span>
+                </div>
+                <div
+                  class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0"
+                  *ngIf="leadDetailData.leadCustomerType"
+                >
+                  <label class="datalbl">Lead Customer Sub Type:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.leadCustomerSubType">{{
+                    leadDetailData.leadCustomerSubType
+                  }}</span>
+                  <span *ngIf="!leadDetailData.leadCustomerSubType">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Lead Customer Sector:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.leadCustomerSector">{{
+                    leadDetailData.leadCustomerSector
+                  }}</span>
+                  <span *ngIf="!leadDetailData.leadCustomerSector">-</span>
+                </div>
+                <div
+                  class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0"
+                  *ngIf="leadDetailData.leadCustomerSector"
+                >
+                  <label class="datalbl">Lead Customer Sub Sector:&nbsp;&nbsp;&nbsp;</label>
+                  <span *ngIf="leadDetailData.leadCustomerSubSector">{{
+                    leadDetailData.leadCustomerSubSector
+                  }}</span>
+                  <span *ngIf="!leadDetailData.leadCustomerSubSector">-</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Present Address Details -->
+          <fieldset>
+            <legend>Present Address Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Landmark:</label>
+                  <span>
+                    {{ leadDetailData.addressList[0]?.landmark }}
+                  </span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ pincodeTitle }} :</label>
+                  <span>{{ presentAdressDATA.code }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ areaTitle }} :</label>
+                  <span>{{ presentAdressDATA.name }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ cityTitle }} :</label>
+                  <span>{{ presentAdressDATA.cityName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ stateTitle }} :</label>
+                  <span>{{ presentAdressDATA.stateName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ countryTitle }} :</label>
+                  <span>{{ presentAdressDATA.countryName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ street }} :</label>
+                  <span>{{ presentAdressDATA.streetName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ houseNo }} :</label>
+                  <span>{{ presentAdressDATA.houseNo }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Payment Address Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Landmark:</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAddressData[0]?.landmark }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ pincodeTitle }} :</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAdressDATA.code }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ areaTitle }} :</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAdressDATA.name }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ cityTitle }} :</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAdressDATA.cityName }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ stateTitle }} :</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAdressDATA.stateName }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ countryTitle }} :</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAdressDATA.countryName }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ street }} :</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAdressDATA.streetName }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">{{ houseNo }} :</label>
+                  <span *ngIf="paymentAddressData?.length">
+                    {{ paymentAdressDATA.houseNo }}
+                  </span>
+                  <span *ngIf="!paymentAddressData?.length">-</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="openLeadStatusScreen && leadStatusAccess">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to View Lead List"
+            (click)="viewLead()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">Lead Status</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#leadLeadStatusScreen"
+            aria-expanded="false"
+            aria-controls="leadLeadStatusScreen"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body">
+          <div class="row" id="leadLeadStatusScreen">
+            <div class="col-lg-12 col-md-12">
+              <div id="custStatus" class="panel-collapse collapse in">
+                <div class="panel-body table-responsive">
+                  <div class="progressbarWrap" *ngIf="teamHierarchyList?.length > 0">
+                    <div
+                      class="circleWrap"
+                      [ngClass]="{
+                        complete: data.status == 'Approved',
+                        progressdv: data.status == 'Pending'
+                      }"
+                      *ngFor="let data of teamHierarchyList; last as isLast"
+                    >
+                      <div class="circledv completedWorkFlowClass">
+                        <i class="fa fa-check" *ngIf="data.status == 'Approved'"></i>
+                      </div>
+                      <p>{{ data.teamName }}</p>
+                      <div class="lines" *ngIf="!isLast">
+                        <div class="line"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="progressbarWrap" *ngIf="teamHierarchyList?.length == 0">
+                    No record found for status.
+                  </div>
+                </div>
+              </div>
+              <div style="margin: 20px" *ngIf="auditTrailAccess">
+                <h3>Workflow Audit</h3>
+                <div class="table-responsive">
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Customer Name</th>
+                            <th>Action</th>
+                            <th>Staff name</th>
+                            <th>Remark</th>
+                            <th>Action Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let data of workflowAuditDataI
+                                | paginate
+                                  : {
+                                      id: 'searchMasterPageData',
+                                      itemsPerPage: MasteritemsPerPageI,
+                                      currentPage: currentPageMasterSlabI,
+                                      totalItems: MastertotalRecordsI
+                                    };
+                              index as i
+                            "
+                          >
+                            <td>
+                              <div *ngIf="data.entityName">
+                                {{ data.entityName }}
+                              </div>
+                              <div *ngIf="data.planName">
+                                {{ data.planName }}
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                {{ data.action }}
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                {{ data.actionByName }}
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                {{ data.remark }}
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                {{ data.actionDateTime | date: "yyyy-MM-dd hh:mm a" }}
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <br />
+                      <div class="pagination_Dropdown">
+                        <pagination-controls
+                          id="searchMasterPageData"
+                          maxSize="10"
+                          directionLinks="true"
+                          previousLabel=""
+                          nextLabel=""
+                          (pageChange)="pageChangedMasterListI($event)"
+                        ></pagination-controls>
+                        <div id="itemPerPageDropdown">
+                          <p-dropdown
+                            [options]="pageLimitOptions"
+                            optionLabel="value"
+                            optionValue="value"
+                            (onChange)="TotalItemPerPageWorkFlow($event)"
+                          ></p-dropdown>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+    header="Search Location"
+    [(visible)]="ifsearchLocationModal"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="modalCloseParentCustomer()"
+  >
+        <div class="modal-body">
+          <form name="searchLocationForm" [formGroup]="searchLocationForm">
+            <div class="form-group">
+              <label for="searchLocationname">Search Location Name:</label>
+              <div class="row">
+                <div class="col-lg-7 col-md-6">
+                  <input
+                    type="searchLocationname"
+                    class="form-control"
+                    id="searchLocationname"
+                    placeholder="Enter Location Name"
+                    formControlName="searchLocationname"
+                  />
+                </div>
+                <div class="col-lg-5 col-md-6" style="padding: 0 10px !important">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-sm"
+                    id="closeModal"
+                    (click)="searchLocation()"
+                    [disabled]="!searchLocationForm.valid"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    id="btn"
+                    type="button"
+                    class="btn btn-default btn-sm"
+                    (click)="clearLocationForm()"
+                    style="margin-left: 8px"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="row">
+            <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 35%">Name</th>
+                    <th style="width: 65%">Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of searchLocationData
+                        | paginate
+                          : {
+                              id: 'searchpageData',
+                              itemsPerPage: searchLocationItemPerPage,
+                              currentPage: currentPagesearchLocationList,
+                              totalItems: searchLocationtotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="HoverEffect"
+                      (click)="filedLocation(data.placeId)"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Set value Latitude & Longitude"
+                      style="width: 35%"
+                    >
+                      {{ data.name }}
+                    </td>
+                    <td style="width: 65%">{{ data.address }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <pagination-controls
+                id="searchpageData"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChangedSearchLocationList($event)"
+              ></pagination-controls>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="addUpdateBtn">
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+              (click)="modalCloseParentCustomer()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+        </p-dialog>
+
+<!-- Fetching lead notes screen Start -->
+<div class="row" *ngIf="openLeadNotesScreen && leadNotesAccess">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Lead Notes</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <table class="table" *ngIf="leadNotesList && leadNotesList?.length > 0">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let leadNotes of leadNotesList
+                      | paginate
+                        : {
+                            id: 'leadNotesListpageData',
+                            itemsPerPage: leadNotesListItemsPerPage,
+                            currentPage: leadNotesListDataCurrentPage,
+                            totalItems: leadNotesDataTotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>{{ leadNotes?.id }}</td>
+                  <td>{{ leadNotes?.notes }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="display: flex" *ngIf="leadNotesList && leadNotesList?.length > 0">
+              <pagination-controls
+                id="leadNotesListpageData"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChangedLeadNotesList($event, myLead?.id)"
+              >
+              </pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalLeadNotesItemPerPage($event, myLead?.id)"
+                ></p-dropdown>
+              </div>
+            </div>
+            <div
+              class="col-lg-12 col-md-12"
+              style="text-align: center"
+              *ngIf="!leadNotesList || leadNotesList?.length === 0"
+            >
+              No Records Found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fetching lead notes screen end -->
+
+<!-- Fetching Service Management start -->
+<div *ngIf="isServiceManagementOpen">
+  <app-add-service
+    [custData]="leadDetailData"
+    [isLeadMaster]="true"
+    name="Circuit"
+    (backButton)="backLeadDeatils($event)"
+  >
+  </app-add-service>
+</div>
+<!-- Fetching Service Management end -->
+
+<!-- Fetching Quatation Management start -->
+<div *ngIf="isQuotationDetailOpen">
+  <app-common-quotation-management
+    [LeadCustData]="leadDetailData"
+    (backLeadData)="backLeadDeatils($event)"
+  ></app-common-quotation-management>
+</div>
+<!-- Fetching Quatation Management end -->
+
+<!--Select Plan group popup END-->
+
+
+<p-dialog
+    header="Select Plan"
+    [(visible)]="selectPlanGroup"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="modalClosePlanChangeSubisu()"
+  >
+
+  <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4 col-lg-4">
+            <h5 style="margin-top: 15px">Select Plan Group:</h5>
+            <p-dropdown
+              [options]="filterNormalPlanGroup"
+              optionValue="planGroupId"
+              optionLabel="planGroupName"
+              filter="true"
+              filterBy="planGroupName"
+              placeholder="Select a Plan Group"
+              [(ngModel)]="planGroupSelectedSubisu"
+              (onChange)="getPlanListByGroupIdSubisu()"
+            ></p-dropdown>
+          </div>
+          <!-- <div class="col-md-4 col-lg-4">
+              <h5 style="margin-top: 15px;">Invoice To Org:</h5>
+              <p-dropdown
+                [options]="isInvoiceData"
+                placeholder="Select Invoice to org or not"
+                optionValue="value"
+                optionLabel="label"
+                [(ngModel)]="isInvoiceToOrg"
+                (onChange)="valueChange($event)"
+              ></p-dropdown>
+            </div> -->
+        </div>
+
+        <br />
+        <h5 style="margin-top: 15px">Select Plan List</h5>
+        <table class="table" style="margin-top: 10px; border: 1px solid #ddd">
+          <thead>
+            <tr>
+              <th style="text-align: center">Name</th>
+              <th style="text-align: center">Charge Name</th>
+              <th style="text-align: center">Offer Price</th>
+              <th style="text-align: center">New Offer Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of plansArray?.controls; let index = index">
+              <td style="padding-left: 8px">
+                <input
+                  class="form-control"
+                  placeholder="Enter planName"
+                  [formControl]="row.get('name')"
+                  readonly
+                />
+              </td>
+              <td>
+                <input
+                  class="form-control"
+                  placeholder="Enter Charge Name"
+                  [formControl]="row.get('chargeName')"
+                  readonly
+                />
+              </td>
+              <td>
+                <input
+                  class="form-control"
+                  placeholder="Enter offerPrice"
+                  [formControl]="row.get('offerPrice')"
+                  readonly
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Enter New Amount"
+                  [formControl]="row.get('newAmount')"
+                  randomly
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            (click)="modalClosePlanChangeSubisu()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm"
+            (click)="modalClosePlanChangeSubisu()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      </p-dialog>
+<!--Select Plan group popup END-->
+
+
+
+
+<p-dialog
+    header="Assign Lead"
+    [(visible)]="assignLeadModal"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeAssignLead()"
+  >
+  <div class="modal-body">
+        <form [formGroup]="assignLeadStaffForm">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <label>Staff*</label>
+              <div>
+                <p-dropdown
+                  [ngClass]="{
+                    'is-invalid': assignSubmmitted && assignLeadStaffForm.controls.staffId.errors
+                  }"
+                  [options]="assignableStaffList"
+                  formControlName="staffId"
+                  optionLabel="fullName"
+                  optionValue="id"
+                  placeholder="Please select staff."
+                ></p-dropdown>
+              </div>
+              <div
+                *ngIf="assignSubmmitted && assignLeadStaffForm.controls.staffId.errors"
+                class="errorWrap text-danger"
+              >
+                <div
+                  *ngIf="assignSubmmitted && assignLeadStaffForm.controls.staffId.errors.required"
+                  class="error text-danger"
+                >
+                  Staff is required.
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <label>Remark*</label>
+              <textarea
+                [ngClass]="{
+                  'is-invalid': assignSubmmitted && assignLeadStaffForm.controls.remark.errors
+                }"
+                class="form-control"
+                formControlName="remark"
+                name="remark"
+              ></textarea>
+              <div
+                *ngIf="assignSubmmitted && assignLeadStaffForm.controls.remark.errors"
+                class="errorWrap text-danger"
+              >
+                <div
+                  *ngIf="assignSubmmitted && assignLeadStaffForm.controls.remark.errors.required"
+                  class="error text-danger"
+                >
+                  Remark is required.
+                </div>
+              </div>
+              <br />
+            </div>
+          </div>
+          <!-- <input type="file" formControlName="fileName" name="fileName"> -->
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="assignLeadStaffSubmit()" class="btn btn-primary" id="submit" type="submit">
+          <i class="fa fa-check-circle"></i>
+          Assign Staff
+        </button>
+        <button class="btn btn-default" data-dismiss="modal" type="button"
+        (click)="closeAssignLead()">Close</button>
+      </div>
+</p-dialog>
+
+
+<p-dialog
+    header="Plan Details"
+    [(visible)]="PlanDetailsShow"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="modalClosePlanDetail()"
+  >
+   <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Invoice Type</th>
+                  <th>Validity</th>
+                  <th>Offer Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let plandata of planDataShow">
+                  <td>{{ plandata.name }}</td>
+                  <td>{{ plandata.invoiceType !== null ? plandata.invoiceType : "-" }}</td>
+                  <td>{{ plandata?.validity }} {{ plandata?.unitsOfValidity }}</td>
+
+                  <td>{{ plandata.offerprice }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" type="button" (click)="modalClosePlanDetail()">Close</button>
+      </div>
+</p-dialog>
+<!-- existingCustomerModal -->
+
+
+<p-dialog
+    header="Existing Customer"
+    [(visible)]="selectextingCustomer"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="modalCloseextingCustomer()"
+  >
+  <div class="modal-body">
+        <h5>Search Customer</h5>
+        <div class="row">
+          <div class="col-lg-3 col-md-3 m-b-10">
+            <p-dropdown
+              [(ngModel)]="searchextingCustType"
+              [options]="leadcustTypeList"
+              [filter]="true"
+              filterBy="label"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a Customer Type"
+            ></p-dropdown>
+          </div>
+          <div class="col-lg-3 col-md-3 m-b-10">
+            <p-dropdown
+              (onChange)="selextingSearchOption($event)"
+              [(ngModel)]="searchextingCustOption"
+              [options]="searchExtingcustomerOption"
+              [filter]="true"
+              filterBy="label"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a Search Option"
+            ></p-dropdown>
+          </div>
+          <div
+            *ngIf="
+              extingFieldEnable &&
+              searchextingCustOption != 'status' &&
+              searchextingCustOption !== 'serviceareaName' &&
+              searchextingCustOption !== 'plan'
+            "
+            class="col-lg-3 col-md-3 m-b-10"
+          >
+            <input
+              [(ngModel)]="searchextingCustValue"
+              class="form-control"
+              id="username"
+              placeholder="Enter Search Detail"
+              type="text"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchextingCustOption === 'status'">
+            <p-dropdown
+              [options]="commondropdownService.CustomerStatusValue"
+              optionValue="value"
+              optionLabel="text"
+              filter="true"
+              filterBy="text"
+              placeholder="Select a Status"
+              [(ngModel)]="searchextingCustValue"
+            ></p-dropdown>
+          </div>
+
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchextingCustOption == 'serviceareaName'">
+            <p-dropdown
+              [options]="commondropdownService.serviceAreaList"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              placeholder="Select a Servicearea"
+              [(ngModel)]="searchextingCustValue"
+            ></p-dropdown>
+          </div>
+          <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchextingCustOption == 'plan'">
+            <p-dropdown
+              [options]="commondropdownService.postpaidplanData"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              placeholder="Select a Plan"
+              [(ngModel)]="searchextingCustValue"
+            ></p-dropdown>
+          </div>
+          <div *ngIf="extingFieldEnable" class="col-lg-3 col-md-3 col-sm-12">
+            <button
+              (click)="searchextingCustomer()"
+              class="btn btn-primary"
+              id="searchbtn"
+              type="button"
+              [disabled]="!searchextingCustValue && !searchextingCustType"
+            >
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+            <button
+              (click)="clearSearchextingCustomer()"
+              class="btn btn-default"
+              id="searchbtn"
+              type="reset"
+            >
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+        <h5 style="margin-top: 15px">Select Customer</h5>
+        <p-table
+          #dt
+          [(selection)]="selectedextingCust"
+          [value]="extingCustomerList"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 5rem"></th>
+              <th>Name</th>
+              <th>User Name</th>
+            </tr>
+          </ng-template>
+          <ng-template let-extingCustomerList let-rowIndex="rowIndex" pTemplate="body">
+            <tr>
+              <td>
+                <p-tableRadioButton [value]="extingCustomerList"></p-tableRadioButton>
+              </td>
+              <td>
+                {{ extingCustomerList.name }}
+                {{ extingCustomerList.lastname }}
+              </td>
+              <td>{{ extingCustomerList.username }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+            <p-paginator
+              (onPageChange)="extingPaginate($event)"
+              [first]="newFirstexting"
+              [rows]="extingCustomerListdataitemsPerPage"
+              [totalRecords]="extingCustomerListdatatotalRecords"
+            ></p-paginator>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            (click)="SelExtingCustomer('')"
+            [disabled]="this.selectedextingCust.length == 0"
+            class="btn btn-primary"
+            style="object-fit: cover; padding: 5px 8px"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button (click)="modalCloseextingCustomer()" class="btn btn-danger btn-sm" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+</p-dialog>

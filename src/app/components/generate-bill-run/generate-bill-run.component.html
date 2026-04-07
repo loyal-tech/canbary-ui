@@ -1,0 +1,458 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <p-tabView
+        styleClass="x-tab-view"
+        class="first-tabview"
+        [(activeIndex)]="activeTabIndex"
+        (onChange)="onTabChange($event)"
+      >
+        <p-tabPanel class="header" header="Generate Bill Run" [headerStyle]="{ width: '33%' }">
+          <div class="panel-heading">
+            <h3 class="panel-title">Generate Bill Run</h3>
+            <div class="right">
+              <button
+                type="button"
+                class="btn-toggle-collapse"
+                data-toggle="collapse"
+                data-target="#genratebill"
+                aria-expanded="false"
+                aria-controls="genratebill"
+              >
+                <i class="fa fa-minus-circle"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="genratebill" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <form [formGroup]="searchGenerateBillRunFormGroup">
+                <div>Bill Date</div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <p-calendar
+                        placeholder="Enter Date"
+                        formControlName="billGenerateDate"
+                        [maxDate]="maxDate"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted &&
+                            searchGenerateBillRunFormGroup.controls.billGenerateDate.errors
+                        }"
+                        [showIcon]="true"
+                      ></p-calendar>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          submitted &&
+                          searchGenerateBillRunFormGroup.controls.billGenerateDate.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            searchGenerateBillRunFormGroup.controls.billGenerateDate.errors.required
+                          "
+                        >
+                          Bill Date is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <button type="submit" class="btn btn-primary" (click)="searchBillRun()">
+                      <i class="fa fa-search"></i>
+                      Generate Bill Run
+                    </button>
+                    <button
+                      type="submit"
+                      class="btn btn-default"
+                      id="searchbtn"
+                      (click)="clearBillRun()"
+                    >
+                      <i class="fa fa-refresh"></i>
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div id="genratebill" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <form [formGroup]="searchGenerateBillRunFormGroup">
+                <div>Early Bill date</div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <p-calendar
+                        placeholder="Enter Date"
+                        formControlName="billGenerateDate"
+                        [maxDate]="maxDate"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted &&
+                            searchGenerateBillRunFormGroup.controls.billGenerateDate.errors
+                        }"
+                        [showIcon]="true"
+                      ></p-calendar>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          submitted &&
+                          searchGenerateBillRunFormGroup.controls.billGenerateDate.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            searchGenerateBillRunFormGroup.controls.billGenerateDate.errors.required
+                          "
+                        >
+                          Bill Date is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <button type="submit" class="btn btn-primary" (click)="earlyBillRun()">
+                      <i class="fa fa-search"></i>
+                      Generate Early Bill Run
+                    </button>
+                    <button
+                      type="submit"
+                      class="btn btn-default"
+                      id="searchbtn"
+                      (click)="clearBillRun()"
+                    >
+                      <i class="fa fa-refresh"></i>
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel class="header" header="Generate Export" [headerStyle]="{ width: '33%' }">
+          <div class="panel-heading heading">
+            <h3 class="panel-title" style="margin: 0">Generate Export</h3>
+            <button
+              (click)="generateExport()"
+              class="btn btn-success"
+              id="searchbtn"
+              type="reset"
+              style="display: flex; align-items: center; gap: 6px; padding: 6px 12px"
+            >
+              <i class="fa fa-file-excel-o exportIcon"></i>
+              Export
+            </button>
+          </div>
+          <div class="panel-collapse collapse in" id="searchPreCust">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 m-b-10">
+                  <p-dropdown
+                    [(ngModel)]="searchOption"
+                    [options]="searchOptions"
+                    placeholder="Select Search Option"
+                    optionLabel="label"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+                <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'status'">
+                  <p-dropdown
+                    [options]="statusOptions"
+                    [(ngModel)]="searchName"
+                    placeholder="Select Status"
+                  >
+                  </p-dropdown>
+                </div>
+                <div class="col-lg-3 col-md-3 m-b-10">
+                  <p-calendar
+                    [(ngModel)]="searchData.fromDate"
+                    [showButtonBar]="true"
+                    [showIcon]="true"
+                    dateFormat="yy-MM-dd"
+                    placeholder="Select Start Date"
+                  ></p-calendar>
+                </div>
+                <div class="col-lg-3 col-md-3 m-b-10">
+                  <p-calendar
+                    [(ngModel)]="searchData.toDate"
+                    [showButtonBar]="true"
+                    [showIcon]="true"
+                    dateFormat="yy-MM-dd"
+                    placeholder="Select End Date"
+                  ></p-calendar>
+                </div>
+                <br />
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12" style="margin-top: 15px">
+                  <button
+                    (click)="searchExportInvoiceAudit()"
+                    class="btn btn-primary"
+                    id="searchbtn"
+                    type="button"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    (click)="clearExportInvoiceAuditSearch()"
+                    class="btn btn-default"
+                    id="searchbtn"
+                    type="reset"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body table-responsive">
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Thread Name</th>
+                      <th>Status</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Total Count</th>
+                      <th>Remark</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let data of exportInvoiceAuditList
+                          | paginate
+                            : {
+                                id: 'exportInvoiceAuditList',
+                                itemsPerPage: exportInvoicePerPage,
+                                currentPage: exportInvoicePageChildSlab,
+                                totalItems: exportInvoicetotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td>
+                        {{ data.threadName }}
+                      </td>
+                      <td *ngIf="data.status == 'STARTED' || data.status == 'Started'">
+                        <span class="badge badge-success">Started</span>
+                      </td>
+                      <td *ngIf="data.status == 'IN-PROGRESS' || data.status == 'In-Progress'">
+                        <span class="badge badge-primary">In-Progress</span>
+                      </td>
+                      <td *ngIf="data.status == 'PENDING' || data.status == 'Pending'">
+                        <span class="badge badge-info">Pending</span>
+                      </td>
+                      <td *ngIf="data.status == 'COMPLETED' || data.status == 'Completed'">
+                        <span class="badge badge-success">Completed</span>
+                      </td>
+                      <td *ngIf="data.status == 'FAILED' || data.status == 'Failed'">
+                        <span class="badge badge-danger">Failed</span>
+                      </td>
+
+                      <td>{{ data.executionStartDate | date: "yyyy-MM-dd" }}</td>
+                      <td>{{ data.executionEndDate | date: "yyyy-MM-dd" }}</td>
+                      <td>{{ data.exportCount }}</td>
+                      <td>{{ data.remarks }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="exportInvoiceAuditList"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedInvoiceExport($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="exportInvoicePerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="runMaster" class="panel-collapse collapse in"></div>
+        </p-tabPanel>
+
+        <p-tabPanel class="header" header="Generate Distribution" [headerStyle]="{ width: '33%' }">
+          <div class="panel-heading heading">
+            <h3 class="panel-title" style="margin: 0">Generate Distribution</h3>
+            <button
+              (click)="generateExportDistribution()"
+              class="btn btn-success"
+              id="searchbtn"
+              type="reset"
+              style="display: flex; align-items: center; gap: 6px; padding: 6px 12px"
+            >
+              <i class="fa fa-file-excel-o exportIcon"></i>
+              Dispatch
+            </button>
+          </div>
+          <div class="panel-collapse collapse in" id="searchPreCust">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 m-b-10">
+                  <p-dropdown
+                    [(ngModel)]="searchOptionDistribution"
+                    [options]="searchOptions"
+                    placeholder="Select Search Option"
+                    optionLabel="label"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+                <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOptionDistribution === 'status'">
+                  <p-dropdown
+                    [options]="statusOptions"
+                    [(ngModel)]="searchDistribution"
+                    placeholder="Select Status"
+                  >
+                  </p-dropdown>
+                </div>
+                <div class="col-lg-3 col-md-3 m-b-10">
+                  <p-calendar
+                    [(ngModel)]="searchDataDistribution.fromDate"
+                    [showButtonBar]="true"
+                    [showIcon]="true"
+                    dateFormat="yy-MM-dd"
+                    placeholder="Select Start Date"
+                  ></p-calendar>
+                </div>
+                <div class="col-lg-3 col-md-3 m-b-10">
+                  <p-calendar
+                    [(ngModel)]="searchDataDistribution.toDate"
+                    [showButtonBar]="true"
+                    [showIcon]="true"
+                    dateFormat="yy-MM-dd"
+                    placeholder="Select End Date"
+                  ></p-calendar>
+                </div>
+                <br />
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12" style="margin-top: 15px">
+                  <button
+                    (click)="searchDistributionInvoiceAudit()"
+                    class="btn btn-primary"
+                    id="searchbtn"
+                    type="button"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  <button
+                    (click)="clearDistributionInvoiceAuditSearch()"
+                    class="btn btn-default"
+                    id="searchbtn"
+                    type="reset"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="runMaster" class="panel-collapse collapse in">
+            <div class="panel-body table-responsive">
+              <div class="row">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Thread Name</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Total Count</th>
+                        <th>Remark</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let data of exportInvoiceAuditList
+                            | paginate
+                              : {
+                                  id: 'exportInvoiceAuditList',
+                                  itemsPerPage: exportInvoicePerPage,
+                                  currentPage: exportInvoicePageChildSlab,
+                                  totalItems: exportInvoicetotalRecords
+                                };
+                          index as i
+                        "
+                      >
+                        <td>
+                          {{ data.threadName }}
+                        </td>
+                        <td *ngIf="data.status == 'STARTED' || data.status == 'Started'">
+                          <span class="badge badge-success">Started</span>
+                        </td>
+                        <td *ngIf="data.status == 'IN-PROGRESS' || data.status == 'In-Progress'">
+                          <span class="badge badge-primary">In-Progress</span>
+                        </td>
+                        <td *ngIf="data.status == 'PENDING' || data.status == 'Pending'">
+                          <span class="badge badge-info">Pending</span>
+                        </td>
+                        <td *ngIf="data.status == 'COMPLETED' || data.status == 'Completed'">
+                          <span class="badge badge-success">Completed</span>
+                        </td>
+                        <td *ngIf="data.status == 'FAILED' || data.status == 'Failed'">
+                          <span class="badge badge-danger">Failed</span>
+                        </td>
+                        <td>{{ data.executionStartDate | date: "yyyy-MM-dd" }}</td>
+                        <td>{{ data.executionEndDate | date: "yyyy-MM-dd" }}</td>
+                        <td>{{ data.exportCount }}</td>
+                        <td>{{ data.remarks }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="pagination_Dropdown">
+                    <pagination-controls
+                      id="exportInvoiceAuditList"
+                      maxSize="10"
+                      directionLinks="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedInvoiceExport($event)"
+                    ></pagination-controls>
+                    <div id="itemPerPageDropdown">
+                      <p-dropdown
+                        [(ngModel)]="exportInvoicePerPage"
+                        [options]="pageLimitOptions"
+                        optionLabel="value"
+                        optionValue="value"
+                        (onChange)="TotalItemPerPage($event)"
+                      ></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>

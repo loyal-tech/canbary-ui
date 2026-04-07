@@ -1,0 +1,445 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Ticket Reason</h3>
+        <div class="right">
+          <!-- <button type="button" class="btn-toggle-collapse">
+            <i class="fa fa-minus-circle"></i>
+          </button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Ticket Reason</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchTicket"
+            aria-expanded="false"
+            aria-controls="searchTicket"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchTicket" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>TAT Consideration</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let ticketReason of ticketReasonData
+                        | paginate
+                          : {
+                              id: 'ticketReasonpageData',
+                              itemsPerPage: ticketReasonConfigitemsPerPage,
+                              currentPage: currentPageTicketReasonConfig,
+                              totalItems: ticketReasonConfigtotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ ticketReason.name }}</td>
+                    <td>{{ ticketReason.tatConsideration }}</td>
+                    <td *ngIf="ticketReason.status == 'ACTIVE'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="ticketReason.status == 'INACTIVE'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td class="btnAction">
+                      <a
+                        href="javascript:void(0)"
+                        id="edit-button"
+                        type="button"
+                        (click)="editTicketReason(ticketReason.reasonId)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="
+                          deleteConfirmonTicketReason(ticketReason.reasonId)
+                        "
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="ticketReasonpageData"
+                  [maxSize]="10"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedTicketReasonConfig($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          {{ isTicketReasonEdit ? "Update" : "Create" }} Ticket Reason
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#CreateTicket"
+            aria-expanded="false"
+            aria-controls="CreateTicket"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="CreateTicket" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="ticketReasonGroupForm">
+            <label>Ticket Reason Name*</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Enter Ticket Reason Name"
+              formControlName="name"
+              [ngClass]="{
+                'is-invalid':
+                  submitted && ticketReasonGroupForm.controls.name.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && ticketReasonGroupForm.controls.name.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  submitted &&
+                  ticketReasonGroupForm.controls.name.errors.required
+                "
+              >
+                Ticket Reason Name is required.
+              </div>
+            </div>
+            <br />
+            <label>TAT Consideration*</label>
+            <div>
+              <p-dropdown
+                [options]="tatConsiderationData"
+                optionValue="value"
+                optionLabel="text"
+                [filter]="true"
+                filterBy="text"
+                placeholder="Select a TAT Consideration"
+                formControlName="tatConsideration"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted &&
+                    ticketReasonGroupForm.controls.tatConsideration.errors
+                }"
+              ></p-dropdown>
+            </div>
+            <!-- <select
+            class="form-control"
+            name="tatConsideration"
+            formControlName="tatConsideration"
+            style="width: 100%;"
+            [ngClass]="{
+              'is-invalid':
+                submitted &&
+                ticketReasonGroupForm.controls.tatConsideration.errors
+            }"
+          >
+            <option value="">
+              Select TAT Consideration
+            </option>
+            <option
+              value="{{ tatConsideration.value }}"
+              *ngFor="let tatConsideration of tatConsiderationData"
+            >
+              {{ tatConsideration.text }}
+            </option>
+          </select> -->
+            <div
+              class="errorWrap text-danger"
+              *ngIf="
+                submitted &&
+                ticketReasonGroupForm.controls.tatConsideration.errors
+              "
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  submitted &&
+                  ticketReasonGroupForm.controls.tatConsideration.errors
+                    .required
+                "
+              >
+                TAT Consideration is required.
+              </div>
+            </div>
+            <br />
+            <label>Time Unit *</label>
+            <p-dropdown
+              [options]="qutaUnitTime"
+              optionValue="value"
+              optionLabel="label"
+              [filter]="true"
+              filterBy="label"
+              placeholder="Select a Quota Unit Time"
+              formControlName="timeUnit"
+              [ngClass]="{
+                'is-invalid':
+                  submitted && ticketReasonGroupForm.controls.timeUnit.errors
+              }"
+            ></p-dropdown>
+            <div></div>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="
+                submitted && ticketReasonGroupForm.controls.timeUnit.errors
+              "
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  submitted &&
+                  ticketReasonGroupForm.controls.timeUnit.errors.required
+                "
+              >
+                Time unit is required.
+              </div>
+            </div>
+            <br />
+            <label>Time *</label>
+            <input
+              id="quotatime"
+              type="number"
+              [min]="1"
+              class="form-control"
+              placeholder="Enter Quota Time"
+              formControlName="time"
+              [ngClass]="{
+                'is-invalid':
+                  submitted && this.ticketReasonGroupForm.controls.time.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && ticketReasonGroupForm.controls.time.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  submitted &&
+                  ticketReasonGroupForm.controls.time.errors.required
+                "
+              >
+                Time is required.
+              </div>
+              <div
+                class="error text-danger"
+                *ngIf="
+                  submitted &&
+                  ticketReasonGroupForm.controls.time.errors.pattern
+                "
+              >
+                Only Numeric Value allowed.
+              </div>
+            </div>
+            <br />
+            <!-- <label>Case Reason Config*</label>
+                    <table class="table coa-table" style="margin-top: 10px">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; width: 30%">
+                                    Case Reason Name*
+                                </th>
+                                <th style="text-align: center; width: 20%">
+                                    Reason*
+                                </th> 
+                                <th style="text-align: center; width: 25%">
+                                    Service Area*
+                                </th>
+                                <th style="text-align: center; width: 25%">
+                                    Staff User*
+                                </th>
+                                <th style="text-align: right; width: 20%; padding: 8px">
+                                     <button id="addAtt" style="object-fit: cover; padding: 5px 8px"
+                                        class="btn btn-primary" (click)="onAddaseReasonConfigField()">
+                                        <i class="fa fa-plus-square" aria-hidden="true"></i> Add
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                *ngFor="let row of caseReasonConfigArray.controls | paginate : { id: 'caseReasonConfigData', itemsPerPage: caseReasonConfigitemsPerPage,
+                                                  currentPage: currentPageCaseReasonConfig, totalItems: caseReasonConfigtotalRecords}; let index = index">
+
+                                <td style="padding-left: 8px">
+                                    <input class="form-control" type="text" placeholder="Enter Case Reason Name"
+                                        [formControl]="row.get('caseReasonName')"
+                                        [ngClass]="{'is-invalid': submitted && row.get('caseReasonName').errors}" />
+                                    <div class="errorWrap text-danger"
+                                        *ngIf="submitted && row.get('caseReasonName').errors">
+                                        <div class="error text-danger"
+                                            *ngIf="submitted && row.get('caseReasonName').errors.required">
+                                            Case Reason Name is required.
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="padding-left: 8px">
+                                    <select class="form-control" name="serviceareaid"
+                                        [formControl]="row.get('serviceareaid')" style="width: 100%"
+                                        [ngClass]="{'is-invalid': submitted && row.get('serviceareaid').errors}">
+                                        <option value="">
+                                            Select Service Area
+                                        </option>
+                                        <option value="{{serviceArea.id}}" *ngFor="let serviceArea of serviceAreaData">
+                                            {{serviceArea.name}}
+                                        </option>
+                                    </select>
+                                    <div class="errorWrap text-danger"
+                                        *ngIf="submitted && row.get('serviceareaid').errors">
+                                        <div class="error text-danger"
+                                            *ngIf="submitted && row.get('serviceareaid').errors.required">
+                                            Service Area is required.
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="staffid" [formControl]="row.get('staffid')"
+                                        style="width: 100%"
+                                        [ngClass]="{'is-invalid': submitted && row.get('staffid').errors}">
+                                        <option value="">
+                                            Select Staff User
+                                        </option>
+                                        <option value="{{staffUser.id}}" *ngFor="let staffUser of staffUserData">
+                                            {{staffUser.fullName}}
+                                        </option>
+                                    </select>
+                                    <div class="errorWrap text-danger" *ngIf="submitted && row.get('staffid').errors">
+                                        <div class="error text-danger"
+                                            *ngIf="submitted && row.get('staffid').errors.required">
+                                            Staff User is required.
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align: right">
+                                    <a id="deleteAtt"
+                                        (click)="deleteConfirmonCaseReasonConfigField(index, row.get('id').value)">
+                                        <img src="assets/img/ioc02.jpg" /></a> 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <pagination-controls id="caseReasonConfigData" maxSize="10" directionLinks="true"
+                                previousLabel="" nextLabel="" (pageChange)="pageChangedCaseReasonConfig($event)">
+                            </pagination-controls>
+                        </div>
+                    </div>
+                    <br /> -->
+            <label>Status*</label>
+            <div>
+              <p-dropdown
+                [options]="statusOptions"
+                optionValue="val"
+                optionLabel="label"
+                [filter]="true"
+                filterBy="label"
+                placeholder="Select a Status"
+                formControlName="status"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && ticketReasonGroupForm.controls.status.errors
+                }"
+              ></p-dropdown>
+            </div>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && ticketReasonGroupForm.controls.status.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="
+                  submitted &&
+                  ticketReasonGroupForm.controls.status.errors.required
+                "
+              >
+                Ticket Reason Status is required.
+              </div>
+            </div>
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="!isTicketReasonEdit"
+                (click)="addEditTicketReason('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Ticket Reason
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="isTicketReasonEdit"
+                (click)="addEditTicketReason(viewTicketReasonData.reasonId)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Ticket Reason
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

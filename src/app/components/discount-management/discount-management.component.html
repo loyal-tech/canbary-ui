@@ -1,0 +1,1031 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Discount Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDiscount"
+            aria-expanded="false"
+            aria-controls="searchDiscount"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchDiscount" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="discountDeatilsShow">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                type="text"
+                [(ngModel)]="searchDiscountName"
+                class="form-control"
+                (keydown.enter)="searchDiscount()"
+                placeholder="Enter Discount Name"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchDiscount()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchDiscount()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="createDiscount()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Discount</h5>
+                <!-- <p>Create Discount</p> -->
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="listDiscount()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Discount</h5>
+                <!-- <p>Search Discount</p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="discountDeatilsShow">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Discount</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#discountDeatis"
+            aria-expanded="false"
+            aria-controls="discountDeatis"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="discountDeatis" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <!-- <th style="width: 20%;">Discount Details</th> -->
+                    <!-- <th>Description</th> -->
+                    <th>Status</th>
+                    <th>ISP Name</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let discount of discountListData
+                        | paginate
+                          : {
+                              id: 'discountListData',
+                              itemsPerPage: discountitemsPerPage,
+                              currentPage: currentPageDiscount,
+                              totalItems: discounttotalRecords
+                            };
+                      let i = index
+                    "
+                  >
+                    <td
+                      class="curson_pointer"
+                      (click)="discountPersonaDetails(discount)"
+                      style="color: #f7b206"
+                    >
+                      {{ discount.name }}
+                    </td>
+                    <!-- <td>
+                                        <div class="curson_pointer" (click)="discountPersonaDetails(discount)" style="color: #f7b206;">
+                                            View Details
+                                        </div>
+                                    </td> -->
+                    <!-- <td class="discInfo">
+                                        <div title="{{ discount.desc }}">{{ discount.desc }}</div>
+                                    </td> -->
+                    <td *ngIf="discount.status == 'Y'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="discount.status == 'N'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td>{{ discount.mvnoName }}</td>
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        *ngIf="editAccess"
+                        title="Edit"
+                        (click)="editDiscount(discount.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        (click)="deleteConfirmonCountry(discount.id)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="discountListData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedDiscount($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isDiscountEdit ? "Update" : "Create" }} Discount</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDiscount"
+            aria-expanded="false"
+            aria-controls="createDiscount"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createDiscount" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body table-responsive" *ngIf="!createAccess && !isDiscountEdit">
+            Sorry you have not privilege to create operation!
+          </div>
+          <div class="panel-body" *ngIf="createAccess || (isDiscountEdit && editAccess)">
+            <form [formGroup]="discountGroupForm">
+              <!--   Discount Information  -->
+              <fieldset style="margin-top: 0px">
+                <legend>Discount Information</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                      <label>Discount Name *</label>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Discount Name"
+                        formControlName="name"
+                        [ngClass]="{
+                          'is-invalid': submitted && discountGroupForm.controls.name.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && discountGroupForm.controls.name.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && discountGroupForm.controls.name.errors.required"
+                        >
+                          Discount Name is required.
+                        </div>
+                        <div
+                          class="position"
+                          *ngIf="
+                            submitted && discountGroupForm.controls.name.errors?.cannotContainSpace
+                          "
+                        >
+                          <p class="error">White space are not allowed.</p>
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                      <label>Status *</label>
+                      <p-dropdown
+                        [options]="statusOptions"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Status"
+                        formControlName="status"
+                        [ngClass]="{
+                          'is-invalid': submitted && discountGroupForm.controls.status.errors
+                        }"
+                      ></p-dropdown>
+                      <!-- <select
+                    class="form-control"
+                    name="status"
+                    id="status"
+                    formControlName="status"
+                    style="width: 100%;"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && discountGroupForm.controls.status.errors
+                    }"
+                  >
+                    <option value="">
+                      Select Discount Status
+                    </option>
+                    <option value="Y">
+                      Active
+                    </option>
+                    <option value="N">
+                      Inactive
+                    </option>
+                  </select> -->
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && discountGroupForm.controls.status.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && discountGroupForm.controls.status.errors.required"
+                        >
+                          Discount Status is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div *ngIf="mvnoId === 1" class="col-lg-4 col-md-4 col-sm-4 col-xs-12 mb-15">
+                      <label>{{ mvnoTitle }} List*</label>
+                      <p-dropdown
+                        id="mvnoId"
+                        [disabled]="isDiscountEdit"
+                        [options]="commondropdownService.mvnoList"
+                        filter="true"
+                        filterBy="name"
+                        formControlName="mvnoId"
+                        optionLabel="name"
+                        optionValue="id"
+                        (onChange)="mvnoChange($event)"
+                        placeholder="Select a mvno"
+                      ></p-dropdown>
+                      <div
+                        *ngIf="submitted && discountGroupForm.controls.mvnoId.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div
+                          *ngIf="submitted && discountGroupForm.controls.mvnoId.errors.required"
+                          class="error text-danger"
+                        >
+                          Mvno is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                      <label>Description *</label>
+                      <textarea
+                        rows="3"
+                        class="form-control"
+                        name="desc"
+                        formControlName="desc"
+                        placeholder="Enter Description"
+                        [ngClass]="{
+                          'is-invalid': submitted && discountGroupForm.controls.desc.errors
+                        }"
+                      ></textarea>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && discountGroupForm.controls.desc.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && discountGroupForm.controls.desc.errors.required"
+                        >
+                          Description is required.
+                        </div>
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && discountGroupForm.controls.desc.errors.pattern"
+                        >
+                          Maximum 255 charecter required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!--    Discount Mapping -->
+              <fieldset>
+                <legend>Discount Mapping</legend>
+                <div class="boxWhite">
+                  <div class="row" [formGroup]="DiscountMappingfromgroup">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-12">
+                      <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter Amount"
+                        formControlName="amount"
+                        [ngClass]="{
+                          'is-invalid':
+                            DiscountMappingSubmitted &&
+                            DiscountMappingfromgroup.controls.amount.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          DiscountMappingSubmitted &&
+                          DiscountMappingfromgroup.controls.amount.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            DiscountMappingSubmitted &&
+                            DiscountMappingfromgroup.controls.amount.errors.required
+                          "
+                        >
+                          Amount is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                      <p-dropdown
+                        [options]="discountType"
+                        optionValue="label"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select  Discount Type"
+                        formControlName="discountType"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && DiscountMappingfromgroup.controls.discountType.errors
+                        }"
+                      ></p-dropdown>
+                      <!-- <select
+                    class="form-control"
+                    formControlName="discountType"
+                    [ngClass]="{
+                      'is-invalid':
+                        DiscountMappingSubmitted &&
+                        DiscountMappingfromgroup.controls.discountType.errors
+                    }"
+                    style="width: 100%;"
+                  >
+                    <option value="">
+                      Select Discount Type
+                    </option>
+                    <option value="Flat">
+                      Flat
+                    </option>
+                    <option value="Percentage">
+                      Percentage
+                    </option>
+                  </select> -->
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          DiscountMappingSubmitted &&
+                          DiscountMappingfromgroup.controls.discountType.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            DiscountMappingSubmitted &&
+                            DiscountMappingfromgroup.controls.discountType.errors.required
+                          "
+                        >
+                          Discount Type is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                      <input
+                        type="date"
+                        formControlName="validFrom"
+                        placeholder="DD/MM/YYYY"
+                        class="form-control"
+                        [ngClass]="{
+                          'is-invalid':
+                            DiscountMappingSubmitted &&
+                            DiscountMappingfromgroup.controls.validFrom.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          DiscountMappingSubmitted &&
+                          DiscountMappingfromgroup.controls.validFrom.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            DiscountMappingSubmitted &&
+                            DiscountMappingfromgroup.controls.validFrom.errors.required
+                          "
+                        >
+                          Valid From is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-12">
+                      <input
+                        type="date"
+                        formControlName="validUpto"
+                        placeholder="DD/MM/YYYY"
+                        class="form-control"
+                        [ngClass]="{
+                          'is-invalid':
+                            DiscountMappingSubmitted &&
+                            DiscountMappingfromgroup.controls.validUpto.errors
+                        }"
+                      />
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          DiscountMappingSubmitted &&
+                          DiscountMappingfromgroup.controls.validUpto.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            DiscountMappingSubmitted &&
+                            DiscountMappingfromgroup.controls.validUpto.errors.required
+                          "
+                        >
+                          Valid Upto is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-12">
+                      <button
+                        id="addAtt"
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddDiscountMappingField()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  <table class="table coa-table" style="margin-top: 10px">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center; width: 15%">Amount*</th>
+                        <th style="text-align: center; width: 25%">Discount Type*</th>
+                        <th style="text-align: center; width: 22%">Valid From*</th>
+                        <th style="text-align: center; width: 23%">Valid Upto*</th>
+                        <th style="text-align: right; width: 15%; padding: 8px">
+                          <!-- <button id="addAtt" style="object-fit: cover; padding: 5px 8px"
+                                                class="btn btn-primary" (click)="onAddDiscountMappingField()">
+                                                <i class="fa fa-plus-square" aria-hidden="true"></i> Add
+                                            </button> -->
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of discountMapping.controls
+                            | paginate
+                              : {
+                                  id: 'discountMappingData',
+                                  itemsPerPage: discountMappingitemsPerPage,
+                                  currentPage: currentPageDiscountMapping,
+                                  totalItems: discountMappingtotalRecords
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <input
+                            class="form-control"
+                            placeholder="Enter Amount"
+                            type="number"
+                            (keypress)="amountValidation($event)"
+                            [formControl]="row.get('amount')"
+                          />
+                          <!-- [ngClass]="{'is-invalid': submitted && row.get('amount').errors}" -->
+                          <!-- <div class="errorWrap text-danger" *ngIf="submitted && row.get('amount').errors">
+                                                <div class="error text-danger" *ngIf="submitted && row.get('amount').errors.required">
+                                                    Amount is required.
+                                                </div>
+                                            </div> -->
+                        </td>
+                        <td>
+                          <p-dropdown
+                            [options]="discountType"
+                            optionValue="label"
+                            optionLabel="label"
+                            filter="true"
+                            filterBy="label"
+                            placeholder="Select  Discount Type"
+                            [formControl]="row.get('discountType')"
+                          >
+                          </p-dropdown>
+                          <!-- <select
+                        class="form-control"
+                        [formControl]="row.get('discountType')"
+                        style="width: 100%;"
+                      >
+                        <option value="">
+                          Select Discount Type
+                        </option>
+                        <option value="Flat">
+                          Flat
+                        </option>
+                        <option value="Percentage">
+                          Percentage
+                        </option>
+                      </select> -->
+                          <!-- [ngClass]="{'is-invalid': submitted && row.get('discountType').errors}" -->
+                          <!-- <div class="errorWrap text-danger" *ngIf="submitted && row.get('discountType').errors">
+                                                <div class="error text-danger" *ngIf="submitted && row.get('discountType').errors.required">
+                                                    Discount Type is required.
+                                                </div>
+                                            </div> -->
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            [formControl]="row.get('validFrom')"
+                            placeholder="DD/MM/YYYY"
+                            class="form-control"
+                          />
+                          <!-- [ngClass]="{'is-invalid': submitted && row.get('validFrom').errors}" -->
+                          <!-- <div class="errorWrap text-danger" *ngIf="submitted && row.get('validFrom').errors">
+                                                <div class="error text-danger" *ngIf="submitted && row.get('validFrom').errors.required">
+                                                    Valid From is required.
+                                                </div>
+                                            </div> -->
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            [formControl]="row.get('validUpto')"
+                            placeholder="DD/MM/YYYY"
+                            class="form-control"
+                          />
+                          <!-- [ngClass]="{'is-invalid': submitted && row.get('validUpto').errors}"  -->
+                          <!-- <div class="errorWrap text-danger" *ngIf="submitted && row.get('validUpto').errors">
+                                                <div class="error text-danger" *ngIf="submitted && row.get('validUpto').errors.required">
+                                                    Valid Upto is required.
+                                                </div>
+                                            </div> -->
+                        </td>
+
+                        <td style="text-align: right">
+                          <a
+                            id="deleteAtt"
+                            class="curson_pointer"
+                            (click)="
+                              deleteConfirmonDiscountMappingField(index, row.get('id').value)
+                            "
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="discountMappingData"
+                        maxSize="10"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedDiscountMapping($event)"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!--    Discount Plan Mapping  -->
+              <fieldset>
+                <legend>Discount Plan Mapping</legend>
+                <div class="boxWhite">
+                  <div class="row" [formGroup]="DiscountPlanMappingfromgroup">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                      <p-dropdown
+                        [options]="planGroupData"
+                        (onChange)="selPlanGroup($event)"
+                        optionValue="value"
+                        optionLabel="text"
+                        filter="true"
+                        filterBy="text"
+                        placeholder="Select a Plan Group"
+                      ></p-dropdown>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                      <p-dropdown
+                        [options]="planListData"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Select a Plan"
+                        formControlName="planId"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && DiscountPlanMappingfromgroup.controls.planId.errors
+                        }"
+                      ></p-dropdown>
+                      <!-- <select
+                    class="form-control"
+                    formControlName="planId"
+                    style="width: 100%;"
+                    [ngClass]="{
+                      'is-invalid':
+                        DiscountPlanMappingSubmitted &&
+                        DiscountPlanMappingfromgroup.controls.planId.errors
+                    }"
+                  >
+                    <option value="">
+                      Select PostPaid Plan
+                    </option>
+                    <option
+                      value="{{ plan.id }}"
+                      *ngFor="let plan of planListData"
+                    >
+                      {{ plan.name }}
+                    </option>
+                  </select> -->
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          DiscountPlanMappingSubmitted &&
+                          DiscountPlanMappingfromgroup.controls.planId.errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            DiscountPlanMappingSubmitted &&
+                            DiscountPlanMappingfromgroup.controls.planId.errors.required
+                          "
+                        >
+                          Plan is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                      <button
+                        id="addAtt"
+                        style="object-fit: cover; padding: 5px 8px"
+                        class="btn btn-primary"
+                        (click)="onAddDiscountPlanMappingField()"
+                      >
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+
+                  <table class="table coa-table" style="margin-top: 10px">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center; width: 20%">Plan*</th>
+
+                        <th style="text-align: right; width: 15%; padding: 8px">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of discountPlanMapping.controls
+                            | paginate
+                              : {
+                                  id: 'discountPlanMappingData',
+                                  itemsPerPage: discountPlanMappingitemsPerPage,
+                                  currentPage: currentPageDiscountPlanMapping,
+                                  totalItems: discountPlanMappingtotalRecords
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            [options]="planAllListData"
+                            optionValue="id"
+                            optionLabel="name"
+                            filter="true"
+                            filterBy="name"
+                            [disabled]="true"
+                            placeholder="Select a PostPaid Plan"
+                            [formControl]="row.get('planId')"
+                          >
+                          </p-dropdown>
+                          <!-- <select
+                        class="form-control"
+                        [formControl]="row.get('planId')"
+                        style="width: 100%;"
+                      >
+                        <option value="">
+                          Select PostPaid Plan
+                        </option>
+                        <option
+                          value="{{ plan.id }}"
+                          *ngFor="let plan of planListData"
+                        >
+                          {{ plan.name }}
+                        </option>
+                      </select> -->
+                          <!-- [ngClass]="{'is-invalid': submitted && row.get('planId').errors}" -->
+                          <!-- <div class="errorWrap text-danger" *ngIf="submitted && row.get('planId').errors">
+                                                <div class="error text-danger" *ngIf="submitted && row.get('planId').errors.required">
+                                                    Plan is required.
+                                                </div>
+                                            </div> -->
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            id="deleteAtt"
+                            class="curson_pointer"
+                            (click)="
+                              deleteConfirmonDiscountPlanMappingField(index, row.get('id').value)
+                            "
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="discountPlanMappingData"
+                        maxSize="10"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedDiscountPlanMapping($event)"
+                      >
+                      </pagination-controls>
+                    </div>
+                  </div>
+                  <br />
+                </div>
+              </fieldset>
+
+              <div class="addUpdateBtn" style="margin: 3rem 0">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  *ngIf="!isDiscountEdit"
+                  (click)="addEditDiscount('')"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Add Discount
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  *ngIf="isDiscountEdit"
+                  (click)="addEditDiscount(viewDiscountListData.id)"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update Discount
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="discountMappingDatashow">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Discount Details"
+            (click)="listDiscount()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ discountPersonalData.name }} Discount</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#discountmapping"
+            aria-expanded="false"
+            aria-controls="discountmapping"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="discountmapping" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ discountPersonalData.name }}</span>
+                </div>
+
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span *ngIf="discountPersonalData.status == 'Y'" class="badge badge-success">
+                    Active
+                  </span>
+                  <span *ngIf="discountPersonalData.status == 'N'" class="badge badge-danger">
+                    Inactive
+                  </span>
+                </div>
+                <div class="col-lg-12 col-md-12 dataGroup">
+                  <label class="datalbl">Description :</label>
+                  <span>{{ discountPersonalData.desc }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Discount Mapping -->
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Discount Mapping</legend>
+            <div class="boxWhite">
+              <div class="row table-responsive">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Amount</th>
+                        <th>Discount Type</th>
+                        <th>Valid From</th>
+                        <th>Valid Upto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let data of discountPersonalData.discoundMappingList
+                            | paginate
+                              : {
+                                  id: 'discountMappingLISTpageData',
+                                  itemsPerPage: discountMappingItemPerPage,
+                                  currentPage: currentPagediscountMappingList,
+                                  totalItems: discountMappingLISTtotalRecords
+                                };
+                          index as i
+                        "
+                      >
+                        <td>{{ data.amount }}</td>
+                        <td>{{ data.discountType }}</td>
+                        <td>{{ data.validFrom }}</td>
+                        <td>{{ data.validUpto }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pagination-controls
+                    id="discountMappingLISTpageData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedDiscountPersonaList($event)"
+                  >
+                  </pagination-controls>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!--    Discount Plan Mapping  -->
+          <fieldset>
+            <legend>Discount Plan Mapping</legend>
+            <div class="boxWhite">
+              <div class="row table-responsive">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th style="text-align: left; padding-left: 8px">Plan Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let data of dataPlanMappingList
+                            | paginate
+                              : {
+                                  id: 'discountPlanMappingData',
+                                  itemsPerPage: discountPlanMappingitemsPerPage,
+                                  currentPage: currentPageDiscountPlanMapping,
+                                  totalItems: discountPlanMappingtotalRecords
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          {{ data }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <pagination-controls
+                        id="discountPlanMappingData"
+                        maxSize="10"
+                        directionLinks="true"
+                        previousLabel=""
+                        nextLabel=""
+                        (pageChange)="pageChangedDiscountPlanMapping($event)"
+                      >
+                      </pagination-controls>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br />
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

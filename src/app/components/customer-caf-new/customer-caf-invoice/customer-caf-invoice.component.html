@@ -1,0 +1,611 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Customer Details"
+            (click)="customerDetailOpen(customerDetailData?.id)"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            Search {{ customerDetailData?.title }} {{ customerDetailData?.custname }} Invoice
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#invoiceSearchCust"
+            aria-expanded="false"
+            aria-controls="invoiceSearchCust"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="invoiceSearchCust" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="searchForm">
+            <form [formGroup]="searchInvoiceMasterFormGroup">
+              <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <div class="form-group">
+                    <label>Document No</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Document No"
+                      formControlName="docnumber"
+                    />
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <div class="form-group">
+                    <label>Customer Name</label>
+                    <select class="form-control" name="customerid" style="width: 100%" disabled>
+                      <option>
+                        {{ customerDetailData?.title }}
+                        {{ customerDetailData?.custname }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <div class="form-group">
+                    <label>Bill From Date</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      placeholder="Enter Pay From Date"
+                      formControlName="billfromdate"
+                    />
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <div class="form-group">
+                    <label>Bill To Date</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      placeholder="Enter Pay To Date"
+                      formControlName="billtodate"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="addUpdateBtn">
+                <button type="submit" class="btn btn-primary" (click)="searchinvoiceMaster('', '')">
+                  <i class="fa fa-search"></i>
+                  Search Invoice
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-default"
+                  id="searchbtn"
+                  (click)="clearSearchinvoiceMaster()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          {{ customerDetailData?.title }}
+          {{ customerDetailData?.custname }} Invoice Details
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#invoiceDeatils"
+            aria-expanded="false"
+            aria-controls="invoiceDeatils"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <app-invoice-payment-details-modal
+        dialogId="invoicePaymentDetailModal"
+        [invoiceId]="invoiceId"
+        [customerDetailData]="customerLedgerDetailData"
+      ></app-invoice-payment-details-modal>
+
+      <div id="invoiceDeatils" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12" *ngIf="invoiceMasterListData.length !== 0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th style="width: 12%">Document No.</th>
+                    <th>Created By</th>
+                    <th>Billable To</th>
+                    <th>Total Amount</th>
+                    <th>Adjusted Amount</th>
+                    <th>Unpaid Amount</th>
+                    <th>Bill Run Status</th>
+                    <th>Bill Date</th>
+                    <th>Payment Status</th>
+                    <!-- <th>Document</th> -->
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let invoice of invoiceMasterListData
+                        | paginate
+                          : {
+                              id: 'searchinvoiceMasterPageData',
+                              itemsPerPage: invoiceMasteritemsPerPage,
+                              currentPage: currentPageinvoiceMasterSlab,
+                              totalItems: invoiceMastertotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <div>
+                        {{ invoice.customerName }}
+                      </div>
+                    </td>
+                    <td>
+                      <div
+                        class="curson_pointer"
+                        style="color: #f7b206"
+                        (click)="openInvoiceModal(invoice)"
+                      >
+                        {{ invoice.docnumber }}
+                      </div>
+                    </td>
+                    <td>{{ invoice.createdByName }}</td>
+                    <td>
+                      {{
+                        invoice.billableToName !== null && invoice.billableToName !== ""
+                          ? invoice.billableToName
+                          : "-"
+                      }}
+                    </td>
+                    <td>
+                      <span>
+                        {{
+                          invoice.totalamount
+                            | customCurrency: currency : customerDetailData?.mvnoId
+                        }}
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="invoice.adjustedAmount !== null">
+                        {{
+                          invoice.adjustedAmount
+                            | customCurrency: currency : customerDetailData?.mvnoId
+                        }}
+                      </span>
+                      <span *ngIf="invoice.adjustedAmount == null">{{
+                        0 | customCurrency: currency : customerDetailData?.mvnoId
+                      }}</span>
+                    </td>
+                    <td>
+                      {{
+                        invoice.totalamount - invoice.adjustedAmount
+                          | customCurrency: currency : customerDetailData?.mvnoId
+                      }}
+                    </td>
+                    <!-- <td>
+                        <div class="badge badge-success">
+                          {{ invoice.billrunstatus }}
+                        </div>
+                      </td> -->
+                    <td>
+                      <span
+                        class="badge badge-success"
+                        [ngStyle]="{
+                          'background-color':
+                            invoice.billrunstatus?.toLowerCase() === 'cancelled'
+                              ? 'gray'
+                              : '#28a745',
+                          color: '#fff'
+                        }"
+                      >
+                        {{ invoice.billrunstatus || "-" }}
+                      </span>
+                    </td>
+                    <td style="font-weight: 400">
+                      {{ invoice.billdate | date: "yyyy-MM-dd" }}
+                    </td>
+                    <!-- <td>
+                        <span
+                          class="badge bg-success"
+                          *ngIf="invoice.paymentStatus !== null && invoice.paymentStatus !== ''"
+                        >
+                          {{ invoice.paymentStatus }}
+                        </span>
+                        <span
+                          class="badge bg-warning"
+                          *ngIf="invoice.paymentStatus === null || invoice.paymentStatus === ''"
+                        >
+                          UnPaid
+                        </span>
+                      </td> -->
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'unpaid'">
+                      <span class="badge badge-danger">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'partialy paid'">
+                      <span
+                        class="badge badge-warning"
+                        style="background-color: #f7b206; color: #fff"
+                      >
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'fully paid'">
+                      <span class="badge badge-success">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'payable'">
+                      <span class="badge badge-success">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'approved'">
+                      <span class="badge badge-success">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'cancelled'">
+                      <span class="badge badge-danger" style="background-color: gray; color: #fff">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'rejected'">
+                      <span class="badge badge-danger">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'pending'">
+                      <span class="badge badge-primary">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'pending sent'">
+                      <span class="badge badge-primary">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'pending accepted'">
+                      <span class="badge badge-primary">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'partial pending'">
+                      <span class="badge badge-primary">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'clear'">
+                      <span class="badge badge-primary">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="invoice.paymentStatus?.toLowerCase() === 'void'">
+                      <span class="badge badge-primary">
+                        {{ invoice.paymentStatus || "-" }}
+                      </span>
+                    </td>
+                    <td *ngIf="!invoice.paymentStatus">
+                      <span>–</span>
+                    </td>
+                    <!-- <th style="font-weight: 400;">{{invoice.latepaymentdate | date: 'yyyy-MM-dd'}}</th> -->
+
+                    <!-- <td class="discInfo" title="{{invoice.document}}">{{ invoice.document }}</td> -->
+                    <td class="btnAction">
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        title="Download"
+                        *ngIf="
+                          invoice.billrunstatus == 'Exported' || invoice.billrunstatus == 'Printed'
+                        "
+                        (click)="downloadPDFINvoice(invoice.id, invoice.customerName)"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/pdf.png" />
+                      </a>
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        title="Generate"
+                        *ngIf="generatePdfAccess && invoice.billrunstatus == 'Generated'"
+                        (click)="generatePDFInvoice(invoice.id)"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/generate.jpg" />
+                      </a>
+                      <!-- <button
+                                                  *ngIf="iscustomerEdit"
+                                                  type="button"
+                                                  class="approve-btn"
+                                                  style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                                                  title="Invoice Payment List"
+                                                  (click)="invicePaymentList(invoice)"
+                                              >
+                                                  <img style="width: 25px; height: 25px" src="assets/img/icons-03.png" />
+                                              </button> -->
+                      <a
+                        *ngIf="reprintAccess && invoice.billrunstatus !== 'Cancelled'"
+                        (click)="InvoiceReprint(invoice.id, invoice.customerName)"
+                        href="javascript:void(0)"
+                        title="Reprint Invoice"
+                      >
+                        <img src="assets/img/22_Reprint-invoice_Y.png" />
+                      </a>
+                      <a
+                        *ngIf="viewInvoiceAccess"
+                        (click)="viewInvoice(invoice.id, invoice.customerName)"
+                        href="javascript:void(0)"
+                        title="View Invoice"
+                      >
+                        <img src="assets/img/22_Reprint-invoice_Y.png" />
+                      </a>
+                      <button
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0"
+                        title="Invoice Payment"
+                        *ngIf="
+                          invoice.totalamount - invoice.adjustedAmount >= 1 && invoicesPaymentAccess
+                        "
+                        (click)="openPaymentGatewaysforInvoicePayment(invoice)"
+                        [disabled]="invoice.billrunstatus == 'Cancelled'"
+                      >
+                        <img
+                          src="assets/img/19_Promise-to-Pay_Y.png"
+                          alt="Invoice Payment"
+                          style="width: 25px; height: 25px; margin-right: 5px"
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="searchinvoiceMasterPageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedinvoiceMasterList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPageInvoice($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12" *ngIf="invoiceMasterListData.length === 0">
+              Invoice data not found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Payment Gateway Method"
+  [(visible)]="displayInvoicePaymentDialog"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card" style="text-align: center">
+    <div *ngFor="let config of savedConfig">
+      <p-card
+        [style]="{
+          margin: '25px',
+          'box-shadow': '0 4px 8px rgba(0, 0, 0, 0.3)'
+        }"
+      >
+        <div class="p-card-title" style="color: #f7b206; font-size: 20px">
+          {{ config.paymentConfigName }}
+        </div>
+        <div class="p-card-content" style="width: 100%">
+          <div>
+            {{ config.paymentGatewayInfo?.substring(0, 50) }}
+          </div>
+          <div style="white-space: normal">
+            {{ config.paymentGatewayInfo?.substring(50) }}
+          </div>
+        </div>
+        <div class="p-card-footer">
+          <button
+            class="btn btn-primary"
+            id="submit"
+            type="submit"
+            (click)="invoicePaymentpaymentGateway(config)"
+          >
+            Proceed
+          </button>
+        </div>
+      </p-card>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Mobile number"
+  [(visible)]="mpinModal"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [draggable]="false"
+  (onHide)="hideMpinModal()"
+  [resizable]="false"
+>
+  <form [formGroup]="mpinForm">
+    <div class="form-group">
+      <label style="margin-top: 10px">Mobile number: <span class="reqSign">*</span></label>
+      <div style="display: flex">
+        <div style="width: 30%">
+          <p-dropdown
+            [filter]="true"
+            [options]="countries"
+            formControlName="countryCode"
+            id="countryCode"
+            optionLabel="dial_code"
+            optionValue="dial_code"
+            placeholder="+91"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+        <div style="width: 70%">
+          <input
+            (input)="onInputMobile($event)"
+            class="form-control"
+            type="text"
+            name="mobileNo"
+            id="mobileNo"
+            formControlName="mobileNumber"
+            [attr.maxlength]="commondropdownService.maxMobileLength"
+            [ngClass]="{
+              'is-invalid': isMpinFormSubmitted && mpinForm.controls.mobileNumber.errors
+            }"
+            placeholder="Enter mobile number"
+          />
+
+          <div
+            *ngIf="isMpinFormSubmitted && mpinForm.controls.mobileNumber.errors"
+            class="errorWrap text-danger"
+          >
+            <div *ngIf="mpinForm.controls.mobileNumber.errors.required">
+              Mobile Number is required.
+            </div>
+
+            <div
+              *ngIf="
+                mpinForm.controls.mobileNumber.errors.minlength ||
+                mpinForm.controls.mobileNumber.errors.maxlength
+              "
+            >
+              <ng-container
+                *ngIf="
+                  commondropdownService.minMobileLength === commondropdownService.maxMobileLength;
+                  else mobileRangeError
+                "
+              >
+                Mobile Number must be exactly
+                {{ commondropdownService.minMobileLength }} digits.
+              </ng-container>
+
+              <ng-template #mobileRangeError>
+                Mobile Number must be between
+                {{ commondropdownService.minMobileLength }} and
+                {{ commondropdownService.maxMobileLength }} digits.
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <div class="btnGroup text-center">
+      <button
+        class="btn btn-primary btnStyle"
+        (click)="invoicePaymentGateway()"
+        style="margin-right: 10px"
+        [disabled]="inputMobileNumber !== '' || mobileError"
+      >
+        Buy
+      </button>
+      <button class="btn btn-danger btnStyle" (click)="hideMpinModal()">Cancel</button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="displayMpesaOptionsDialog"
+  [style]="{ width: '450px' }"
+  header="Select MPESA Payment Method"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <br />
+  <div class="p-fluid">
+    <div class="p-field-radiobutton p-mb-3">
+      <p-radioButton
+        name="mpesaOption"
+        value="Mpesa-B2C"
+        [(ngModel)]="selectedMpesaOption"
+        label="Pay using MPESA B2C Methoad"
+      ></p-radioButton>
+    </div>
+    <br />
+    <div class="p-field-radiobutton p-mb-3">
+      <p-radioButton
+        name="mpesaOption"
+        value="Mpesa-Express"
+        [(ngModel)]="selectedMpesaOption"
+        label="Pay using MPESA Express"
+      ></p-radioButton>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button class="btn btn-default" type="submit" (click)="closeMpesaOptionsDialog()">
+      Cancel
+    </button>
+    <button
+      class="btn btn-success"
+      type="submit"
+      (click)="handleMpesaPaymentOption(selectedMpesaOption)"
+      [disabled]="!selectedMpesaOption"
+    >
+      Submit
+    </button>
+  </ng-template>
+</p-dialog>
+
+<div *ngIf="isInvoiceDetail">
+  <app-invoice-detalis-model
+    [invoiceID]="invoiceID"
+    [custID]="customerId"
+    [sourceType]="'caf'"
+    [customerLedgerDetailData]="customerDetailData"
+    (closeInvoiceDetails)="closeInvoiceDetails()"
+  ></app-invoice-detalis-model>
+</div>

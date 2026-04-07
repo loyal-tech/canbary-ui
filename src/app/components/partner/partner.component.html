@@ -1,0 +1,3238 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Partner Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchPartner"
+            aria-expanded="false"
+            aria-controls="searchPartner"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchPartner" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="listView && !partnerrALLDeatilsShow">
+          <div class="col-md-3" style="margin-bottom: 2%">
+            <p-dropdown
+              id="roles"
+              [options]="searchOptions"
+              [(ngModel)]="searchOption"
+              defaultLabel="Select Search Options"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="selectSearchOption()"
+            ></p-dropdown>
+          </div>
+          <div
+            class="col-md-3"
+            style="margin-bottom: 2%"
+            *ngIf="
+              searchOption === 'name' || searchOption === 'email' || searchOption === 'country'
+            "
+          >
+            <input
+              id="userName"
+              type="text"
+              [(ngModel)]="searchName"
+              class="form-control"
+              [placeholder]="'Enter ' + searchOption"
+            />
+          </div>
+          <div class="col-md-3" style="margin-bottom: 2%" *ngIf="searchOption === 'commtype'">
+            <p-dropdown
+              [options]="commissionShareType"
+              optionValue="label"
+              optionLabel="label"
+              placeholder="Select a Commission Interval"
+              [(ngModel)]="searchName"
+            ></p-dropdown>
+          </div>
+          <div class="col-md-3" style="margin-bottom: 2%" *ngIf="searchOption === 'status'">
+            <p-dropdown
+              [options]="statusOption"
+              placeholder="Select Status"
+              optionLabel="label"
+              optionValue="label"
+              [(ngModel)]="searchName"
+              filterBy="label"
+            ></p-dropdown>
+          </div>
+          <div class="col-md-3 marginTopSearchBtn">
+            <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchpartner()">
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+            <button
+              type="reset"
+              class="btn btn-default"
+              id="searchbtn"
+              (click)="clearSearchpartner()"
+            >
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div
+            class="pcol"
+            [ngClass]="
+              isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' ? 'col-md-3' : 'col-md-6'
+            "
+            *ngIf="!isBalanceSubMenu && createAccess"
+          >
+            <div class="dbox">
+              <a (click)="createPlan(null)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Partner</h5>
+                <!-- <p>Create Partner </p> -->
+              </a>
+            </div>
+          </div>
+          <div
+            class="pcol"
+            [ngClass]="
+              isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' ? 'col-md-3' : 'col-md-6'
+            "
+          >
+            <div class="dbox">
+              <a (click)="listPlan()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5 *ngIf="!isBalanceSubMenu">Search Partner</h5>
+                <h5 *ngIf="isBalanceSubMenu">Home</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+          <div
+            class="pcol"
+            [ngClass]="
+              isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' ? 'col-md-3' : 'col-md-6'
+            "
+            *ngIf="isBalanceSubMenu && balanceDataAccess"
+          >
+            <div class="dbox">
+              <a (click)="PartnerBalnceData(partnerDATA.id, '')" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Partner Balance Data</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+          <div
+            class="pcol"
+            [ngClass]="isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' ? 'col-md-3' : ''"
+            *ngIf="isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' && invoiceAccess"
+          >
+            <div class="dbox">
+              <a (click)="showListInvoiceData()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Invoice</h5>
+              </a>
+            </div>
+          </div>
+          <div
+            class="pcol"
+            [ngClass]="isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' ? 'col-md-3' : ''"
+            *ngIf="isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' && paymentAccess"
+          >
+            <div class="dbox">
+              <a (click)="showListPaymentData()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Payment</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div
+            class="pcol"
+            [ngClass]="
+              isBalanceSubMenu && this.partnerDATA.partnerType == 'LCO' ? 'col-md-3' : 'col-md-6'
+            "
+            *ngIf="isBalanceSubMenu && balanceDataAccess"
+          >
+            <div class="dbox">
+              <a (click)="getPartnerOnlinePaymentAudit(partnerDATA.id)" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Partner Online Payment Audit</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 col-sm-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title"></h3>
+
+        <h3 class="panel-title" *ngIf="!ispartnerEdit">Create Partner</h3>
+        <h3 class="panel-title" *ngIf="ispartnerEdit">Update Partner</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#UpdatePartner"
+            aria-expanded="false"
+            aria-controls="UpdatePartner"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="UpdatePartner" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body">
+            <form [formGroup]="partnerGroupForm">
+              <fieldset style="margin-top: 0px">
+                <legend>Basic Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Name *</label>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Name"
+                        formControlName="name"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.name.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.name.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.name.errors.required"
+                        >
+                          Name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Partner Code</label>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Partner Code"
+                        formControlName="prcode"
+                      />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Partner Type *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="partnerTypeData"
+                          optionValue="value"
+                          optionLabel="text"
+                          filter="true"
+                          filterBy="text"
+                          placeholder="Select a Partner Type"
+                          formControlName="partnerType"
+                          (onChange)="selectPartnerType($event, false)"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.partnerType.errors
+                          }"
+                          [disabled]="ispartnerEdit"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.partnerType.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.partnerType.errors.required"
+                        >
+                          Partner Type is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Tax Name *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="commondropdownService.taxAllList"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a Tax"
+                          formControlName="taxid"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.taxid.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.taxid.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.taxid.errors.required"
+                        >
+                          Tax Name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Balance *</label>
+                      <input
+                        [readOnly]="ispartnerEdit"
+                        id="outcomeBalance"
+                        type="text"
+                        min="0"
+                        class="form-control"
+                        (keydown)="handleKeyDown($event)"
+                        placeholder="Enter Balance"
+                        formControlName="outcomeBalance"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.outcomeBalance.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.outcomeBalance.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && partnerGroupForm.controls.outcomeBalance.errors.required
+                          "
+                        >
+                          Balance is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Credit *</label>
+                      <input
+                        [readOnly]="ispartnerEdit"
+                        id="credit"
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        placeholder="Enter Balance"
+                        formControlName="credit"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.credit.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.credit.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.credit.errors.required"
+                        >
+                          Credit is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Parent Partner</label>
+                      <div>
+                        <p-dropdown
+                          [options]="parenetpartnerList"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a Parent Partner"
+                          formControlName="parentpartnerid"
+                          #ddlParentPartner
+                          (onChange)="onChangePartner($event, ddlParentPartner)"
+                          [disabled]="!partnerGroupForm.value.partnerType"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && partnerGroupForm.controls.parentpartnerid.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Calendar Type *</label>
+                      <p-dropdown
+                        [options]="celendarTypeData"
+                        optionValue="label"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Calendar Type"
+                        formControlName="calendarType"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.calendarType.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && partnerGroupForm.controls.calendarType.errors.required
+                          "
+                        >
+                          Calendar Type is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Status *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="statusOptions"
+                          optionValue="val"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Status"
+                          formControlName="status"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.status.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.status.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.status.errors.required"
+                        >
+                          Status is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div
+                      class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                      *ngIf="partnerGroupForm.get('partnerType')?.value === 'LCO'"
+                    >
+                      <p-checkbox
+                        binary="true"
+                        class="checkbox-align"
+                        formControlName="isVisibleToIsp"
+                        name="isCheckBox"
+                      ></p-checkbox>
+                      <label class="form-check-label" for="acceptTerms" style="margin-bottom: -20%"
+                        >Is Visible To ISP
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!--    Contact Details    -->
+              <fieldset>
+                <legend>Contact Details & Service Area</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Mobile Number*</label>
+                      <div style="display: flex">
+                        <div style="width: 30%; height: 34px">
+                          <p-dropdown
+                            id="countryCode"
+                            [filter]="true"
+                            [options]="countries"
+                            optionLabel="dial_code"
+                            optionValue="dial_code"
+                            formControlName="countryCode"
+                            placeholder="+91"
+                          ></p-dropdown>
+                        </div>
+                        <div style="width: 70%">
+                          <input
+                            (input)="onInputMobile($event)"
+                            id="mobile"
+                            type="text"
+                            class="form-control"
+                            placeholder="Enter Mobile Number"
+                            [attr.maxLength]="commondropdownService.maxMobileLength"
+                            formControlName="mobile"
+                            [ngClass]="{
+                              'is-invalid': submitted && partnerGroupForm.controls.mobile.errors
+                            }"
+                          />
+
+                          <!-- Validation messages -->
+                          <div
+                            *ngIf="submitted && partnerGroupForm.controls.mobile.errors"
+                            class="errorWrap text-danger"
+                          >
+                            <div *ngIf="partnerGroupForm.controls.mobile.errors.required">
+                              Mobile Number is required.
+                            </div>
+
+                            <div
+                              *ngIf="
+                                partnerGroupForm.controls.mobile.errors.minlength ||
+                                partnerGroupForm.controls.mobile.errors.maxlength
+                              "
+                            >
+                              <ng-container
+                                *ngIf="
+                                  commondropdownService.minMobileLength ===
+                                    commondropdownService.maxMobileLength;
+                                  else rangeLength
+                                "
+                              >
+                                Mobile Number must be exactly
+                                {{ commondropdownService.minMobileLength }} digits.
+                              </ng-container>
+                              <ng-template #rangeLength>
+                                Mobile Number must be between
+                                {{ commondropdownService.minMobileLength }} and
+                                {{ commondropdownService.maxMobileLength }} digits.
+                              </ng-template>
+                            </div>
+                          </div>
+
+                          <!-- Custom mobile error: should not start with 0 -->
+                          <div *ngIf="mobileError" class="errorWrap text-danger">
+                            <div class="error text-danger">
+                              Mobile number should not start with 0.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Email *</label>
+                      <input
+                        [readOnly]="ispartnerEdit"
+                        id="bccemail"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Email"
+                        formControlName="email"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.email.errors
+                        }"
+                        (keyup.enter)="checkEmail()"
+                      />
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.email.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.email.errors.required"
+                        >
+                          Email is required.
+                        </div>
+                        <div
+                          *ngIf="submitted && this.partnerGroupForm.controls.email.errors.email"
+                          class="error text-danger"
+                        >
+                          Email is not valid.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>TIN/PAN</label>
+                      <input
+                        id="mobile"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter PAN"
+                        formControlName="panName"
+                        maxlength="16"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.panName.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.panName.errors"
+                      >
+                        <div *ngIf="partnerGroupForm.controls.panName.errors.maxlength">
+                          TIN/PAN Number minimum 9 character is required.
+                        </div>
+                        <div *ngIf="partnerGroupForm.controls.panName.errors.minlength">
+                          TIN/PAN Number minimum 9 character is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Company Name</label>
+                      <input
+                        id="mobile"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Company Name"
+                        formControlName="cname"
+                        maxlength="16"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.cname.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.cname.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.cname.errors.required"
+                        >
+                          Company Name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label
+                        >Service Area
+                        <span *ngIf="partnerGroupForm?.controls?.serviceAreaIds?.errors?.required"
+                          >*</span
+                        >
+                      </label>
+                      <p-multiSelect
+                        id="roles"
+                        [options]="partnerServiceDropdownData"
+                        formControlName="serviceAreaIds"
+                        (onChange)="selServiceArea($event)"
+                        defaultLabel="Select Area"
+                        optionLabel="name"
+                        optionValue="id"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && partnerGroupForm.controls?.serviceAreaIds?.errors
+                        }"
+                        [disabled]="!partnerGroupForm.value.partnerType"
+                      ></p-multiSelect>
+                      <div
+                        *ngIf="!partnerGroupForm.value.partnerType"
+                        class="errorWrap text-danger"
+                      >
+                        <div class="error text-danger">Please select Partner Type first!</div>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.serviceAreaIds.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && partnerGroupForm.controls.serviceAreaIds.errors.required
+                          "
+                        >
+                          Service Area is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Branch</label>
+                      <div>
+                        <p-dropdown
+                          id="serviceBranches"
+                          [options]="serviceBranches"
+                          (onChange)="onBranchChange($event)"
+                          optionLabel="name"
+                          optionValue="id"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Branch"
+                          formControlName="branch"
+                        ></p-dropdown>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Region</label>
+                      <div>
+                        <p-dropdown
+                          id="branchRegions"
+                          [options]="branchRegions"
+                          (onChange)="onRegionChange($event)"
+                          optionLabel="rname"
+                          optionValue="id"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Region"
+                          formControlName="region"
+                        ></p-dropdown>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Business Verticals</label>
+                      <div>
+                        <p-dropdown
+                          id="regionVerticals"
+                          [options]="regionVerticals"
+                          optionLabel="vname"
+                          optionValue="id"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Business Vertical"
+                          formControlName="bussinessvertical"
+                        ></p-dropdown>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Contact Person Name</label>
+                      <input
+                        id="mobile"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Contact Person Name"
+                        formControlName="cpName"
+                        maxlength="16"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.cpName.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.cpName.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.cpName.errors.required"
+                        >
+                          Contact Person Name is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!--    Commission Details   -->
+              <fieldset>
+                <legend>{{ CommissionLabel }} Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Plan Bundle*</label>
+                      <div>
+                        <p-dropdown
+                          [options]="activePriceBookList"
+                          optionValue="id"
+                          optionLabel="bookname"
+                          filter="true"
+                          filterBy="bookname"
+                          placeholder="Select a Plan Bundle"
+                          formControlName="pricebookId"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.pricebookId.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.pricebookId.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.pricebookId.errors.required"
+                        >
+                          Plan Bundle is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                    <label>Commission Type *</label>
+                                    <select class="form-control" name="commtype" id="commtype"
+                                        formControlName="commtype" style="width: 100%" (change)="selCommType($event)"
+                                        [ngClass]="{'is-invalid': submitted && partnerGroupForm.controls.commtype.errors}">
+                                        <option value="">
+                                            Select Commission Type
+                                        </option>
+                                        <option value="PERCUSTFLAT">
+                                            PERCUSTFLAT
+                                        </option>
+                                        <option value="PERCUSTPERC">
+                                            PERCUSTPERC
+                                        </option>
+                                        <option value="PRICEBOOK">
+                                            PRICEBOOK
+                                        </option>
+                                    </select>
+                                    <div class="errorWrap text-danger"
+                                        *ngIf="submitted && partnerGroupForm.controls.commtype.errors">
+                                        <div class="error text-danger"
+                                            *ngIf="submitted && partnerGroupForm.controls.commtype.errors.required">
+                                            Commission Type is required.
+                                        </div>
+                                    </div>
+                                    <br />
+                                </div> -->
+                    <div
+                      class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                      *ngIf="this.partnerGroupForm.value.partnerType !== 'LCO'"
+                    >
+                      <label>Commission Day *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="dayArray"
+                          optionValue="label"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Commission Day"
+                          formControlName="commdueday"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.commdueday.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.commdueday.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.commdueday.errors.required"
+                        >
+                          Commission Day is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div
+                      class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                      *ngIf="this.partnerGroupForm.value.partnerType !== 'LCO'"
+                    >
+                      <label>Commission Interval *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="commissionIntervalOptionData"
+                          optionValue="label"
+                          optionLabel="label"
+                          placeholder="Select a Commission Interval"
+                          formControlName="commissionInterval"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && partnerGroupForm.controls.commissionInterval.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.commissionInterval.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            partnerGroupForm.controls.commissionInterval.errors.required
+                          "
+                        >
+                          Commission Interval is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div
+                      class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                      *ngIf="partnerGroupForm.controls.commrelvalue.enabled"
+                    >
+                      <label>Commission *</label>
+                      <input
+                        id="commrelvalue"
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        placeholder="Enter Commission "
+                        formControlName="commrelvalue"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.commrelvalue.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.commrelvalue.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && partnerGroupForm.controls.commrelvalue.errors.required
+                          "
+                        >
+                          Commission is required.
+                        </div>
+
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.commrelvalue.errors.max"
+                        >
+                          Maximum 100 Commission allowed.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ CommissionLabel }} Share Type *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="commissionShareType"
+                          optionValue="label"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a {{ CommissionLabel }} Share Type"
+                          formControlName="commissionShareType"
+                          [disabled]="this.partnerGroupForm.value.partnerType == 'LCO'"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && partnerGroupForm.controls.commissionShareType.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.commissionShareType.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            partnerGroupForm.controls.commissionShareType.errors.required
+                          "
+                        >
+                          Commission Share Type is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!--    Address Details    -->
+              <fieldset>
+                <legend>Address Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                    <label>Address Type *</label>
+                                    <select class="form-control" name="addresstype" id="addresstype"
+                                        formControlName="addresstype" style="width: 100%"
+                                        [ngClass]="{'is-invalid': submitted && partnerGroupForm.controls.addresstype.errors}">
+                                        <option value="">
+                                            Select Address Type
+                                        </option>
+                                        <option value="Present">
+                                            Present
+                                        </option>
+                                        <option value="Permanent">
+                                            Permanent
+                                        </option>
+                                        <option value="Payment">
+                                            Payment
+                                        </option>
+                                    </select>
+                                    <div class="errorWrap text-danger"
+                                        *ngIf="submitted && partnerGroupForm.controls.addresstype.errors">
+                                        <div class="error text-danger"
+                                            *ngIf="submitted && partnerGroupForm.controls.addresstype.errors.required">
+                                            Address Type is required.
+                                        </div>
+                                    </div>
+                                    <br />
+                                </div> -->
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Address1 *</label>
+                      <input
+                        id="address1"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Address1"
+                        formControlName="address1"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.address1.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.address1.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.address1.errors.required"
+                        >
+                          Address1 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>Address2 *</label>
+                      <input
+                        id="address2"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Address2"
+                        formControlName="address2"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.address2.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.address2.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.address2.errors.required"
+                        >
+                          Address2 is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ pincodeTitle }} *</label>
+                      <p-dropdown
+                        [options]="filterPincodeData"
+                        optionValue="pincodeid"
+                        optionLabel="pincode"
+                        filter="true"
+                        filterBy="pincode"
+                        placeholder="Select a {{ pincodeTitle }}"
+                        formControlName="pincode"
+                        (onChange)="selectPINCODEChange($event)"
+                        [ngClass]="{
+                          'is-invalid': submitted && partnerGroupForm.controls.pincode.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.pincode.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.pincode.errors.required"
+                        >
+                          {{ pincodeTitle }} is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ cityTitle }} *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="commondropdownService.cityListData"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a {{ cityTitle }}"
+                          formControlName="city"
+                          [disabled]="selectPartnerView"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.city.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.city.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.city.errors.required"
+                        >
+                          {{ cityTitle }} is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ stateTitle }} *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="commondropdownService.stateListData"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a {{ stateTitle }}"
+                          formControlName="state"
+                          [disabled]="selectPartnerView"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.state.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.state.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.state.errors.required"
+                        >
+                          {{ stateTitle }} required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                      <label>{{ countryTitle }} *</label>
+                      <div>
+                        <p-dropdown
+                          [options]="commondropdownService.countryListData"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select a {{ countryTitle }}"
+                          formControlName="country"
+                          [disabled]="selectPartnerView"
+                          [ngClass]="{
+                            'is-invalid': submitted && partnerGroupForm.controls.country.errors
+                          }"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && partnerGroupForm.controls.country.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && partnerGroupForm.controls.country.errors.required"
+                        >
+                          {{ countryTitle }} is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  *ngIf="!ispartnerEdit"
+                  id="submit"
+                  (click)="addEditpartner('')"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Add Partner
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  *ngIf="ispartnerEdit"
+                  id="submit"
+                  (click)="addEditpartner(viewpartnerListData.id)"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update Partner
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12 col-sm-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Partners</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listpartner"
+            aria-expanded="false"
+            aria-controls="listpartner"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listpartner" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Commission Type</th>
+                    <th>{{ countryTitle }} Name</th>
+                    <!-- <th>Address</th> -->
+                    <th>Status</th>
+                    <th
+                      *ngIf="
+                        deleteAccess ||
+                        editAccess ||
+                        manageBalanceAccess ||
+                        uploadAccess ||
+                        shiftAccess
+                      "
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of partnerListData
+                        | paginate
+                          : {
+                              id: 'partnerListpageData',
+                              itemsPerPage: partnerListdataitemsPerPage,
+                              currentPage: currentPagepartnerListdata,
+                              totalItems: partnerListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="curson_pointer"
+                      (click)="particularALLDatashow(data)"
+                      style="color: #f7b206"
+                    >
+                      {{ data.name }}
+                    </td>
+                    <td>{{ data.email }}</td>
+                    <td>{{ data.commtype }}</td>
+                    <!-- <th style="font-weight: 400;">{{ data.addresstype}}</th> -->
+                    <td>{{ data.countryName }}</td>
+                    <!-- <td>{{ data.address1}},{{ data.address2}}</td> -->
+                    <!-- <td>
+                                        <ul style="margin-left: -24px;">
+                                            <li *ngFor=" let serviceName of data.serviceAreaNameList">{{serviceName}}
+                                            </li>
+                                        </ul>
+                                    </td> -->
+                    <td>
+                      <div *ngIf="data.status == 'ACTIVE'">
+                        <span class="badge badge-success">Active</span>
+                      </div>
+                      <div *ngIf="data.status == 'INACTIVE'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </div>
+                    </td>
+                    <td
+                      class="btnAction"
+                      *ngIf="
+                        deleteAccess ||
+                        editAccess ||
+                        manageBalanceAccess ||
+                        uploadAccess ||
+                        shiftAccess
+                      "
+                    >
+                      <button
+                        *ngIf="editAccess"
+                        type="button"
+                        id="editbutton"
+                        class="approve-btn"
+                        style="border: none"
+                        title="Edit"
+                        [disabled]="data.name == 'Default'"
+                        (click)="editpartner(data.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </button>
+                      <button
+                        *ngIf="deleteAccess"
+                        type="button"
+                        id="delete-button"
+                        class="approve-btn"
+                        title="Delete"
+                        style="border: none"
+                        [disabled]="data.name == 'Default'"
+                        (click)="deleteConfirmonpartner(data.id)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </button>
+                      <button
+                        *ngIf="manageBalanceAccess"
+                        type="button"
+                        class="approve-btn"
+                        style="border: none"
+                        title="Manage Balance"
+                        (click)="gotoManageBalance(data.id)"
+                        [disabled]="data.name == 'Default'"
+                      >
+                        <img src="assets/img/ManageBalance.png" width="32" height="32" />
+                      </button>
+
+                      <button
+                        *ngIf="uploadAccess"
+                        class="approve-btn"
+                        style="border: none"
+                        title="Upload Documents"
+                        type="button"
+                        [disabled]="data.name == 'Default'"
+                        [routerLink]="['/home/partnerDocument', data.id]"
+                      >
+                        <img width="32" height="32" src="assets/img/up.jpg" />
+                      </button>
+                      <button
+                        *ngIf="shiftAccess && data.partnerType !== 'LCO'"
+                        type="button"
+                        class="approve-btn"
+                        style="border: none"
+                        title="Shift Partner"
+                        [disabled]="data.name == 'Default'"
+                        (click)="shiftPartnerModel(data)"
+                      >
+                        <img src="assets/img/icons-02.png" width="32" height="32" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="partnerListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedpartnerList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="partnerListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="partnerrALLDeatilsShow">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Partner All Details"
+            (click)="listPlan()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ partnerDATA.name }} Partner</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#partnerdeatilsview"
+            aria-expanded="false"
+            aria-controls="partnerdeatilsview"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="partnerdeatilsview" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <!--    Basic Details    -->
+          <fieldset style="margin-top: 0rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ partnerDATA.name }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl"> Partner Code :</label>
+                  <span>{{ partnerDATA.prcode }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Partner Type :</label>
+                  <span>{{ partnerDATA.partnerType }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Tax Name :</label>
+                  <span>{{ partnerDATA.taxName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Balance :</label>
+                  <span>{{ partnerDATA.outcomeBalance }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Credit :</label>
+                  <span>{{ partnerDATA.credit }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Credit Consume :</label>
+                  <span>{{ partnerDATA.creditConsume }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Parent Partner :</label>
+                  <span>{{ partnerDATA.parentPartnerName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Calendar Type :</label>
+                  <span>{{ partnerDATA.calendarType }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span *ngIf="partnerDATA.status == 'ACTIVE'" class="badge badge-success">
+                    Active
+                  </span>
+                  <span *ngIf="partnerDATA.status == 'INACTIVE'" class="badge badge-danger">
+                    Inactive
+                  </span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!--    Contact Details    -->
+          <fieldset>
+            <legend>Contact Details & Service Area</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Mobile Number :</label>
+                  <span>
+                    <span *ngIf="partnerDATA.countryCode" title="Country Code">
+                      ({{ partnerDATA.countryCode }})&nbsp;
+                    </span>
+                    {{ partnerDATA.mobile }}
+                  </span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Email :</label>
+                  <span>{{ partnerDATA.email }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Service Area :</label>
+                  <!-- <span
+                  style="word-break: break-all;"
+                  *ngFor="let serviceName of partnerDATA.serviceAreaNameList"
+                >
+                  <span>{{ serviceName }},&nbsp;</span>
+                </span> -->
+                  <span
+                    class="HoverEffect"
+                    data-target="#serviceareaModal"
+                    data-toggle="modal"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    title="Go To service Area List"
+                    (click)="openServiceareaModal()"
+                  >
+                    Click here
+                  </span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">PAN :</label>
+                  <span>{{ partnerDATA.panName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Contact Person Name :</label>
+                  <span>{{ partnerDATA.cpName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Company Name :</label>
+                  <span>{{ partnerDATA.cname }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!--    Commission Details   -->
+          <fieldset>
+            <legend>{{ CommissionLabel }} Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ CommissionLabel }} Type :</label>
+                  <span>{{ partnerDATA.commtype }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ CommissionLabel }} Day :</label>
+                  <span>{{ partnerDATA.commdueday }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Commission Interval :</label>
+                  <span *ngIf="partnerDATA.commissionInterval">
+                    {{ partnerDATA.commissionInterval }}
+                  </span>
+                  <span *ngIf="!partnerDATA.commissionInterval">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ CommissionLabel }} :</label>
+                  <span *ngIf="partnerDATA.commrelvalue">
+                    {{ partnerDATA.commrelvalue }}
+                  </span>
+                  <span *ngIf="!partnerDATA.commrelvalue">-</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Plan Bundle Name :</label>
+                  <span *ngIf="partnerDATA.pricebookname">
+                    {{ partnerDATA.pricebookname }}
+                  </span>
+                  <span *ngIf="!partnerDATA.pricebookname">-</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!--    Address Details    -->
+          <fieldset>
+            <legend>Address Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Address Type :</label>
+                  <span>{{ partnerDATA.addresstype }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Address1 :</label>
+                  <span>{{ partnerDATA.address1 }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Address2 :</label>
+                  <span>{{ partnerDATA.address2 }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ pincodeTitle }} :</label>
+                  <span *ngIf="partnerDATA.pincode">
+                    {{ viewPincodeNumber }}
+                  </span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ cityTitle }} :</label>
+                  <span>{{ partnerDATA.cityName }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ countryTitle }} :</label>
+                  <span>{{ partnerDATA.countryName }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">{{ stateTitle }} :</label>
+                  <span>{{ partnerDATA.stateName }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Customer Count Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">New Customer Count :</label>
+                  <span>{{ partnerDATA.newCustomerCount }}</span>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Renew Customer Count :</label>
+                  <span>{{ partnerDATA.renewCustomerCount }}</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Total Customer Count :</label>
+                  <span>{{ partnerDATA.totalCustomerCount }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Partner Hierarchy Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Partner Hierarchy:</label>
+                  <span
+                    class="HoverEffect"
+                    title="Go To Partner Hierarchy"
+                    (click)="openPartnerHierarchyModal(partnerDATA.id)"
+                    >Click here
+                  </span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-customer-details
+  *ngIf="dialogId"
+  (closeSelectStaff)="closeSelectStaff()"
+  [custId]="custId"
+></app-customer-details>
+
+<div *ngIf="balanceDetailsView">
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <button
+              type="button"
+              class="btn btn-secondary backbtn"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Go to Partner Details"
+              (click)="particularALLDatashow('')"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: #f7b206 !important; font-size: 28px"
+              ></i>
+            </button>
+            <h3 class="panel-title">{{ partnerDATA.name }} Balance Management</h3>
+          </div>
+          <div class="right">
+            <button
+              class="btn refreshbtn"
+              type="reset"
+              (click)="PartnerBalnceData(partnerDATA.id, '')"
+            >
+              <i class="fa fa-refresh"></i>
+            </button>
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#BalanceManagement"
+              aria-expanded="false"
+              aria-controls="BalanceManagement"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="BalanceManagement"
+          class="panel-collapse collapse in"
+          *ngIf="BalanceAllData?.commissionType != 'Plan level'"
+        >
+          <div class="panel-body table-responsive">
+            <div class="row" style="margin-top: 2rem">
+              <div class="col-lg-12 col-md-12">
+                <table class="table myclass">
+                  <thead>
+                    <tr>
+                      <th class="myclass">Service Name</th>
+                      <th class="myclass">Total Price</th>
+                      <th class="myclass">Customer Count</th>
+                      <th class="myclass">Total Sale</th>
+                      <th class="myclass">Total Base Revenue</th>
+                      <th class="myclass">Net Total Commission Of Service (%)</th>
+                      <th class="myclass">Total Commission Of Service</th>
+                      <th class="myclass">Category</th>
+                      <th class="myclass">Debit</th>
+                      <th class="myclass">Credit</th>
+                      <th class="myclass">Balance Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let data of partnerLedgerInfoPojo.partnerLedgerDetailsServiceLevelDTO
+                          | paginate
+                            : {
+                                id: 'balanceLedgerpageData',
+                                itemsPerPage: balanceLedgerItemPerPage,
+                                currentPage: currentPagebalanceLedgerList,
+                                totalItems: balanceLedgertotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td class="myclass">{{ data.serviceName }}</td>
+                      <td>
+                        {{ data.planOrPlanGroupPrice }}
+                      </td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="
+                          openCustomerCountDetailsModelForServiceLevel(
+                            data.serviceId,
+                            data.transcategory,
+                            data.transType
+                          )
+                        "
+                      >
+                        {{ data.customerCount }}
+                      </td>
+                      <td>
+                        {{ data.totalSale }}
+                      </td>
+                      <td class="myclass">{{ data.basePlanOrPlanGroupPrice }}</td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openNetTotalCommissionOfServiceDetailsModelForServiceLevel(data)"
+                      >
+                        {{ data.netCommission }}
+                      </td>
+
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openCustomerTotalCommissionDetailsModel(data)"
+                      >
+                        {{ data.totalCommission }}
+                      </td>
+                      <td class="myclass">{{ data.transcategory }}</td>
+                      <td class="myclass">{{ data.debit }}</td>
+                      <td class="myclass">{{ data.credit }}</td>
+                      <td class="myclass">{{ data.balAmount }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 dataGroup text-right" style="margin-top: 2rem">
+                    <label class="datalbl">Closing Balance :</label>
+                    <span>
+                      {{ partnerLedgerInfoPojo.closingBalance | number: "1.2-2" }}
+                    </span>
+                  </div>
+                </div>
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="balanceLedgerpageData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedbalanceLedgerList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="balanceLedgerItemPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPageBalnce($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Commission level Service Table -->
+        <div
+          id="BalanceManagement"
+          class="panel-collapse collapse in"
+          *ngIf="BalanceAllData?.commissionType == 'Plan level'"
+        >
+          <div class="panel-body table-responsive">
+            <div class="row" style="margin-top: 2rem">
+              <div class="col-lg-12 col-md-12">
+                <table class="table myclass">
+                  <thead>
+                    <tr>
+                      <th class="myclass">Plan/Plan Group</th>
+                      <th class="myclass">Plan/Plan Group Price</th>
+                      <th class="myclass">Base Revenue</th>
+                      <th class="myclass">Customer Count</th>
+                      <th class="myclass">Total Sale</th>
+                      <th class="myclass">Commission Share Per Customer(%)</th>
+                      <th class="myclass">Net Commission Per Customer (without any share)</th>
+                      <th class="myclass">Total Commission Per Customer (without any share)</th>
+                      <th class="myclass">Actual Total Plan Commission</th>
+                      <th class="myclass">Category</th>
+                      <th class="myclass">Debit</th>
+                      <th class="myclass">Credit</th>
+                      <th class="myclass">Balance Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let ledger of partnerLedgerInfoPojo.partnerLedgerDetailsPlanLevelDTO
+                          | paginate
+                            : {
+                                id: 'balanceLedgerpageData',
+                                itemsPerPage: balanceLedgerItemPerPage,
+                                currentPage: currentPagebalanceLedgerList,
+                                totalItems: balanceLedgertotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td class="myclass">{{ ledger.planOrPlanGroupName }}</td>
+                      <td class="myclass">{{ ledger.planOrPlanGroupPrice }}</td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openCustomerRevenueDetailsModel(ledger)"
+                      >
+                        {{ ledger.basePlanOrPlanGroupPrice }}
+                      </td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="
+                          openCustomerCountDetailsModel(
+                            ledger.isPlanGroup,
+                            ledger.planOrPlanGroupId,
+                            ledger.transcategory,
+                            ledger.transType
+                          )
+                        "
+                      >
+                        {{ ledger.customerCount }}
+                      </td>
+                      <td class="myclass">{{ ledger.totalSale }}</td>
+                      <td class="myclass">{{ ledger.commissionSharePercentage }}</td>
+                      <td *ngIf="!ledger.isPlanGroup" class="myclass">
+                        {{ ledger.netCommission }}
+                      </td>
+                      <td
+                        *ngIf="ledger.isPlanGroup"
+                        class="HoverEffect myclass"
+                        (click)="openCustomerNetCommissionDetailsModel(ledger)"
+                      >
+                        {{ ledger.netCommission }}
+                      </td>
+                      <td
+                        class="HoverEffect myclass"
+                        (click)="openCustomerCommissionDetailsModel(ledger)"
+                      >
+                        {{ ledger.totalCommission }}
+                      </td>
+                      <td class="myclass">{{ ledger.totalPlanCommission }}</td>
+                      <td class="myclass">{{ ledger.transcategory }}</td>
+                      <td class="myclass">{{ ledger.debit }}</td>
+                      <td class="myclass">{{ ledger.credit }}</td>
+                      <td class="myclass">{{ ledger.balAmount }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 dataGroup text-right" style="margin-top: 2rem">
+                    <label class="datalbl">Closing Balance :</label>
+                    <span>
+                      {{ partnerLedgerInfoPojo.closingBalance | number: "1.2-2" }}
+                    </span>
+                  </div>
+                </div>
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="balanceLedgerpageData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedbalanceLedgerList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="balanceLedgerItemPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPageBalnce($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Partner Online Payment Audit -->
+<div class="row" *ngIf="isOnlinePaymentAudit">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <h3 class="panel-title">{{ partnerDATA.name }} Online Payment Audit</h3>
+        </div>
+        <div class="right">
+          <!-- <button class="btn refreshbtn" type="reset" (click)="getPartnerInvoiceList()">
+            <i class="fa fa-refresh"></i>
+          </button> -->
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#ChildManagement"
+            aria-expanded="false"
+            aria-controls="ChildManagement"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listpartner" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Reference No</th>
+                    <th>Payment Amount</th>
+                    <th>Status</th>
+                    <th>Payment Date</th>
+                    <th>Merchant Name</th>
+                    <th>Transaction Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let payment of partnerOnlinePaymentAuditListData
+                        | paginate
+                          : {
+                              id: 'partnerOnlinePaymentListpageData',
+                              itemsPerPage: partnerOnlinePaymentdataitemsPerPage,
+                              currentPage: partnerpaymentCurrentPagepartnerListdata,
+                              totalItems: partnerOnlinePaymentListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      {{ payment.orderId }}
+                    </td>
+                    <td>{{ payment.payment }}</td>
+
+                    <td>
+                      <span *ngIf="payment.status === 'success'">
+                        <span class="badge badge-success">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="payment.status === 'Success'">
+                        <span class="badge badge-success">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="payment.status === 'Initiate'">
+                        <span class="badge badge-info">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="payment.status === 'failed'">
+                        <span class="badge badge-danger">
+                          {{ payment.status | titlecase }}
+                        </span>
+                      </span>
+                    </td>
+                    <td>{{ payment.paymentDate | date: "dd-MM-YYYY HH:mm:ss" }}</td>
+                    <td>{{ payment.merchantName }}</td>
+                    <td>{{ payment.transactionDate | date: "dd-MM-YYYY HH:mm:ss" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="partnerOnlinePaymentListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="partnerPaymentPageChanged($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="partnerOnlinePaymentdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="partnerPaymentTotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header=" Balance Information"
+  [(visible)]="showDialogue"
+  [style]="{ width: '45%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="balanceDetailsColse(i)"
+>
+  <div class="modal-body">
+    <div class="panel-body table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Plan Gross Offer Price</td>
+            <td>
+              <span>{{ balanceData.grossOfferPrice | number: "1.2-2" }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Plan Offer Price(Inc. only Recurring Charge)</td>
+            <td>
+              <span>{{ balanceData.offerprice | number: "1.2-2" }}</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Tax on Plan</td>
+            <td>{{ balanceData.tax | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>AGR</td>
+            <td>{{ balanceData.agr_amount | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>Plan Base Price</td>
+            <td>
+              {{
+                balanceData.offerprice - balanceData.tax - balanceData.agr_amount | number: "1.2-2"
+              }}
+            </td>
+          </tr>
+          <tr *ngIf="loginPartner == 1 && loginPartner == '1'">
+            <td>Operator Revenue Share</td>
+            <td>
+              {{ balanceData.operatorCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.operatorCommission * 100) /
+                  (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                  | number: "1.2-2"
+              }}% of Plan Base Price)
+            </td>
+          </tr>
+          <tr
+            *ngIf="
+              balanceData.totalSharedCommission != null &&
+              balanceData.totalSharedCommission > 0 &&
+              loginPartner == 1 &&
+              loginPartner == '1'
+            "
+          >
+            <td>Total Shared Partner Commission</td>
+            <td>
+              {{ balanceData.totalSharedCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.totalSharedCommission * 100) /
+                  (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                  | number: "1.2-2"
+              }}% of Plan Base Price)
+            </td>
+          </tr>
+          <tr
+            *ngIf="
+              balanceData.totalSharedCommission != null &&
+              balanceData.totalSharedCommission > 0 &&
+              loginPartner == 1 &&
+              loginPartner == '1'
+            "
+          >
+            <td>Parent Partner Shared Commission</td>
+            <td>
+              {{ balanceData.parentSharedCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.parentSharedCommission * 100) / balanceData.totalSharedCommission
+                  | number: "1.2-2"
+              }}% of Total Shared Commission)
+            </td>
+          </tr>
+          <tr
+            *ngIf="
+              balanceData.totalSharedCommission != null &&
+              balanceData.totalSharedCommission > 0 &&
+              loginPartner == 1 &&
+              loginPartner == '1'
+            "
+          >
+            <td>Child partner shared commission</td>
+            <td>
+              {{ balanceData.childSharedCommission | number: "1.2-2" }}
+              ({{
+                (balanceData.childSharedCommission * 100) / balanceData.totalSharedCommission
+                  | number: "1.2-2"
+              }}% of Total Shared Commission)
+            </td>
+          </tr>
+          <tr>
+            <td>{{ PartnerCommission }}</td>
+            <td>
+              <span *ngIf="partnerFlag">
+                {{
+                  balanceData.tds_amount +
+                    balanceData.amount -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2"
+                }}
+                ({{
+                  ((balanceData.tds_amount +
+                    balanceData.amount -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2") *
+                    100) /
+                    (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                    | number: "1.2-2"
+                }}%)</span
+              >
+
+              <!-- Franchise Partner -->
+              <span
+                *ngIf="
+                  !partnerFlag &&
+                  (balanceData.totalSharedCommission == null ||
+                    balanceData.totalSharedCommission == 0)
+                "
+              >
+                {{
+                  balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2"
+                }}
+                ({{
+                  ((balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2") *
+                    100) /
+                    (balanceData.offerprice - balanceData.tax - balanceData.agr_amount)
+                    | number: "1.2-2"
+                }}%)</span
+              >
+
+              <span
+                *ngIf="
+                  !partnerFlag &&
+                  balanceData.totalSharedCommission != null &&
+                  balanceData.totalSharedCommission > 0
+                "
+              >
+                {{
+                  balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2"
+                }}
+                ({{
+                  ((balanceData.tds_amount +
+                    balanceData.commission -
+                    balanceData.partnerTax +
+                    balanceData.royalty | number: "1.2-2") *
+                    100) /
+                    balanceData.totalSharedCommission | number: "1.2-2"
+                }}%)</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>Royalty Base Price</td>
+            <td>{{ balanceData.royaltyBasePrice | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>Royalty</td>
+            <!-- <td>{{ balanceData.royalty | number : "1.2-2" }}</td> -->
+            <td>
+              <span *ngIf="partnerFlag">
+                {{ balanceData.royalty ? balanceData.royalty : (0 | number: "1.2-2") }}({{
+                  !balanceData.royaltyBasePrice
+                    ? 0
+                    : ((balanceData.royalty * 100) / balanceData.royaltyBasePrice
+                      | number: "1.2-2")
+                }}%)
+              </span>
+              <span *ngIf="!partnerFlag">
+                {{ balanceData.royalty ? balanceData.royalty : (0 | number: "1.2-2") }} ({{
+                  !balanceData.royaltyBasePrice
+                    ? 0
+                    : ((balanceData.royalty * 100) / balanceData.royaltyBasePrice
+                      | number: "1.2-2")
+                }}%)
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>Net {{ CommissionLabel }}</td>
+            <td>
+              <span *ngIf="partnerFlag">
+                {{
+                  balanceData.tds_amount + balanceData.amount - balanceData.partnerTax
+                    | number: "1.2-2"
+                }}</span
+              >
+              <span *ngIf="!partnerFlag">
+                {{
+                  balanceData.tds_amount + balanceData.commission - balanceData.partnerTax
+                    | number: "1.2-2"
+                }}</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>Tax On {{ CommissionLabel }}</td>
+            <td>{{ balanceData.partnerTax | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>TDS</td>
+            <td>{{ balanceData.tds_amount | number: "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td>{{ PartnerPayableCommission }}</td>
+            <td>
+              <span *ngIf="partnerFlag"> {{ balanceData.amount | number: "1.2-2" }}</span>
+              <span *ngIf="!partnerFlag"> {{ balanceData.commission | number: "1.2-2" }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td>{{ balanceData.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="balanceDetailsColse(i)"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- service area list -->
+
+<p-dialog
+  header=" {{ partnerDATA.name }} Service Area List"
+  [(visible)]="serviceareaModal"
+  [style]="{ width: '45%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeServiceareaModal()"
+>
+  <div class="modal-body">
+    <div class="panel-body table-responsive" id="networkDeviceTabel">
+      <table class="table">
+        <tbody>
+          <tr>
+            <td><label class="networkLabel">Service Area :</label></td>
+            <td>
+              <span
+                style="word-break: break-all"
+                *ngFor="let serviceName of partnerDATA.serviceAreaNameList"
+              >
+                <span>
+                  {{ serviceName }},
+                  <br />
+                </span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="closeServiceareaModal()"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<div *ngIf="isInvoiceSubMenu" class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Partner Details"
+            (click)="particularALLDatashow('')"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ partnerDATA.name }} Invoice</h3>
+        </div>
+        <div class="right">
+          <button
+            class="btn refreshbtn"
+            type="reset"
+            (click)="showListInvoiceData(partnerDATA.id, '')"
+          >
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            aria-controls="searchInvoiceCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#searchInvoiceCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="searchInvoiceCust">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div *ngIf="invoiceMasterListData.length !== 0" class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 30%">Document No.</th>
+                    <th>Total Amount</th>
+                    <th>Adjusted Amount</th>
+                    <th>Bill Run Status</th>
+                    <th>Bill Date</th>
+                    <th>Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let invoice of invoiceMasterListData
+                        | paginate
+                          : {
+                              id: 'invoiceDataID',
+                              itemsPerPage: invoiceMasteritemsPerPage,
+                              currentPage: currentPageinvoiceMasterSlab,
+                              totalItems: invoiceMastertotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      {{ invoice.docnumber }}
+                    </td>
+                    <td>
+                      {{ invoice.totalamount | number: "1.2-2" }}
+                    </td>
+                    <td>
+                      <span>
+                        {{ invoice.adjustedamount | number: "1.2-2" }}
+                      </span>
+                      <span *ngIf="!invoice.adjustedamount">0</span>
+                    </td>
+                    <td>
+                      <div class="badge badge-success">
+                        {{ invoice.billrunstatus }}
+                      </div>
+                    </td>
+                    <td style="font-weight: 400">
+                      {{ invoice.billdate | date: "yyyy-MM-dd" }}
+                    </td>
+                    <td style="font-weight: 400">
+                      {{ invoice.duedate | date: "yyyy-MM-dd" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  (pageChange)="pageChangedinvoiceMasterList($event)"
+                  directionLinks="true"
+                  id="invoiceDataID"
+                  maxSize="10"
+                  nextLabel=""
+                  previousLabel=""
+                >
+                </pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    (onChange)="TotalItemPerPageInvoice($event)"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="invoiceMasterListData.length === 0" class="col-lg-12 col-md-12">
+              Invoice data not found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment List -->
+<div *ngIf="isPaymentSubMenu" class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Partner Details"
+            (click)="particularALLDatashow('')"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ partnerDATA.name }} Payment Details</h3>
+        </div>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="showListPaymentData()">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            aria-controls="paymentPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#paymentPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="paymentPreCust">
+        <div *ngIf="viewPaymentData.length !== 0" class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Pay Details</th>
+                    <th>Receipt No/Credit Note No.</th>
+                    <th>Paymode</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Payment Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let data of viewPaymentData
+                        | paginate
+                          : {
+                              id: 'PayListpageDataID',
+                              itemsPerPage: PaymentdataitemsPerPage,
+                              currentPage: currentPagePaymentdata,
+                              totalItems: PaymentdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ data.paydetails4 }}</td>
+                    <td>
+                      <span *ngIf="data.receiptNo">
+                        {{ data.receiptNo }}
+                      </span>
+                      <span *ngIf="!data.receiptNo">-</span>
+                    </td>
+                    <td>{{ data.paymode }}</td>
+                    <td>{{ data.type }}</td>
+                    <td>
+                      {{ data.amount | number: "1.2-2" }}
+                    </td>
+                    <td>
+                      <span>
+                        <span *ngIf="data.paymentdate">
+                          {{ data.paymentdate }}
+                        </span>
+                        <span *ngIf="!data.paymentdate">-</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="data.status === 'Fully Adjusted'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'advance'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'approved'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'pending'">
+                        <span class="badge badge-info">
+                          {{ "Collected" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'Partialy Adjusted'">
+                        <span class="badge badge-success">
+                          {{ "verified" | titlecase }}
+                        </span>
+                      </span>
+                      <span *ngIf="data.status === 'rejected'">
+                        <span class="badge badge-danger">
+                          {{ data.status | titlecase }}
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  (pageChange)="pageChangedPaymentList($event)"
+                  directionLinks="true"
+                  id="PayListpageDataID"
+                  maxSize="10"
+                  nextLabel=""
+                  previousLabel=""
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    (onChange)="TotalPaymentItemPerPage($event)"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="viewPaymentData.length === 0" class="panel-body table-responsive">
+          Details are not available.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Shift Partner"
+  [(visible)]="viewShiftPartnerModel"
+  [style]="{ width: '75%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeShiftPartnerModel()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="card row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Partner</label>
+            <p-dropdown
+              [options]="frenchiseDropdownData"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              [(ngModel)]="partnerDATA.id"
+              [disabled]="true"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12"></div>
+      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="card row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Select New Partner</label>
+            <p-dropdown
+              [options]="frenchiseDropdownData"
+              optionValue="id"
+              optionLabel="name"
+              filter="true"
+              filterBy="name"
+              placeholder="Select a Partner"
+              [(ngModel)]="newPartnerId"
+              (onChange)="getPartnerData()"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="card row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Service Area</label>
+            <p-listbox
+              id="roles"
+              [options]="partnerDATAServiceAreaList"
+              [(ngModel)]="selectedServiceAreaIds"
+              defaultLabel="Select Service Area"
+              optionLabel="name"
+              optionValue="id"
+              [multiple]="true"
+            ></p-listbox>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center align-self-center">
+        <button class="btn btn-primary" (click)="shiftPartner()">>></button>
+      </div>
+      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="card row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Service Area</label>
+            <p-listbox
+              id="roles"
+              [options]="selectedShiftPartnerServiceAreaList"
+              defaultLabel="Select Service Area"
+              optionLabel="name"
+              optionValue="id"
+            ></p-listbox>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="card row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Balance :</label>
+            <span>{{ partnerDATA.outcomeBalance }}</span>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Credit :</label>
+            <span>{{ partnerDATA.credit }}</span>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">{{ CommissionLabel }} :</label>
+            <span *ngIf="partnerDATA.commrelvalue">
+              {{ partnerDATA.commrelvalue }}
+            </span>
+            <span *ngIf="!partnerDATA.commrelvalue">-</span>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">New Customer Count :</label>
+            <span *ngIf="partnerDATA.newCustomerCount">
+              {{ partnerDATA.newCustomerCount }}
+            </span>
+            <span *ngIf="!partnerDATA.newCustomerCount">-</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12"></div>
+      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="card row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Balance :</label>
+            <span>{{ selectedShiftPartner?.outcomeBalance }}</span>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">Credit :</label>
+            <span>{{ selectedShiftPartner?.credit }}</span>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">{{ CommissionLabel }} :</label>
+            <span *ngIf="selectedShiftPartner?.commrelvalue">
+              {{ selectedShiftPartner?.commrelvalue }}
+            </span>
+            <span *ngIf="!selectedShiftPartner?.commrelvalue">-</span>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 dataGroup">
+            <label class="datalbl">New Customer Count :</label>
+            <span *ngIf="selectedShiftPartner?.newCustomerCount">
+              {{ selectedShiftPartner?.newCustomerCount }}
+            </span>
+            <span *ngIf="!selectedShiftPartner?.newCustomerCount">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      id="submit"
+      (click)="shiftPartnerSave()"
+      [disabled]="!this.partnerShifted"
+    >
+      <i class="fa fa-check-circle"></i>
+      Save
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="closeShiftPartnerModel()"
+      data-dismiss="modal"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- partner hierarchy diagram -->
+<p-dialog
+  header=" {{ partnerDATA.name }} Partner Hierarchy Diagram"
+  [(visible)]="partnerHierarchyModal"
+  [style]="{ width: '40%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closePartnerHierarchyModal()"
+>
+  <div class="modal-body">
+    <div class="panel-body table-responsive" id="networkDeviceTabel">
+      <table class="table">
+        <tbody>
+          <p-organizationChart [value]="partnerHierarchy"></p-organizationChart>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="closePartnerHierarchyModal()"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Count Details Model -->
+<p-dialog
+  header="Customer Details"
+  [(visible)]="isCustomerCountDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Create Date</th>
+              <th class="myclass">Customer Name</th>
+              <th class="myclass">Customer Invoice Number</th>
+              <th class="myclass">Credit Note Number</th>
+              <th class="myclass">Plan/Bundle Name</th>
+              <th class="myclass">Plan Price</th>
+              <th class="myclass">{{ PartnerPayableCommission }}</th>
+              <th class="myclass">Category</th>
+              <th class="myclass">Debit</th>
+              <th class="myclass">Credit</th>
+              <th class="myclass">Settled Invoice Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of customerLedgerDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.createDate }}</td>
+
+              <td
+                *ngIf="data.customer_name"
+                class="HoverEffect myclass"
+                (click)="openModal('custmerDetailModal', data.custid)"
+              >
+                {{ data.customer_name }}
+              </td>
+              <td class="myclass" *ngIf="!data.customer_name">-</td>
+              <td class="myclass">{{ data.invoiceNo }}</td>
+              <td class="myclass">
+                <span *ngFor="let creditNote of data.creditDocNo">{{ creditNote }} </span><br />
+              </td>
+              <td class="myclass" *ngIf="data.planname">{{ data.planname }}</td>
+              <td class="myclass" *ngIf="!data.planname">-</td>
+              <td class="myclass">
+                {{ data.offerprice | number: "1.2-2" }}
+              </td>
+              <td
+                class="HoverEffect myclass"
+                data-target="#planBundle"
+                data-toggle="modal"
+                data-backdrop="static"
+                data-keyboard="false"
+                (click)="balanceAllDetails(data)"
+              >
+                {{ partnerFlag ? data.amount : (data.commission | customCurrency: currency) }}
+              </td>
+              <td class="myclass">{{ data.transcategory }}</td>
+              <td class="myclass" *ngIf="data.transtype == 'DR'">
+                {{
+                  data.transcategory == "Credit Note Commission"
+                    ? (data.commission | customCurrency: currency)
+                    : (data.amount | customCurrency: currency)
+                }}
+              </td>
+
+              <td class="myclass">-</td>
+              <td class="myclass" *ngIf="data.transtype == 'CR'">
+                {{
+                  data.transcategory == "Commision"
+                    ? (data.commission | customCurrency: currency)
+                    : (data.amount | customCurrency: currency)
+                }}
+              </td>
+              <td class="myclass">{{ data.partnerInvoiceId }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination_Dropdown">
+          <pagination-controls
+            id="customerDetailsData"
+            maxSize="10"
+            directionLinks="true"
+            previousLabel=""
+            nextLabel=""
+            (pageChange)="customerDetailsPageChanged($event)"
+          ></pagination-controls>
+          <div id="itemPerPageDropdown">
+            <p-dropdown
+              [(ngModel)]="customerDetailsItemPerPage"
+              [options]="pageLimitOptions"
+              optionLabel="value"
+              optionValue="value"
+              (onChange)="customerDetailsTotalItemPerPage($event)"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeCustomerCountDetailsModel()" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Revenue Details Model -->
+<p-dialog
+  header="Customer Revenue Details"
+  [(visible)]="isCustomerRevenueDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Base Price</th>
+              <th class="myclass">Plan Tax</th>
+              <th class="myclass">Total Price</th>
+              <th class="myclass">AGR</th>
+              <th class="myclass">Base Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of planCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.offerPrice - data.taxAmount }}</td>
+              <td class="myclass">{{ data.taxAmount }}</td>
+              <td class="myclass">{{ data.offerPrice }}</td>
+              <td class="myclass">{{ data.agrAmount }}</td>
+              <td class="myclass">{{ data.baseOfferPriceExcludeAgr }}</td>
+            </tr>
+            <tr>
+              <td class="myclass" colspan="5">Total</td>
+              <td class="myclass">
+                {{ getTotal(planCommissionDetailsList) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeCustomerRevenueDetailsModel()" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Commission Details Model -->
+<p-dialog
+  header="Customer Commission Details"
+  [(visible)]="isCustomerCommissionDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Net Commission Per Customer</th>
+              <th class="myclass">Partner Tax Per Customer</th>
+              <th class="myclass">TDS Per Customer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of planCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.netCommission }}</td>
+              <td class="myclass">{{ data.partnerTaxAmount }}</td>
+              <td class="myclass">{{ data.tdsAmount }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" (click)="closeCustomerCommissionDetailsModel()" type="button">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Net Commission Details Model -->
+<p-dialog
+  header="Customer Net Commission Details"
+  [(visible)]="isCustomerNetCommissionDetailsModel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Base Revenue</th>
+              <th class="myclass">Commission On Plan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of planCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerDetailsData',
+                        itemsPerPage: customerDetailsItemPerPage,
+                        currentPage: customerDetailsCurrentPage,
+                        totalItems: customerDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.baseOfferPriceExcludeAgr }}</td>
+              <td class="myclass">{{ data.netCommission }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeCustomerNetCommissionDetailsModel()"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Customer Total Commission Details Model For Service Level-->
+<p-dialog
+  header="Customer Commission Details"
+  [(visible)]="isCustomerTotalCommissionDetailsModelForServiceLevel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Plan Name</th>
+              <th class="myclass">Commission Per Plan</th>
+              <th class="myclass">Royalty</th>
+              <th class="myclass">Partner Tax</th>
+              <th class="myclass">TDS</th>
+              <th class="myclass">Commission Without Royalty Charge</th>
+              <th class="myclass">Final Commission</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of customerCommissionDetailsList
+                  | paginate
+                    : {
+                        id: 'customerServiceDetailsData',
+                        itemsPerPage: customerServiceDetailsItemPerPage,
+                        currentPage: customerServiceDetailsCurrentPage,
+                        totalItems: customerServiceDetailsTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td class="myclass">{{ data.planName }}</td>
+              <td class="myclass">{{ data.partnerCommission }}</td>
+              <td class="myclass">{{ data.royalty }}</td>
+              <td class="myclass">{{ data.partnerTax }}</td>
+              <td class="myclass">{{ data.tds }}</td>
+              <td class="myclass">{{ data.netCommission }}</td>
+              <td class="myclass">{{ data.payableCommission }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination_Dropdown">
+          <pagination-controls
+            id="customerServiceDetailsData"
+            maxSize="10"
+            directionLinks="true"
+            previousLabel=""
+            nextLabel=""
+            (pageChange)="customerServiceDetailsPageChanged($event)"
+          ></pagination-controls>
+          <div id="itemPerPageDropdown">
+            <p-dropdown
+              [(ngModel)]="customerServiceDetailsItemPerPage"
+              [options]="pageLimitOptions"
+              optionLabel="value"
+              optionValue="value"
+              (onChange)="customerServiceDetailsTotalItemPerPage($event)"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeCustomerTotalCommissionDetailsModelForServiceLevel()"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Net Total Commission of Service Details Model For Service Level-->
+<p-dialog
+  header="Net Total Commission Details"
+  [(visible)]="isNetTotalCommissionOfServiceDetailsModelForServiceLevel"
+  [style]="{ width: '70%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div class="modal-body">
+    <div class="row" style="margin-top: 2rem">
+      <div class="col-lg-12 col-md-12">
+        <table class="table myclass">
+          <thead>
+            <tr>
+              <th class="myclass">Service Name</th>
+              <th class="myclass">Total Base Revenue Of Service</th>
+              <th class="myclass">Commission</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="myclass">{{ netCommissionDetailsListForService.serviceName }}</td>
+              <td class="myclass">{{ netCommissionDetailsListForService.totalBaseRevenue }}</td>
+              <td class="myclass">{{ netCommissionDetailsListForService.commission }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-default"
+      (click)="closeNetTotalCommissionOfServiceDetailsModelForServiceLevel()"
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>

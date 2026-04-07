@@ -1,0 +1,726 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="customerDetailOpen()"
+            class="btn btn-secondary backbtn"
+            data-placement="bottom"
+            data-toggle="tooltip"
+            title="Go to Customer Details"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ custData?.title }}
+            {{ custData?.custname }} Details
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            aria-controls="customerNotes"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#customerNotes"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <!-- <div class="panel-heading">
+        <h3 class="panel-title">Child Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchchild"
+            aria-expanded="false"
+            aria-controls="searchchild"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div> -->
+
+      <div id="searchchild" class="panel-collapse collapse in">
+        <div id="" class="panel-body" *ngIf="isChildList">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="childManagementName"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchChild()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchChild()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearsearchChild()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="openChildCustomerCreateMenu()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Child</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="listChild()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Child Management List</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="isChildList">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Child Management List</h3>
+        <div class="right">
+              <button
+                 class="approve-btn"
+                 style="border: none; background: transparent"
+                 title="View"
+                 (click)="reactivateChildOpen(customerId)"
+                 [disabled]="!isChildDeleted"
+                >
+              <i class="fa fa-rotate-right" title="Reactivate CWSC Account"></i> 
+        </button>
+          <button type="button" (click)="getRefresh()">
+            <i class="fa fa-refresh" title="Refresh"></i>
+          </button>
+          &nbsp;
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listchildmanagement"
+            aria-expanded="false"
+            aria-controls="listchildmanagement"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>         
+        </div>
+      </div>
+
+      <div id="listchildmanagement" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>User Name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let child of childListData
+                    | paginate
+                      : {
+                          id: 'childListData',
+                          itemsPerPage: childitemsPerPage,
+                          currentPage: currentPageChildSlab,
+                          totalItems: childTotalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ child.childFirstName }}</td>
+                <td>{{ child.childLastName }}</td>
+                <td>{{ child.childUsername }}</td>
+                <td class="btnAction">
+                  <a href="javascript:void(0)" (click)="editChild(child.id)" title="Edit">
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="deleteChildConfirmation(child.id)"
+                    title="Delete"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                  <button
+                    class="approve-btn"
+                    style="border: none; background: transparent; padding: 0"
+                    title="View"
+                    (click)="openModal(child.id)"
+                  >
+                    <img
+                      src="assets/img/eye-icon.png"
+                      alt="View Details"
+                      style="width: 25px; height: 25px; margin-right: 3px"
+                    />
+                  </button>
+                  <button
+                    class="approve-btn"
+                    style="border: none; background: transparent"
+                    (click)="viewChildWallet(child.childCustomer)"
+                    title="View Child Wallet"
+                  >
+                    <img src="../assets/img/ManageBalance.png" />
+                  </button>
+                  <button
+                    class="approve-btn"
+                    style="border: none; background: transparent"
+                    (click)="viewChildLedger(child.childCustomer)"
+                    title="View Child Ledger"
+                  >
+                    <img src="../assets/img/ManageBalance.png" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pagination_Dropdown">
+            <pagination-controls
+              id="childListData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedChildList($event)"
+            ></pagination-controls>
+
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [(ngModel)]="childitemsPerPage"
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="isChildCreateOrEdit">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isChildEdit ? "Update" : "Create" }} Child Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createChild"
+            aria-expanded="false"
+            aria-controls="createChild"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createChild" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form class="form-auth-small" [formGroup]="childManagementFormGroup">
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Mobile Number*</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter Mobile Number"
+                  [attr.maxlength]="commonDropdownService.maxMobileLength"
+                  formControlName="mobileNumber"
+                  (input)="onInputMobile($event)"
+                  (keyup)="onKeymobileNumberlength($event)"
+                  (keypress)="keypressSession($event)"
+                  (blur)="onMobileBlur()"
+                  [readonly]="isChildEdit"
+                  [ngClass]="{
+                    'is-invalid': submitted && childManagementFormGroup.controls.mobileNumber.errors
+                  }"
+                />
+                <div *ngIf="mobileError" class="errorWrap text-danger">
+                  Mobile number should not start with 0.
+                </div>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="
+                    submitted && childManagementFormGroup.controls.mobileNumber.errors?.required
+                  "
+                >
+                  Mobile Number is required.
+                </div>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="
+                    submitted &&
+                    (childManagementFormGroup.controls.mobileNumber.errors?.minlength ||
+                      childManagementFormGroup.controls.mobileNumber.errors?.maxlength)
+                  "
+                >
+                  <ng-container
+                    *ngIf="
+                      commonDropdownService.minMobileLength ===
+                        commonDropdownService.maxMobileLength;
+                      else rangeMobileError
+                    "
+                  >
+                    Mobile Number must be exactly
+                    {{ commonDropdownService.minMobileLength }} digits.
+                  </ng-container>
+
+                  <ng-template #rangeMobileError>
+                    Mobile Number must be between
+                    {{ commonDropdownService.minMobileLength }} and
+                    {{ commonDropdownService.maxMobileLength }} digits.
+                  </ng-template>
+                </div>
+                <div
+                  *ngIf="inputMobileNumber && childManagementFormGroup.value.mobileNumber"
+                  class="error text-danger"
+                >
+                  {{ inputMobileNumber }}
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Account Number</label>
+                <p-dropdown
+                  [options]="parentAccountList"
+                  formControlName="parentAccountNumber"
+                  placeholder="Select Parent Account"
+                  (onChange)="onParentAccountSelect($event.value)"
+                >
+                </p-dropdown>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>First Name*</label>
+                <input
+                  id="firstname"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter First Name"
+                  formControlName="firstName"
+                  [ngClass]="{
+                    'is-invalid': submitted && childManagementFormGroup.controls.firstName.errors
+                  }"
+                  maxLength="250"
+                  [readonly]="isAccountSelected"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && childManagementFormGroup.controls.firstName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="childManagementFormGroup.controls.firstName.errors.required"
+                  >
+                    FirstName is required.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Last Name*</label>
+                <input
+                  id="lastname"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter Last Name"
+                  formControlName="lastName"
+                  [ngClass]="{
+                    'is-invalid': submitted && childManagementFormGroup.controls.lastName.errors
+                  }"
+                  maxLength="250"
+                  [readonly]="isAccountSelected"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && childManagementFormGroup.controls.lastName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="childManagementFormGroup.controls.lastName.errors.required"
+                  >
+                    Last Name is required.
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>User Name*</label>
+                <input
+                  id="username"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter User Name"
+                  formControlName="userName"
+                  [ngClass]="{
+                    'is-invalid': submitted && childManagementFormGroup.controls.userName.errors
+                  }"
+                  maxLength="250"
+                  [readonly]="isChildEdit || isAccountSelected"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && childManagementFormGroup.controls.userName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="childManagementFormGroup.controls.userName.errors.required"
+                  >
+                    User Name is required.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Password</label>
+                <div class="password-wrapper">
+                  <input
+                    [type]="_passwordType"
+                    class="form-control"
+                    placeholder="Enter Password"
+                    formControlName="password"
+                    [ngClass]="{
+                      'is-invalid': submitted && childManagementFormGroup.controls.password.errors,
+                      'readonly-input': isChildEdit || isAccountSelected
+                    }"
+                    maxlength="250"
+                    [readonly]="isChildEdit || isAccountSelected"
+                  />
+                  <i
+                    *ngIf="showPassword"
+                    class="fa fa-eye toggle-icon"
+                    (click)="showPassword = false; _passwordType = 'password'"
+                  ></i>
+                  <i
+                    *ngIf="!showPassword"
+                    class="fa fa-eye-slash toggle-icon"
+                    (click)="showPassword = true; _passwordType = 'text'"
+                  ></i>
+                </div>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Email*</label>
+                <input
+                  id="email"
+                  type="email"
+                  class="form-control"
+                  placeholder="Enter Email"
+                  formControlName="email"
+                  [ngClass]="{
+                    'is-invalid': submitted && childManagementFormGroup.controls.email.errors
+                  }"
+                  maxLength="250"
+                  [readonly]="isAccountSelected"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && childManagementFormGroup.controls.email.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && childManagementFormGroup.controls.email.errors.required"
+                  >
+                    E-mail is required.
+                  </div>
+                  <div
+                    *ngIf="submitted && childManagementFormGroup.controls.email.errors.email"
+                    class="error text-danger"
+                  >
+                    Email is not valid.
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Status*</label>
+                <p-dropdown
+                  [options]="statusOptions"
+                  optionValue="label"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  formControlName="status"
+                  placeholder="Enter Status"
+                  [ngClass]="{
+                    'is-invalid': submitted && childManagementFormGroup.controls.status.errors
+                  }"
+                  [disabled]="isAccountSelected"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && childManagementFormGroup.controls.status.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="childManagementFormGroup.controls.status.errors.required"
+                  >
+                    Status is required.
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="p-field-checkbox" style="margin-top: 7%">
+                  <p-checkbox
+                    name="accept"
+                    formControlName="isParentWalletUsable"
+                    binary="true"
+                    inputId="isParentWalletUsable"
+                  ></p-checkbox>
+                  <label for="isParentWalletUsable"> Parent Wallet Usable </label>
+                </div>
+              </div>
+            </div>
+            <br />
+            <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+              <button
+                *ngIf="!isChildEdit"
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="ischildButton"
+                (click)="addEditChildManagement('')"
+              >
+                <i class="fa fa-check-circle"></i> Add {{ title }}
+              </button>
+              <button
+                *ngIf="isChildEdit"
+                type="submit"
+                [disabled]="ischildButton"
+                class="btn btn-primary"
+                (click)="addEditChildManagement(viewChildListData.id)"
+              >
+                <i class="fa fa-check-circle"></i> Update {{ title }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Child Details"
+  [(visible)]="dialog"
+  [baseZIndex]="10000"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closedialog()"
+>
+  <div class="modal-body">
+    <div class="panel-collapse collapse in" id="precustDetails">
+      <div class="panel-body table-responsive">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">First Name :</label>
+                    <span>{{ childListData?.childFirstName }}</span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Last Name :</label>
+                    <span>{{ childListData?.childLastName }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Email :</label>
+                    <span>{{ childListData?.childEmail }}</span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Username :</label>
+                    <span>{{ childListData?.childUsername }}</span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Status :</label>
+                    <span>{{ childListData?.status }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Mobile :</label>
+                    <span>{{ childListData?.childMobile }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="closedialog()" class="btn btn-default" data-dismiss="modal">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Child Wallet Details"
+  [(visible)]="isviewChildWallet"
+  [style]="{ width: '30%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeChildWallet()"
+>
+  <div class="modal-body">
+    <div class="col-md-12 h-230px">
+      <div class="panel top">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <h3 class="panel-title">
+              <h4 class="card-title">Wallet Balance</h4>
+            </h3>
+          </div>
+        </div>
+        <div class="panel-collapse collapse in" id="customerWallet">
+          <div class="panel-body table-responsive">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body text-center">
+                <div class="d-inline-block py-2 px-4 rounded-lg text-white mt-3">
+                  <p-badge
+                    *ngIf="viewChildWalletData >= 0"
+                    [value]="viewChildWalletData | customCurrency: currency : custData?.mvnoId"
+                    size="xlarge"
+                    severity="success"
+                  >
+                  </p-badge>
+                  <p-badge
+                    *ngIf="viewChildWalletData < 0"
+                    [value]="viewChildWalletData | customCurrency: currency : custData?.mvnoId"
+                    size="xlarge"
+                    severity="danger"
+                  >
+                  </p-badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="closeChildWallet()">Close</button>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Child Ledger Details"
+  [(visible)]="isViewChildLedger"
+  [style]="{ width: '80%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeViewChildLedger()"
+>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Transaction Type</th>
+              <th>Transaction Category</th>
+              <th>Amount</th>
+              <th>Balance Amount</th>
+              <th>Created Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let ledger of viewChildLedgerData
+                  | paginate
+                    : {
+                        id: 'viewChildLedgerData',
+                        itemsPerPage: childLedgerItemsPerPage,
+                        currentPage: currentPageChildLedgerSlab,
+                        totalItems: childLedgerTotalRecords
+                      };
+                index as i
+              "
+            >
+              <td>{{ ledger.transtype }}</td>
+              <td>{{ ledger.transcategory }}</td>
+              <td>{{ ledger.amount }}</td>
+              <td>{{ ledger.balAmount }}</td>
+              <td>{{ ledger.create_DATE }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="row">
+          <div class="col-md-12" style="display: flex">
+            <pagination-controls
+              id="viewChildLedgerData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedChildLedgerList($event)"
+            ></pagination-controls>
+            <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptionsChildLedger"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPageChildLedger($event)"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="closeViewChildLedger()">Close</button>
+  </div>
+</p-dialog>

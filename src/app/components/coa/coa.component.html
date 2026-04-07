@@ -1,0 +1,695 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">CoA/DM Profile</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#coaSearchPanel"
+            aria-expanded="false"
+            aria-controls="coaSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="coaSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchForm">
+              <div class="row">
+                <div class="col-12 col-sm-4 col-md-2" style="padding: 0%; text-align: right">
+                  <label style="padding: 5px">CoA/DM Profile Name:</label>
+                </div>
+                <div class="col-12 col-sm-6 col-md-2" style="padding-left: 0%">
+                  <input
+                    id="search-coa-name"
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter CoA/DM Profile Name"
+                    formControlName="name"
+                    (keydown.enter)="searchByName()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchForm.controls.name.errors
+                    }"
+                  />
+                </div>
+                <div class="col-12 col-sm-4 col-md-2" style="padding: 0%; text-align: right">
+                  <label style="padding: 5px" for="type" class="align-items-center"> Type: </label>
+                </div>
+                <div class="col-12 col-sm-6 col-md-2" style="padding-left: 0%">
+                  <p-dropdown
+                    id="searchType"
+                    [options]="typeOfProfile"
+                    placeholder="Select Type"
+                    optionLabel="label"
+                    optionValue="label"
+                    filter="true"
+                    filterBy="label"
+                    formControlName="type"
+                    [showClear]="true"
+                    (keydown.enter)="searchByName()"
+                  ></p-dropdown>
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search CoA/DM Profile"
+                    data-toggle="tooltip"
+                    (click)="searchByName()"
+                    id="search-button"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                    id="search-clear"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+                <!-- <input type="submit" value="Search" class="form-control" placeholder="button">
+                          <input type="reset" value="Clear" class="form-control" placeholder="button"> -->
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="createCoa()" *ngIf="createAccess">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create CoA/DM Profile</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="clearSearchForm()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search CoA/DM Profile</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="coaGridFlag">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">CoA/DM Profiles</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#coaTablePanel"
+            aria-expanded="false"
+            aria-controls="coaTablePanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="coaTablePanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>CoA/DM Profile</th>
+                <th>Type</th>
+                <!-- <th>Gateway</th> -->
+                <th>Port</th>
+                <th>Created On</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let coa of coaDMData
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>
+                  <a
+                    (click)="showCoaDetail(coa.coaDMProfileId)"
+                    title="Click To See Plan Detail"
+                    data-toggle="modal"
+                    data-target="#myModal"
+                    class="curson_pointer"
+                  >
+                    {{ coa.name }}
+                  </a>
+                </td>
+                <td>{{ coa.type }}</td>
+                <!-- <td>{{ coa.gateway }}</td> -->
+                <td>{{ coa.port }}</td>
+                <td>
+                  {{ coa.createDate | date: "dd-MM-yyy HH:mm" }}
+                </td>
+                <td *ngIf="editAccess || deleteAccess" class="btnAction">
+                  <a
+                    *ngIf="editAccess"
+                    id="edit-button"
+                    type="button"
+                    data-title="Edit"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="editCoaById(coa.coaDMProfileId, i, coa.mvnoId)"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    *ngIf="deleteAccess"
+                    id="delete-button"
+                    data-title="Delete"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="deleteConfirm(coa.coaDMProfileId, coa.mvnoId, i)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_groupdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-12" *ngIf="createCoaFlag">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} CoA/DM Profile</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#coaFormPanel"
+            aria-expanded="false"
+            aria-controls="coaFormPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="coaFormPanel" class="panel-collapse collapse in" *ngIf="editAccess || createAccess">
+        <form class="form-auth-small" [formGroup]="coaForm">
+          <div class="panel-body">
+            <!-- <fieldset style="margin-top: 0rem; margin-bottom: 2rem" *ngIf="userId == superAdminId">
+              <legend>Mvno Basic Parameters</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 co-md-4 col-sm-7 col-xs-12">
+                    <div *ngIf="userId == superAdminId">
+                      <label>Mvno Name *</label>
+                      <div>
+                        <p-dropdown
+                          #dd
+                          [options]="mvnoData"
+                          placeholder="Select mvno"
+                          optionLabel="name"
+                          optionValue="mvnoId"
+                          (onChange)="getDetailsByMVNO($event.value)"
+                          formControlName="mvnoName"
+                          filter="true"
+                          filterBy="name"
+                          [readonly]="editMode"
+                          [ngClass]="{
+                            'is-invalid': submitted && coaForm.controls.mvnoName.errors
+                          }"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && coaForm.controls.mvnoName.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && coaForm.controls.mvnoName.errors.required"
+                          >
+                            Please select MVNO name.
+                          </div>
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset> -->
+
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>CoA/DM Basic Parameters</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 co-md-4 col-sm-6 col-xs-12">
+                    <label>CoA/DM Profile Name *</label>
+                    <input
+                      id="name"
+                      type="text"
+                      name="name"
+                      class="form-control"
+                      [readonly]="editMode"
+                      placeholder="Enter CoA/DM Profile Name"
+                      formControlName="name"
+                      [ngClass]="{
+                        'is-invalid': submitted && coaForm.controls.name.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && coaForm.controls.name.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && coaForm.controls.name.errors.required"
+                      >
+                        Please enter CoA/DM Profile name.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 co-md-4 col-sm-6 col-xs-12">
+                    <div>
+                      <label>Type *</label>
+                      <p-dropdown
+                        [options]="typeOfProfile"
+                        placeholder="Select Type"
+                        optionLabel="label"
+                        optionValue="label"
+                        formControlName="type"
+                        filter="true"
+                        filterBy="label"
+                        [readonly]="editMode"
+                        [ngClass]="{
+                          'is-invalid': submitted && coaForm.controls.type.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && coaForm.controls.type.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && submitted && coaForm.controls.type.errors.required"
+                        >
+                          Please select type.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 co-md-4 col-sm-6 col-xs-12">
+                    <label>Shared Key *</label>
+                    <input
+                      id="sharedkey"
+                      type="text"
+                      name="sharedkey"
+                      class="form-control"
+                      placeholder="Enter Shared Key"
+                      formControlName="sharedkey"
+                      [ngClass]="{
+                        'is-invalid': submitted && coaForm.controls.sharedkey.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && coaForm.controls.sharedkey.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && coaForm.controls.sharedkey.errors.required"
+                      >
+                        Please enter Shared key.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <!-- <div class="col-lg-4 co-md-4 col-sm-7 col-xs-12">
+                    <div>
+                      <label>Gateway *</label>
+                      <input
+                        id="gateway"
+                        type="text"
+                        name="gateway"
+                        class="form-control"
+                        placeholder="Enter Gateway"
+                        formControlName="gateway"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && coaForm.controls.gateway.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && coaForm.controls.gateway.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            coaForm.controls.gateway.errors.required
+                          "
+                        >
+                          Please enter Gateway.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div> -->
+                </div>
+                <div class="row">
+                  <div class="col-lg-4 co-md-4 col-sm-6 col-xs-12">
+                    <label>Port *</label>
+                    <input
+                      id="port"
+                      type="number"
+                      min="0"
+                      name="port"
+                      class="form-control"
+                      placeholder="Enter Port"
+                      formControlName="port"
+                      [ngClass]="{
+                        'is-invalid': submitted && coaForm.controls.port.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && coaForm.controls.port.errors"
+                    >
+                      <span
+                        class="error text-danger"
+                        *ngIf="submitted && coaForm.controls.port.errors.required"
+                      >
+                        Please enter Port.
+                      </span>
+                      <span
+                        class="error text-danger"
+                        *ngIf="submitted && coaForm.controls.port.errors"
+                      >
+                        Enter valid Port number.
+                      </span>
+                    </div>
+                    <br />
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>Timeout (In ms) *</label>
+
+                    <div style="display: flex">
+                      <div style="width: 60%">
+                        <input
+                          id="timevar"
+                          type="number"
+                          min="1"
+                          class="form-control"
+                          placeholder="Enter Timeout"
+                          formControlName="timevar"
+                          [ngClass]="{
+                            'is-invalid': submitted && coaForm.controls.timevar.errors
+                          }"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && coaForm.controls.timevar.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && coaForm.controls.timevar.errors.required"
+                          >
+                            Timeout is required.
+                          </div>
+                        </div>
+                      </div>
+                      <!--                      <div style="width: 40%; height: 34px;">-->
+                      <!--                        <p-dropdown-->
+                      <!--                          [options]="timeOutData"-->
+                      <!--                          optionValue="value"-->
+                      <!--                          optionLabel="label"-->
+                      <!--                          filter="true"-->
+                      <!--                          filterBy="label"-->
+                      <!--                          placeholder="Select a Unit"-->
+                      <!--                          formControlName="unitsOftime"-->
+                      <!--                          [ngClass]="{-->
+                      <!--                            'is-invalid':-->
+                      <!--                              submitted && coaForm.controls.unitsOftime.errors-->
+                      <!--                          }"-->
+                      <!--                        ></p-dropdown>-->
+                      <!--                        <div></div>-->
+                      <!--                        <div-->
+                      <!--                          class="errorWrap text-danger"-->
+                      <!--                          *ngIf="-->
+                      <!--                            submitted && coaForm.controls.unitsOftime.errors-->
+                      <!--                          "-->
+                      <!--                        >-->
+                      <!--                          <div-->
+                      <!--                            class="error text-danger"-->
+                      <!--                            *ngIf="-->
+                      <!--                              submitted &&-->
+                      <!--                              coaForm.controls.unitsOftime.errors.required-->
+                      <!--                            "-->
+                      <!--                          >-->
+                      <!--                            Unit is required.-->
+                      <!--                          </div>-->
+                      <!--                        </div>-->
+                      <!--                      </div>-->
+                    </div>
+
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Attribute Mapping</legend>
+              <div class="boxWhite">
+                <div id="Createradius" style="margin-top: 10px">
+                  <table class="table map-table">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center">Check Item</th>
+                        <th style="text-align: center">Profile Attribute *</th>
+                        <th style="text-align: center">Radius Attribute *</th>
+                        <th style="text-align: right; padding: 8px">
+                          <button
+                            id="addAtt"
+                            style="object-fit: cover; padding: 5px 8px"
+                            class="btn btn-primary"
+                            (click)="onAddAttribute()"
+                          >
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                            Add
+                          </button>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let row of attribute.controls; let index = index">
+                        <td style="padding-left: 8px; width: 28%">
+                          <input
+                            id="checkitem"
+                            class="form-control"
+                            placeholder="Enter Check Item"
+                            [formControl]="row.get('checkitem')"
+                          />
+                        </td>
+                        <td style="width: 28%">
+                          <input
+                            id="profileAtt"
+                            class="form-control"
+                            placeholder="Enter Profile Attribute"
+                            [formControl]="row.get('profileAtt')"
+                            [ngClass]="{
+                              'is-invalid': submitted && row.get('profileAtt').invalid
+                            }"
+                          />
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && row.get('profileAtt').errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="submitted && row.get('profileAtt').errors"
+                            >
+                              Please enter Profile Attribute OR delete the row.
+                            </div>
+                          </div>
+                        </td>
+                        <td style="width: 28%">
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="dictionaryAttributeData.dictionaryAttributeList"
+                            placeholder="Select Radius Attribute"
+                            optionLabel="name"
+                            optionValue="name"
+                            filter="true"
+                            filterBy="name"
+                            [formControl]="row.get('radiusAtt')"
+                          ></p-dropdown>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && row.get('radiusAtt').errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="submitted && row.get('radiusAtt').errors"
+                            >
+                              Please select Radius Attribute OR delete the row.
+                            </div>
+                          </div>
+                        </td>
+                        <td style="text-align: right">
+                          <a
+                            id="deleteAtt"
+                            class="curson_pointer"
+                            (click)="
+                              deleteConfirmAttribute(
+                                index,
+                                row.get('coaDMProfileAttributeMappingId').value,
+                                row.get('mvnoId')
+                              )
+                            "
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                data-title="Submit CoA/DM Details"
+                data-toggle="tooltip"
+                class="btn btn-primary"
+                (click)="addCoA()"
+              >
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update CoA/DM Profile" : "Add CoA/DM Profile" }}
+              </button>
+              <br />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- END Form Design -->
+  </div>
+</div>
+
+<div class="row" *ngIf="modalToggle">
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" style="width: 35%">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <!-- <h4 class="modal-title">{{plan.planName}} Detail</h4> -->
+          <h3 class="panel-title">{{ coa.name }} Detail</h3>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="name">CoA/DM Profile :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="nameValue">{{ coa.name }}</label>
+              </div>
+            </div>
+            <!-- <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="type">Gateway :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="typeValue">{{ coa.gateway }}</label>
+              </div>
+            </div> -->
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="quota">Shared Key :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="quotaValue">{{ coa.sharedkey }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="uom">Port :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="uomValue">{{ coa.port }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-5">
+                <label for="uom">Type :</label>
+              </div>
+              <div class="col-md-7">
+                <label for="uomValue">{{ coa.type }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

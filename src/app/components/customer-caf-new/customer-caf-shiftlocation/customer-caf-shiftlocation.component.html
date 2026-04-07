@@ -1,0 +1,1449 @@
+<div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <button
+              (click)="customerDetailOpen(customerDetailData.id)"
+              class="btn btn-secondary backbtn"
+              data-placement="bottom"
+              data-toggle="tooltip"
+              title="Go to Customer Details"
+              type="button"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: #f7b206 !important; font-size: 28px"
+              ></i>
+            </button>
+            <h3 class="panel-title">
+              {{ custData.title }}
+              {{ custData.firstname }} {{ custData.lastname }} My Address
+            </h3>
+          </div>
+          <div class="right" *ngIf="newShiftaddShiftLocationAccess">
+            <button
+              (click)="newShiftopenShiftLocationForm()"
+              class="btn btn-primary statusbtn"
+              data-backdrop="static"
+              data-keyboard="false"
+              data-title="Shift Location"
+              data-toggle="modal"
+              style="
+                background-color: #f7b206 !important;
+                font-size: 16px;
+                padding: 3px 12px;
+                margin-top: 10px;
+              "
+              type="submit"
+              [disabled]="disableShiftButton"
+            >
+              Shift Location
+            </button>
+          </div>
+        </div>
+        <div class="panel-body table-responsive" id="customerAdrress">
+          <!-- <div *ngIf="newCustomerAddressDataForCustometr.status == 'NewActivation'"> -->
+          <div class="panel-collapse collapse in" id="shiftLocation">
+            <div class="panel-body table-responsive">
+              <div class="row">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>New Address</th>
+                        <th>Requested By</th>
+                        <th>Requested Date</th>
+                        <th>Version</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngIf="newShiftCustomerAddressDataForCustometr?.length > 0">
+                      <tr *ngFor="let address of newShiftCustomerAddressDataForCustometr">
+                        <td>
+                          <div style="padding: 8px">
+                            {{ address.fullAddress }}
+                          </div>
+                        </td>
+                        <td>{{ address.requestedByName }}</td>
+                        <td>{{ address.requestedDate | date }}</td>
+                        <td>{{ address.version }}</td>
+                        <td>
+                          <button
+                            class="approve-btn"
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                            "
+                            type="button"
+                            title="Pick"
+                            (click)="newShiftpickModalOpen(address)"
+                            [disabled]="
+                              address?.status != 'NewActivation' || address?.nextStaff != null
+                            "
+                          >
+                            <img width="30px" src="assets/img/17_Pick-ticket-to-resolve_Y.png" />
+                          </button>
+
+                          <button
+                            (click)="newShiftshiftLocationApproved(address)"
+                            [disabled]="
+                              address?.nextStaff == null ||
+                              address?.nextStaff != loggedInStaffId ||
+                              address?.status != 'NewActivation'
+                            "
+                            class="approve-btn"
+                            title="Approve"
+                            type="button"
+                          >
+                            <img src="assets/img/assign.jpg" />
+                          </button>
+
+                          <button
+                            (click)="newShiftshiftLocationRejected(address)"
+                            [disabled]="
+                              address?.nextStaff == null ||
+                              address?.nextStaff != loggedInStaffId ||
+                              (address?.status != null && address?.status != 'NewActivation')
+                            "
+                            class="approve-btn"
+                            title="Reject"
+                            type="button"
+                          >
+                            <img src="assets/img/reject.jpg" />
+                          </button>
+
+                          <a
+                            class="detailOnAnchorClick"
+                            title="Workflow Status Details"
+                            (click)="newShiftshiftWorkflow(address)"
+                          >
+                            <img
+                              width="32"
+                              height="32"
+                              src="assets/img/05_inventory-to-customer_Y.png"
+                            />
+                          </a>
+
+                          <button
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                              cursor: pointer;
+                            "
+                            [disabled]="
+                              address?.status == 'Active' ||
+                              address?.nextStaff != loggedInStaffId ||
+                              address?.status == null
+                            "
+                            id="assign-button"
+                            class="approve-btn"
+                            title="Reassign shiftLocation"
+                            (click)="newShiftStaffReasignListShiftLocation(address)"
+                          >
+                            <img
+                              width="32"
+                              height="32"
+                              alt="Assign shiftLocation"
+                              src="assets/img/icons-02.png"
+                            />
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-dialog
+    header="Shift Location Details"
+    [(visible)]="newShiftdisplayShiftLocationDetails"
+    [style]="{ width: '90%' }"
+    [modal]="true"
+    [responsive]="true"
+    [draggable]="false"
+    [closable]="true"
+    (onHide)="newShiftcloseShiftLocation()"
+  >
+    <div class="modal-body">
+      <fieldset>
+        <legend>New Address Details</legend>
+        <div class="boxWhite">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+              <label>Service Area *</label>
+              <p-dropdown
+                (onChange)="newShiftselServiceArea($event, true)"
+                [(ngModel)]="newShiftshiftLocationDTO.updateAddressServiceAreaId"
+                [disabled]="newShiftserviceAreaDisable"
+                [options]="commondropdownService.serviceAreaList"
+                filter="true"
+                filterBy="name"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a Servicearea"
+              ></p-dropdown>
+              <div></div>
+              <br />
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+              <label>POP</label>
+              <p-dropdown
+                [options]="commondropdownService.popListData"
+                [(ngModel)]="newShiftLocationPopId"
+                filter="true"
+                filterBy="name"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a POP"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+              <label>OLT</label>
+              <p-dropdown
+                [options]="newShiftoltDevices"
+                [(ngModel)]="newShiftLocationOltId"
+                filter="true"
+                filterBy="name"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a OLT devices"
+              ></p-dropdown>
+            </div>
+          </div>
+          <div [formGroup]="newShiftpresentGroupForm">
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>Address *</label>
+                <input
+                  [ngClass]="{
+                    'is-invalid':
+                      newShiftsubmitted && newShiftpresentGroupForm.controls.landmark.errors
+                  }"
+                  class="form-control"
+                  formControlName="landmark"
+                  id="landmark"
+                  name="landmark"
+                  placeholder="Enter Address"
+                  type="text"
+                />
+                <div
+                  *ngIf="newShiftsubmitted && newShiftpresentGroupForm.controls.landmark.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div class="error text-danger">Address is required.</div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>{{ pincodeTitle }} *</label>
+                <p-dropdown
+                  (onChange)="newShiftselectPINCODEChange($event, 'present')"
+                  [ngClass]="{
+                    'is-invalid':
+                      newShiftsubmitted && newShiftpresentGroupForm.controls.pincodeId.errors
+                  }"
+                  [options]="newShiftpincodeDD"
+                  filter="true"
+                  filterBy="pincode"
+                  formControlName="pincodeId"
+                  id="pincodeId"
+                  optionLabel="pincode"
+                  optionValue="pincodeid"
+                  placeholder="Select a {{ pincodeTitle }}"
+                ></p-dropdown>
+                <div></div>
+                <div
+                  *ngIf="newShiftsubmitted && newShiftpresentGroupForm.controls.pincodeId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div class="error text-danger">{{ pincodeTitle }} is required.</div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>{{ areaTitle }} *</label>
+                <p-dropdown
+                  (onChange)="newShiftselectAreaChange($event, 'present')"
+                  [ngClass]="{
+                    'is-invalid':
+                      newShiftsubmitted && newShiftpresentGroupForm.controls.areaId.errors
+                  }"
+                  [options]="newShiftAreaListDD"
+                  filter="true"
+                  filterBy="areaId"
+                  formControlName="areaId"
+                  id="areaId"
+                  optionLabel="name"
+                  optionValue="id"
+                  placeholder="Select a {{ areaTitle }}"
+                ></p-dropdown>
+                <div
+                  *ngIf="newShiftsubmitted && newShiftpresentGroupForm.controls.areaId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div class="error text-danger">{{ areaTitle }} is required.</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>{{ subareaTitle }}</label>
+                <p-dropdown
+                  id="areatitl"
+                  (onChange)="newShiftonChangeSubArea($event, 'present')"
+                  [options]="newShiftsubAreaListDD"
+                  filter="true"
+                  filterBy="name"
+                  formControlName="subareaId"
+                  id="subareaId"
+                  optionLabel="name"
+                  optionValue="id"
+                  placeholder="Select a {{ subareaTitle }}"
+                  [virtualScroll]="true"
+                  [itemSize]="30"
+                  [scrollHeight]="'200px'"
+                >
+                  <ng-template let-option pTemplate="item">
+                    <span>
+                      {{ option.name }}
+                      &nbsp;
+                      <span
+                        *ngIf="option.isUnderDevelopment"
+                        class="badge badge-info underDevelopBadge"
+                      >
+                        UnderDevelopment
+                      </span>
+                    </span>
+                  </ng-template></p-dropdown
+                >
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>{{ buildingTitle }}</label>
+                <p-dropdown
+                  id="areatitl"
+                  (onChange)="newShiftonChangeBuildingArea($event, 'present')"
+                  [options]="newShiftbuildingListDD"
+                  filter="true"
+                  filterBy="buildingName"
+                  formControlName="building_mgmt_id"
+                  id="building_mgmt_id"
+                  optionLabel="buildingName"
+                  optionValue="buildingMgmtId"
+                  placeholder="Select a {{ buildingTitle }}"
+                  [virtualScroll]="true"
+                  [itemSize]="30"
+                  [scrollHeight]="'200px'"
+                ></p-dropdown>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>Building Number</label>
+                <p-dropdown
+                  id="areatitl"
+                  [options]="newShiftbuildingNoDD"
+                  filter="true"
+                  filterBy="buildingNumber"
+                  formControlName="buildingNumber"
+                  id="buildingNumber"
+                  optionLabel="buildingNumber"
+                  optionValue="buildingNumber"
+                  placeholder="Select a Building Number"
+                  [virtualScroll]="true"
+                  [itemSize]="30"
+                  [scrollHeight]="'200px'"
+                ></p-dropdown>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>{{ cityTitle }} *</label>
+                <select
+                  class="form-control"
+                  disabled
+                  formControlName="cityId"
+                  id="cityId"
+                  name="cityId"
+                  style="width: 100%"
+                >
+                  <option value="">Select {{ cityTitle }}</option>
+                  <option
+                    *ngFor="let item of commondropdownService.cityListData"
+                    value="{{ item.id }}"
+                  >
+                    {{ item.name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="newShiftsubmitted && newShiftpresentGroupForm.controls.cityId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div class="error text-danger">{{ cityTitle }} is required.</div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 top">
+                <label>{{ stateTitle }} *</label>
+                <select
+                  class="form-control"
+                  disabled
+                  formControlName="stateId"
+                  id="stateId"
+                  name="stateId"
+                  style="width: 100%"
+                >
+                  <option value="">Select {{ stateTitle }}</option>
+                  <option
+                    *ngFor="let item of commondropdownService.stateListData"
+                    value="{{ item.id }}"
+                  >
+                    {{ item.name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="newShiftsubmitted && newShiftpresentGroupForm.controls.stateId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div class="error text-danger">{{ stateTitle }} is required.</div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top">
+                <label>{{ countryTitle }} *</label>
+                <select
+                  class="form-control"
+                  disabled
+                  formControlName="countryId"
+                  id="countryId"
+                  name="countryId"
+                  style="width: 100%"
+                >
+                  <option value="">Select {{ countryTitle }}</option>
+                  <option
+                    *ngFor="let item of commondropdownService.countryListData"
+                    value="{{ item.id }}"
+                  >
+                    {{ item.name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="newShiftsubmitted && newShiftpresentGroupForm.controls.countryId.errors"
+                  class="errorWrap text-danger"
+                >
+                  <div class="error text-danger">{{ countryTitle }} is required.</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top">
+                <label>Latitude</label>
+                <input
+                  [readonly]="iflocationFill"
+                  class="form-control"
+                  formControlName="latitude"
+                  id="latitude"
+                  placeholder="Enter latitude"
+                  type="text"
+                />
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top">
+                <label>Longitude</label>
+                <input
+                  [readonly]="iflocationFill"
+                  class="form-control"
+                  formControlName="longitude"
+                  id="longitude"
+                  placeholder="Enter longitude"
+                  type="text"
+                />
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top">
+                <div style="margin-bottom: 1rem">
+                  <span
+                    (click)="mylocation()"
+                    class="HoverEffect"
+                    style="border-bottom: 1px solid #f7b206"
+                    title="Get Current Location"
+                  >
+                    <img
+                      class="LocationIcon LocationIconMargin"
+                      src="assets/img/B_Find-My-current-location_Y.png"
+                    />
+                  </span>
+                  <!-- TODO need to make seperate Dialog -->
+                  <span
+                    (click)="openSearchModel()"
+                    class="HoverEffect"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    data-target="#searchLocationModal"
+                    data-toggle="modal"
+                    style="margin-left: 8px; border-bottom: 1px solid #f7b206"
+                    title="Search Location"
+                  >
+                    <img
+                      class="LocationIcon LocationIconMargin"
+                      src="assets/img/C_Search-location_Y.png"
+                    />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top">
+              <label>Requested By </label>
+              <br />
+              <!-- <p-dropdown
+                    [options]="staffData"
+                    optionLabel="fullName"
+                      optionValue="id"
+                      [(ngModel)]="requestedByID"
+                      filterBy="fullName"
+                      placeholder="Select a staff"
+                      filter="true"
+                      (onChange)="branchChange($event)"
+                    ></p-dropdown> -->
+
+              <p-dropdown
+                [disabled]="true"
+                [options]="newShiftstaffCustList"
+                optionLabel="name"
+                optionValue="id"
+                filterBy="firstname"
+                placeholder="Select a staff"
+                [filter]="true"
+                [(ngModel)]="newShiftrequestedByID"
+                [showClear]="true"
+                styleClass="disableDropdown"
+              >
+                <ng-template let-data pTemplate="item">
+                  <div class="item-drop1">
+                    <span class="item-value1"> {{ data.name }} </span>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+
+              <button
+                type="button"
+                (click)="newShiftmodalOpenStaff('requestedBy')"
+                class="btn btn-primary"
+                style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+              >
+                <i class="fa fa-plus-square"></i>
+              </button>
+              <button
+                [disabled]="newShiftrequestedByID == null"
+                type="button"
+                (click)="newShiftremoveSelStaff('requestedBy')"
+                class="btn btn-danger"
+                style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+              >
+                <i class="fa fa-trash"></i>
+              </button>
+
+              <div
+                *ngIf="newShiftsubmitted && newShiftrequestedByID == 0"
+                class="errorWrap text-danger"
+              >
+                <div class="error text-danger">Requested By is required.</div>
+              </div>
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top"
+              *ngIf="newShiftisBranchShiftLocation"
+            >
+              <label>Branch/Partner *</label>
+              <p-dropdown
+                [options]="newShiftbranchData"
+                [(ngModel)]="newShiftbranchID"
+                optionValue="id"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select a branch"
+              ></p-dropdown>
+              <div *ngIf="newShiftsubmitted && newShiftbranchID == 0" class="errorWrap text-danger">
+                <div class="error text-danger">Branch is required.</div>
+              </div>
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top"
+              *ngIf="!newShiftisBranchShiftLocation"
+            >
+              <label>Branch/Partner *</label>
+              <p-dropdown
+                [options]="this.newShiftpartnerListByServiceArea"
+                [(ngModel)]="newShiftshiftLocationDTO.shiftPartnerid"
+                optionValue="id"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select a partner"
+              >
+              </p-dropdown>
+              <div
+                *ngIf="newShiftsubmitted && newShiftshiftLocationDTO.shiftPartnerid == 0"
+                class="errorWrap text-danger"
+              >
+                <div class="error text-danger">Partner is required.</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top">
+              <label>Wallet Amount</label>
+              <span>
+                <input
+                  type="text"
+                  class="form-control"
+                  disabled="true"
+                  [(ngModel)]="newShiftwalletValue"
+                />
+              </span>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top">
+              <label>Due Value</label>
+              <span>
+                <input
+                  type="text"
+                  class="form-control"
+                  disabled="true"
+                  [(ngModel)]="newShiftdueValue"
+                />
+              </span>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group form-check">
+                <input
+                  [(ngModel)]="newShiftshiftLocationDTO.isPaymentAddresSame"
+                  [checked]="newShiftshiftLocationDTO.isPaymentAddresSame"
+                  class="form-check-input"
+                  id="paymentAddress"
+                  type="checkbox"
+                />
+                <label class="form-check-label" for="permanentAddress" style="margin-left: 1rem">
+                  set <b>Payment Address</b> same as a present address
+                </label>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group form-check">
+                <input
+                  [(ngModel)]="newShiftshiftLocationDTO.isPermanentAddress"
+                  [checked]="newShiftshiftLocationDTO.isPermanentAddress"
+                  class="form-check-input"
+                  id="permanentAddress"
+                  type="checkbox"
+                />
+                <label class="form-check-label" for="permanentAddress" style="margin-left: 1rem">
+                  set <b>Permanent Address</b> same as a present address
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <!-- <fieldset>
+          <legend>Charge Details new</legend>
+          <div [formGroup]="newShiftLocationChargeGroupForm" class="boxWhite">
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Billable To</label>
+                <br />
+                <p-dropdown
+                  [disabled]="true"
+                  [options]="newShiftbillableCustList"
+                  [showClear]="true"
+                  filter="true"
+                  filterBy="name"
+                  formControlName="billableCustomerId"
+                  optionLabel="name"
+                  optionValue="id"
+                  placeholder="Select a Billable"
+                  styleClass="disableDropdown"
+                ></p-dropdown>
+                <button
+                  type="button"
+                  (click)="newShiftmodalOpenParentCustomer('billable-shift-location')"
+                  class="btn btn-primary"
+                  style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                >
+                  <i class="fa fa-plus-square"></i>
+                </button>
+                <button
+                  class="btn btn-danger"
+                  style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                  (click)="newShiftremoveSelParentCust('billable-shift-location')"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <label>Payment Owner *</label>
+                <br />
+                <p-dropdown
+                  [disabled]="true"
+                  [options]="newShiftstaffCustList"
+                  optionLabel="name"
+                  optionValue="id"
+                  filterBy="firstname"
+                  placeholder="Select a staff"
+                  [filter]="true"
+                  formControlName="paymentOwnerId"
+                  [showClear]="true"
+                  styleClass="disableDropdown"
+                >
+                  <ng-template let-data pTemplate="item">
+                    <div class="item-drop1">
+                      <span class="item-value1"> {{ data.name }} </span>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+  
+                <button
+                  type="button"
+                  (click)="newShiftmodalOpenStaff('paymentCharge')"
+                  class="btn btn-primary"
+                  style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                >
+                  <i class="fa fa-plus-square"></i>
+                </button>
+                <button
+                  [disabled]="newShiftpaymentOwnerId == null"
+                  type="button"
+                  (click)="newShiftremoveSelStaff('paymentCharge')"
+                  class="btn btn-danger"
+                  style="border-radius: 5px; padding: 5px 10px; line-height: 1.5; margin-left: 10px"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+                <div
+                  *ngIf="
+                    newShiftifUpdateAddressSubmited &&
+                    newShiftLocationChargeGroupForm.controls.paymentOwnerId.errors
+                  "
+                  class="errorWrap text-danger"
+                >
+                  <div class="error text-danger">Payment Owner is required</div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <table style="width: 100%">
+              <tr>
+                <td style="padding-right: 10px">
+                  <label>Charge *</label>
+                  <p-dropdown
+                    (onChange)="newShiftselectcharge($event, 'shiftLocation')"
+                    [ngClass]="{
+                      'is-invalid':
+                        newShiftifUpdateAddressSubmited &&
+                        newShiftLocationChargeGroupForm.controls.chargeid.errors
+                    }"
+                    [options]="commondropdownService.chargeByTypeData"
+                    filter="true"
+                    filterBy="name"
+                    formControlName="chargeid"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Select a Charge"
+                  ></p-dropdown>
+                  <div></div>
+                </td>
+  
+                <td style="padding-right: 10px">
+                  <label>Actual Price *</label>
+                  <input
+                    *ngIf="newShiftselectchargeValueShow"
+                    class="form-control"
+                    disabled
+                    formControlName="actualprice"
+                    id="actualprice"
+                    min="0"
+                    name="actualprice"
+                    placeholder="Enter Actual Price"
+                    type="number"
+                  />
+  
+                  <input
+                    *ngIf="!newShiftselectchargeValueShow"
+                    [ngClass]="{
+                      'is-invalid':
+                        newShiftifUpdateAddressSubmited &&
+                        newShiftLocationChargeGroupForm.controls.actualprice.errors
+                    }"
+                    class="form-control"
+                    formControlName="actualprice"
+                    id="actualprice"
+                    min="0"
+                    name="actualprice"
+                    placeholder="Enter Actual Price"
+                    type="number"
+                  />
+                </td>
+  
+                <td style="padding-right: 10px">
+                  <label>Charge Type *</label>
+                  <p-dropdown
+                    (onChange)="newShiftselectTypecharge($event)"
+                    [ngClass]="{
+                      'is-invalid':
+                        newShiftifUpdateAddressSubmited &&
+                        newShiftLocationChargeGroupForm.controls.type.errors
+                    }"
+                    [options]="newShiftchargeType"
+                    filter="true"
+                    filterBy="name"
+                    formControlName="type"
+                    optionLabel="label"
+                    optionValue="label"
+                    placeholder="Select a Type"
+                  ></p-dropdown>
+                  <div></div>
+                </td>
+  
+                <td style="padding-right: 10px">
+                  <label>New Price *</label>
+                  <input
+                    [ngClass]="{
+                      'is-invalid':
+                        newShiftifUpdateAddressSubmited &&
+                        newShiftLocationChargeGroupForm.controls.price.errors
+                    }"
+                    class="form-control"
+                    formControlName="price"
+                    id="price"
+                    min="0"
+                    name="price"
+                    placeholder="Enter New Price"
+                    type="number"
+                  />
+                </td>
+                <td>
+                  <label>Discount</label>
+                  <input
+                    class="form-control"
+                    formControlName="discount"
+                    id="discount"
+                    min="0"
+                    name="discount"
+                    placeholder="Enter discount"
+                    type="number"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div
+                    *ngIf="
+                      newShiftifUpdateAddressSubmited &&
+                      newShiftLocationChargeGroupForm.controls.chargeid.errors
+                    "
+                    class="errorWrap text-danger"
+                  >
+                    <div class="error text-danger">Charge is required.</div>
+                  </div>
+                </td>
+                <td>
+                  <div
+                    *ngIf="
+                      newShiftifUpdateAddressSubmited &&
+                      newShiftLocationChargeGroupForm.controls.actualprice.errors
+                    "
+                    class="errorWrap text-danger"
+                  >
+                    <div class="error text-danger">Charge Amount is required.</div>
+                  </div>
+                </td>
+                <td style="text-align: center; padding: 0 10px 0 0">
+                  <div
+                    *ngIf="
+                      newShiftifUpdateAddressSubmited &&
+                      newShiftLocationChargeGroupForm.controls.type.errors
+                    "
+                    class="errorWrap text-danger"
+                  >
+                    <div class="error text-danger">Charge Type is required.</div>
+                  </div>
+                </td>
+                <td
+                      *ngIf="shiftLocationChargeGroupForm.value.type == 'Recurring'"
+                      style="text-align: center; padding: 0 10px 0 0"
+                    >
+                      <div
+                        *ngIf="
+                          ifUpdateAddressSubmited &&
+                          shiftLocationChargeGroupForm.controls.billingCycle.errors
+                        "
+                        class="errorWrap text-danger"
+                      >
+                        <div class="error text-danger">Billing Cycle is required.</div>
+                      </div>
+                    </td> 
+                <td style="text-align: center; padding: 0 10px 0 0">
+                  <div
+                    *ngIf="
+                      newShiftifUpdateAddressSubmited &&
+                      newShiftLocationChargeGroupForm.controls.price.errors
+                    "
+                    class="errorWrap text-danger"
+                  >
+                    <div class="error text-danger">New Price is required.</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+  
+            <div
+              *ngIf="
+                newShiftLocationChargeGroupForm.value.price <
+                newShiftLocationChargeGroupForm.value.actualprice
+              "
+              class="errorWrap text-danger"
+            >
+              <div class="error text-danger">
+                New Price must not be less than the actual charge price
+              </div>
+            </div>
+            <br />
+          </div>
+        </fieldset> -->
+    </div>
+    <div class="modal-footer">
+      <div class="addUpdateBtn">
+        <button
+          (click)="newShiftsaveShiftLocation()"
+          class="btn btn-primary"
+          data-title="Shift Location"
+          type="button"
+        >
+          save
+        </button>
+        <button type="button" class="btn btn-default" (click)="newShiftcloseShiftLocation()">
+          Close
+        </button>
+      </div>
+    </div>
+  </p-dialog>
+  <p-dialog
+    header="{{ newShiftAppRjecHeader }} Shift Location"
+    [(visible)]="newShiftrejectApproveShiftLocationModal"
+    [style]="{ width: '40%' }"
+    [modal]="true"
+    [responsive]="true"
+    [draggable]="false"
+    [closable]="false"
+  >
+    <div class="modal-body">
+      <form [formGroup]="newShiftassignAppRejectShiftLocationForm">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label>Remark*</label>
+            <textarea
+              [ngClass]="{
+                'is-invalid':
+                  newShiftassignShiftLocationsubmitted &&
+                  newShiftassignAppRejectShiftLocationForm.controls.remark.errors
+              }"
+              class="form-control"
+              formControlName="remark"
+              name="remark"
+            ></textarea>
+            <div
+              *ngIf="
+                newShiftassignShiftLocationsubmitted &&
+                newShiftassignAppRejectShiftLocationForm.controls.remark.errors
+              "
+              class="errorWrap text-danger"
+            >
+              <div
+                *ngIf="
+                  newShiftassignShiftLocationsubmitted &&
+                  newShiftassignAppRejectShiftLocationForm.controls.remark.errors.required
+                "
+                class="error text-danger"
+              >
+                Remark is required.
+              </div>
+            </div>
+            <br />
+          </div>
+        </div>
+        <!-- <input type="file" formControlName="fileName" name="fileName"> -->
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        (click)="newShiftassignAddressApprove()"
+        [disabled]="!newShiftassignAppRejectShiftLocationForm.valid"
+        class="btn btn-primary"
+        id="submit"
+        type="submit"
+      >
+        <i class="fa fa-times-circle"></i>
+        {{ newShiftAppRjecHeader }}
+      </button>
+      <button
+        class="btn btn-default"
+        data-dismiss="modal"
+        (click)="newShiftcloseDisplayShiftLocationDetails()"
+        type="button"
+      >
+        Close
+      </button>
+    </div>
+  </p-dialog>
+  <p-dialog
+    header="Assign Staff"
+    [(visible)]="newShiftrejectCustomerInventoryModal"
+    [style]="{ width: '40%' }"
+    [modal]="true"
+    [responsive]="true"
+    [draggable]="false"
+    [closable]="false"
+  >
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+
+    <div class="modal-body">
+      <div class="row">
+        <div *ngIf="reject" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="card">
+            <h5>Select Staff</h5>
+            <p-table
+              [(selection)]="newShiftselectStaffReject"
+              [value]="newShiftrejectInventoryData"
+              responsiveLayout="scroll"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 3rem"></th>
+                  <th>Name</th>
+                  <th>Username</th>
+                </tr>
+              </ng-template>
+              <ng-template let-product pTemplate="body">
+                <tr>
+                  <td>
+                    <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                  </td>
+                  <td>{{ product.fullName }}</td>
+                  <td>
+                    {{ product.username }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+      <!-- <input type="file" formControlName="fileName" name="fileName"> -->
+    </div>
+    <div class="modal-footer">
+      <button
+        (click)="newShiftassignToStaff(false)"
+        *ngIf="reject"
+        class="btn btn-primary"
+        id="submit"
+        type="submit"
+      >
+        <i class="fa fa-times-circle"></i>
+        Assign
+      </button>
+      <button
+        (click)="newShiftcloseDisplayShiftLocationDetails()"
+        class="btn btn-default"
+        data-dismiss="modal"
+        type="submit"
+      >
+        Close
+      </button>
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    header="Assign Staff"
+    [(visible)]="newShiftassignShiftLocation1"
+    [style]="{ width: '35%' }"
+    [modal]="true"
+    [responsive]="true"
+    [draggable]="false"
+    [closable]="true"
+  >
+    <!-- <div
+    aria-labelledby="myModalLabel"
+    class="modal fade"
+    id="assignCustomerInventoryModal"
+    role="dialog"
+    tabindex="-1"
+  > -->
+    <!-- <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel" style="color: #fff !important">Assign Staff</h4>
+        </div> -->
+    <div class="modal-body">
+      <div class="row">
+        <div *ngIf="newShiftapproved" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="card">
+            <h5>Select Staff</h5>
+            <p-table
+              [(selection)]="newShiftselectStaff"
+              [value]="newShiftapproveInventoryData"
+              responsiveLayout="scroll"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 3rem"></th>
+                  <th>Name dd</th>
+                  <th>Username</th>
+                </tr>
+              </ng-template>
+              <ng-template let-newshift pTemplate="body">
+                <tr>
+                  <td>
+                    <p-tableRadioButton [value]="newshift.id"></p-tableRadioButton>
+                  </td>
+                  <td>{{ newshift.fullName }}</td>
+                  <td>
+                    {{ newshift.username }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+      <!-- <input type="file" formControlName="fileName" name="fileName"> -->
+    </div>
+    <div class="modal-footer">
+      <button
+        (click)="newShiftassignToStaff(true)"
+        *ngIf="newShiftapproved"
+        class="btn btn-primary"
+        id="submit"
+        type="submit"
+      >
+        <i class="fa fa-check-circle"></i>
+        Assign
+      </button>
+      <button
+        class="btn btn-default"
+        (click)="newShiftcloseStaffModel(true)"
+        data-dismiss="modal"
+        type="button"
+      >
+        Close
+      </button>
+    </div>
+    <!-- </div>
+    </div> -->
+    <!-- </div> -->
+  </p-dialog>
+  <!-- <div
+    aria-labelledby="myModalLabel"
+    class="modal fade"
+    id="rejectCustomerInventoryModal"
+    role="dialog"
+    tabindex="-1"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel" style="color: #fff !important">Assign Staff</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div *ngIf="reject" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <div class="card">
+                <h5>Select Staff</h5>
+                <p-table
+                  [(selection)]="newShiftselectStaffReject"
+                  [value]="newShiftrejectInventoryData"
+                  responsiveLayout="scroll"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width: 3rem"></th>
+                      <th>Name</th>
+                      <th>Username</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template let-product pTemplate="body">
+                    <tr>
+                      <td>
+                        <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                      </td>
+                      <td>{{ product.fullName }}</td>
+                      <td>
+                        {{ product.username }}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            (click)="newShiftassignToStaff(false)"
+            *ngIf="reject"
+            class="btn btn-primary"
+            id="submit"
+            type="submit"
+          >
+            <i class="fa fa-times-circle"></i>
+            Assign
+          </button>
+          <button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <div
+    class="modal fade"
+    id="reAssignPLANModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="myModalLabel"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel" style="color: #fff !important">
+            Approve Shift Location
+          </h4>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="newShiftassignDocForm">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                  <h5>Select Staff</h5>
+                  <p-table
+                    [value]="newShiftapprovableStaff"
+                    [(selection)]="newShiftselectStaff"
+                    responsiveLayout="scroll"
+                  >
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th style="width: 3rem"></th>
+                        <th>Name</th>
+                        <th>Username</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-product>
+                      <tr>
+                        <td>
+                          <p-tableRadioButton [value]="product.id"></p-tableRadioButton>
+                        </td>
+                        <td>{{ product.fullName }}</td>
+                        <td>
+                          {{ product.username }}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <label>Remark*</label>
+                <textarea
+                  class="form-control"
+                  name="remark"
+                  formControlName="remark"
+                  [ngClass]="{
+                    'is-invalid':
+                      newShiftassignDocSubmitted && newShiftassignDocForm.controls.remark.errors
+                  }"
+                ></textarea>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="newShiftassignDocSubmitted && newShiftassignDocForm.controls.remark.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      newShiftassignDocSubmitted &&
+                      newShiftassignDocForm.controls.remark.errors.required
+                    "
+                  >
+                    Remark is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="submit"
+            (click)="newShiftreassignWorkflow()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Assign
+          </button>
+
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-select-staff
+    *ngIf="newShiftisSelectStaff"
+    [selectedStaff]="newShiftselectedStaff"
+    (selectedStaffChange)="newShiftselectedStaffChange($event)"
+    (closeStaff)="newShiftcloseStaff()"
+  ></app-select-staff>
+  <app-customer-select
+    *ngIf="newShiftshowParentCustomerModel"
+    [type]="custType"
+    [custId]="custData.id"
+    [selectedCust]="newShiftselectedParentCust"
+    (selectedCustChange)="newShiftselectedCustChange($event)"
+    (closeParentCust)="newShiftcloseParentCust()"
+  ></app-customer-select>
+  <app-workflow-audit-details-modal
+    *ngIf="newShiftifModelIsShow"
+    [auditcustid]="newShiftauditcustid"
+    dialogId="custauditWorkflowModal"
+    (closeParentCustt)="newShiftcloseParentCustt()"
+  ></app-workflow-audit-details-modal>
+</div>
+
+<p-dialog
+  header="Search Location"
+  [(visible)]="ifsearchLocationModal"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="clearsearchLocationData()"
+>
+  <div class="modal-body">
+    <form name="searchLocationForm" [formGroup]="searchLocationForm">
+      <div class="form-group">
+        <label for="searchLocationname">Search Location Name:</label>
+        <div class="row">
+          <div class="col-lg-7 col-md-6">
+            <input
+              type="searchLocationname"
+              class="form-control"
+              id="searchLocationname"
+              placeholder="Enter Location Name"
+              formControlName="searchLocationname"
+            />
+          </div>
+          <div class="col-lg-5 col-md-6" style="padding: 0 10px !important">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm"
+              id="closeModal"
+              (click)="searchLocation()"
+              [disabled]="!searchLocationForm.valid"
+            >
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+            <button
+              id="btn"
+              type="button"
+              class="btn btn-default btn-sm"
+              (click)="clearLocationForm()"
+              style="margin-left: 8px"
+            >
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 35%">Name</th>
+              <th style="width: 65%">Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of searchLocationData
+                  | paginate
+                    : {
+                        id: 'searchpageData',
+                        itemsPerPage: searchLocationItemPerPage,
+                        currentPage: currentPagesearchLocationList,
+                        totalItems: searchLocationtotalRecords
+                      };
+                index as i
+              "
+            >
+              <td
+                class="HoverEffect"
+                (click)="filedLocation(data.placeId)"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="Set value Latitude & Longitude"
+                style="width: 35%"
+              >
+                {{ data.name }}
+              </td>
+              <td style="width: 65%">{{ data.address }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <pagination-controls
+          id="searchpageData"
+          maxSize="10"
+          directionLinks="true"
+          previousLabel=""
+          nextLabel=""
+          (pageChange)="pageChangedSearchLocationList($event)"
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        #closebutton
+        data-dismiss="modal"
+        (click)="clearsearchLocationData()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>

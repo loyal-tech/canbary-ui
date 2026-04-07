@@ -1,0 +1,4258 @@
+<!-- <p-toast [style]="{ height: 'auto', width: '20vw', fontSize: '16px' }"></p-toast> -->
+<!-- LEFT SIDEBAR -->
+<div
+  (onload)="checkfiunction()"
+  class="sidebar"
+  [ngClass]="{
+    sidebarIcon: sidebarService.sidebarShowIcon,
+    sidebarMenu: !sidebarService.sidebarShowIcon
+  }"
+>
+  <div
+    class="brand"
+    style="background-image: url(&quot;../../assets/img/logo_background_img.png&quot;)"
+    *ngIf="!sidebarService.sidebarShowIcon"
+  >
+    <a>
+      <img
+        src="../assets/img/adopt_logo.png"
+        alt="Adopt Logo"
+        class="img-responsive logo adoptlogo"
+      />
+    </a>
+  </div>
+  <div *ngIf="sidebarService.sidebarShowIcon" style="background: #f7b206; height: 50px"></div>
+  <div class="userimg" *ngIf="!sidebarService.sidebarShowIcon">
+    <img src="../assets/img/user.png" class="img-circle" *ngIf="!profileImg" />
+
+    <img
+      [src]="staffService.staffImg"
+      class="circular-profile-image img-circle"
+      *ngIf="profileImg"
+    />
+    <span style="word-break: break-all">{{ username }}</span>
+  </div>
+  <div
+    id="style-1"
+    [ngClass]="{
+      scrollbarIcon: sidebarService.sidebarShowIcon,
+      scrollbar: !sidebarService.sidebarShowIcon
+    }"
+  >
+    <!-- <nav> -->
+    <!-- <div id=" navbar"> -->
+    <ul id="accordion" [routerLinkActive]="['active']">
+      <li>
+        <a
+          routerLinkActive="active"
+          class="dashboard-link"
+          [routerLink]="['/home/dashbord']"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Dashboard "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Dashboard
+                              </span> -->
+          <img src="../assets/img/i01.png" class="singleMenu" />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Dashboard</span>
+        </a>
+      </li>
+      <li class="panel" *ngIf="loginPartner !== 1 && loginPartner !== '1'">
+        <a
+          [routerLink]="['/home/userProfile']"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" My Profile "
+          [matTooltipPosition]="position.value"
+        >
+          <img
+            src="../assets/img/All_Icons/03_Partner_Management/03_Partner_Management_B.png"
+            class="singleMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> My Profile </span>
+        </a>
+      </li>
+      <!-- <li class="panel">
+              <a href="#ticketReasonMasterMenu" data-toggle="collapse" class="collapsed" data-parent="#accordion"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon" matTooltip="Ticket Reason Management"
+                [matTooltipPosition]="position.value">
+                <img src="../assets/img/All_Icons/01_Master_Management/01_Master_Management.png" class="navi" />
+                <img src="../assets/img/All_Icons/01_Master_Management/01_Master_Management_W.png" class="activeMenu" />
+                <span *ngIf="!sidebarService.sidebarShowIcon">
+                  Ticket Reason Management
+                </span>
+                <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+              </a>
+              <div id="ticketReasonMasterMenu" class="collapse panel-collapse">
+                <ul id="submenuNavbar">
+                  <li>
+                    <a [routerLink]="['/home/ticket-reason-category']" [ngClass]="{
+                                        paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                                        paddingLeft45PX: !sidebarService.sidebarShowIcon
+                                      }" [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip="Ticket Problem Domain" [matTooltipPosition]="position.value">
+                      <img src="../assets/img/All_Icons/01_Master_Management/A_Country_B.png" class="submenuIcon" />
+                      <span *ngIf="!sidebarService.sidebarShowIcon">
+                        Ticket Problem Domain
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li> -->
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(MASTERS.MASTER)"
+        [routerLinkActive]="['active']"
+      >
+        <a
+          href="#masterMenu"
+          [routerLinkActive]="['active']"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Master Management "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Master Management
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/01_Master_Management/01_Master_Management.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/01_Master_Management/01_Master_Management_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Master Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="masterMenu" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(MASTERS.COUNTRY)">
+              <a
+                [routerLink]="['/home/countryManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Country Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span *ngIf="sidebarService.sidebarShowIcon" class="tooltips">
+                                                Country Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/A_Country_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ countryTitle }} Management </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(MASTERS.STATE)">
+              <a
+                [routerLink]="['/home/stateManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  {{ stateTitle }} Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/B_State_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ stateTitle }} Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.CITY)">
+              <a
+                [routerLink]="['/home/cityManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  {{ cityTitle }} Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/C_City_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ cityTitle }} Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.PINCODE)">
+              <a
+                [routerLink]="['/home/pincodeManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  {{ pincodeTitle }} Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/D__Pincode_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ pincodeTitle }} Management </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(MASTERS.AREA)">
+              <a
+                [routerLink]="['/home/areaManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  {{ areaTitle }} Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/E_Area_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ areaTitle }} Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.SUBAREA)">
+              <a
+                [routerLink]="['/home/subareaManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Sub Area Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span *ngIf="sidebarService.sidebarShowIcon" class="tooltips">
+                                                            Country Management
+                                                            </span> -->
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/A_Country_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ subareaTitle }} Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.BUILDING_CONFIG)">
+              <a
+                [routerLink]="['/home/buildingConfigManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Building Config Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span *ngIf="sidebarService.sidebarShowIcon" class="tooltips">
+                                                                        Country Management
+                                                                        </span> -->
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/A_Country_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">
+                  {{ buildingConfig }} Management
+                </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.BUILDINGMGMT)">
+              <a
+                [routerLink]="['/home/buildingManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Building Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span *ngIf="sidebarService.sidebarShowIcon" class="tooltips">
+                                                                Country Management
+                                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/A_Country_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">
+                  {{ buildingTitle }} Management
+                </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(MASTERS.SERVICE_AREA)">
+              <a
+                [routerLink]="['/home/serviceArea']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Service Area "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span *ngIf="sidebarService.sidebarShowIcon" class="tooltips">
+                                                Service Area
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/F_Service_Area_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Service Area </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.INVESTMENT_CODE)">
+              <a
+                [routerLink]="['/home/investmentCode']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Investment Code "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/11_Business-Unit(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Investment Code </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(MASTERS.BUSINESS_UNIT)">
+              <a
+                [routerLink]="['/home/businessunit']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Business Unit "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/11_Business-Unit(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Business Unit </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.SUB_BUSINESS_UNIT)">
+              <a
+                [routerLink]="['/home/subbusinessunit']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Business Unit "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/11_Business-Unit(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Sub Business Unit </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.BANK)">
+              <a
+                [routerLink]="['/home/bankManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Bank Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/All_Icons/2/12_Bank-Management_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Bank Management </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(MASTERS.BRANCH)">
+              <a
+                [routerLink]="['/home/branch-management']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Branch Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/13_Branch-Management-(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Branch Management </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(MASTERS.REGION)">
+              <a
+                [routerLink]="['/home/region']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Region Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/13_Branch-Management-(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Region Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.BUSINESS_VERTICALS)">
+              <a
+                [routerLink]="['/home/businessVertical']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Business Vertical Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/13_Branch-Management-(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Business vertical management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.SUB_BUSINESS_VERTICAL)">
+              <a
+                [routerLink]="['/home/subbusinessVertical']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Sub Business Vertical Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/13_Branch-Management-(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">
+                  Sub Business Vertical Management
+                </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(MASTERS.DEPARTMENT)">
+              <a
+                [routerLink]="['/home/departmentManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Department Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/13_Branch-Management-(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Department Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.LOCATION_MASTER)">
+              <a
+                [routerLink]="['/home/location']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Location Master Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/E_Voucher Management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Location Master Management </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(PRODUCTS.PRODUCT) && statusCheckService.isActiveCMS"
+      >
+        <a
+          href="#productMenu"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Product Management "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span *ngIf="sidebarService.sidebarShowIcon" class="tooltips">
+                              Product Management
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/02_Product_Management/02_Product_Management_B_.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/02_Product_Management/02_Product_Management_W_.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Product Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="productMenu" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(PRODUCTS.SERVICE)">
+              <a
+                [routerLink]="['/home/serviceManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Service Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Service Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/A_Service_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Service Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.TAX)">
+              <a
+                [routerLink]="['/home/taxManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Tax Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Tax Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/B_Tax_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Tax Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.CHARGE)">
+              <a
+                [routerLink]="['/home/chargeManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Charge Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Charge Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/C_Charge_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Charge Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.QOS_POLICY)">
+              <a
+                [routerLink]="['/home/qosPolicyManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Qos Policy Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Qos Policy Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/E_QoS Policy_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Qos Policy Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.TIME_POLICY)">
+              <a
+                [routerLink]="['/home/timeBasePolicy']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Time Base Policy "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Time Base Policy
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/2/16_Time-base-policy-(menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Time Base Policy </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.PLAN)">
+              <a
+                [routerLink]="['/home/planManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Plan Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Plan Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/F_Plan_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Plan Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.DISCOUNT)">
+              <a
+                [routerLink]="['/home/discountManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Discount Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Discount Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/D_Discount_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Discount Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.PLAN_GROUP)">
+              <a
+                [routerLink]="['/home/planGroup']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Plan Bundle "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/03_Partner_Management/B_Plan Bundle_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Plan Bundle </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.SPECIAL_PLAN_MAPPING)">
+              <a
+                [routerLink]="['/home/planMapping']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Special Plan Mapping "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/F_Plan_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Special Plan Mapping </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRODUCTS.VOUCHER_MANAGEMENT)">
+              <a
+                [routerLink]="['/home/voucherManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Special Plan Mapping "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/E_Voucher Management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Voucher Managment </span>
+              </a>
+            </li>
+            <li>
+              <a
+                [routerLink]="['/home/vasManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="VAS Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_Product_Management/E_Voucher Management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> VAS Managment </span>
+              </a>
+            </li>
+            <!-- <li *ngIf="loginService.hasPermission(LOCATION.LOCATION_MASTER)"> -->
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(PARTNERS.PARTNER) && statusCheckService.isActivePMS"
+      >
+        <a
+          href="#partnerMenu"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Partner Management "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Partner Management
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/03_Partner_Management/03_Partner_Management_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/03_Partner_Management/03_Partner_Management_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Partner Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="partnerMenu" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(PARTNERS.PARTNER_PLAN_BUNDLE)">
+              <a
+                [routerLink]="['/home/planBundle']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Partner Plan Bundle "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/03_Partner_Management/B_Plan Bundle_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Partner Plan Bundle </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PARTNERS.PARTNER_LIST)">
+              <a
+                [routerLink]="['/home/partner']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Partner "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Partner
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/03_Partner_Management/A_Partner_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Partner</span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(PARTNERS.MANAGE_BALANCE)">
+              <a
+                [routerLink]="['/home/manageBalance']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Manage Balance "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/03_Partner_Management/B_Plan Bundle_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Manage Balance </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- *************DTV********** -->
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(DTVS.DTV) && statusCheckService.isActiveCMS"
+      >
+        <a
+          href="#DTVMenu"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" DTV Management "
+          [matTooltipPosition]="position.value"
+        >
+          <img
+            src="../assets/img/All_Icons/03_Partner_Management/03_Partner_Management_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/03_Partner_Management/03_Partner_Management_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">DTV </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="DTVMenu" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(DTVS.CAS_MGMT)">
+              <a
+                [routerLink]="['/home/casmanagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" CAS Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/03_Partner_Management/B_Plan Bundle_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> CAS Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(DTVS.SECTOR_MGMT)">
+              <a
+                [routerLink]="['/home/sector']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="sector "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Partner
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/03_Partner_Management/A_Partner_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Sector Management</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(SALES_CRMS.SALES_CRM) && statusCheckService.isActiveSalesCrm
+        "
+      >
+        <a
+          href="#leadPages"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Sales CRM "
+          [matTooltipPosition]="position.value"
+        >
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Sales CRM </span>
+
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="leadPages" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(SALES_CRMS.LEAD_SOURCE_MASTER)">
+              <a
+                [routerLink]="['/home/lead-source-master']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Lead Source Master "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Lead Source Master </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(SALES_CRMS.LEAD) && isBuTypePredefined">
+              <a
+                [routerLink]="['/home/lead-management']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Lead Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/C_Ticket_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Lead Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SALES_CRMS.REJECTED_REASON_MASTER)">
+              <a
+                [routerLink]="['/home/rejected-reason-master']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Rejected Reason Master "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/03_Rejected-Reason_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Rejected Reason Master </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SALES_CRMS.ENTERPRISE_LEAD) && isBuTypeOnDemand">
+              <a
+                href="#"
+                [routerLink]="['/home/enterprise-lead']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Enterprise Lead"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/C_Ticket_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Enterprise Lead</span>
+              </a>
+            </li>
+
+            <!-- <li
+              *ngIf="
+                loginService.hideSidebarMenu(
+                  menuItemService.getMenuId('Sales CRM'),
+                  menuItemService.getSubMenuId('Sales CRM', 'Reject Reason'),
+                  AclConstants.OPERATION_REJECT_REASON_DISPLAY
+                )
+              "
+            >
+              <a
+                href="#"
+                [routerLink]="['/home/leadbeta']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Enterprise Lead"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/C_Ticket_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Enterprise Lead</span>
+              </a>
+            </li> -->
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(SALES_FULFILLMENTS.SALES_FULFILLMENT) &&
+          statusCheckService.isActiveKPIService
+        "
+      >
+        <a
+          href="#salesFulfillment"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Sales Fulfillment "
+          [matTooltipPosition]="position.value"
+        >
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Sales Fulfillment </span>
+
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="salesFulfillment" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(SALES_FULFILLMENTS.MY_ACHIEVEMENT)">
+              <a
+                [routerLink]="['/home/my-achievement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="My Achievement"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> My Achievement </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SALES_FULFILLMENTS.KPI)">
+              <a
+                [routerLink]="['/home/KPI-management']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="KPI Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> KPI Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SALES_FULFILLMENTS.TARGET)">
+              <a
+                [routerLink]="['/home/target-management']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Target Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Target Management </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(PRE_CUST_CONSTANTS.PRE_CUST) && statusCheckService.isActiveCMS
+        "
+      >
+        <a
+          href="#prepaidCustomerMenu"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Prepaid Customer "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Prepaid Customer
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/04_Prepaid_Customer/04_Prepaid_Customer_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/04_Prepaid_Customer/04_Prepaid_Customer_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> {{ preCustTitle }} </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="prepaidCustomerMenu" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <!-- <li
+              *ngIf="
+                loginService.hideSidebarMenu(
+                  menuItemService.getMenuId('Customer'),
+                  menuItemService.getSubMenuId('Customer', 'Prepaid Customer'),
+                  AclConstants.OPERATION_CUSTOMER_DISPLAY
+                )
+              "
+            >
+              <a
+                [routerLink]="['/home/customer/Prepaid']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Prepaid Customer "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Prepaid Customer
+                                                </span> -->
+            <!-- <img
+                  src="../assets/img/All_Icons/04_Prepaid_Customer/04_Prepaid_Customer_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Prepaid Customers </span>
+              </a>
+            </li> -->
+            <li *ngIf="loginService.hasPermission(PRE_CUST_CONSTANTS.PRE_CUSTS_LIST)">
+              <a
+                [routerLink]="['/home/customer/list/Prepaid']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Prepaid Customer "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Prepaid Customer
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/04_Prepaid_Customer/04_Prepaid_Customer_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ preCustTitle }} </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRE_CUST_CONSTANTS.PRE_CUST_CAF_LIST)">
+              <a
+                href="#"
+                [routerLink]="['/home/customer-caf/Prepaid']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Prepaid Customer CAF"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Prepaid Customer CAF
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/04_Prepaid_Customer/B_Prepaid CAF_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ preCustTitle }} CAF </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRE_CUST_CONSTANTS.PRE_CUST_LEASED_LINE_CUST)">
+              <a
+                href="#"
+                [routerLink]="['/home/leased-line-customer']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Leased Line Customer"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Prepaid Customer CAF
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/04_Prepaid_Customer/B_Prepaid CAF_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Leased Line Customer </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PRE_CUST_CONSTANTS.CUST_BETA)">
+              <a
+                href="#"
+                [routerLink]="['/home/customer-template']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Customer Template"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+            Prepaid Customer CAF
+            </span> -->
+                <img
+                  src="../assets/img/All_Icons/04_Prepaid_Customer/B_Prepaid CAF_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Customer Beta </span>
+              </a>
+            </li>
+
+            <!-- *ngIf="
+              loginService.hideSidebarMenu(
+                menuItemService.getMenuId('Customer'),
+                menuItemService.getSubMenuId('Customer', 'Reject Reason'),
+                AclConstants.OPERATION_PREPAID_REJECT_REASON_DISPLAY
+              )
+            " -->
+            <li
+              *ngIf="loginService.hasPermission(PRE_CUST_CONSTANTS.PRE_CUST_REJECTED_REASON_MASTER)"
+            >
+              <a
+                [routerLink]="['/home/prepaid-rejected-reason-master']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Rejected Reason Master "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/03_Rejected-Reason_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Rejected Reason Master </span>
+              </a>
+            </li>
+
+            <!-- <li
+              *ngIf="
+                loginService.hideSidebarMenu(
+                  menuItemService.getMenuId('Customer'),
+                  menuItemService.getSubMenuId('Customer', 'Reject Reason'),
+                  AclConstants.OPERATION_REJECT_REASON_DISPLAY
+                )
+              "
+            >
+              <a
+                [routerLink]="['/home/postpaid-rejected-reason-master']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Rejected Reason Master "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/03_Rejected-Reason_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Rejected Reason Master </span>
+              </a>
+            </li> -->
+
+            <!-- <li
+              *ngIf="
+                loginService.hideSidebarMenu(
+                  menuItemService.getMenuId('Customer'),
+                  menuItemService.getSubMenuId('Customer', 'LeasedLineCustomers'),
+                  AclConstants.OPERATION_LEASED_LINE_CUSTOMERS_DISPLAY
+                )
+              "
+            >
+              <a
+                href="#"
+                [routerLink]="['/home/add-service']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Add Service"
+                [matTooltipPosition]="position.value"
+              >
+           
+                <img
+                  src="../assets/img/All_Icons/04_Prepaid_Customer/B_Prepaid CAF_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Add Service </span>
+              </a>
+            </li>  -->
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(POST_CUST_CONSTANTS.POST_CUST) &&
+          statusCheckService.isActiveCMS
+        "
+      >
+        <a
+          href="#postpaidCustomerMenu"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Postpaid Customer "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Postpaid Customer
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/05_Postpaid_Customer/05_Postpaid_Customer_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/05_Postpaid_Customer/05_Postpaid_Customer_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> {{ postCustTitle }} </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="postpaidCustomerMenu" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(POST_CUST_CONSTANTS.POST_CUST_LIST)">
+              <a
+                [routerLink]="['/home/customer/list/Postpaid']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Postpaid Customer "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Postpaid Customer
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/05_Postpaid_Customer/05_Postpaid_Customer_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ postCustTitle }} </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(POST_CUST_CONSTANTS.POST_CUST_CAF)">
+              <a
+                href="#"
+                [routerLink]="['/home/customer-caf/Postpaid']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Postpaid Customer CAF "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Postpaid Customer CAF
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/05_Postpaid_Customer/B_Postpaid CAF_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ postCustTitle }} CAF </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(INVOICE_SYSTEMS.INVOICE_SYSTEM) &&
+          statusCheckService.isActiveCMS &&
+          statusCheckService.isActiveRevenueService
+        "
+      >
+        <a
+          href="#billing"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Invoice System "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Invoice System
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/06_Invoice_System/06_Invoice_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/06_Invoice_System/06_Invoice System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Invoice System</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="billing" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.BILL_TEMPLATE)">
+              <a
+                [routerLink]="['/home/billtemplate']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Bill Template "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/A_Bill_Template_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Bill Template </span>
+              </a>
+            </li>
+            <li
+              *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.QUICK_INVOICE) && isBuTypeOnDemand"
+            >
+              <a
+                [routerLink]="['/home/quickInvoice']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Quick Invoice"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                            Bill Template
+                                                            </span> -->
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/A_Bill_Template_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Quick Invoice </span>
+              </a>
+            </li>
+            <li>
+              <a
+                [routerLink]="['/home/proforma-invoice']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Proforma Invoice"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/A_Bill_Template_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Proforma Invoice </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_BILL_RUNS)">
+              <a
+                href="#billmater"
+                data-toggle="collapse"
+                class="collapsed"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Postpaid Bill Runs "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/B_Bill_Run_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Postpaid Bill Runs </span>
+                <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+              </a>
+              <div id="billmater" class="collapse">
+                <ul id="submenuNavbar">
+                  <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_GENE_BILL_RUN)">
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/generateBillRun']"
+                      [ngClass]="{
+                        paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                        paddingLeft45PX: !sidebarService.sidebarShowIcon
+                      }"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip="Generate Bill Run "
+                      [matTooltipPosition]="position.value"
+                    >
+                      <!-- <span
+                                                                  class="tooltips"
+                                                                  *ngIf="sidebarService.sidebarShowIcon"
+                                                                  >
+                                                                  Generate Bill Run
+                                                                  </span> -->
+                      <img
+                        src="../assets/img/All_Icons/06_Invoice_System/C_Generate_Bill_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon"> Generate Bill Run </span>
+                    </a>
+                  </li>
+                  <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_BILL_RUN_MASTER)">
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/billRunMaster']"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip="Bill Run Master"
+                      [matTooltipPosition]="position.value"
+                    >
+                      <!-- <span
+                                                                  class="tooltips"
+                                                                  *ngIf="sidebarService.sidebarShowIcon"
+                                                                  >
+                                                                  Bill Run Master
+                                                                  </span> -->
+                      <img
+                        src="../assets/img/All_Icons/06_Invoice_System/D_Bill-Run-Master_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon"> Bill Run Master </span>
+                    </a>
+                  </li>
+                  <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_INVOICE_MASTER)">
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/invoiceMaster']"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip=" Invoice Master "
+                      [matTooltipPosition]="position.value"
+                    >
+                      <!-- <span
+                                                                  class="tooltips"
+                                                                  *ngIf="sidebarService.sidebarShowIcon"
+                                                                  >
+                                                                  Invoice Master
+                                                                  </span> -->
+                      <img
+                        src="../assets/img/All_Icons/06_Invoice_System/E_Invoice-Master_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon"> Invoice Master </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.PREPAID_BILL_RUNS)">
+              <a
+                href="#prepaidBillmater"
+                data-toggle="collapse"
+                class="collapsed"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Prepaid Bill Runs "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Prepaid Bill Runs
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/B_Bill_Run_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Prepaid Bill Runs </span>
+                <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+              </a>
+              <div id="prepaidBillmater" class="collapse">
+                <ul id="submenuNavbar">
+                  <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.PREPAID_INVOICE_MASTER)">
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/prepaid-invoiceMaster']"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip=" Invoice Master "
+                      [matTooltipPosition]="position.value"
+                    >
+                      <img
+                        src="../assets/img/All_Icons/06_Invoice_System/E_Invoice-Master_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon"> Invoice Master </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <!-- <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_TRAIL_BILL_RUN)">
+              <a
+                href="#billInvoicemater"
+                data-toggle="collapse"
+                class="collapsed"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Postpaid Trail Bill run "
+                [matTooltipPosition]="position.value"
+              > -->
+            <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Postpaid Trail Bill run
+                                                </span> -->
+            <!-- <img
+                  src="../assets/img/All_Icons/06_Invoice_System/F_Trial Bill Run_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Postpaid Trail Bill run </span>
+                <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+              </a>
+              <div id="billInvoicemater" class="collapse">
+                <ul id="submenuNavbar">
+                  <li
+                    *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_GENE_TRIAL_BILL_RUN)"
+                  >
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/generateTrialBillRun']"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip="Generate Bill Run"
+                      [matTooltipPosition]="position.value"
+                    > -->
+            <!-- <span
+                                                                  class="tooltips"
+                                                                  *ngIf="sidebarService.sidebarShowIcon"
+                                                                  >
+                                                                  Generate Trial Bill Run
+                                                                  </span> -->
+            <!-- <img
+                        src="../assets/img/All_Icons/06_Invoice_System/F_Trial Bill Run_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon"> Generate Bill Run </span>
+                    </a>
+                  </li>
+                  <li
+                    *ngIf="
+                      loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_TRIAL_BILL_RUN_MASTER)
+                    "
+                  >
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/TrialBill']"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip="Bill Run Master "
+                      [matTooltipPosition]="position.value"
+                    > -->
+            <!-- <span
+                                                                  class="tooltips"
+                                                                  *ngIf="sidebarService.sidebarShowIcon"
+                                                                  >
+                                                                  Trial Bill Run Master
+                                                                  </span> -->
+            <!-- <img
+                        src="../assets/img/All_Icons/06_Invoice_System/F_Trial Bill Run_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon"> Bill Run Master </span>
+                    </a>
+                  </li>
+                  <li
+                    *ngIf="
+                      loginService.hasPermission(INVOICE_SYSTEMS.POSTPAID_TRIAL_BILL_RUN_INVOICE)
+                    "
+                  >
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/trialInvoice']"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip="  Trial Invoice Master "
+                      [matTooltipPosition]="position.value"
+                    > -->
+            <!-- <span
+                                                                  class="tooltips"
+                                                                  *ngIf="sidebarService.sidebarShowIcon"
+                                                                  >
+                                                                  Trial Invioce Master
+                                                                  </span> -->
+            <!-- <img
+                        src="../assets/img/All_Icons/06_Invoice_System/F_Trial Bill Run_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon"> Invoice Master </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li> -->
+            <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.INVOICE_REVENUE_REPORT)">
+              <a
+                [routerLink]="['/home/dbr-problem']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Revenue Report"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                            Bill Template
+                                                            </span> -->
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/A_Bill_Template_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Revenue Report </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVOICE_SYSTEMS.BILL_TEMPLATE)">
+              <a
+                [routerLink]="['/home/partnerbilltemplate']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Partner Bill Run "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/A_Bill_Template_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Partner Bill Run </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(PAYMENT_SYSTEMS.PAYMENT_SYSTEM) &&
+          statusCheckService.isActiveCMS &&
+          statusCheckService.isActiveRevenueService
+        "
+      >
+        <a
+          href="#paymentPages"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Payment System "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Payment System
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/07_Payment_System/07_Payment_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/07_Payment_System/07_Payment_System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Payment System</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="paymentPages" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(PAYMENT_SYSTEMS.RECORD_PAYMENT)">
+              <a
+                href="#"
+                [routerLink]="['/home/recordPayment']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Record Payment "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Record Payment
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/07_Payment_System/A_-Record-Payment_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Record Payment </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(PAYMENT_SYSTEMS.SEARCH_PAYMENT)">
+              <a
+                href="#"
+                [routerLink]="['/home/searchPayment']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Search Payment "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Search Payment
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/07_Payment_System/B_Search Payment_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Search Payment </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(CREDIT_NOTES.CREDIT_NOTE) &&
+          statusCheckService.isActiveCMS &&
+          statusCheckService.isActiveRevenueService
+        "
+      >
+        <a
+          href="#creditNote"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Credit Notes  "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                      Payment System
+                                      </span> -->
+          <img
+            src="../assets/img/All_Icons/07_Payment_System/07_Payment_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/07_Payment_System/07_Payment_System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Credit Notes</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="creditNote" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(CREDIT_NOTES.GENERATE_CREDIT_NOTE)">
+              <a
+                href="#"
+                [routerLink]="['/home/invoice/recordPayment']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Generate Credit Note"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                        Record Payment
+                                                        </span> -->
+                <img
+                  src="../assets/img/All_Icons/07_Payment_System/A_-Record-Payment_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Generate Credit Note </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(CREDIT_NOTES.SEARCH_CREDIT_NOTE)">
+              <a
+                href="#"
+                [routerLink]="['/home/invoice/search-payment']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Search Credit Note"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/07_Payment_System/B_Search Payment_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Search Credit Note </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(TICKETING_SYSTEMS.TICKETING_SYSTEM) &&
+          statusCheckService.isActiveCMS &&
+          statusCheckService.isActiveTicketService
+        "
+      >
+        <a
+          href="#ticketPages"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Ticketing System "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Ticketing System
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Ticketing System </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="ticketPages" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.TAT_TICKET)">
+              <a
+                [routerLink]="['/home/ticketmaster']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="TAT Master "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Resolution Master
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> TAT For Ticket </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.PROBLEM_DOMAIN)">
+              <a
+                [routerLink]="['/home/ticket-reason-category']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Ticket Problem Domain"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/14_Problem-Domain(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Problem Domain </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.SUB_PB_DOMAIN)">
+              <a
+                [routerLink]="['/home/ticket-reason-sub-category']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Ticket Problem Domain"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/15_Sub-Problem-Domain(menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Sub Problem Domain </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.ROOT_CAUSE_MASTER)">
+              <a
+                [routerLink]="['/home/resolutionMaster']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Resolution Master "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Resolution Master
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Root cause Master </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.TICKET_FINDINGS)">
+              <a
+                [routerLink]="['/home/ticket-finding']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Ticket Finding"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Ticket Finding </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.TICKET)">
+              <a
+                [routerLink]="['/home/ticketManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Ticket Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Ticket Management
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/C_Ticket_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Ticket Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.TICKET_OPEN_OPPORTUNITY)">
+              <a
+                [routerLink]="['/home/openOpportunity']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Open Opportunity"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/C_Ticket_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Open Opportunity </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(TASK_SYSTEMS.TASK_DOMAIN) &&
+          statusCheckService.isActiveTaskManagementService
+        "
+      >
+        <a
+          href="#taskPages"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip="Task Management"
+          [matTooltipPosition]="position.value"
+        >
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/08_Ticketing_System/08_Ticket_System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Task Management</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="taskPages" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(TASK_SYSTEMS.TAT_TASK)">
+              <a
+                [routerLink]="['/home/tat-for-task']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="TAT Master "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> TAT For Task </span>
+              </a>
+            </li>
+            <!-- <li>
+              <a
+                [routerLink]="['/home/ticket-reason-category']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=""
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/14_Problem-Domain(Menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Problem Domain </span>
+              </a>
+            </li> -->
+            <li *ngIf="loginService.hasPermission(TASK_SYSTEMS.TASK_CATEGORY_DOMAIN)">
+              <a
+                [routerLink]="['/home/task-category']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Category Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/15_Sub-Problem-Domain(menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Category Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TASK_SYSTEMS.TASK_SUB_CATEGORY_DOMAIN)">
+              <a
+                [routerLink]="['/home/task-sub-category']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Category Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/2/15_Sub-Problem-Domain(menu)_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Sub Category Management </span>
+              </a>
+            </li>
+            <!-- <li>
+              <a
+                [routerLink]="['/home/resolutionMaster']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Resolution Master "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Root cause Master </span>
+              </a>
+            </li> -->
+            <li *ngIf="loginService.hasPermission(TASK_SYSTEMS.TASK_DOMAIN)">
+              <a
+                [routerLink]="['/home/taskManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Task Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/C_Ticket_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Task Management </span>
+              </a>
+            </li>
+            <!-- <li *ngIf="loginService.hasPermission(TICKETING_SYSTEMS.TICKET_OPEN_OPPORTUNITY)">
+              <a
+                [routerLink]="['/home/openOpportunity']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Open Opportunity"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/C_Ticket_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Open Opportunity </span>
+              </a>
+            </li> -->
+
+            <li *ngIf="loginService.hasPermission(TASK_SYSTEMS.ROOT_CAUSE_MASTER)">
+              <a
+                [routerLink]="['/home/resolutiontaskMaster']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Resolution Master"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/08_Ticketing_System/A_Resolution Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Root cause Master</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(TECHNICIAN_DIARY_SYSTEMS.TECHNNICIAN_DIARY) &&
+          statusCheckService.isActiveTaskManagementService
+        "
+      >
+        <a
+          href="#technicianDiary"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip="Technician Calendar"
+          [matTooltipPosition]="position.value"
+        >
+          <img
+            src="../assets/img/All_Icons/09_Dunning-Managenment/09_Dunning-Managenment_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/09_Dunning-Managenment/09_Dunning-Managenment_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Technician Diary</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="technicianDiary" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(TECHNICIAN_DIARY_SYSTEMS.TECHNNICIAN_DIARY)">
+              <a
+                [routerLink]="['/home/technicianDiary']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Task Calendar"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/09_Dunning-Managenment/A_Dunning Rule_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Technician Diary</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(DUNNINGS.DUNNING) && statusCheckService.isActiveCMS"
+      >
+        <a
+          href="#dunningMenu"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Dunning Management "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Dunning Management
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/09_Dunning-Managenment/09_Dunning-Managenment_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/09_Dunning-Managenment/09_Dunning-Managenment_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Dunning Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="dunningMenu" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(DUNNINGS.DUNNING_RULES)">
+              <a
+                [routerLink]="['/home/dunningRules']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Dunning Rules "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Dunning Rules
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/09_Dunning-Managenment/A_Dunning Rule_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Dunning Rules </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(RADIUS_CONSTANTS.RADIUS) &&
+          statusCheckService.isActiveRadiusService
+        "
+      >
+        <a
+          href="#aaa"
+          [routerLinkActive]="['active']"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Radius Management "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Radius Management
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/10_Radius_Management/10_Radius Management_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/10_Radius_Management/10_Radius Management_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Radius Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="aaa" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_GROUP)">
+              <a
+                [routerLink]="['/home/radiusgroup']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Radius Group "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Radius Group
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/A_Radius Group_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Radius Group </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_CLIENT)">
+              <a
+                [routerLink]="['/home/radiusclient']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Radius Client "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Radius Client
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/B_Radius Customer_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Radius Client </span>
+              </a>
+            </li>
+            <!-- <li >
+                                        <a  [routerLink]="['/home/radiuscustomer']" [ngClass]="{
+                                          paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                                          paddingLeft45PX: !sidebarService.sidebarShowIcon
+                                        }" >Radius Customer</a>
+                                    </li> -->
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_CUST)">
+              <a
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Radius Customer "
+                [matTooltipPosition]="position.value"
+                [routerLink]="['/home/radiuscustomer']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/B_Radius Customer_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Radius Customer </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_CDR)">
+              <a
+                [routerLink]="['/home/acctCdr']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" CDRs "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                CDRs
+                                                </span> -->
+                <img src="../assets/img/All_Icons/02_AAA/D_CDRs_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon">CDRs</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_LIVE_USERS)">
+              <a
+                [routerLink]="['/home/liveuser']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Live Users "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Live Users
+                                                </span> -->
+                <img src="../assets/img/All_Icons/02_AAA/E_Live Users_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Live Users </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_PROXY_CONFIG)">
+              <a
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Proxy Configuration "
+                [matTooltipPosition]="position.value"
+                [routerLink]="['/home/proxy-server']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/F_Proxy Configuration_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Proxy Configuration </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_DICT)">
+              <a
+                [routerLink]="['/home/dictionary']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Dictionary "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Dictionary
+                                                </span> -->
+                <img src="../assets/img/All_Icons/02_AAA/G_Dictionary_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Dictionary </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_AUTHEN_AUDIT)">
+              <a
+                [routerLink]="['/home/authResponse']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Authentication Audit "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Authentication Audit
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/H_Authentication Audit_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Authentication Audit </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_COA_DM)">
+              <a
+                [routerLink]="['/home/coadm']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" CoA/DM Profile "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                CoA/DM Profile
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/I_CoADM Profile_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> CoA/DM Profile </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_PROFILES)">
+              <a
+                [routerLink]="['/home/radiusProfile']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Radius Profile "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Radius Profile
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/J_Radius Profile_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Radius Profile </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_DEVICE)">
+              <a
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Device Management "
+                [matTooltipPosition]="position.value"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [routerLink]="['/home/device']"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/K_Device Management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Device Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_DB_MAPPING)">
+              <a
+                [routerLink]="['/home/dbMappingMaster']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  DB Mapping Master "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                DB Mapping Master
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/L_DB Mapping Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> DB Mapping Master </span>
+              </a>
+            </li>
+            <!-- Device Driver -->
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_DRIVER_MANAGEMENT)">
+              <a
+                [routerLink]="['/home/driverManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Device Driver "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                DB Mapping Master
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/L_DB Mapping Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Driver Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_ACCESS_RESPONSE)">
+              <a
+                [routerLink]="['/home/access-response']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Access response "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/L_DB Mapping Master_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Access Response </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_VLAN_MANAGMENT)">
+              <a
+                [routerLink]="['/home/vlanManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" VLAN Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/H_Authentication Audit_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> VLAN Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_IP_MANAGEMENT)">
+              <a
+                [routerLink]="['/home/radiusipManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="IP Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/H_Authentication Audit_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> IP Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(RADIUS_CONSTANTS.RADIUS_FAULTY_MAC)">
+              <a
+                [routerLink]="['/home/faulty-mac']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Faulty Mac"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/H_Authentication Audit_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Faulty Mac Management </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(RADIUS_CONSTANTS.NETCONF_CUST_MANAGEMENT) &&
+          statusCheckService.isActiveNetConfService
+        "
+      >
+        <a
+          href="#netConf"
+          [routerLinkActive]="['active']"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Net-Conf Management "
+          [matTooltipPosition]="position.value"
+        >
+          <img src="../assets/img/All_Icons/02_AAA/sliders-solid.svg" class="navi" />
+          <img src="../assets/img/All_Icons/02_AAA/sliders-solid-active.svg" class="activeMenu" />
+          Net-Conf Management <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="netConf" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li
+              [routerLinkActive]="['active']"
+              *ngIf="
+                loginService.hasPermission(RADIUS_CONSTANTS.NETCONF_CUST_MANAGEMENT) &&
+                statusCheckService.isActiveNetConfService
+              "
+            >
+              <a
+                [routerLink]="['/home/net-Conf']"
+                routerLinkActive="active"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Device Driver "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/All_Icons/02_AAA/network.png" class="submenuIcon" />
+                <span> Net Conf Customer</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(TACACS.TACACS) && statusCheckService.isActiveTacacs"
+      >
+        <a
+          href="#tacasmanagement"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Tacas Management "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Radius Management
+                              </span> -->
+          <img src="../assets/img/i01.png" class="navi" />
+          <img src="../assets/img/i01.png" class="activeMenu" />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Tacacs Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="tacasmanagement" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(TACACS.TACACS_CONFIG)">
+              <a
+                [routerLink]="['/home/tacasConfiguration']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Tacacs Configuration "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                            Radius Group
+                                            </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/A_Radius Group_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Tacacs Configuration </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TACACS.TACACS_STAFF)">
+              <a
+                [routerLink]="['/home/tacacsStaff']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Staff Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                        Staff Management
+                                        </span> -->
+                <img src="../assets/img/All_Icons/14_Setting/D_ Staff_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Tacacs Staff </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TACACS.TACACS_DEVICE)">
+              <a
+                [routerLink]="['/home/tacacsDevice']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Tacacs Device "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                              Network Device
+                                              </span> -->
+                <img
+                  src="../assets/img/All_Icons/11_Network_Management/A_NetworkS_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Tacacs Device </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TACACS.TACACS_DEVICE_GROUP)">
+              <a
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Tacacs Device Group "
+                [matTooltipPosition]="position.value"
+                [routerLink]="['/home/tacacsDeviceGroup']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+              >
+                <img
+                  src="../assets/img/All_Icons/02_AAA/B_Radius Customer_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Tacacs Device Group </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TACACS.TACACS_AUDIT)">
+              <a
+                [routerLink]="['/home/tacacsAuthenticationAudit']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Tacacs Authentication Audit "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Authentication Audit
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/02_AAA/H_Authentication Audit_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Audit Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TACACS.TACACS_CMD_SET)">
+              <a
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Tacacs Commandset "
+                [matTooltipPosition]="position.value"
+                [routerLink]="['/home/tacacsCommandset']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/A_Bill_Template_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Tacacs CommandSet </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(TACACS.TACACS_ACCESS_LEVEL_GROUP)">
+              <a
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Access Level Group "
+                [matTooltipPosition]="position.value"
+                [routerLink]="['/home/accessControlList']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+              >
+                <img
+                  src="../assets/img/All_Icons/01_Master_Management/C_City_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Access Level Group </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(NETWORKS.NETWORK) &&
+          statusCheckService.isActiveInventoryService
+        "
+      >
+        <a
+          href="#networkDevice"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Network Management "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Network Management
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/11_Network_Management/11_Network-Management_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/11_Network_Management/11_Network-Management_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Network Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="networkDevice" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(NETWORKS.NETWORK_DEVICE)">
+              <a
+                [routerLink]="['/home/networkDevice']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Network Device "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/11_Network_Management/A_NetworkS_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Network Device </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(NETWORKS.NETWORK_MAP)">
+              <a
+                [routerLink]="['/home/maps']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Network Map "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/All_Icons/14_Setting/F_MVNO_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Network Map</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(NETWORKS.IP)">
+              <a
+                [routerLink]="['/home/ipManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Ip Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/All_Icons/14_Setting/F_MVNO_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> IP Management </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(INVENTORYS.INVENTORY) &&
+          statusCheckService.isActiveInventoryService
+        "
+      >
+        <a
+          href="#inventoryManagement"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip="Inventory Management"
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Network Management
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/17_Inventory_Management/A_Inventory Management_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/17_Inventory_Management/A_Inventory Management_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> Inventory Management </span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="inventoryManagement" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(INVENTORYS.MANUFACTURER)">
+              <a
+                [routerLink]="['/home/vendorManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Product Category Mangagement"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                              Network Device
+                                              </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/03_Vendor_Management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Manufacturer Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.PRODUCT_CATEGORY)">
+              <a
+                [routerLink]="['/home/productCategory']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Product Category Mangagement"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/06_Product-Category_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Product Category Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.INVEN_PRODUCT)">
+              <a
+                [routerLink]="['/home/product']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Product Mangagement"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/B_Product Management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Product Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.POP)">
+              <a
+                [routerLink]="['/home/popManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Product Mangagement"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/07_Pop-management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Pop Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.WAREHOUSE)">
+              <a
+                [routerLink]="['/home/warehouseManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Warehouse Mangagement"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/C_Warehouse Management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Warehouse Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.INVEN_INWARDS)">
+              <a
+                [routerLink]="['/home/inwards']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Inwards"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/E_Inwards_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Inwards</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.INVEN_OUTWARDS)">
+              <a
+                [routerLink]="['/home/outwards']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Outwards"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/D_Outwards_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Outwards</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.EXT_ITEM)">
+              <a
+                [routerLink]="['/home/externalItemManagement']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Outwards"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/05_External-Item-Group_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">External Item Management</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.EXT_ITEM_BULK_CONSUMPTION)">
+              <a
+                [routerLink]="['/home/bulkConsumption']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" bulkConsumption"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/04_Bulk-Consumption-Screen_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Bulk Consumption Management</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.INVEN_REQUEST)">
+              <a
+                [routerLink]="['/home/inventory-request']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Inventory Request"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/02_Inventory-Request_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Inventory Request </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INVENTORYS.INVEN_DETAILS)">
+              <a
+                [routerLink]="['/home/assignedInventory']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Assigned Inventories"
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Network Device
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/17_Inventory_Management/07_Pop-management_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Inventory Details </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(NOTIFICATIONS.NOTIFICATION) &&
+          statusCheckService.isActiveNotificationService
+        "
+      >
+        <a
+          href="#notification"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Notifications "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Notifications
+                              </span> -->
+          <img src="../assets/img/All_Icons/12_Notifications/12_Notifications_B.png" class="navi" />
+          <img
+            src="../assets/img/All_Icons/12_Notifications/12_Notifications_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Notifications</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="notification" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(NOTIFICATIONS.EMAIL_CONFIG)">
+              <a
+                [routerLink]="['/home/emailConfig']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Email Configuration "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Email Configuration
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/12_Notifications/A_Email Configuration_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Email Configuration </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(NOTIFICATIONS.SMS_CONFIG)">
+              <a
+                [routerLink]="['/home/smsConfig']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="   SMS Configuration "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                SMS Configuration
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/12_Notifications/B_SMS-Configuration_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> SMS Configuration </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(NOTIFICATIONS.NOTIFICATION_EMAIL)">
+              <a
+                [routerLink]="['/home/emailNotification']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Email "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Email
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/12_Notifications/C_Email_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Email</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(NOTIFICATIONS.NOTIFICATION_SMS)">
+              <a
+                [routerLink]="['/home/smsNotification']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" SMS "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                SMS
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/12_Notifications/D_SMS_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">SMS</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(NOTIFICATIONS.NOTIFICATION_OTP)">
+              <a
+                [routerLink]="['/home/otp']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" OTP "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                SMS
+                                                </span> -->
+                <img
+                  src="../assets/img/All_Icons/12_Notifications/D_SMS_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">OTP</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(WORKFLOWS.WORKFLOW) && statusCheckService.isActiveCMS"
+      >
+        <a
+          href="#worksubPages"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Workflow"
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Setting
+                              </span> -->
+          <img src="../assets/img/All_Icons/14_Setting/14_Setting_B.png" class="navi" />
+          <img src="../assets/img/All_Icons/14_Setting/14_Setting_W.png" class="activeMenu" />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Workflow Management</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="worksubPages" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(WORKFLOWS.TEAMS)">
+              <a
+                [routerLink]="['/home/teams']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Teams Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Teams Management
+                                                </span> -->
+                <img src="../assets/img/All_Icons/14_Setting/A_Teams_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Teams Management </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(WORKFLOWS.TAT_METRICS)">
+              <a
+                [routerLink]="['/home/TAT_Matrics']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="TAT Metrics Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/14_Setting/B_Team Hierarchy_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> TAT Metrics Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(WORKFLOWS.WORKFLOW_LIST)">
+              <a
+                [routerLink]="['/home/team-hierarchy']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Teams Hierarchy "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/14_Setting/B_Team Hierarchy_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Workflow Management </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <!-- <li class="panel" *ngIf="userRole == 1"> -->
+      <li
+        class="panel"
+        *ngIf="
+          loginService.hasPermission(INTEGRATION_SYSTEMS.INTEGRATION_SYSTEM) &&
+          statusCheckService.isActiveIntegrationService
+        "
+      >
+        <a
+          href="#integration"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip="Integration System"
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Invoice System
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/06_Invoice_System/06_Invoice_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/06_Invoice_System/06_Invoice System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Integration System</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="integration" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <!-- <li *ngIf="loginService.hasPermission(INTEGRATION_SYSTEMS.FINANCE_INTEGRATION)">
+              <a
+                href="#finance"
+                data-toggle="collapse"
+                class="collapsed"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Finance Integration"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/B_Bill_Run_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Finance Integration</span>
+                <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+              </a>
+              <div id="finance" class="collapse">
+                <ul id="submenuNavbar">
+                  <li *ngIf="loginService.hasPermission(INTEGRATION_SYSTEMS.MICROSOFT_DYNAMICS)">
+                    <a
+                      [ngClass]="{
+                        innerMenuICON: sidebarService.sidebarShowIcon,
+                        innerMenu: !sidebarService.sidebarShowIcon
+                      }"
+                      [routerLink]="['/home/navMaster']"
+                      [ngClass]="{
+                        paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                        paddingLeft45PX: !sidebarService.sidebarShowIcon
+                      }"
+                      [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                      matTooltip="Microsoft Dynamics(NAV)"
+                      [matTooltipPosition]="position.value"
+                    > -->
+            <!-- <span
+                                                                  class="tooltips"
+                                                                  *ngIf="sidebarService.sidebarShowIcon"
+                                                                  >
+                                                                  Generate Bill Run
+                                                                  </span> -->
+            <!-- <img
+                        src="../assets/img/All_Icons/06_Invoice_System/C_Generate_Bill_B.png"
+                        class="submenuIcon"
+                      />
+                      <span *ngIf="!sidebarService.sidebarShowIcon">Microsoft Dynamics(NAV)</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li> -->
+            <!-- <li *ngIf="loginService.hasPermission(INTEGRATION_SYSTEMS.ACS_MASTER)">
+              <a
+                data-toggle="collapse"
+                class="collapsed"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [routerLink]="['/home/acs-master']"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="ACS Master"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/B_Bill_Run_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">ACS Master</span>
+              </a>
+            </li> -->
+            <!-- <li *ngIf="loginService.hasPermission(INTEGRATION_SYSTEMS.GOV_INTEGRATION)">
+              <a
+                data-toggle="collapse"
+                class="collapsed"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [routerLink]="['/home/goverment-integration']"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Goverment Integration"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/06_Invoice_System/B_Bill_Run_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Government Integration</span>
+              </a>
+            </li> -->
+            <li *ngIf="loginService.hasPermission(INTEGRATION_SYSTEMS.INTEGRATION_SYSTEM)">
+              <a
+                [routerLink]="['/home/integration-configuration']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Integration Configuration"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Integration Configuration </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.PAYMENT_GATEWAY_CONFIGURATION)">
+              <a
+                [routerLink]="['/home/integration-audit']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Integration Audit"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Integration Audit </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(INTEGRATION_SYSTEMS.INTEGRATION_SYSTEM)">
+              <a
+                [routerLink]="['/home/third-party-integration-menu']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Third-Party-Integration-Menu "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Third Party Menu </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li class="panel">
+        <a
+          href="#auditManagement"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip="Audit Management"
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Invoice System
+                              </span> -->
+          <img
+            src="../assets/img/All_Icons/06_Invoice_System/06_Invoice_System_B.png"
+            class="navi"
+          />
+          <img
+            src="../assets/img/All_Icons/06_Invoice_System/06_Invoice System_W.png"
+            class="activeMenu"
+          />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Audit Management</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="auditManagement" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li>
+              <a
+                [routerLink]="['/home/audit-report']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Audit Report"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Audit Report </span>
+              </a>
+            </li>
+            <!-- <li *ngIf="loginService.hasPermission(INTEGRATION_SYSTEMS.INTEGRATION_SYSTEM)">
+              <a
+                [routerLink]="['/home/third-party-integration-menu']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Third-Party-Integration-Menu "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Third Party Menu </span>
+              </a>
+            </li> -->
+          </ul>
+        </div>
+      </li>
+      <li class="panel" *ngIf="loginService.hasPermission(SETTINGS.SETTING)">
+        <a
+          href="#subPages"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Setting "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Setting
+                              </span> -->
+          <img src="../assets/img/All_Icons/14_Setting/14_Setting_B.png" class="navi" />
+          <img src="../assets/img/All_Icons/14_Setting/14_Setting_W.png" class="activeMenu" />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Setting</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="subPages" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(SETTINGS.ROLE)">
+              <a
+                [routerLink]="['/home/radiusrole']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Role Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Role Management
+                                                </span> -->
+                <img src="../assets/img/All_Icons/14_Setting/C_Role_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Role Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.STAFF)">
+              <a
+                [routerLink]="['/home/radiusstaff']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Staff Management "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Staff Management
+                                                </span> -->
+                <img src="../assets/img/All_Icons/14_Setting/D_ Staff_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Staff Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.MY_PROFILE)">
+              <a
+                [routerLink]="['/home/mystaff', userId]"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="My Staff "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Staff Management
+                                                </span> -->
+                <img src="../assets/img/All_Icons/14_Setting/D_ Staff_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> My Profile </span>
+              </a>
+            </li>
+            <li *ngIf="showProfile && loginService.hasPermission(SETTINGS.MY_PROFILE)">
+              <a
+                [routerLink]="['/home/profile']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="profile "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Staff Management
+                                                </span> -->
+                <img src="../assets/img/All_Icons/14_Setting/D_ Staff_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Profile Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.ORGANIZATION)">
+              <a
+                [routerLink]="['/home/myOrganizationCustomer']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="My Organization Customer"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/14_Setting/B_Team Hierarchy_B.png"
+                  class="submenuIcon"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Organization Profile </span>
+              </a>
+            </li>
+            <!-- <li *ngIf="showMvno && loginService.hideSidebarMenu(menuItemService.getMenuId('Settings'),menuItemService.getSubMenuId('Settings','Ticket'))">
+                                        <a [routerLink]="['/home/mvno']">MVNO Management</a>
+                                        </li> -->
+            <li *ngIf="loginService.hasPermission(SETTINGS.SYSTEM_CONFIGURATION)">
+              <a
+                [routerLink]="['/home/SystemConfig']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" System Configuration "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                System Configuration
+                                                </span> -->
+                <img src="../assets/img/All_Icons/14_Setting/E_System_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> System Configuration </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.TEMPLATE)">
+              <a
+                [routerLink]="['/home/Template']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="  Template Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Template Management </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.FIELD_TEMPLATE_MAPPING)">
+              <a
+                [routerLink]="['/home/field-temp-mapping']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="   Field Template Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Field Template Mapping </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.PAYMENT_GATEWAY_CONFIGURATION)">
+              <a
+                [routerLink]="['/home/payment-gateway-configuration']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Payment Gateway Configuration"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Payment Gateway Configuration </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.MIGRATION)">
+              <a
+                [routerLink]="['/home/migration']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Migration"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Migration </span>
+              </a>
+            </li>
+            <!-- *ngIf="showMvno && loginService.hasPermission(SETTINGS.FEEDBACK)" -->
+            <li>
+              <a
+                [routerLink]="['/home/feedback']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Feedback"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Feedback Config </span>
+              </a>
+            </li>
+
+            <li *ngIf="loginService.hasPermission(SETTINGS.KNOWLEDGE_BASE)">
+              <a
+                [routerLink]="['/home/knowledgebase']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Knowledge Base"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Knowledge Base </span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(SETTINGS.KNOWLEDGE_BASE)">
+              <a
+                [routerLink]="['/home/schedular-management']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Schedular Management"
+                [matTooltipPosition]="position.value"
+              >
+                <img
+                  src="../assets/img/All_Icons/13_Templat_ Management/13_Template Management_B.png"
+                  class="singleMenu"
+                />
+
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Schedular Management </span>
+              </a>
+            </li>
+            <li *ngIf="showMvno">
+              <a
+                href="javascript:void(0)"
+                [routerLink]="['/home/password-policy/list']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" {{ mvnoTitle }} Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/All_Icons/14_Setting/F_MVNO_B.png" class="submenuIcon" />
+                <span class="is-2" *ngIf="!sidebarService.sidebarShowIcon">Password Policy</span></a
+              >
+            </li>
+            <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                MVNO Management
+                                                </span> -->
+            <!-- <li *ngIf="showMvno && loginService.hasPermission(SETTINGS.ISP_MANAGEMENT)">
+              <a
+                [routerLink]="['/home/mvnoManagement/list']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" {{ mvnoTitle }} Management "
+                [matTooltipPosition]="position.value"
+              >
+               
+                <img src="../assets/img/All_Icons/14_Setting/F_MVNO_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> {{ mvnoTitle }} Management </span>
+              </a>
+            </li>
+            <li *ngIf="showMvno">
+              <a
+                href="javascript:void(0)"
+                [routerLink]="['/home/password-policy/list']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" {{ mvnoTitle }} Management "
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/All_Icons/14_Setting/F_MVNO_B.png" class="submenuIcon" />
+                <span class="is-2" *ngIf="!sidebarService.sidebarShowIcon">Password Policy</span></a
+              >
+            </li> -->
+          </ul>
+        </div>
+      </li>
+      <li *ngIf="showMvno && loginService.hasPermission(SETTINGS.ISP_MANAGEMENT)">
+        <a
+          [routerLink]="['/home/mvnoManagement/list']"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip="Mvno Management"
+          [matTooltipPosition]="position.value"
+          class="detailOnAnchorClick"
+        >
+          <img src="../assets/img/All_Icons/14_Setting/F_MVNO_B.png" class="activeMenu" />
+          <span *ngIf="!sidebarService.sidebarShowIcon"> {{ mvnoTitle }} Management </span>
+        </a>
+      </li>
+
+      <li
+        class="panel"
+        *ngIf="loginService.hasPermission(AUDITS.AUDIT) && statusCheckService.isActiveCMS"
+      >
+        <a
+          href="#Audit"
+          data-toggle="collapse"
+          class="collapsed"
+          data-parent="#accordion"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Audit "
+          [matTooltipPosition]="position.value"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Audit
+                              </span> -->
+          <img src="../assets/img/All_Icons/15_Audit/15_Audit_B.png" class="navi" />
+          <img src="../assets/img/All_Icons/15_Audit/15_Audit_W.png" class="activeMenu" />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Audit</span>
+          <i class="icon-submenu paddingmenuIcon lnr lnr-chevron-left"></i>
+        </a>
+        <div id="Audit" class="collapse panel-collapse">
+          <ul id="submenuNavbar">
+            <li *ngIf="loginService.hasPermission(AUDITS.AUDIT_LOG)">
+              <a
+                [routerLink]="['/home/auditLog']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip=" Audit Log "
+                [matTooltipPosition]="position.value"
+              >
+                <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                                                Audit Log
+                                                </span> -->
+                <img src="../assets/img/All_Icons/15_Audit/A_Audit Log_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon">Audit Log</span>
+              </a>
+            </li>
+            <li *ngIf="loginService.hasPermission(AUDITS.REPORTED_PROBLEM)">
+              <a
+                [routerLink]="['/home/reported-problem']"
+                [ngClass]="{
+                  paddingLeftsubmenu: sidebarService.sidebarShowIcon,
+                  paddingLeft45PX: !sidebarService.sidebarShowIcon
+                }"
+                [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+                matTooltip="Reported Problem"
+                [matTooltipPosition]="position.value"
+              >
+                <img src="../assets/img/All_Icons/15_Audit/A_Audit Log_B.png" class="submenuIcon" />
+                <span *ngIf="!sidebarService.sidebarShowIcon"> Reported Problem </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <a
+          (click)="logout()"
+          [matTooltipDisabled]="!sidebarService.sidebarShowIcon"
+          matTooltip=" Logoff "
+          [matTooltipPosition]="position.value"
+          class="detailOnAnchorClick"
+        >
+          <!-- <span class="tooltips" *ngIf="sidebarService.sidebarShowIcon">
+                              Logoff
+                              </span> -->
+          <img src="../assets/img/All_Icons/16_Logoff/16_Logoff_B.png" class="singleMenu" />
+          <span *ngIf="!sidebarService.sidebarShowIcon">Logoff</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- END LEFT SIDEBAR -->
+</div>

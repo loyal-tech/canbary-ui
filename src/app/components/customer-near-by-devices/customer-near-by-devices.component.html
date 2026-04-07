@@ -1,0 +1,258 @@
+<p-dialog
+  [(visible)]="nearLocationModal"
+  [style]="{ width: '100%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="nearsearchClose(false)"
+>
+  <ng-template pTemplate="header">
+    <span style="display: flex; align-items: flex-start">
+      Near Location
+      <i
+        class="fa fa-info-circle text-info"
+        style="cursor: pointer; margin-left: 8px"
+        title="Near Location screen displays splitters within a 5000 meter radius."
+      ></i>
+    </span>
+  </ng-template>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 3%"></th>
+              <th>Name</th>
+              <th>Available Out Port</th>
+              <th>Device Out Port</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th>Distance(M)</th>
+              <th>Status</th>
+              <!-- <th style="width: 20%">Address</th> -->
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let data of nearDeviceLocationData
+                  | paginate
+                    : {
+                        id: 'nearDevicepageData',
+                        itemsPerPage: nearDeviceLocationItemPerPage,
+                        currentPage: currentPagenearDeviceLocationList,
+                        totalItems: nearDeviceLocationtotalRecords
+                      };
+                index as i
+              "
+            >
+              <td style="width: 3%">
+                <input
+                  type="radio"
+                  name="selectedDevice"
+                  (click)="checkAvailblePort(data.networkDeviceId)"
+                />
+              </td>
+              <td>
+                {{ data.name }}
+              </td>
+              <td>{{ data.availableOutPort }}</td>
+              <td>
+                <p-dropdown
+                  [options]="availableOutPorts"
+                  [(ngModel)]="data.selectedPortNumber"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select Parent Device Out-Port"
+                  [disabled]="
+                    editMacSerialBtn == data.networkDeviceId && isEditEnable ? false : true
+                  "
+                ></p-dropdown>
+              </td>
+
+              <td>{{ data.latitude }}</td>
+              <td>{{ data.longitude }}</td>
+              <td>{{ data.distance }}</td>
+              <td>
+                <span *ngIf="data.attachedStatus == 'Attached'" class="badge badge-success">{{
+                  data.attachedStatus
+                }}</span>
+                <span *ngIf="data.attachedStatus == 'Not Attached'" class="badge badge-info">{{
+                  data.attachedStatus
+                }}</span>
+              </td>
+              <!-- <td style="width: 20%">{{ data.address }}</td> -->
+              <td>
+                <button
+                  id="addAtt"
+                  class="btn btn-primary"
+                  (click)="confirmAttachDeviceUpdate(data.networkDeviceId, data.selectedPortNumber)"
+                  style="object-fit: cover; padding: 5px 8px"
+                  icon="pi pi-check"
+                  [disabled]="
+                    editMacSerialBtn == data.networkDeviceId && isEditEnable ? false : true
+                  "
+                >
+                  Add
+                </button>
+                <!-- <button
+                  id="addAtt"
+                  class="btn btn-primary"
+                  (click)="viewPortBlock(data, true)"
+                  style="object-fit: cover; padding: 5px 8px"
+                  icon="pi pi-check"
+                  [disabled]="
+                    editMacSerialBtn == data.networkDeviceId && isEditEnable ? false : true
+                  "
+                >
+                  View
+                </button> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <pagination-controls
+          (pageChange)="pageChangedNearDeviceList($event)"
+          directionLinks="true"
+          id="nearDevicepageData"
+          maxSize="10"
+          nextLabel=""
+          previousLabel=""
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end">
+    <div class="addUpdateBtn">
+      <button
+        #closebutton
+        (click)="nearsearchClose()"
+        class="btn btn-danger btn-sm"
+        data-dismiss="modal"
+        type="button"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- <div class="modal fade" id="nearLocationModal" role="dialog" data-backdrop="static">
+  <div class="modal-dialog nearSearchModalLocation">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="panel-title">Near Location</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12" style="margin-top: 3rem">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                  <th>Distance(KM)</th>
+                  <th style="width: 35%">Address</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let data of nearDeviceLocationData
+                      | paginate
+                        : {
+                            id: 'nearDevicepageData',
+                            itemsPerPage: nearDeviceLocationItemPerPage,
+                            currentPage: currentPagenearDeviceLocationList,
+                            totalItems: nearDeviceLocationtotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    <span
+                      (click)="bindNetworkDevice(data.networkDeviceId)"
+                      class="HoverEffect"
+                      data-dismiss="modal"
+                    >
+                      {{ data.name }}
+                    </span>
+                  </td>
+                  <td>{{ data.latitude }}</td>
+                  <td>{{ data.longitude }}</td>
+                  <td>{{ data.distance }}</td>
+                  <td style="width: 35%">{{ data.address }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              (pageChange)="pageChangedNearDeviceList($event)"
+              directionLinks="true"
+              id="nearDevicepageData"
+              maxSize="10"
+              nextLabel=""
+              previousLabel=""
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            #closebutton
+            (click)="nearsearchClose()"
+            class="btn btn-danger btn-sm"
+            data-dismiss="modal"
+            type="button"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<p-dialog
+  header="View Port Block Details"
+  [(visible)]="viewPortDialog"
+  [style]="{ width: '65%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  [baseZIndex]="10000"
+  (onHide)="closePortDetailsModel()"
+  [contentStyle]="{ overflow: 'visible' }"
+>
+  <div class="panel-collapse collapse in">
+    <div class="panel-body table-responsive">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Port Details</legend>
+        <div class="boxWhite">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <!-- ✅ Show table only when 'port' data exists -->
+              <table class="table" *ngIf="viewPort?.portBlockNumber; else noData">
+                <thead>
+                  <tr>
+                    <th>Port Block Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ viewPort.portBlockNumber }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</p-dialog>

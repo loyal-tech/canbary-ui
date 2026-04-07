@@ -1,0 +1,495 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Rejected Reason Master Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchRejectedReason"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchRejectedReason" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <form [formGroup]="searchRejectedReasonFormGroup">
+            <div class="row">
+              <div class="col-lg-3 col-md-3">
+                <input
+                  id="sourceName"
+                  (keydown.enter)="searchRejectedReason()"
+                  type="text"
+                  class="form-control"
+                  formControlName="searchTrscName"
+                  placeholder="Enter Rejected Reason Master Name"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="
+                    searchSubmitted && searchRejectedReasonFormGroup.controls.searchTrscName?.errors
+                  "
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      searchSubmitted &&
+                      searchRejectedReasonFormGroup.controls.searchTrscName?.errors?.required
+                    "
+                  >
+                    Keyword is required.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="searchbtn"
+                  (click)="searchRejectedReason()"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+                <button
+                  type="reset"
+                  class="btn btn-default"
+                  id="searchbtn"
+                  (click)="clearSearchTrsc()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Rejected Reason Master</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#rejectedReasonData"
+            aria-expanded="false"
+            aria-controls="rejectedReasonData"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="rejectedReasonData" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12" *ngIf="rejectedReasonDataList?.length > 0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 30%">Rejected Reason</th>
+                    <th style="width: 20%">Status</th>
+                    <th *ngIf="editAccess || deleteAccess" style="width: 20%">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let source of rejectedReasonDataList
+                        | paginate
+                          : {
+                              id: 'rejectedReasonData',
+                              itemsPerPage: rejectedReasonItemsPerPage,
+                              currentPage: currentRejectedReasonListData,
+                              totalItems: rejectedReasonDataListTotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="curson_pointer"
+                      style="color: #f7b206"
+                      data-backdrop="static"
+                      data-keyboard="false"
+                      data-target="#RejectedReasonDetails"
+                      data-toggle="modal"
+                      (click)="trscAllDetails(source)"
+                    >
+                      {{ source.name }}
+                    </td>
+                    <td *ngIf="source.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="source.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        type="button"
+                        (click)="editRejectedReasonMasterDataFunction(source.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        (click)="deleteConfirmonRejectedReasonData(source.id)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="rejectedReasonData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedTrscList((currentRejectedReasonListData = $event))"
+                  >
+                  </pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12" *ngIf="rejectedReasonDataList?.length === 0">
+              No Records Found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <!-- <h3 class="panel-title">
+                    {{ isTicketReasonSubCategoryEdit ? 'Update' : 'Create' }} Lead Source Master
+                </h3> -->
+        <h3 class="panel-title">
+          {{ isRejectedReasonMasterEdit ? "Update" : "Create" }} Rejected Reason Master
+        </h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createRejectedReason"
+            aria-expanded="false"
+            aria-controls="createRejectedReason"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createRejectedReason" class="panel-collapse collapse in">
+        <div
+          class="panel-body table-responsive"
+          *ngIf="!createAccess && !isRejectedReasonMasterEdit"
+        >
+          Sorry you have not privilege to create operation!
+        </div>
+        <div class="panel-body" *ngIf="createAccess || (isRejectedReasonMasterEdit && editAccess)">
+          <form [formGroup]="rejectedReasonMasterFormGroup">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <label>Rejected Reason Master Name*</label>
+                <input
+                  id="name"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter Rejected Reason Master Name"
+                  formControlName="name"
+                  [ngClass]="{
+                    'is-invalid': submitted && rejectedReasonMasterFormGroup.controls.name.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && rejectedReasonMasterFormGroup.controls.name?.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      submitted && rejectedReasonMasterFormGroup.controls.name?.errors?.required
+                    "
+                  >
+                    Rejected Reason Master Name is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <label>Status*</label>
+                <div>
+                  <p-dropdown
+                    [options]="statusOptions"
+                    optionValue="label"
+                    optionLabel="label"
+                    placeholder="Select a Status"
+                    formControlName="status"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && rejectedReasonMasterFormGroup.controls.status.errors
+                    }"
+                  ></p-dropdown>
+                </div>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && rejectedReasonMasterFormGroup.controls.status?.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      submitted && rejectedReasonMasterFormGroup.controls.status?.errors?.required
+                    "
+                  >
+                    Status is required.
+                  </div>
+                </div>
+                <br />
+              </div>
+            </div>
+
+            <label>Lead Rejected Sub Reason</label>
+            <div [formGroup]="rejecteSubReasonMappingForm">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-8">
+                  <div>
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Enter Sub Source"
+                      formControlName="name"
+                      [ngClass]="{
+                        'is-invalid':
+                          rejectedSubReasonSubmitted &&
+                          rejecteSubReasonMappingForm.controls.name?.errors
+                      }"
+                    />
+                  </div>
+                  <div
+                    class="error text-danger"
+                    *ngIf="
+                      rejectedSubReasonSubmitted &&
+                      rejecteSubReasonMappingForm.controls.name?.errors?.required
+                    "
+                  >
+                    Rejected Sub Reason Name is required.
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-4">
+                  <button
+                    id="addAtt"
+                    style="object-fit: cover; padding: 5px 8px"
+                    class="btn btn-primary"
+                    (click)="onAddRejectedSubReasonMappingField()"
+                  >
+                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <table class="table coa-table" style="margin-top: 10px">
+              <thead>
+                <tr>
+                  <th style="text-align: center">Sub Reason</th>
+                  <th style="text-align: right; width: 20%; padding: 8px">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let row of rejectedSubReasonMapping.controls
+                      | paginate
+                        : {
+                            id: 'rejectedSubReasonMappingData',
+                            itemsPerPage: rejectedSubReasonItemsPerPage,
+                            currentPage: currentRejectedSubReasonListData,
+                            totalItems: rejectedSubReasonDataListTotalRecords
+                          };
+                    let pageIndex = index
+                  "
+                >
+                  <td style="padding-left: 5px">
+                    <input
+                      class="form-control"
+                      type="text"
+                      [formControl]="row.get('name')"
+                      disabled
+                    />
+                  </td>
+                  <td style="text-align: right">
+                    <a
+                      id="deleteAtt"
+                      class="curson_pointer"
+                      (click)="
+                        deleteConfirmonRejectedSubReasonMappingField(pageIndex, row.get('id'))
+                      "
+                    >
+                      <img src="assets/img/ioc02.jpg" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="row">
+              <div class="col-md-12" style="display: flex">
+                <pagination-controls
+                  id="rejectedSubReasonMappingData"
+                  maxSize="10"
+                  (pageChange)="pageChangedRejectedSubReason($event)"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                >
+                </pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="leadSubSourcePageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="LeadSubTotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="!isRejectedReasonMasterEdit && createAccess"
+                (click)="addEditRejectedReasonMaster('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Rejected Reason Master
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                *ngIf="isRejectedReasonMasterEdit && editAccess"
+                (click)="addEditRejectedReasonMaster(editRejectedReasonMasterData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Rejected Reason Master
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="RejectedReasonDetails" role="dialog">
+  <div class="modal-dialog" style="width: 50%">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="panel-title">Rejected Reason Master</h3>
+      </div>
+      <div class="modal-body" *ngIf="viewTrscData">
+        <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+          <legend>Basic Details</legend>
+          <div class="boxWhite">
+            <div class="row">
+              <div class="col-lg-6 col-md-6 dataGroup">
+                <label class="datalbl">Rejected Reason :</label>
+                <span>{{ viewTrscData.name }}</span>
+              </div>
+              <div class="col-lg-6 col-md-6 dataGroup">
+                <label class="datalbl">Status :</label>
+                <span *ngIf="viewTrscData.status === 'Active'" class="badge badge-success">
+                  Active
+                </span>
+                <span *ngIf="viewTrscData.status === 'Inactive'" class="badge badge-danger">
+                  Inactive
+                </span>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset *ngIf="viewTrscData.rejectSubReasonDtoList?.length > 0">
+          <legend>Rejected Sub Reason Detail</legend>
+          <div class="boxWhite">
+            <div class="row table-responsive">
+              <div class="col-lg-12 col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Sub Source</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let subSource of viewTrscData.rejectSubReasonDtoList
+                          | paginate
+                            : {
+                                id: 'rejectedSubReasonPageData',
+                                itemsPerPage: viewrejectedSubReasonItemsPerPage,
+                                currentPage: viewrejectedSubReasonListData,
+                                totalItems: viewrejectedSubReasonDataListTotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td>{{ subSource.name }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <pagination-controls
+                  id="rejectedSubReasonPageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedleadSubSourceOnView($event)"
+                >
+                </pagination-controls>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="modal-body" *ngIf="!viewTrscData">
+        <h4>Sorry, something went wrong with data fetch!</h4>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

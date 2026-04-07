@@ -1,0 +1,18 @@
+.checkbox-align {
+  padding-right: 5%;
+}
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+}
+
+
+

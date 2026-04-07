@@ -1,0 +1,325 @@
+<!-- <p-confirmDialog [style]="{ width: '40vw' }" [baseZIndex]="10000"></p-confirmDialog>
+<div class="childComponent" pFocusTrap>
+    <ngx-spinner [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+        <p class="loading">Loading...</p>
+    </ngx-spinner>
+</div> -->
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Template Management</h3>
+        <div class="right">
+          <button type="button" class="btn-toggle-collapse">
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="searchForm">
+          <form class="form-auth-small" [formGroup]="searchGroupByNameForm">
+            <div class="row">
+              <div
+                class="col-md-3"
+                style="padding-right: 0%; text-align: right;"
+              >
+                <label style="padding: 5px;">Event Name:</label>
+              </div>
+              <div class="col-md-5" style="padding-left: 0%;">
+                <input
+                  type="text"
+                  name="EventName"
+                  class="form-control"
+                  placeholder="Enter Event Name"
+                  formControlName="name"
+                  [ngClass]="{
+                    'is-invalid':
+                      searchSubmitted &&
+                      searchGroupByNameForm.controls.name.errors
+                  }"
+                />
+              </div>
+              <div class="col-md-4" style="padding-left: 0%;">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="searchGroupByName()"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+                &nbsp;
+                <button
+                  type="reset"
+                  class="btn btn-default"
+                  (click)="clearSearchForm()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel-body no-padding panel-udata">
+        <div class="col-md-3 pcol">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px;" />
+              <!-- <h5>Create</h5>
+                <p>Create Event</p> -->
+            </a>
+          </div>
+        </div>
+        <div class="col-md-3 pcol">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px;" />
+              <!-- <h5>Search</h5>
+                <p>Search Event</p> -->
+            </a>
+          </div>
+        </div>
+        <div class="col-md-3 pcol">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px;" />
+              <!-- <h5>User Section</h5>
+                <p>Details Comes Here</p> -->
+            </a>
+          </div>
+        </div>
+        <div class="col-md-3 pcol noborder">
+          <div class="dbox">
+            <a>
+              <img src="../../../assets/img/i01.png" style="width: 32px;" />
+              <!-- <h5>User Section</h5>
+                <p>Details Comes Here</p> -->
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Events</h3>
+        <div class="right">
+          <button type="button" class="btn-toggle-collapse">
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body table-responsive">
+        <!-- <form class="form-auth-small" [formGroup]="saveTemplateForm"> -->
+        <p-table
+          [value]="groupData.eventList"
+          [resizableColumns]="true"
+          styleClass="p-datatable-gridlines"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="colgroup">
+            <colgroup>
+              <col *ngFor="let col of columns" [style.width]="col.width" />
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th pResizableColumn style="width: 10%;">Event Name</th>
+              <th pResizableColumn style="width: 2%;">
+                <input
+                  style="padding: 5px; justify-self: center;"
+                  type="checkbox"
+                  name="allChecked"
+                  checked
+                />
+              </th>
+              <th pResizableColumn style="width: 43%;">SMS Template</th>
+              <th pResizableColumn style="width: 2%;">
+                <input
+                  style="padding: 5px; justify-self: center;"
+                  type="checkbox"
+                  name="allChecked"
+                  checked
+                />
+              </th>
+              <th pResizableColumn style="width: 43%;">Email Template</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-group>
+            <tr>
+              <td hidden="true">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="eventId"
+                  name="eventId"
+                  [value]="group.eventId"
+                />
+              </td>
+              <td hidden="true">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="templateName"
+                  name="templateName"
+                  [value]="group.eventName"
+                />
+              </td>
+              <td>{{ group.eventName }}</td>
+              <td>
+                <input
+                  style="padding: 5px; justify-self: center;"
+                  type="checkbox"
+                  [id]="group.eventId"
+                  name="smsEventConfigured"
+                  [value]="group.template.smsEventConfigured"
+                  [(ngModel)]="group.template.smsEventConfigured"
+                />
+              </td>
+              <td
+                pEditableColumn
+                style="
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <textarea
+                      name="smsTemplateData"
+                      id="smsTemplateData"
+                      [value]="group.template.smsTemplateData"
+                      class="form-control"
+                      placeholder="Enter SMS Template"
+                    ></textarea>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span style="max-width: 90%; overflow: scroll;">
+                      {{ group.template.smsTemplateData }}
+                    </span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <input
+                  style="padding: 5px; justify-self: center;"
+                  type="checkbox"
+                  name="emailEventConfigured"
+                  [value]="group.template.emailEventConfigured"
+                  [(ngModel)]="group.template.emailEventConfigured"
+                />
+              </td>
+              <td
+                pEditableColumn
+                style="
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <textarea
+                      style="width: 90%; display: inline-table;"
+                      name="emailTemplateData"
+                      id="emailTemplateData"
+                      [value]="group.template.emailTemplateData"
+                      class="form-control"
+                      placeholder="Enter Email Template"
+                    ></textarea>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span style="max-width: 90%; overflow: scroll;">
+                      {{ group.template.emailTemplateData }}
+                    </span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <!-- </form> -->
+        <div class="addUpdateBtn" style="margin-top: 20px;">
+          <button type="submit" class="btn btn-primary" (click)="addTemplate()">
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-md-12">
+            <pagination-controls
+              id="listing_groupdata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <!-- <div class="col-md-8 right">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Template
+                    </h3>
+                    <div class="right">
+                        <button type="button" class="btn-toggle-collapse">
+                            <i class="fa fa-minus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <form class="form-auth-small" [formGroup]="createGroupForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>SMS Template</label>
+                                <textarea name="smsTemplate" id="smsTemplate" class="form-control"
+                                    placeholder="Enter SMS Template" formControlName="smsTemplate" [ngClass]="{' is-invalid': submitted &&
+                                            createGroupForm.controls.smsTemplate.errors}"></textarea>
+                                <div class="errorWrap text-danger"
+                                    *ngIf="submitted && createGroupForm.controls.smsTemplate.errors">
+                                    <div class="error text-danger"
+                                        *ngIf="submitted && createGroupForm.controls.smsTemplate.errors.required">
+                                        SMS Template is required
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Email Template</label>
+                                <textarea name="emailTemplate" id="emailTemplate" class="form-control"
+                                    placeholder="Enter Email Template" formControlName="emailTemplate"
+                                    [ngClass]="{'is-invalid': submitted && createGroupForm.controls.emailTemplate.errors}"></textarea>
+                                <div class="errorWrap text-danger"
+                                    *ngIf="submitted && createGroupForm.controls.emailTemplate.errors">
+                                    <div class="error text-danger"
+                                        *ngIf="submitted && createGroupForm.controls.emailTemplate.errors.required">
+                                        Email Template is required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <p-confirmDialog [style]="{ width: '50vw' }" key="positionDialog" [baseZIndex]="10000"></p-confirmDialog>
+        </div> -->
+</div>

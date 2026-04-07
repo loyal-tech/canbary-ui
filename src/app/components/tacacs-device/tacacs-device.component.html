@@ -1,0 +1,362 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Device</h3>
+      </div>
+      <div class="panel-body no-padding panel-udata">
+        <div class="pcol col-md-6" *ngIf="createAccess">
+          <div class="dbox">
+            <a (click)="createDevice()" class="curson_pointer">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Create Device</h5>
+              <!-- <p>Create Partner </p> -->
+            </a>
+          </div>
+        </div>
+        <div class="pcol col-md-6">
+          <div class="dbox">
+            <a (click)="this.clearSearch()" class="curson_pointer">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Search Device</h5>
+              <!-- <p>Search Partner </p> -->
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="this.listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Tacacs Device List</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listInwards"
+            aria-expanded="false"
+            aria-controls="listInwards"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataSector" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Device Name</th>
+                    <th>Device Address</th>
+                    <th>Tacacs Device Group</th>
+                    <th>Device IpType</th>
+                    <th>Tacacs SharedKey</th>
+                    <th>TimeOut</th>
+                    <th>submitted Date</th>
+                    <th>lastModified Date</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let Device of deviceList
+                        | paginate
+                          : {
+                              id: 'casListDataID',
+                              itemsPerPage: deviceitemsPerPage,
+                              currentPage: currentPageDevice,
+                              totalItems: devicetotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ Device.deviceName }}</td>
+                    <td>{{ Device.deviceAddress }}</td>
+                    <td>{{ Device.tacacsDeviceGroup.tacacsDeviceGroupName }}</td>
+                    <td>{{ Device.deviceIpType }}</td>
+                    <td>{{ Device.tacacsSharedKey }}</td>
+                    <td>{{ Device.timeOut }}</td>
+                    <td>{{ Device.submittedDate }}</td>
+                    <td>{{ Device.lastModifiedDate }}</td>
+
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        (click)="editDevice(Device)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonSector(Device)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="casListDataID"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCasList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="this.createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ this.editMode ? "Update" : "Create" }} Device</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="deviceFormGroup">
+            <fieldset style="margin-top: 0px">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Device Name*</label>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter DeviceName"
+                        formControlName="deviceName"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.deviceName.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.deviceName.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && deviceFormGroup.controls.deviceName.errors.required"
+                        >
+                          {{ title }} deviceName is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Device Address*</label>
+                      <input
+                        id="DeviceAddress"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter DeviceAddress"
+                        formControlName="deviceAddress"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.deviceAddress.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.deviceAddress.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && deviceFormGroup.controls.deviceAddress.errors.required
+                          "
+                        >
+                          {{ title }} deviceAddress is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Tacacs SharedKey*</label>
+                      <input
+                        id="TacacsSharedKey"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter TacacsSharedKey"
+                        formControlName="tacacsSharedKey"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.tacacsSharedKey.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.tacacsSharedKey.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && deviceFormGroup.controls.tacacsSharedKey.errors.required
+                          "
+                        >
+                          {{ title }} tacacsSharedKey is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Device IpType*</label>
+                      <p-dropdown
+                        [options]="this.ipType"
+                        optionValue="label"
+                        formControlName="deviceIpType"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Select DeviceIpType"
+                        (onChange)="getIpType($event)"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.deviceIpType.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.deviceIpType.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && deviceFormGroup.controls.deviceIpType.errors.required"
+                        >
+                          {{ title }} DeviceIpType is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>TimeOut*</label>
+                      <input
+                        id="TimeOut"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter TimeOut"
+                        formControlName="timeOut"
+                        [ngClass]="{
+                          'is-invalid': submitted && deviceFormGroup.controls.timeOut.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && deviceFormGroup.controls.timeOut.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && deviceFormGroup.controls.timeOut.errors.required"
+                        >
+                          {{ title }} timeOut is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Tacacs Device Group*</label>
+                      <p-dropdown
+                        [options]="TacacsDeviceList"
+                        [formControl]="
+                          deviceFormGroup.get('tacacsDeviceGroup').get('tacacsDeviceGroupName')
+                        "
+                        optionLabel="tacacsDeviceGroupName"
+                        optionValue="tacacsDeviceGroupName"
+                        placeholder="Select TacacsDeviceGroup"
+                        filter="true"
+                        filterBy="name"
+                        (onChange)="tacacsDeviceGroupName($event)"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted &&
+                            deviceFormGroup.get('tacacsDeviceGroup').get('tacacsDeviceGroupName')
+                              .errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          submitted &&
+                          deviceFormGroup.get('tacacsDeviceGroup').get('tacacsDeviceGroupName')
+                            .errors
+                        "
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted &&
+                            deviceFormGroup.get('tacacsDeviceGroup').get('tacacsDeviceGroupName')
+                              .errors.required
+                          "
+                        >
+                          {{ title }} tacacsDeviceGroup is required.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br />
+                <div class="addUpdateBtn">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="submit"
+                    (click)="addEditDevice(deviceFormGroup.get('id').value)"
+                  >
+                    <i class="fa fa-check-circle"></i>
+                    {{ editMode ? "Update" : "Add" }} {{ title }} Device
+                  </button>
+                  <br />
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

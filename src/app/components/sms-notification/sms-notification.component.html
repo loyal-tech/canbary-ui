@@ -1,0 +1,456 @@
+<div class="">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- User Data -->
+      <div class="panel top">
+        <!-- <div *ngIf="alert_search_error_message" class="alert alert-warning alert-dismissible" role="alert">
+            <strong><i class="fa fa-warning"></i></strong> {{ errorMsg }}
+            <button type="button" (click)="clearMessageAlert()" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div> -->
+        <div class="panel-heading">
+          <h3 class="panel-title">SMS Notification Management</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#searchSMS"
+              aria-expanded="false"
+              aria-controls="searchSMS"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="searchSMS" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="searchForm">
+              <form class="form-auth-small" [formGroup]="searchForm">
+                <div class="col-md-3" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px">Mobile Number:</label>
+                </div>
+                <div class="col-md-5" style="padding-left: 0%">
+                  <input
+                    type="text"
+                    name="sourceName"
+                    class="form-control"
+                    placeholder="Enter Mobile Number"
+                    formControlName="mobileNo"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchForm.controls.mobileNo.errors
+                    }"
+                    [attr.maxLength]="commondropdownService.maxMobileLength"
+                  />
+
+                  <!-- Validation Messages -->
+                  <div
+                    *ngIf="searchSubmitted && searchForm.controls.mobileNo.errors"
+                    class="errorWrap text-danger"
+                  >
+                    <div *ngIf="searchForm.controls.mobileNo.errors.required">
+                      Mobile Number is required.
+                    </div>
+
+                    <div
+                      *ngIf="
+                        searchForm.controls.mobileNo.errors.minlength ||
+                        searchForm.controls.mobileNo.errors.maxlength
+                      "
+                    >
+                      <ng-container
+                        *ngIf="
+                          commondropdownService.minMobileLength ===
+                            commondropdownService.maxMobileLength;
+                          else rangeLength
+                        "
+                      >
+                        Mobile Number must be exactly
+                        {{ commondropdownService.minMobileLength }} digits.
+                      </ng-container>
+                      <ng-template #rangeLength>
+                        Mobile Number must be between
+                        {{ commondropdownService.minMobileLength }} and
+                        {{ commondropdownService.maxMobileLength }} digits.
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button type="submit" class="btn btn-primary" (click)="searchBySourceName()">
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button type="reset" class="btn btn-default" (click)="clearSearchForm()">
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- <div class="panel-body no-padding panel-udata">
+            <div class="col-md-6 pcol" *ngIf="createAccess">
+              <div class="dbox">
+                <a class="detailOnAnchorClick">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Create SMS Details</h5>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 pcol">
+              <div class="dbox">
+                <a (click)="clearSearchForm()" class="detailOnAnchorClick">
+                  <img src="../../../assets/img/i01.png" style="width: 32px" />
+                  <h5>Search SMS Details</h5>
+                </a>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 left">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">SMS Details</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#ListSMS"
+              aria-expanded="false"
+              aria-controls="ListSMS"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="ListSMS" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Event Type</th>
+                  <th>Mobile No</th>
+                  <th>Event Time</th>
+                  <th>Status</th>
+                  <th *ngIf="editAccess || deleteAccess || sendAccess">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let group of groupData
+                      | paginate
+                        : {
+                            id: 'listing_groupdata',
+                            itemsPerPage: itemsPerPage,
+                            currentPage: currentPage,
+                            totalItems: totalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td *ngIf="group.eventName">{{ group.eventName }}</td>
+                  <td *ngIf="!group.eventName">-</td>
+                  <td>{{ group.mobileNo }}</td>
+                  <td>{{ group.date }}</td>
+                  <td>{{ group.status }}</td>
+                  <td class="btnAction" *ngIf="editAccess || deleteAccess || sendAccess">
+                    <a
+                      *ngIf="editAccess"
+                      (click)="editSmsById(group.smsId, i)"
+                      class="curson_pointer"
+                      title="Edit"
+                    >
+                      <img src="assets/img/ioc01.jpg" />
+                    </a>
+                    <a
+                      *ngIf="deleteAccess"
+                      (click)="deleteConfirm(group.smsId)"
+                      class="curson_pointer"
+                      title="Delete"
+                    >
+                      <img src="assets/img/ioc02.jpg" />
+                    </a>
+                    <span *ngIf="group.status != 'Sent' && sendAccess">
+                      <a type="button" (click)="sendSmsById(group.smsId)" class="curson_pointer">
+                        <img
+                          class="icon"
+                          src="assets/img/icons-02.png"
+                          style="display: inline-flex"
+                          title="Send SMS"
+                        />
+                      </a>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <div class="pagination_Dropdown">
+              <pagination-controls
+                id="listing_groupdata"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+
+    <div class="col-md-6 right">
+      <!-- Form Design -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} SMS Details</h3>
+          <div class="right">
+            <button
+              type="button"
+              class="btn-toggle-collapse"
+              data-toggle="collapse"
+              data-target="#CreateSMS"
+              aria-expanded="false"
+              aria-controls="CreateSMS"
+            >
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+          Sorry you have not privilege to create operation!
+        </div>
+        <div *ngIf="createAccess || (editMode && editAccess)">
+          <div id="CreateSMS" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <div>
+                <form class="form-auth-small" [formGroup]="smsDetailsForm">
+                  <div>
+                    <label>Event Type *</label>
+                    <p-dropdown
+                      [options]="eventTypeValue.eventList"
+                      placeholder="Select Event Type"
+                      optionLabel="eventName"
+                      optionValue="eventId"
+                      formControlName="eventId"
+                      filter="true"
+                      filterBy="eventName"
+                      [ngClass]="{
+                        'is-invalid': submitted && smsDetailsForm.controls.eventId.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && smsDetailsForm.controls.eventId.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && smsDetailsForm.controls.eventId.errors.required"
+                      >
+                        Event Type is required
+                      </div>
+                    </div>
+                  </div>
+                  <br />
+                  <div>
+                    <label>Source Name *</label>
+                    <p-dropdown
+                      [options]="sourceNameValue"
+                      placeholder="Select Group Status"
+                      optionLabel="label"
+                      optionValue="label"
+                      formControlName="sourceName"
+                      filter="true"
+                      filterBy="label"
+                      [ngClass]="{
+                        'is-invalid': submitted && smsDetailsForm.controls.sourceName.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && smsDetailsForm.controls.sourceName.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && smsDetailsForm.controls.sourceName.errors.required"
+                      >
+                        Source Name is required
+                      </div>
+                    </div>
+                    <!-- <select class="form-control" name="sourceName" id="sourceName" #t ngModel>
+                <option value="" selected>Select source name</option>
+                <option *ngFor="let type of sourceNameValue; let i = index" [value]="type"
+                  [selected]="i == 0 ? true : false">
+                  {{ type }}
+                </option>
+              </select> -->
+                  </div>
+                  <br />
+                  <label>Mobile No *</label>
+                  <div style="width: 100%; display: flex">
+                    <!-- <div style="width: 20%"></div> -->
+                    <div style="width: 15%">
+                      <p-dropdown
+                        id="countryCode"
+                        [filter]="true"
+                        [options]="countries"
+                        placeholder="+91"
+                        optionLabel="dial_code"
+                        optionValue="dial_code"
+                        formControlName="countryCode"
+                        filter="true"
+                        filterBy="dial_code"
+                      ></p-dropdown>
+                      <!-- <div class="errorWrap text-danger" *ngIf="
+                                                submitted && smsDetailsForm.controls.countryCode.errors
+                                              ">
+                    <div class="error text-danger" *ngIf="
+                                                  submitted &&
+                                                  smsDetailsForm.controls.countryCode.errors.required
+                                                ">
+                      Code is required
+                    </div>
+                  </div> -->
+                    </div>
+                    <div style="width: 80%">
+                      <input
+                        type="text"
+                        name="mobileNo"
+                        class="form-control"
+                        placeholder="Enter Mobile No"
+                        formControlName="mobileNo"
+                        [attr.maxLength]="commondropdownService.maxMobileLength"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted &&
+                            smsDetailsForm.controls.mobileNo.errors &&
+                            smsDetailsForm.controls.mobileNo.touched
+                        }"
+                      />
+
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          submitted &&
+                          smsDetailsForm.controls.mobileNo.errors &&
+                          smsDetailsForm.controls.mobileNo.touched
+                        "
+                      >
+                        <!-- Required -->
+                        <div *ngIf="smsDetailsForm.controls.mobileNo.errors.required">
+                          Mobile No is required.
+                        </div>
+
+                        <!-- Min/Max Length -->
+                        <div
+                          *ngIf="
+                            smsDetailsForm.controls.mobileNo.errors.minlength ||
+                            smsDetailsForm.controls.mobileNo.errors.maxlength
+                          "
+                        >
+                          <ng-container
+                            *ngIf="
+                              commondropdownService.minMobileLength ===
+                                commondropdownService.maxMobileLength;
+                              else rangeLength
+                            "
+                          >
+                            Mobile Number must be exactly
+                            {{ commondropdownService.minMobileLength }} digits.
+                          </ng-container>
+                          <ng-template #rangeLength>
+                            Mobile Number must be between
+                            {{ commondropdownService.minMobileLength }} and
+                            {{ commondropdownService.maxMobileLength }} digits.
+                          </ng-template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <br />
+                  <label>Message *</label>
+                  <textarea
+                    name="message"
+                    id="message"
+                    class="form-control"
+                    placeholder="Enter message"
+                    formControlName="message"
+                    [ngClass]="{
+                      'is-invalid': submitted && smsDetailsForm.controls.message.errors
+                    }"
+                  ></textarea>
+                  <!-- <input type="text" name="message" class="form-control" placeholder="Enter message" ngModel> -->
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && smsDetailsForm.controls.message.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="submitted && smsDetailsForm.controls.message.errors.required"
+                    >
+                      Message is required
+                    </div>
+                  </div>
+                  <br />
+                  <!-- <input type="submit" class="form-control"> -->
+                  <div class="addUpdateBtn">
+                    <button type="submit" class="btn btn-primary" (click)="addSmsDetails()">
+                      <i class="fa fa-check-circle"></i>
+                      {{ editMode ? "Update" : "Add" }} SMS
+                    </button>
+                    <br />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END Form Design -->
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Javascript -->
+  <!-- <script src="../../../assets/scripts/radius-group.js"></script> -->
+</div>

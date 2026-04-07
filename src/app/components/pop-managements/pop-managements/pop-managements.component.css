@@ -1,0 +1,6 @@
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #f7b206 !important ;
+}
+ .underDevelopBadge {
+    padding: 6px 10px !important;
+  }

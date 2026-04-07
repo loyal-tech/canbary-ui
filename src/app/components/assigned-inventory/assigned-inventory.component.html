@@ -1,0 +1,2898 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Inventories</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#assignInven"
+            aria-expanded="false"
+            aria-controls="assignInven"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="assignInven" class="panel-collapse collapse in">
+        <div class="panel-body no-padding panel-udata">
+          <div class="pcol col-md-6">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails1
+                }"
+              >
+                <a (click)="showAllAssignedInventries()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>All Inventories</h5>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="pcol col-md-6" *ngIf="assignedIntAccess">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails2
+                }"
+              >
+                <a (click)="showInventoryAssignedToCustomer()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Assigned Inventories</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata" *ngIf="showInventoryAssignedFlag">
+          <div class="pcol col-md-4" *ngIf="intAssignedToCustomerAccess">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails3
+                }"
+              >
+                <a (click)="showInventoryAssignedToCustomer()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Inventory Assigned To Customer</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="pcol col-md-4" *ngIf="showInventoryAssignedFlag && intAssignedToPOPAccess">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails4
+                }"
+              >
+                <a (click)="showInventoryAssignedToPOP()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Inventory Assigned To POP</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+          <div
+            class="pcol col-md-4"
+            *ngIf="showInventoryAssignedFlag && intAssignedToServiceAreaAccess"
+          >
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails5
+                }"
+              >
+                <a (click)="showInventoryAssignedToServiceArea()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Inventory Assigned To Service Area</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata" *ngIf="showInventoryAssignedCustomerFlag">
+          <div class="pcol col-md-6" *ngIf="assignSerializedItem">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails6
+                }"
+              >
+                <a (click)="showInventoryAssignedToCustomer()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Assigned Serialized Item</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="pcol col-md-6" *ngIf="assignNonSerializedItem">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails7
+                }"
+              >
+                <a
+                  (click)="getNonSerializedItemCustomerInventoryMappingByStaffId()"
+                  class="curson_pointer"
+                >
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Assigned NonSerialized Item</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata" *ngIf="showInventoryAssignedPopFlag">
+          <div class="pcol col-md-6" *ngIf="assignSerializedItem">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails8
+                }"
+              >
+                <a (click)="showInventoryAssignedToPOP()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Assigned Serialized Item</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="pcol col-md-6" *ngIf="assignNonSerializedItem">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails9
+                }"
+              >
+                <a
+                  (click)="getNonSerializedItemPopByInventoryMappingByStaffId()"
+                  class="curson_pointer"
+                >
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Assigned NonSerialized Item</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata" *ngIf="showInventoryAssignedServiceAreaFlag">
+          <div class="pcol col-md-6" *ngIf="assignSerializedItem">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails10
+                }"
+              >
+                <a (click)="showInventoryAssignedToServiceArea()" class="curson_pointer">
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Assigned Serialized Item</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="pcol col-md-6" *ngIf="assignNonSerializedItem">
+            <div>
+              <div
+                class="dbox"
+                [ngClass]="{
+                  activeSubMenu: isDetails11
+                }"
+                class="dbox"
+              >
+                <a
+                  (click)="getNonSerializedItemServiceAreaByInventoryMappingByStaffId()"
+                  class="curson_pointer"
+                >
+                  <img
+                    src="../../../assets/img/All_Icons/17_Inventory_Management/04_inventory-to-staff_BW.png"
+                    style="width: 32px"
+                  />
+                  <h5>Assigned NonSerialized Item</h5>
+                  <!-- <p>Search Partner </p> -->
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="showStaffsInventory">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Assigned Inventory</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#showStaffINvo"
+            aria-expanded="false"
+            aria-controls="showStaffINvo"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="showStaffINvo" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchProductName"
+                class="form-control"
+                placeholder="Enter Product Name"
+                (keydown.enter)="searchProduct()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchProduct()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchProduct()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th *ngIf="InitialOutwardNumberFlag">Outward Number</th>
+                    <th *ngIf="outwardNumberFlag">Outward Number</th>
+                    <th>Product Name</th>
+                    <!-- <th>Warehouse Name</th> -->
+                    <!-- <th>Inward Number</th> -->
+                    <th *ngIf="InitialOutwardNumberFlag">Outward Date</th>
+                    <th *ngIf="outwardNumberFlag">Outward Date</th>
+                    <th>Qty.</th>
+                    <th>Used Qty.</th>
+                    <th>Available Qty.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignListdataitemsPerPage,
+                              currentPage: assigntPageProductListdata,
+                              totalItems: assignListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td *ngIf="InitialOutwardNumberFlag">
+                      {{ assignedInventory.outwardId.outwardNumber }}
+                    </td>
+                    <td *ngIf="outwardNumberFlag">{{ assignedInventory.outwardNumber }}</td>
+                    <td>{{ assignedInventory.productId.name }}</td>
+                    <!-- <td
+                    *ngFor="
+                      let warehouseName of this.warehouseNamesList
+                        | paginate
+                          : {
+                              id: 'warehouseNamesList',
+                              itemsPerPage: assignListdataitemsPerPage,
+                              currentPage: assigntPageProductListdata,
+                              totalItems: assignListdatatotalRecords
+                            };
+                      index as i
+                    ">{{ warehouseName[0] }}</td> -->
+                    <!-- <td *ngIf="assignedInventory.wareHouseId">{{ assignedInventory.wareHouseId.name  }}</td>
+                    <td *ngIf="!assignedInventory.wareHouseId">-</td> -->
+                    <!-- <td>{{ assignedInventory.inwardNumber }}</td> -->
+                    <td *ngIf="InitialOutwardNumberFlag">
+                      {{ assignedInventory.outwardId.outwardDateTime | date: "short" }}
+                    </td>
+                    <td *ngIf="outwardNumberFlag">
+                      {{ assignedInventory.outwardDateTime | date: "short" }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.qty }}
+                      {{ assignedInventory.unit }}
+                    </td>
+
+                    <td>
+                      {{ assignedInventory.usedQty }}
+                      {{ assignedInventory.unit }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.unusedQty }}
+                      {{ assignedInventory.unit }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedProductList((assigntPageProductListdata = $event))"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="assignListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Serialized Item To Customer Modal -->
+<div class="row" *ngIf="showCustomerAssignedInventory && assignSerializedItem">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Serialized Inventory Assigned To Customer</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#assignCustomer"
+            aria-expanded="false"
+            aria-controls="assignCustomer"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="assignCustomer" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <div class="form-group">
+                <p-dropdown
+                  [options]="filterByCustData"
+                  optionValue="value"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select Search By"
+                  [(ngModel)]="searchByFilterColumn"
+                    (onChange)="selSearchOption($event)"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchName"
+                class="form-control"
+                placeholder="Enter Name"
+                (keydown.enter)="searchSerializedCustomer()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchSerializedCustomer()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchSerializedCustomer()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <!-- <th>Outward Number</th> -->
+                    <th>Serial Number</th>
+                    <th>Mac Address</th>
+                    <th>Product Name</th>
+                    <th>Customer Firstname</th>
+                    <th>Customer Lastname</th>
+                    <th>Service Area</th>
+                    <th>Assignee Name</th>
+                    <th>Assigned Qty.</th>
+                    <th>Assigned Date</th>
+                    <th>Expiry Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignCustomerListdataitemsPerPage,
+                              currentPage: currentPageAssigntListdata,
+                              totalItems: assignCustomertListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <!-- <td>{{ assignedInventory.outwardNumber }}</td> -->
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].serialNumber }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].macAddress }}</td>
+                    <td>{{ assignedInventory.productName }}</td>
+                    <td>{{ assignedInventory.customerFirstName }}</td>
+                    <td>{{ assignedInventory.customerLastName }}</td>
+                    <td>{{ assignedInventory.serviceAreaName }}</td>
+                    <td>{{ assignedInventory.assigneeName }}</td>
+                    <td>
+                      <!-- <a
+                        data-target="#macDetailsModal"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        style="color: #f7b206"
+                        class="curson_pointer"
+                        (click)="
+                          openAssignedQtyMACMapping(
+                            assignedInventory.custId,
+                            assignedInventory.outId,
+                            assignedInventory.id,
+                            assignedInventory.hasMac,
+                            assignedInventory.hasSerial
+                          )
+                        "
+                      >
+                        {{ assignedInventory.qty }}
+                      </a> -->
+                      {{ assignedInventory.qty }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.assignedDateTime | date: "short" }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.expDate | date: "short" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="
+                    pageChangedassignCustomerList((currentPageAssigntListdata = $event))
+                  "
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="assignCustomerListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPageAssignCustomer($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- NON Serialized Item To Customer Modal -->
+<div class="row" *ngIf="showNonSerializedCustomerAssignedInventory && assignNonSerializedItem">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Non Serialized Inventory Assigned To Customer</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#assignCustomer"
+            aria-expanded="false"
+            aria-controls="assignCustomer"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="assignCustomer" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <div class="form-group">
+                <p-dropdown
+                  [options]="filterByCustData"
+                  optionValue="value"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select Search By"
+                  [(ngModel)]="searchByFilterColumn"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchNameNonSeriCust"
+                class="form-control"
+                placeholder="Enter Name"
+                (keydown.enter)="searchNonSerializedCustomer()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchNonSerializedCustomer()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchNonSerializedCustomer()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <!-- <th>Outward Number</th> -->
+                    <!-- <th>Serial Number</th>
+                    <th>Mac Address</th> -->
+                    <th>Product Name</th>
+                    <th>Customer Firstname</th>
+                    <th>Customer Lastname</th>
+                    <th>Service Area</th>
+                    <th>Assignee Name</th>
+                    <th>Assigned Qty.</th>
+                    <th>Assigned Date</th>
+                    <!-- <th>Expiry Date</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedNonSerializedCustInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignNonSerializedCustomerListdataitemsPerPage,
+                              currentPage: currentCustomerNonSerializedPageAssigntListdata,
+                              totalItems: assignNonSerializedCustomertListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <!-- <td>{{ assignedInventory.outwardNumber }}</td> -->
+                    <!-- <td>{{ assignedInventory.inOutWardMACMapping[0].serialNumber }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].macAddress }}</td> -->
+                    <td>{{ assignedInventory.productName }}</td>
+                    <td>{{ assignedInventory.customerFirstName }}</td>
+                    <td>{{ assignedInventory.customerLastName }}</td>
+                    <td>{{ assignedInventory.serviceAreaName }}</td>
+                    <td>{{ assignedInventory.assigneeName }}</td>
+                    <td>
+                      {{ assignedInventory.qty }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.assignedDateTime | date: "short" }}
+                    </td>
+                    <!-- <td>
+                      {{ assignedInventory.expDate | date : "short" }}
+                    </td> -->
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="
+                    pageChangedassignNonSerializedCustomerList(
+                      (currentCustomerNonSerializedPageAssigntListdata = $event)
+                    )
+                  "
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="assignNonSerializedCustomerListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPageAssignNonSerializedCustomer($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Serialized Item To POP Modal -->
+<div class="row" *ngIf="showSerializedPOPAssignedInventory && assignSerializedItem">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Serialized Inventory Assigned To POP</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#assignCustomer"
+            aria-expanded="false"
+            aria-controls="assignCustomer"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="assignCustomer" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <div class="form-group">
+                <p-dropdown
+                  [options]="filterByPOPData"
+                  optionValue="value"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select Search By"
+                  [(ngModel)]="searchByFilterColumn"
+                  #ddlSearchBy
+                  (onChange)="popSearchaByChange($event, ddlSearchBy)"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div *ngIf="isPop" class="col-lg-3 col-md-3">
+              <p-dropdown
+                [options]="popListData"
+                optionValue="name"
+                optionLabel="name"
+                filter="true"
+                filterBy="label"
+                placeholder="Select POP"
+                [(ngModel)]="searchNameSeriPop"
+              >
+              </p-dropdown>
+            </div>
+            <div *ngIf="isProduct" class="col-lg-3 col-md-3">
+              <p-dropdown
+                [options]="commondropdownService.activeProductList"
+                optionValue="name"
+                optionLabel="name"
+                filter="true"
+                filterBy="label"
+                placeholder="Select Product"
+                [(ngModel)]="searchNameSeriPop"
+              >
+              </p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchSerializedPop()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchSerializedPop()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <!-- <th>Outward Number</th> -->
+                    <th>Pop Name</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th>Serial Number</th>
+                    <th>Mac Address</th>
+                    <!-- <th>Customer Firstname</th> -->
+                    <!-- <th>Customer Lastname</th> -->
+                    <!-- <th>Service Area</th> -->
+                    <th>Assignee Name</th>
+                    <th>Assigned Qty.</th>
+                    <th>Assigned Date</th>
+                    <!-- <th>Expiry Date</th> -->
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedSerializedPOPInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignSerializedPopListdataitemsPerPage,
+                              currentPage: currentPopSerializedPageAssigntListdata,
+                              totalItems: assignSerializedPopListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <!-- <td>{{ assignedInventory.outwardNumber }}</td> -->
+                    <td>{{ assignedInventory.popName }}</td>
+                    <td>{{ assignedInventory.productName }}</td>
+                    <td>{{ assignedInventory.deviceType }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].serialNumber }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].macAddress }}</td>
+                    <!-- <td>{{ assignedInventory.customerFirstName }}</td>
+                    <td>{{ assignedInventory.customerLastName }}</td> -->
+                    <!-- <td>{{ assignedInventory.serviceAreaName }}</td> -->
+                    <td>{{ assignedInventory.assigneeName }}</td>
+                    <td>
+                      <!-- <a
+                        data-target="#macDetailsModal"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        style="color: #f7b206"
+                        class="curson_pointer"
+                        (click)="
+                          openAssignedQtyMACMapping(
+                            assignedInventory.custId,
+                            assignedInventory.outId,
+                            assignedInventory.id,
+                            assignedInventory.hasMac,
+                            assignedInventory.hasSerial
+                          )
+                        "
+                      >
+                        {{ assignedInventory.qty }}
+                      </a> -->
+                      {{ assignedInventory.qty }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.assignedDateTime | date: "short" }}
+                    </td>
+                    <!-- <td>
+                      {{ assignedInventory.expDate | date : "short" }}
+                    </td> -->
+                    <td>
+                      <button
+                        title="View Inventory"
+                        type="button"
+                        (click)="viewInventory(assignedInventory)"
+                        class="btn btn-primary"
+                        style="
+                          border-radius: 5px;
+                          padding: 5px 10px;
+                          line-height: 1.5;
+                          margin-left: 10px;
+                        "
+                      >
+                        <i _ngcontent-nrc-c2="" class="fa fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="
+                    pageChangedassignPOPList((currentPopSerializedPageAssigntListdata = $event))
+                  "
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="assignSerializedPopListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPageAssignPOP($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Non Serialized Item To POP Modal -->
+<div class="row" *ngIf="showNonSerializedPOPAssignedInventory && assignNonSerializedItem">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Non Serialized Inventory Assigned To Pop</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#assignCustomer"
+            aria-expanded="false"
+            aria-controls="assignCustomer"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="assignCustomer" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <div class="form-group">
+                <p-dropdown
+                  [options]="filterByPOPData"
+                  optionValue="value"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select Search By"
+                  [(ngModel)]="searchByFilterColumn"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchNameNonSeriPop"
+                class="form-control"
+                placeholder="Enter Name"
+                (keydown.enter)="searchNonSerializedPop()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchNonSerializedPop()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchNonSerializedPop()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <!-- <th>Outward Number</th> -->
+                    <!-- <th>Serial Number</th>
+                    <th>Mac Address</th> -->
+                    <th>Product Name</th>
+                    <!-- <th>Customer Firstname</th>
+                    <th>Customer Lastname</th> -->
+                    <th>Pop Name</th>
+                    <!-- <th>Service Area</th> -->
+                    <th>Assignee Name</th>
+                    <th>Assigned Qty.</th>
+                    <th>Assigned Date</th>
+                    <!-- <th>Expiry Date</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedNonSerializePOPInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignNonSerializedPopListdataitemsPerPage,
+                              currentPage: currentPopNonSerializedPageAssigntListdata,
+                              totalItems: assignNonSerializedPopListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <!-- <td>{{ assignedInventory.outwardNumber }}</td> -->
+                    <!-- <td>{{ assignedInventory.inOutWardMACMapping[0].serialNumber }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].macAddress }}</td> -->
+                    <td>{{ assignedInventory.productName }}</td>
+                    <!-- <td>{{ assignedInventory.customerFirstName }}</td>
+                    <td>{{ assignedInventory.customerLastName }}</td>
+                    <td>{{ assignedInventory.serviceAreaName }}</td> -->
+                    <td>{{ assignedInventory.popName }}</td>
+                    <td>{{ assignedInventory.assigneeName }}</td>
+                    <td>
+                      {{ assignedInventory.qty }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.assignedDateTime | date: "short" }}
+                    </td>
+                    <!-- <td>
+                      {{ assignedInventory.expDate | date : "short" }}
+                    </td> -->
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="
+                    pageChangedassignNonSerializedPOPList(
+                      (currentPopNonSerializedPageAssigntListdata = $event)
+                    )
+                  "
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPageAssignNonSerializedPOP($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Serialized Item To Service Area Modal -->
+<div class="row" *ngIf="showSerializedServiceAreaAssignedInventory && assignSerializedItem">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Serialized Inventory Assigned To Service Area</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#assignCustomer"
+            aria-expanded="false"
+            aria-controls="assignCustomer"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="assignCustomer" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <div class="form-group">
+                <p-dropdown
+                  [options]="filterByServiceAreaData"
+                  optionValue="value"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select Search By"
+                  [(ngModel)]="searchByFilterColumn"
+                  #ddlServcieAreaSearchBy
+                  (onChange)="serviceAreaSearchaByChange($event, ddlServcieAreaSearchBy)"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div *ngIf="isServcieArea" class="col-lg-3 col-md-3">
+              <!-- <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchNameSeriServiceArea"
+                class="form-control"
+                placeholder="Enter Name"
+                (keydown.enter)="searchSerializedServiceArea()"
+              /> -->
+              <p-dropdown
+                [options]="servcieAreaListData"
+                optionValue="name"
+                optionLabel="name"
+                filter="true"
+                filterBy="label"
+                placeholder="Select Servcie Area"
+                [(ngModel)]="searchNameSeriServiceArea"
+              >
+              </p-dropdown>
+            </div>
+            <div *ngIf="isServiceAreaProduct" class="col-lg-3 col-md-3">
+              <p-dropdown
+                [options]="commondropdownService.activeProductList"
+                optionValue="name"
+                optionLabel="name"
+                filter="true"
+                filterBy="label"
+                placeholder="Select Product"
+                [(ngModel)]="searchNameSeriServiceArea"
+              >
+              </p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchSerializedServiceArea()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchSerializedServiceArea()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <!-- <th>Outward Number</th> -->
+                    <th>Service Area Name</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th>Serial Number</th>
+                    <th>Mac Address</th>
+                    <th>Assignee Name</th>
+                    <th>Assigned Qty.</th>
+                    <th>Assigned Date</th>
+                    <!-- <th>Expiry Date</th> -->
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedSerializedServiceAreaInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignSerializedServiceAreaListdataitemsPerPage,
+                              currentPage: currentServiceAreaSerializedPageAssigntListdata,
+                              totalItems: assignSerializedServiceAreaListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <!-- <td>{{ assignedInventory.outwardNumber }}</td> -->
+                    <td>{{ assignedInventory.serviceAreaName }}</td>
+                    <td>{{ assignedInventory.productName }}</td>
+                    <td>{{ assignedInventory.deviceType }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].serialNumber }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].macAddress }}</td>
+                    <td>{{ assignedInventory.assigneeName }}</td>
+                    <td>
+                      <!-- <a
+                        data-target="#macDetailsModal"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        style="color: #f7b206"
+                        class="curson_pointer"
+                        (click)="
+                          openAssignedQtyMACMapping(
+                            assignedInventory.custId,
+                            assignedInventory.outId,
+                            assignedInventory.id,
+                            assignedInventory.hasMac,
+                            assignedInventory.hasSerial
+                          )
+                        "
+                      >
+                        {{ assignedInventory.qty }}
+                      </a> -->
+                      {{ assignedInventory.qty }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.assignedDateTime | date: "short" }}
+                    </td>
+                    <!-- <td>
+                      {{ assignedInventory.expDate | date : "short" }}
+                    </td> -->
+                    <td>
+                      <button
+                        type="button"
+                        (click)="viewInventory(assignedInventory)"
+                        class="btn btn-primary"
+                        style="
+                          border-radius: 5px;
+                          padding: 5px 10px;
+                          line-height: 1.5;
+                          margin-left: 10px;
+                        "
+                        title="View Inventory"
+                      >
+                        <i _ngcontent-nrc-c2="" class="fa fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="
+                    pageChangedassignServiceAreaList(
+                      (currentServiceAreaSerializedPageAssigntListdata = $event)
+                    )
+                  "
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="assignSerializedServiceAreaListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPageAssignServiceArea($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Non Serialized Item To Service Area Modal -->
+<div class="row" *ngIf="showNonSerializedServiceAreaAssignedInventory && assignNonSerializedItem">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Non Serialized Inventory Assigned To Service Area</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#assignCustomer"
+            aria-expanded="false"
+            aria-controls="assignCustomer"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="assignCustomer" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <div class="form-group">
+                <p-dropdown
+                  [options]="filterByServiceAreaData"
+                  optionValue="value"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select Search By"
+                  [(ngModel)]="searchByFilterColumn"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchNameNonSeriServiceArea"
+                class="form-control"
+                placeholder="Enter Name"
+                (keydown.enter)="searchNonSerializedServiceArea()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchNonSerializedServiceArea()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchNonSerializedServiceArea()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <!-- <th>Outward Number</th> -->
+                    <!-- <th>Serial Number</th>
+                    <th>Mac Address</th> -->
+                    <th>Product Name</th>
+                    <!-- <th>Customer Firstname</th>
+                    <th>Customer Lastname</th> -->
+                    <th>Service Area Name</th>
+                    <th>Assignee Name</th>
+                    <th>Assigned Qty.</th>
+                    <th>Assigned Date</th>
+                    <!-- <th>Expiry Date</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedNonSerializedServiceAreaInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignNonSerializedServiceAreaListdataitemsPerPage,
+                              currentPage: currentServiceAreaNonSerializedPageAssigntListdata,
+                              totalItems: assignNonSerializedServiceAreaListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <!-- <td>{{ assignedInventory.outwardNumber }}</td> -->
+                    <!-- <td>{{ assignedInventory.inOutWardMACMapping[0].serialNumber }}</td>
+                    <td>{{ assignedInventory.inOutWardMACMapping[0].macAddress }}</td> -->
+                    <td>{{ assignedInventory.productName }}</td>
+                    <!-- <td>{{ assignedInventory.customerFirstName }}</td>
+                    <td>{{ assignedInventory.customerLastName }}</td> -->
+                    <td>{{ assignedInventory.serviceAreaName }}</td>
+                    <td>{{ assignedInventory.assigneeName }}</td>
+                    <td>
+                      {{ assignedInventory.qty }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.assignedDateTime | date: "short" }}
+                    </td>
+                    <!-- <td>
+                      {{ assignedInventory.expDate | date : "short" }}
+                    </td> -->
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="
+                    pageChangedassignNonSerializedServiceAreaList(
+                      (currentServiceAreaNonSerializedPageAssigntListdata = $event)
+                    )
+                  "
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="assignNonSerializedServiceAreaListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPageAssignNonSerializedServiceArea($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="showAllAssignedInventrie">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">All Inventories</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#showStaffINvo"
+            aria-expanded="false"
+            aria-controls="showStaffINvo"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="showStaffINvo" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <!-- <form [formGroup]="assignedAllFormGroup"> -->
+          <div class="row">
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Owner Type</label>
+                <p-dropdown
+                  [options]="destinationType"
+                  optionValue="label"
+                  optionLabel="label"
+                  filter="true"
+                  filterBy="label"
+                  placeholder="Select Owner Type"
+                  [(ngModel)]="searchOwnerType"
+                  (onChange)="this.getDestinations($event)"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Owner</label>
+                <p-dropdown
+                  *ngIf="!isDestAStaffOrCustomer"
+                  [options]="destinations"
+                  [(ngModel)]="searchOwner"
+                  optionLabel="name"
+                  optionValue="id"
+                  filter="true"
+                  filterBy="name"
+                  placeholder="Select Owner"
+                ></p-dropdown>
+
+                <p-dropdown
+                  *ngIf="isDestAStaffOrCustomer"
+                  [options]="destinations"
+                  [(ngModel)]="searchOwner"
+                  optionLabel="username"
+                  optionValue="id"
+                  filter="true"
+                  filterBy="username"
+                  placeholder="Select Destination"
+                ></p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Product</label>
+                <p-dropdown
+                  [options]="commondropdownService.activeProductList"
+                  [(ngModel)]="searchProductVal"
+                  optionLabel="name"
+                  optionValue="id"
+                  filter="true"
+                  filterBy="name"
+                  placeholder="Select Product"
+                ></p-dropdown>
+              </div>
+            </div>
+            <!-- <div class="col-lg-3">
+              <div class="form-group">
+                <label>Inward</label>
+                <p-dropdown
+                  [options]="commondropdownService.activeInwardList"
+                  [(ngModel)]="searchInward"
+                  optionLabel="inwardNumber"
+                  optionValue="id"
+                  filter="true"
+                  filterBy="inwardNumber"
+                  placeholder="Select Inward"
+                ></p-dropdown>
+              </div>
+            </div> -->
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Serial Number</label>
+                <input
+                  type="text"
+                  [(ngModel)]="searchSerialNumber"
+                  class="form-control"
+                  placeholder="Enter Serial Number"
+                />
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Ownership</label>
+                <p-dropdown
+                  [options]="commondropdownService.ownershipTypeList"
+                  [(ngModel)]="searchOwnership"
+                  optionLabel="text"
+                  optionValue="value"
+                  filter="true"
+                  filterBy="text"
+                  placeholder="Select Ownership"
+                ></p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Status</label>
+                <p-dropdown
+                  [options]="commondropdownService.itemStatusList"
+                  [(ngModel)]="searchStatus"
+                  optionLabel="text"
+                  optionValue="value"
+                  filter="true"
+                  filterBy="text"
+                  placeholder="Select Status"
+                ></p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Item Type</label>
+                <p-dropdown
+                  [options]="commondropdownService.itemConditionList"
+                  [(ngModel)]="searchItemType"
+                  optionLabel="text"
+                  optionValue="value"
+                  filter="true"
+                  filterBy="text"
+                  placeholder="Select Item Type"
+                ></p-dropdown>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label>Warranty Status</label>
+                <p-dropdown
+                  [options]="commondropdownService.warrantyStatusList"
+                  [(ngModel)]="searchWarrantyStatus"
+                  optionLabel="text"
+                  optionValue="value"
+                  filter="true"
+                  filterBy="text"
+                  placeholder="Select Warranty Status"
+                ></p-dropdown>
+              </div>
+            </div>
+            <!-- <div class="col-lg-3">
+              <div class="form-group">
+                <label>Serial Number</label>
+                <input
+                  type="text"
+                  [(ngModel)]="searchSerialNumber"
+                  class="form-control"
+                  placeholder="Enter Serial Number"
+                />
+              </div>
+            </div> -->
+          </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-8 marginTopSearchBtn">
+              <div class="form-group d-flex align-items-center">
+                <button
+                  type="button"
+                  class="btn btn-primary mr-2"
+                  id="searchbtnn"
+                  (click)="searchInventory('')"
+                >
+                  <i class="fa fa-search"></i>
+                  Search
+                </button>
+
+                <button
+                  type="reset"
+                  class="btn btn-default mr-2"
+                  id="searchbtn"
+                  (click)="clearSearchInventory()"
+                >
+                  <i class="fa fa-refresh"></i>
+                  Clear
+                </button>
+                &nbsp;&nbsp;&nbsp;
+                <!-- Show total records inline -->
+                <span class="ml-2" *ngIf="assignAllListdatatotalRecords > 0">
+                  <strong>Total Records: {{ assignAllListdatatotalRecords }}</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- </form> -->
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="widthCheckboxColom">
+                      <div class="centerCheckbox">
+                        <p-checkbox
+                          name="allChecked"
+                          [(ngModel)]="ispaymentChecked"
+                          binary="true"
+                          (onChange)="allSelectBatch($event)"
+                        ></p-checkbox>
+                      </div>
+                    </th>
+                    <!-- <th>Inward Number</th> -->
+                    <!-- <th>Product Name</th> -->
+                    <!-- <th>Warehouse Name</th> -->
+                    <!-- <th>Mac</th> -->
+                    <th>Serial Number</th>
+                    <th>Product Name</th>
+                    <th>Type</th>
+                    <!-- <th>Warranty Period</th> -->
+                    <th>Customer Warranty</th>
+                    <th>OEM Warranty</th>
+                    <th>Status</th>
+                    <th>Ownership Status</th>
+                    <th>Owner type</th>
+                    <th>Owner name</th>
+                    <th>Download</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let assignedInventory of this.assignedAllInventoryList
+                        | paginate
+                          : {
+                              id: 'assignedInventoryListData',
+                              itemsPerPage: assignAllListdataitemsPerPage,
+                              currentPage: assigntAllPageProductListdata,
+                              totalItems: assignAllListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <div class="centerCheckbox">
+                        <p-checkbox
+                          class="p-field-checkbox"
+                          [inputId]="assignedInventory.id"
+                          [(ngModel)]="assignedInventory.isSinglepaymentChecked"
+                          (onChange)="addbatchChecked(assignedInventory.id, $event)"
+                          [binary]="true"
+                        ></p-checkbox>
+                      </div>
+                    </td>
+                    <!-- <td>
+                      {{ assignedInventory.currentInwardNumber }}
+
+                    </td> -->
+                    <!-- <td>
+                      {{ assignedInventory.productName }}
+                    </td> -->
+                    <!-- <td>
+                      {{ assignedInventory.mac }}
+                    </td> -->
+                    <td>
+                      <span *ngIf="assignedInventory.serialNumber">
+                        <a
+                          href="javascript:void(0)"
+                          class="curson_pointer"
+                          (click)="InventoryDetails(assignedInventory)"
+                          style="color: #f7b206"
+                        >
+                          {{ assignedInventory.serialNumber }}</a
+                        >
+                      </span>
+                      <span *ngIf="!assignedInventory.serialNumber">
+                        <a
+                          href="javascript:void(0)"
+                          class="curson_pointer"
+                          (click)="InventoryDetails(assignedInventory)"
+                          style="color: #f7b206"
+                        >
+                          -</a
+                        ></span
+                      >
+                    </td>
+                    <td>{{ assignedInventory.productName }}</td>
+                    <td>
+                      {{ assignedInventory.condition }}
+                    </td>
+                    <!-- <td>
+                      {{ assignedInventory.warrantyPeriod }}
+                    </td> -->
+                    <td>
+                      <span *ngIf="assignedInventory.warranty">
+                        {{ assignedInventory.warranty }}
+                        <span *ngIf="assignedInventory.warrantyPeriod">
+                          ({{ assignedInventory.warrantyPeriod }})
+                        </span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <span *ngIf="assignedInventory.warranty">
+                        {{ assignedInventory.oemWarrantyStatus }}
+                        <span *ngIf="assignedInventory.oemWarrantyRemainingDays">
+                          ({{ assignedInventory.oemWarrantyRemainingDays }})
+                        </span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <span
+                        class="badge badge-success"
+                        *ngIf="
+                          assignedInventory.itemStatus == 'Allocated' ||
+                          assignedInventory.itemStatus == 'Staff Allocated' ||
+                          assignedInventory.itemStatus == 'Released'
+                        "
+                      >
+                        {{ assignedInventory.itemStatus }}</span
+                      >
+                      <span
+                        class="badge badge-info"
+                        *ngIf="assignedInventory.itemStatus == 'UnAllocated'"
+                      >
+                        {{ assignedInventory.itemStatus }}</span
+                      >
+                      <span
+                        class="badge badge-primary"
+                        *ngIf="
+                          assignedInventory.itemStatus == 'Maintenance' ||
+                          assignedInventory.itemStatus == 'Returned'
+                        "
+                      >
+                        {{ assignedInventory.itemStatus }}</span
+                      >
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="assignedInventory.itemStatus == 'Defective'"
+                      >
+                        {{ assignedInventory.itemStatus }}</span
+                      >
+                    </td>
+                    <td>
+                      {{ assignedInventory.ownershipType }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.ownerType }}
+                    </td>
+                    <td>
+                      {{ assignedInventory.ownerName }}
+                    </td>
+                    <td>
+                      <a
+                        *ngIf="assignedInventory.filename"
+                        href="javascript:void(0)"
+                        style="color: #28a745; font-size: 20px"
+                        title="Download"
+                        (click)="
+                          downloadInvoice(
+                            assignedInventory.id,
+                            assignedInventory.itemConditionId,
+                            assignedInventory.filename
+                          )
+                        "
+                      >
+                        <img src="assets/img/pdf.png" style="width: 25px; height: 25px" />
+                      </a>
+                      <span *ngIf="assignedInventory.filename == null"> - </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="btnGrp" *ngIf="this.assignedAllInventoryList.length > 0">
+                <!-- <button type="submit" class="btn btn-primary" (click)="openReturnItemModal()">
+                  Return Item
+                </button> -->
+
+                &nbsp;
+                <!-- <button
+                type="submit"
+                class="btn btn-primary"
+                data-target="#ChangeTypeModal"
+                data-toggle="modal"
+                (click)="editItemsName()"
+              >
+                Change Type
+              </button> -->
+                <button
+                  *ngIf="changeTypeAccess"
+                  type="submit"
+                  class="btn btn-primary"
+                  data-backdrop="static"
+                  data-keyboard="false"
+                  (click)="openChangeTypeModal()"
+                >
+                  Change Type
+                </button>
+                &nbsp;
+                <button
+                  *ngIf="warrantyAccess"
+                  type="submit"
+                  class="btn btn-primary"
+                  data-backdrop="static"
+                  data-keyboard="false"
+                  (click)="openWarrantyStatusChangeModal()"
+                >
+                  Warranty
+                </button>
+                &nbsp;
+                <button
+                  *ngIf="statusAccess"
+                  type="submit"
+                  class="btn btn-primary"
+                  data-backdrop="static"
+                  data-keyboard="false"
+                  (click)="openInventoryStatusModal()"
+                >
+                  Status
+                </button>
+                &nbsp;
+                <button
+                  *ngIf="ownershipStatusAccess"
+                  type="submit"
+                  class="btn btn-primary"
+                  data-backdrop="static"
+                  data-keyboard="false"
+                  (click)="openItemOwnershipStatus()"
+                >
+                  Ownership Status
+                </button>
+              </div>
+              <br />
+              <br />
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="assignedInventoryListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageAllInventriesList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="assignAllListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalAllInventriesItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-dialog
+      header="Return Item Description"
+      [(visible)]="returnItemModal"
+      [style]="{ width: '75%' }"
+      [modal]="true"
+      [responsive]="true"
+      [draggable]="false"
+      [closable]="false"
+    >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <form [formGroup]="returnItemFormGroup">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Serial Number</th>
+                    <th>Condition</th>
+                    <th>Remark</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of returnItemFormArray.controls; let i = index">
+                    <td>{{ chakedData[i]?.serialNumber }}</td>
+                    <td>{{ chakedData[i]?.condition }}</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Remarks"
+                        [formControl]="row.get('remarks')"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          returnItemSubmitted &&
+                          returnItemFormArray.controls[i].get('remarks').errors?.required
+                        "
+                      >
+                        <div class="errorTxt text-danger">Remark is required.</div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            id="addAtt"
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            (click)="returnItemStatus()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="closeReturnItemModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </p-dialog>
+
+    <p-dialog
+      header="Change Item Type Description"
+      [(visible)]="ChangeTypeModal"
+      [style]="{ width: '70%' }"
+      [modal]="true"
+      [responsive]="true"
+      [draggable]="false"
+      [closable]="false"
+    >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <form [formGroup]="changeTypeFormGroup">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Serial Number</th>
+                    <th>Condition</th>
+                    <!-- <th>Remark</th> -->
+                    <th>Type</th>
+                    <th>Remark</th>
+                    <th>Comment</th>
+                    <th style="width: 20%">File</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of changeTypeFormArray.controls; let i = index">
+                    <td>{{ chakedData[i]?.serialNumber }}</td>
+                    <td>{{ chakedData[i]?.condition }}</td>
+                    <td>
+                      <select class="form-control" [formControl]="row.get('condition')">
+                        <option value="">Select Type</option>
+                        <option value="New">New</option>
+                        <option
+                          value="Refurbished"
+                          *ngIf="filetrConditions('Refurbished', chakedData[i])"
+                        >
+                          Refurbished
+                        </option>
+                        <option
+                          value="DamagedAtStore"
+                          *ngIf="filetrConditions('DamagedAtStore', chakedData[i])"
+                        >
+                          DamagedAtStore
+                        </option>
+                        <option
+                          value="DamagedAtSite"
+                          *ngIf="filetrConditions('DamagedAtSite', chakedData[i])"
+                        >
+                          DamagedAtSite
+                        </option>
+                        <option
+                          value="ScrappedAtStore"
+                          *ngIf="filetrConditions('ScrappedAtStore', chakedData[i])"
+                        >
+                          ScrappedAtStore
+                        </option>
+                        <option
+                          value="ScrappedAtSite"
+                          *ngIf="filetrConditions('ScrappedAtSite', chakedData[i])"
+                        >
+                          ScrappedAtSite
+                        </option>
+                        <option value="Old">Old</option>
+                      </select>
+                      <!-- <p-dropdown
+                          [options]="condition"
+                          optionValue="label"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select change type"
+                          [formControl]="row.get('type')"
+                        >
+                        </p-dropdown> -->
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          changeTypeSubmitted &&
+                          changeTypeFormArray.controls[i].get('condition').errors?.required
+                        "
+                      >
+                        <div class="errorTxt text-danger">Type is required.</div>
+                      </div>
+                    </td>
+                    <td>
+                      <p-dropdown
+                        [options]="remarkType"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select Remark"
+                        (onChange)="getSelRemark($event, i)"
+                        [formControl]="row.get('remarks')"
+                      >
+                      </p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          changeTypeSubmitted &&
+                          changeTypeFormArray.controls[i].get('remarks').errors?.required
+                        "
+                      >
+                        <div class="errorTxt text-danger">Remark is required.</div>
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="txt"
+                        [formControl]="row.get('otherreason')"
+                        placeholder="Enter Comment"
+                        class="form-control"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          changeTypeSubmitted &&
+                          changeTypeFormArray.controls[i].get('otherreason').errors?.required
+                        "
+                      >
+                        <div class="errorTxt text-danger">Comment is required.</div>
+                      </div>
+                    </td>
+                    <td style="width: 20%">
+                      <input
+                        type="file"
+                        [formControl]="row.get('file')"
+                        (change)="onFileChange($event, i)"
+                        placeholder="Upload Image"
+                        class="form-control"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+            <!-- <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Serial Number</th>
+                       <th>Condition</th>
+                     
+                      <th>Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let outward of chakedData">
+                      <td>{{ outward.serialNumber }}</td>
+                       <td>{{ outward.condition }}</td>
+                      <td>
+                        <select class="form-control" [(ngModel)]="outward.type">
+                          <option value="">Select Type</option>
+                          <option value="New">New</option>
+                          <option value="Refurbished" *ngIf="filetrConditions('Refurbished', outward)">Refurbished</option>
+                          <option value="DamagedAtStore" *ngIf="filetrConditions('DamagedAtStore', outward)">DamagedAtStore</option>
+                          <option value="DamagedAtSite" *ngIf="filetrConditions('DamagedAtSite', outward)">DamagedAtSite</option>
+                          <option value="ScrappedAtStore" *ngIf="filetrConditions('ScrappedAtStore', outward)">ScrappedAtStore</option>
+                          <option value="ScrappedAtSite" *ngIf="filetrConditions('ScrappedAtSite', outward)">ScrappedAtSite</option>
+                          <option value="PartnerOwnedDevice">PartnerOwnedDevice</option>
+                          <option value="CustomerOwnedDevice">CustomerOwnedDevice</option>
+                          <option value="Old">Old</option>
+                          
+                        </select>
+                        
+                      </td>
+                    </tr>
+                  </tbody>
+                </table> -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            id="addAtt"
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            (click)="changeNewInventoryType()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button
+            type="button"
+            (click)="closeChangeTypeModal()"
+            class="btn btn-danger btn-sm"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </p-dialog>
+
+    <p-dialog
+      header="Change Item Warranty"
+      [(visible)]="warrantyTypeModal"
+      [style]="{ width: '70%' }"
+      [modal]="true"
+      [responsive]="true"
+      [draggable]="false"
+      [closable]="false"
+    >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <form [formGroup]="warrantyStatusChangeFormGroup">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Serial Number</th>
+                    <th>Condition</th>
+                    <th>Current Warranty</th>
+                    <th>Warranty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of warrantyStatusChangeFormArray.controls; let i = index">
+                    <td>{{ chakedData[i]?.serialNumber }}</td>
+                    <td>{{ chakedData[i]?.condition }}</td>
+                    <td>
+                      {{ chakedData[i]?.warranty }}
+                    </td>
+                    <td>
+                      <p-dropdown
+                        [options]="warrantylabels"
+                        optionValue="label"
+                        optionLabel="label"
+                        filter="true"
+                        [formControl]="row.get('warranty')"
+                        filterBy="label"
+                        placeholder="Select warranty type"
+                        appendTo="body"
+                      >
+                      </p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          warrantyStatusChangeSubmitted &&
+                          warrantyStatusChangeFormArray.controls[i].get('warranty').errors?.required
+                        "
+                      >
+                        <div class="errorTxt text-danger">Warranty Status is required.</div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            id="addAtt"
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            (click)="warrantyChangeStatus()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="closeWarrantyChangeModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </p-dialog>
+
+    <p-dialog
+      header="Change Item Status Description"
+      [(visible)]="itemStatusModal"
+      [style]="{ width: '75%' }"
+      [modal]="true"
+      [responsive]="true"
+      [draggable]="false"
+      [closable]="false"
+    >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <form [formGroup]="changeInventoryStatusFormGroup">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Serial Number</th>
+                    <th>Condition</th>
+                    <th>Current Status</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of changeInventoryStatusFormArray.controls; let i = index">
+                    <td>{{ chakedData[i]?.serialNumber }}</td>
+                    <td>{{ chakedData[i]?.condition }}</td>
+                    <td>{{ chakedData[i]?.itemStatus }}</td>
+                    <td>
+                      <!-- <form [formGroup]="changeItemStatusFormGroup"> -->
+                      <select class="form-control" [formControl]="row.get('itemStatus')">
+                        <option value="">Select Status</option>
+                        <option
+                          value="Maintenance"
+                          *ngIf="filetrItemStatusConditions('Maintenance', chakedData[i])"
+                        >
+                          Maintenance
+                        </option>
+                        <option
+                          value="Defective"
+                          *ngIf="filetrItemStatusConditions('Defective', chakedData[i])"
+                        >
+                          Defective
+                        </option>
+                        <option
+                          value="UnAllocated"
+                          *ngIf="filetrItemStatusConditions('UnAllocated', chakedData[i])"
+                        >
+                          UnAllocated
+                        </option>
+                        <option
+                          value="Staff Allocated"
+                          *ngIf="filetrItemStatusConditions('Staff Allocated', chakedData[i])"
+                        >
+                          Staff Allocated
+                        </option>
+                      </select>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          changeInventoryStatusSubmitted &&
+                          changeInventoryStatusFormArray.controls[i].get('itemStatus').errors
+                            ?.required
+                        "
+                      >
+                        <div class="errorTxt text-danger">Status is required.</div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            id="addAtt"
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            (click)="changeItemStatus()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button
+            type="button"
+            (click)="closeInventoryStatusChangeTypeModal()"
+            class="btn btn-danger btn-sm"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </p-dialog>
+    <p-dialog
+      header="Change Item Ownership Status Description"
+      [(visible)]="itemOwnershipStatusModal"
+      [style]="{ width: '75%' }"
+      [modal]="true"
+      [responsive]="true"
+      [draggable]="false"
+      [closable]="false"
+    >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <form [formGroup]="changeOwnershipStatusFormGroup">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Serial Number</th>
+                    <th>Condition</th>
+                    <th>Ownership Status</th>
+                    <th>Remark</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of changeOwnershipStatusFormArray.controls; let i = index">
+                    <td>{{ chakedData[i]?.serialNumber }}</td>
+                    <td>{{ chakedData[i]?.condition }}</td>
+                    <td>
+                      <p-dropdown
+                        [options]="itemOwnershipStatuslabels"
+                        optionValue="label"
+                        optionLabel="label"
+                        filter="true"
+                        [disabled]="this.editMode"
+                        filterBy="label"
+                        placeholder="Select Item Ownership Status"
+                        [formControl]="row.get('ownershipType')"
+                        appendTo="body"
+                      >
+                      </p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="
+                          changeOwnershipStatusSubmitted &&
+                          changeOwnershipStatusFormArray.controls[i].get('ownershipType').errors
+                            ?.required
+                        "
+                      >
+                        <div class="errorTxt text-danger">Status is required.</div>
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="txt"
+                        [formControl]="row.get('remarks')"
+                        placeholder="Enter Remark"
+                        class="form-control"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="addUpdateBtn">
+          <button
+            id="addAtt"
+            style="object-fit: cover; padding: 5px 8px"
+            class="btn btn-primary"
+            (click)="changeOwnershipStatus()"
+          >
+            <i class="fa fa-check-circle"></i>
+            Save
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm"
+            (click)="closeOwnershipStatusChangeTypeModal()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </p-dialog>
+
+    <div class="modal fade" id="macDetailsModal" *ngIf="this.showMac" role="dialog">
+      <div class="modal-dialog" style="width: 40%">
+        <!-- Modal content-->
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="panel-title">MAC Address Of Product Assigned</h3>
+          </div>
+          <div class="modal-body">
+            <p-table
+              #dt
+              [value]="this.macMappingList"
+              [rows]="5"
+              [paginator]="true"
+              [globalFilterFields]="['macAddress', 'serialNumber']"
+              responsiveLayout="scroll"
+              [rowHover]="true"
+              dataKey="id"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+              [showCurrentPageReport]="true"
+            >
+              <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                  <span class="p-input-icon-left">
+                    <input
+                      class="form-control"
+                      pInputText
+                      type="text"
+                      (input)="dt.filterGlobal($event.target.value, 'contains')"
+                      placeholder="Search..."
+                    />
+                  </span>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th *ngIf="this.hasMac">MAC Address</th>
+                  <th *ngIf="this.hasSerial">Serial Number</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-product>
+                <tr>
+                  <td *ngIf="product.macAddress">{{ product.macAddress }}</td>
+                  <td *ngIf="product.serialNumber">{{ product.serialNumber }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+            <br />
+          </div>
+          <div class="modal-footer">
+            <div class="addUpdateBtn">
+              <!-- <button
+        type="submit"
+        class="btn btn-primary btn-sm"
+        data-dismiss="modal"
+        (click)="this.mapMACOutward()"
+      >
+        <i class="fa fa-check-circle"></i>
+        Save
+      </button> -->
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                data-dismiss="modal"
+                (click)="this.closeMacMapping()"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inventory Port Details Model -->
+<p-dialog
+  header="Port Details"
+  [(visible)]="portModel"
+  [style]="{ width: '75%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+>
+  <div class="modal-body">
+    <div class="row">
+      <!-- <div class="row"> -->
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 dataGroup">
+        <label class="datalbl">Total IN Ports :</label>
+        <span>{{
+          selectedInventory?.totalInPort != null || selectedInventory?.totalInPort > 0
+            ? selectedInventory?.totalInPort
+            : "0"
+        }}</span>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 dataGroup">
+        <label class="datalbl">Available IN Ports :</label>
+        <span>{{
+          selectedInventory?.availableInPort != null || selectedInventory?.availableInPort > 0
+            ? selectedInventory?.availableInPort
+            : "0"
+        }}</span>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 dataGroup">
+        <label class="datalbl">Total OUT Ports :</label>
+        <span>{{
+          selectedInventory?.totalOutPort != null || selectedInventory?.totalOutPort > 0
+            ? selectedInventory?.totalOutPort
+            : "0"
+        }}</span>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 dataGroup">
+        <label class="datalbl">Available OUT Ports :</label>
+        <span>{{
+          selectedInventory?.availableOutPort != null || selectedInventory?.availableOutPort > 0
+            ? selectedInventory?.availableOutPort
+            : "0"
+        }}</span>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 dataGroup">
+        <label class="datalbl">Device Name :</label>
+        <span>{{ selectedInventory?.deviceName ? selectedInventory?.deviceName : "-" }}</span>
+      </div>
+      <!-- </div> -->
+    </div>
+  </div>
+  <div class="modal-footer">
+    <!-- <div class="addUpdateBtn">
+          <button type="button" class="btn btn-danger btn-sm" (click)="closeReturnItemModal()">
+            Close
+          </button>
+        </div> -->
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Inventory Detail"
+  [(visible)]="inventoryDetailModal"
+  [style]="{ width: '75%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeInventoryDetailModal()"
+>
+  <div id="inwardDetail" class="panel-collapse collapse in">
+    <div class="panel-body table-responsive">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Basic Details</legend>
+        <div class="boxWhite">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Inward :</label>
+                <span *ngIf="inventoryDetailData?.currentInwardNumber">{{
+                  inventoryDetailData?.currentInwardNumber
+                }}</span>
+                <span *ngIf="!inventoryDetailData?.currentInwardNumber">-</span>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Product Name :</label>
+                <span>{{ inventoryDetailData?.productName }}</span>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Status :</label>
+                <span>{{ inventoryDetailData?.itemStatus }}</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">MAC :</label>
+                <span>{{ inventoryDetailData?.macAddress }}</span>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Serial Number :</label>
+                <span>{{ inventoryDetailData?.serialNumber }}</span>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Customer Warranty :</label>
+                <span *ngIf="inventoryDetailData?.warranty">
+                  {{ inventoryDetailData?.warranty }}
+                  <span *ngIf="inventoryDetailData?.warrantyPeriod">
+                    ({{ inventoryDetailData?.warrantyPeriod }})
+                  </span>
+                </span>
+                <span *ngIf="!inventoryDetailData?.warranty">-</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Asset Id :</label>
+                <span *ngIf="inventoryDetailData?.assetId">
+                  {{ inventoryDetailData?.assetId }}
+                </span>
+                <span *ngIf="!inventoryDetailData?.assetId">-</span>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">OEM Start Date :</label>
+                <span *ngIf="inventoryDetailData?.oemStartDate">
+                  {{ inventoryDetailData?.oemStartDate }}
+                </span>
+                <span *ngIf="!inventoryDetailData?.oemStartDate">-</span>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">OEM End Date :</label>
+                <span *ngIf="inventoryDetailData?.oemEndDate">
+                  {{ inventoryDetailData?.oemEndDate }}
+                </span>
+                <span *ngIf="!inventoryDetailData?.oemEndDate">-</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">Remark :</label>
+                <span *ngIf="inventoryDetailData?.remarks">{{ inventoryDetailData?.remarks }}</span>
+                <span *ngIf="!inventoryDetailData?.remarks">-</span>
+              </div>
+
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">OEM Warranty Status :</label>
+                <span *ngIf="inventoryDetailData?.oemWarrantyStatus">
+                  {{ inventoryDetailData?.oemWarrantyStatus }}
+                </span>
+                <span *ngIf="!inventoryDetailData?.oemWarrantyStatus">-</span>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                <label class="datalbl">OEM Warranty Period :</label>
+                <span *ngIf="inventoryDetailData?.oemWarrantyRemainingDays">
+                  {{ inventoryDetailData?.oemWarrantyRemainingDays }}
+                </span>
+                <span *ngIf="!inventoryDetailData?.oemWarrantyRemainingDays">-</span>
+              </div>
+            </div>
+            <!-- </div> -->
+          </div>
+        </div>
+      </fieldset>
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem" *ngIf="specDetailsShow">
+        <legend>Inventory Specification Parameter Details</legend>
+        <div class="boxWhite">
+          <div class="row table-responsive">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th id="parameter">Parameter</th>
+                    <th id="mandatory">Mandatory</th>
+                    <th id="value">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let param of inventorySpecificationDetails
+                        | paginate
+                          : {
+                              id: 'productDetailPageData',
+                              itemsPerPage: productDeatilItemPerPage,
+                              currentPage: productPageChargeDeatilList,
+                              totalItems: productDeatiltotalRecords
+                            };
+                      let i = index
+                    "
+                  >
+                    <td>{{ param.paramName }}</td>
+                    <td>{{ param.isMandatory }}</td>
+                    <td *ngIf="!param.isMultiValueParam">
+                      <input
+                        type="text"
+                        name="value"
+                        class="form-control"
+                        [(ngModel)]="param.paramValue"
+                        [disabled]="!isEditing(i)"
+                      />
+                    </td>
+                    <td *ngIf="param.isMultiValueParam">
+                      <p-dropdown
+                        [options]="param.multiValue"
+                        [(ngModel)]="param.paramValue"
+                        optionLabel="label"
+                        optionValue="value"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select Parameter"
+                        [disabled]="!isEditing(i)"
+                      >
+                      </p-dropdown>
+                    </td>
+
+                    <td *ngIf="!isEditing(i)">
+                      <div class="btnAction">
+                        <button
+                          type="button"
+                          class="approve-btn"
+                          title="Edit"
+                          (click)="editValue(i)"
+                        >
+                          <img src="assets/img/ioc01.jpg" />
+                        </button>
+                        <button
+                          class="approve-btn"
+                          title="View History"
+                          (click)="viewHistory(param.paramId)"
+                        >
+                          <img src="assets/img/followup.png" />
+                        </button>
+                      </div>
+                    </td>
+                    <td *ngIf="isEditing(i)">
+                      <button
+                        type="submit"
+                        id="delete-button"
+                        class="btn btn-primary btn-sm"
+                        (click)="addOrEditValue(i, param.id, param.paramValue, param)"
+                      >
+                        Save
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+  <div id="inwardDetail" class="panel-collapse collapse in">
+    <div class="panel-body table-responsive">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Inventory Previous History</legend>
+        <div class="boxWhite">
+          <div class="modal-body">
+            <div class="row table-responsive">
+              <div class="col-lg-12 col-md-12">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Owner Name</th>
+                      <th>Owner Type</th>
+                      <th>Remark</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let history of inventoryPreviousHistoryList
+                          | paginate
+                            : {
+                                id: 'inventoryPreviousHistory',
+                                itemsPerPage: historyItemsPerPage,
+                                currentPage: historyPageNumber,
+                                totalItems: historyTotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td>{{ history.date | date: "dd-MM-yyyy hh:mm:ss" }}</td>
+                      <td>{{ history.ownerName }}</td>
+                      <td>{{ history.ownerType }}</td>
+                      <td>{{ history.remark }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="inventoryPreviousHistory"
+                    [maxSize]="5"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="onHistoryPageChange($event)"
+                  ></pagination-controls>
+
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="historyItemsPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="onHistoryItemsPerPageChange($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        (click)="closeInventoryDetailModal()"
+        class="btn btn-danger btn-sm"
+        data-dismiss="modal"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<app-customer-details
+  *ngIf="dialogId"
+  (closeSelectStaff)="closeSelectStaff()"
+  [custId]="custId"
+></app-customer-details>
+
+<p-dialog
+  header="Histroy"
+  [(visible)]="displayDialog"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="true"
+>
+  <p-table
+    #dt1
+    [value]="this.inventorySpecificationDetailsHistory"
+    dataKey="id"
+    styleClass="p-datatable-customers"
+    [rowHover]="true"
+    [rows]="5"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [loading]="loading"
+    [paginator]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [filterDelay]="0"
+    responsiveLayout="scroll"
+    [scrollable]="true"
+    scrollHeight="300px"
+    paginatorDropdownAppendTo="body"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 30%">Created Date</th>
+        <th style="width: 30%">Current Assignee</th>
+        <th style="width: 30%">Type</th>
+        <th style="width: 30%">Current Value</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+      <tr>
+        <td style="width: 25%">
+          {{ item.createdDate | date: "yyyy-MM-dd HH:mm" }}
+        </td>
+        <td style="width: 25%">
+          {{ item.currentAssignee }}
+        </td>
+        <td style="width: 25%">
+          {{ item.ownerType }}
+        </td>
+        <td style="width: 25%">
+          {{ item.currentParamValue }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

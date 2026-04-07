@@ -1,0 +1,1243 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="listCustomer()"
+            class="btn btn-secondary backbtn"
+            title="Go to Customer List"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerLedgerDetailData?.title }} {{ customerLedgerDetailData?.firstname }}
+            {{ customerLedgerDetailData?.lastname }} Details
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            aria-controls="precustDetails"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#precustDetails"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="precustDetails">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <p-tabView styleClass="x-tab-view">
+                <p-tabPanel class="header" header="Basic Details">
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <p-card>
+                        <div class="row">
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Name :</label>
+                            <span>
+                              {{ customerLedgerDetailData?.title }}
+                              {{ customerLedgerDetailData?.firstname }}
+                              {{ customerLedgerDetailData?.lastname }}
+                            </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Contact Person :</label>
+                            <span>{{ customerLedgerDetailData?.contactperson }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">CAF No. :</label>
+                            <span>{{ customerLedgerDetailData?.cafno }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Act No. :</label>
+                            <span>{{ customerLedgerDetailData?.acctno }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">AAA Username :</label>
+                            <span>{{ customerLedgerDetailData?.username }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">AAA Password :</label>
+                            <span>{{
+                              showPassword
+                                ? customerLedgerDetailData?.password
+                                : maskPassword(customerLedgerDetailData?.password)
+                            }}</span>
+                            <button
+                              *ngIf="customerLedgerDetailData?.password && aaaPasswordVisible"
+                              type="button"
+                              (click)="togglePassword()"
+                              style="
+                                background: none;
+                                border: none;
+                                cursor: pointer;
+                                padding-left: 10px;
+                              "
+                            >
+                              <i
+                                class="fa"
+                                [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                              ></i>
+                            </button>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">CWSC Username :</label>
+                            <span>{{ customerLedgerDetailData?.loginUsername }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">CWSC Password :</label>
+                            <span>{{
+                              showLoginPassword
+                                ? customerLedgerDetailData?.loginPassword
+                                : maskPassword(customerLedgerDetailData?.loginPassword)
+                            }}</span>
+                            <button
+                              *ngIf="customerLedgerDetailData?.loginPassword && cwscPasswordVisible"
+                              type="button"
+                              (click)="toggleLoginPassword()"
+                              style="
+                                background: none;
+                                border: none;
+                                cursor: pointer;
+                                padding-left: 10px;
+                              "
+                            >
+                              <i
+                                class="fa"
+                                [ngClass]="showLoginPassword ? 'fa-eye-slash' : 'fa-eye'"
+                              ></i>
+                            </button>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Status :</label>
+                            <span>{{
+                              customerLedgerDetailData?.status == "Ingrace" ||
+                              customerLedgerDetailData?.status == "INGRACE"
+                                ? "InGrace"
+                                : customerLedgerDetailData?.status
+                            }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Customer Type :</label>
+                            <span>{{ customerLedgerDetailData?.custtype }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Calendar Type :</label>
+                            <span>{{ customerLedgerDetailData?.calendarType }}</span>
+                          </div>
+
+                          <div
+                            *ngIf="customerPopName"
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                          >
+                            <label class="datalbl">POP Name :</label>
+                            <span>{{ customerPopName }}</span>
+                          </div>
+                          <div
+                            *ngIf="customerLedgerDetailData?.billday"
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                          >
+                            <label class="datalbl">Bill Day :</label>
+                            <span>{{ customerLedgerDetailData?.billday }}</span>
+                          </div>
+                          <div
+                            *ngIf="customerLedgerDetailData?.previousBillday"
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                          >
+                            <label class="datalbl">Previous Bill Day :</label>
+                            <span>{{ customerLedgerDetailData?.previousBillday }}</span>
+                          </div>
+                          <div
+                            *ngIf="
+                              customerLedgerDetailData?.nextBillDate &&
+                              customerLedgerDetailData?.custtype === 'Postpaid'
+                            "
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                          >
+                            <label class="datalbl">Next bill date :</label>
+                            <span>
+                              {{ customerLedgerDetailData?.nextBillDate | date: "dd-MM-yyy" }}
+                            </span>
+                          </div>
+                          <div
+                            *ngIf="customerLedgerDetailData?.parentCustomerName"
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                          >
+                            <label class="datalbl">Parent Customer :</label>
+                            <span>{{ customerLedgerDetailData?.parentCustomerName }}</span>
+                          </div>
+                          <div
+                            *ngIf="customerLedgerDetailData?.invoiceType"
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                          >
+                            <label class="datalbl">Invoice Type :</label>
+                            <span>{{ customerLedgerDetailData?.invoiceType }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">First Activation Date :</label>
+                            <span>{{
+                              customerLedgerDetailData?.firstActivationDate
+                                | date: "dd-MM-yyyy hh:mm a"
+                            }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Primary Mobile Number :</label>
+                            <span>
+                              <span *ngIf="customerLedgerDetailData?.countryCode">
+                                ( {{ customerLedgerDetailData?.countryCode }} )&nbsp;
+                              </span>
+                              {{ customerLedgerDetailData?.mobile }}
+                            </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Secondary Mobile Number :</label>
+                            <span *ngIf="customerLedgerDetailData?.altmobile">
+                              <span *ngIf="customerLedgerDetailData?.countryCode">
+                                ( {{ customerLedgerDetailData?.countryCode }} )&nbsp;
+                              </span>
+                              {{ customerLedgerDetailData?.altmobile }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.altmobile">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Telephone :</label>
+                            <span *ngIf="customerLedgerDetailData?.phone">
+                              {{ customerLedgerDetailData?.phone }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.phone">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">FAX Number :</label>
+                            <span *ngIf="customerLedgerDetailData?.pan">
+                              {{ customerLedgerDetailData?.fax }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.fax">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Email :</label>
+                            <span>{{ customerLedgerDetailData?.email }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Bill to Name :</label>
+                            <span *ngIf="customerBill">
+                              {{ customerLedgerDetailData.customerbillingid }}
+                            </span>
+                            <span *ngIf="!customerBill">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Bill to Address :</label>
+                            <!-- {{ customerLedgerDetailData.customerbillingid }} -->
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">TIN/PAN Number :</label>
+                            <span *ngIf="customerLedgerDetailData?.pan">
+                              {{ customerLedgerDetailData?.pan }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.pan">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Created By :</label>
+                            <span>{{ customerLedgerDetailData?.createdByName }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.createdByName">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Activated By :</label>
+                            <span>{{ customerLedgerDetailData?.activationByName }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.activationByName">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Customer Category :</label>
+                            <span>{{ customerLedgerDetailData?.dunningCategory }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.dunningCategory">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Customer Sub Type :</label>
+                            <span>{{ customerLedgerDetailData?.customerType }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.customerType">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Customer Sector :</label>
+                            <span>{{ customerLedgerDetailData?.customerSector }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.customerSector">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Customer Sub Sector :</label>
+                            <span>{{ customerLedgerDetailData?.customerSubSector }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.customerSubSector">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Ezybill ID :</label>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Date of Birth :</label>
+                            <span>{{
+                              customerLedgerDetailData?.birthDate | date: "dd-MM-yyy"
+                            }}</span>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Dunning Enable :</label>
+                            <span>{{ customerLedgerDetailData?.isDunningEnable }}</span>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Automatic notification :</label>
+                            <span>{{ customerLedgerDetailData?.isNotificationEnable }}</span>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Next Quota Reset Date :</label>
+                            <span>{{
+                              customerLedgerDetailData?.nextQuotaResetDate | date: "dd-MM-yyyy"
+                            }}</span>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">MAC Retention Date :</label>
+                            <span>{{
+                              customerLedgerDetailData?.nearestMacRetentionDate | date: "dd-MM-yyyy"
+                            }}</span>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Unit No :</label>
+                            <span>{{ customerLedgerDetailData?.blockNo }}</span>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Available balance :</label>
+                            <span>{{
+                              walletValue
+                                | customCurrency: currency : customerLedgerDetailData?.mvnoId
+                            }}</span>
+                            <span></span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Last Payment Amount :</label>
+                            <span
+                              *ngIf="
+                                paymentHistoryList?.length > 0 &&
+                                paymentHistoryList[0]?.amount !== null
+                              "
+                            >
+                              {{
+                                roundAmount(paymentHistoryList[0]?.amount)
+                                  | customCurrency: currency : customerLedgerDetailData?.mvnoId
+                              }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !(
+                                  paymentHistoryList?.length > 0 &&
+                                  paymentHistoryList[0]?.amount !== null
+                                )
+                              "
+                              >-</span
+                            >
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Last Payment Date :</label>
+                            <span
+                              *ngIf="
+                                paymentHistoryList?.length > 0 &&
+                                paymentHistoryList[0]?.paymentdate !== null
+                              "
+                            >
+                              {{ paymentHistoryList[0]?.paymentdate }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !(
+                                  paymentHistoryList?.length > 0 &&
+                                  paymentHistoryList[0]?.paymentdate !== null
+                                )
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                            *ngIf="customerLedgerDetailData?.custtype === 'Prepaid'"
+                          >
+                            <label class="datalbl">Expiry Date :</label>
+                            <span
+                              *ngIf="
+                                activePlanList?.length > 0 &&
+                                activePlanList[activePlanList.length - 1]?.dbExpiryDate !== null
+                              "
+                            >
+                              {{
+                                activePlanList[activePlanList.length - 1]?.dbExpiryDate
+                                  | date: "dd/MM/yyyy HH:mm:ss"
+                              }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !(
+                                  activePlanList?.length > 0 &&
+                                  activePlanList[activePlanList.length - 1]?.dbExpiryDate !== null
+                                )
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Feasibility :</label>
+                            <span *ngIf="customerLedgerDetailData?.feasibility">
+                              {{ customerLedgerDetailData?.feasibility }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.feasibility">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Grace Period :</label>
+                            <span *ngIf="customerLedgerDetailData?.graceDay">
+                              {{ customerLedgerDetailData?.graceDay }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.graceDay">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("Department") }} :</label>
+                            <span *ngIf="customerLedgerDetailData?.department">
+                              {{ customerLedgerDetailData?.department }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.department">-</span>
+                          </div>
+                        </div>
+                      </p-card>
+                    </div>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel header="Service Area Details">
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <p-card>
+                        <div class="row">
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Address :</label>
+                            <span>{{ customerAddress?.landmark }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Service Area Name :</label>
+                            <span>{{ customerLedgerDetailData?.serviceareaName }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.serviceareaid">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Branch Name / Partner :</label>
+                            <span>{{ customerLedgerDetailData?.branchName }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Region :</label>
+                            <span>{{ customerLedgerDetailData?.regionName }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Business Verticals :</label>
+                            <span>{{ customerLedgerDetailData?.buVerticals }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("Pincode") }} :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA.code }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("Area") }} :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA.name }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("Sub Area") }} :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA?.subarea || "-" }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("Building") }} :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA?.buildingName || "-" }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Building Number :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA?.buildingNumber || "-" }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("City") }} :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA.cityName }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("State") }} :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA.stateName }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">{{ getDemographicLabel("Country") }} :</label>
+                            <span *ngIf="presentAdressDATA != null">
+                              {{ presentAdressDATA.countryName }}
+                            </span>
+                            <span *ngIf="presentAdressDATA == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Valley Type :</label>
+                            <span>{{ customerLedgerDetailData?.valleyType }}</span>
+                            <span *ngIf="!customerLedgerDetailData?.valleyType">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Latitude :</label>
+                            <span *ngIf="customerLedgerDetailData?.latitude">
+                              {{ customerLedgerDetailData?.latitude }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.latitude">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Longitude :</label>
+                            <span *ngIf="customerLedgerDetailData?.longitude">
+                              {{ customerLedgerDetailData?.longitude }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.longitude">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Landmark :</label>
+                            <span>{{ customerAddress?.landmark1 }}</span>
+                          </div>
+                        </div>
+                      </p-card>
+                    </div>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel header="Network Location Details">
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <p-card>
+                        <div class="row">
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">POP :</label>
+                            <span *ngIf="customerNetworkLocationDetailData?.popName != null">
+                              {{ customerNetworkLocationDetailData?.popName }}
+                            </span>
+                            <span *ngIf="customerNetworkLocationDetailData?.popName == null">
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.popName }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">OLT :</label>
+                            <span *ngIf="customerNetworkLocationDetailData?.oltDeviceName != null">
+                              {{ customerNetworkLocationDetailData?.oltDeviceName }}
+                            </span>
+                            <span *ngIf="customerNetworkLocationDetailData?.oltDeviceName == null">
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.oltDeviceName }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">ONU Interface :</label>
+                            <span>{{ customerLedgerDetailData?.onuInterface || "-" }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Card Number :</label>
+                            <span>-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Master DB :</label>
+                            <span
+                              *ngIf="customerNetworkLocationDetailData?.masterdbDeviceName != null"
+                            >
+                              {{ customerNetworkLocationDetailData?.masterdbDeviceName }}
+                            </span>
+                            <span
+                              *ngIf="customerNetworkLocationDetailData?.masterdbDeviceName == null"
+                            >
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.masterdbDeviceName }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Splitter/DB :</label>
+                            <span
+                              *ngIf="customerNetworkLocationDetailData?.splitterDerviceName != null"
+                            >
+                              {{ customerNetworkLocationDetailData?.splitterDerviceName }}
+                            </span>
+                            <span
+                              *ngIf="customerNetworkLocationDetailData?.splitterDerviceName == null"
+                            >
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.splitterDerviceName }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">MAC :</label>
+                            <span *ngIf="customerNetworkLocationDetailData?.macAddress != ''">
+                              {{ customerNetworkLocationDetailData?.macAddress }}
+                            </span>
+                            <span *ngIf="customerNetworkLocationDetailData?.macAddress == ''">
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.macAddress }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">ONU Serial Number :</label>
+                            <span
+                              *ngIf="customerNetworkLocationDetailData?.onuSerialNumber != null"
+                            >
+                              {{ customerNetworkLocationDetailData?.onuSerialNumber }}
+                            </span>
+                            <span
+                              *ngIf="customerNetworkLocationDetailData?.onuSerialNumber == null"
+                            >
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.onuSerialNumber }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">External ONU Serial Number :</label>
+                            <span
+                              *ngIf="
+                                customerNetworkLocationDetailData?.externalOnuSerialNumber != null
+                              "
+                            >
+                              {{ customerNetworkLocationDetailData?.externalOnuSerialNumber }}
+                            </span>
+                            <span
+                              *ngIf="
+                                customerNetworkLocationDetailData?.externalOnuSerialNumber == null
+                              "
+                            >
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.externalOnuSerialNumber }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Static IP :</label>
+                            <span *ngIf="customerLedgerDetailData?.framedIpBind != null">
+                              {{ customerLedgerDetailData?.framedIpBind }}
+                            </span>
+                            <span
+                              *ngIf="
+                                customerNetworkLocationDetailData?.framedIpBind == null ||
+                                customerLedgerDetailData?.framedIpBind == ''
+                              "
+                            >
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.framedIpBind }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">NAS IP :</label>
+                            <span *ngIf="customerLedgerDetailData?.nasIpAddress != null">
+                              {{ customerLedgerDetailData?.nasIpAddress }}
+                            </span>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.nasIpAddress == null ||
+                                customerLedgerDetailData?.nasIpAddress == ''
+                              "
+                            >
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.framedIp }}</span> -->
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">NAS Port :</label>
+                            <span *ngIf="customerLedgerDetailData?.nasPort != null">
+                              {{ customerLedgerDetailData?.nasPort }}
+                            </span>
+                            <span
+                              *ngIf="
+                                customerNetworkLocationDetailData?.nasPort == null ||
+                                customerNetworkLocationDetailData?.nasPort == ''
+                              "
+                            >
+                              -
+                            </span>
+                            <!-- <span>{{ customerNetworkLocationDetailData?.nasPort }}</span> -->
+                          </div>
+                          <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                                                        <label class="datalbl">Max Current Session :</label>
+                                                        <span>-</span>
+                                                    </div> -->
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Network Profile :</label>
+                            <span>-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Location :</label>
+                            <span *ngIf="locationList != ''">
+                              {{ locationList }}
+                            </span>
+                            <span *ngIf="locationList == ''">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Is Parent Location :</label>
+                            <span>
+                              {{ isParentLocation }}
+                            </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Parent Quota Type :</label>
+                            <span *ngIf="customerLedgerDetailData?.parentQuotaType != null">
+                              {{ customerLedgerDetailData?.parentQuotaType }}
+                            </span>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.parentQuotaType == null ||
+                                customerLedgerDetailData?.parentQuotaType == ''
+                              "
+                            >
+                              -
+                            </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">IP Pool Name (Bind) :</label>
+                            <span *ngIf="customerLedgerDetailData?.ipPoolNameBind != null">
+                              {{ customerLedgerDetailData?.ipPoolNameBind }}
+                            </span>
+                            <span *ngIf="customerLedgerDetailData?.ipPoolNameBind == null">- </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Vlan Id :</label>
+                            <span *ngIf="customerLedgerDetailData?.vlan_id != null">
+                              {{ customerLedgerDetailData?.vlan_id }}
+                            </span>
+                            <span *ngIf="customerLedgerDetailData?.vlan_id == null">- </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Framed Ip Address :</label>
+                            <span *ngIf="framedIpAddress && framedIpAddress?.trim() !== ''">
+                              {{ framedIpAddress }}
+                            </span>
+                            <span *ngIf="!framedIpAddress || framedIpAddress?.trim() === ''"
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Framed IPv6 Address :</label>
+                            <span *ngIf="customerLedgerDetailData?.framedIpv6Address != null">
+                              {{ customerLedgerDetailData?.framedIpv6Address }}
+                            </span>
+                            <span *ngIf="customerLedgerDetailData?.framedIpv6Address == null"
+                              >-
+                            </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Max Concurrent Session :</label>
+                            <span *ngIf="customerLedgerDetailData?.maxconcurrentsession != null">
+                              {{ customerLedgerDetailData?.maxconcurrentsession }}
+                            </span>
+                            <span *ngIf="customerLedgerDetailData?.maxconcurrentsession == null"
+                              >-
+                            </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Framed Route :</label>
+                            <span *ngIf="customerLedgerDetailData?.framedroute != null">
+                              {{ customerLedgerDetailData?.framedroute }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.framedroute == null">-</span>
+                          </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Framed IP Netmask :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.framedIPNetmask &&
+                                customerLedgerDetailData.framedIPNetmask.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.framedIPNetmask }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.framedIPNetmask ||
+                                customerLedgerDetailData.framedIPNetmask.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Framed IPv6 Prefix :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.framedIPv6Prefix &&
+                                customerLedgerDetailData.framedIPv6Prefix.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.framedIPv6Prefix }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.framedIPv6Prefix ||
+                                customerLedgerDetailData.framedIPv6Prefix.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Gateway IP :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.gatewayIP &&
+                                customerLedgerDetailData.gatewayIP.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.gatewayIP }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.gatewayIP ||
+                                customerLedgerDetailData.gatewayIP.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Primary DNS :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.primaryDNS &&
+                                customerLedgerDetailData.primaryDNS.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.primaryDNS }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.primaryDNS ||
+                                customerLedgerDetailData.primaryDNS.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Primary IPv6 DNS :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.primaryIPv6DNS &&
+                                customerLedgerDetailData.primaryIPv6DNS.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.primaryIPv6DNS }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.primaryIPv6DNS ||
+                                customerLedgerDetailData.primaryIPv6DNS.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Secondary DNS :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.secondaryDNS &&
+                                customerLedgerDetailData.secondaryDNS.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.secondaryDNS }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.secondaryDNS ||
+                                customerLedgerDetailData.secondaryDNS.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Secondary IPv6 DNS:</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.secondaryIPv6DNS &&
+                                customerLedgerDetailData.secondaryIPv6DNS.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.secondaryIPv6DNS }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.secondaryIPv6DNS ||
+                                customerLedgerDetailData.secondaryIPv6DNS.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Delegated Prefix :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.delegatedprefix &&
+                                customerLedgerDetailData.delegatedprefix.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.delegatedprefix }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.delegatedprefix ||
+                                customerLedgerDetailData.delegatedprefix.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">NAS Port Id :</label>
+                            <span
+                              *ngIf="
+                                customerLedgerDetailData?.nasPortId &&
+                                customerLedgerDetailData.nasPortId.trim() !== ''
+                              "
+                            >
+                              {{ customerLedgerDetailData?.nasPortId }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !customerLedgerDetailData?.nasPortId ||
+                                customerLedgerDetailData.nasPortId.trim() === ''
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Mac Provision :</label>
+                            <span *ngIf="customerLedgerDetailData?.mac_provision === true">
+                              {{ customerLedgerDetailData?.mac_provision }}
+                            </span>
+                            <span *ngIf="customerLedgerDetailData?.mac_provision === false">
+                              {{ customerLedgerDetailData?.mac_provision }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.mac_provision">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Mac Auth :</label>
+                            <span *ngIf="customerLedgerDetailData?.mac_auth_enable === true">
+                              {{ customerLedgerDetailData?.mac_auth_enable }}
+                            </span>
+                            <span *ngIf="customerLedgerDetailData?.mac_auth_enable === false">
+                              {{ customerLedgerDetailData?.mac_auth_enable }}
+                            </span>
+                            <span *ngIf="!customerLedgerDetailData?.mac_auth_enable">-</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Assigned DateTime :</label>
+                            <span
+                              *ngIf="
+                                customerInventoryList?.length > 0 &&
+                                customerInventoryList[0]?.assignedDateTime
+                              "
+                            >
+                              {{
+                                customerInventoryList[0]?.assignedDateTime
+                                  | date: "dd/MM/yyyy HH:mm:ss"
+                              }}
+                            </span>
+                            <span
+                              *ngIf="
+                                !(
+                                  customerInventoryList?.length > 0 &&
+                                  customerInventoryList[0]?.assignedDateTime
+                                )
+                              "
+                              >-</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Staff Name :</label>
+                            <span *ngIf="staffUserData?.username">
+                              {{ staffUserData?.username }}
+                            </span>
+                            <span *ngIf="!staffUserData?.username">-</span>
+                          </div>
+                        </div>
+                      </p-card>
+                    </div>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel class="header" header="Service Pack Details">
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <p-card>
+                        <div class="row" *ngIf="servicePackData; else elseBlock">
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">VAS Name :</label>
+                            <span>
+                              {{ servicePackData?.vasName }}
+                            </span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">VAS Offer Price :</label>
+                            <span>{{
+                              servicePackData?.vasOfferPrice
+                                | customCurrency: currency : customerLedgerDetailData?.mvnoId
+                            }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">TAT Name:</label>
+                            <span *ngIf="tatDetailsData?.name">
+                              <a
+                                (click)="openTATModel()"
+                                href="javascript:void(0)"
+                                style="color: #f7b206"
+                                >{{ tatDetailsData?.name }}
+                              </a></span
+                            >
+                          </div>
+                          <div
+                            *ngIf="servicePackData?.amountPerInstallment"
+                            class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup"
+                          >
+                            <label class="datalbl">Per Installment Price:</label>
+                            <span>{{
+                              servicePackData?.amountPerInstallment
+                                | customCurrency: currency : customerLedgerDetailData?.mvnoId
+                            }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">VAS Validity :</label>
+                            <span
+                              >{{ servicePackData?.validity }}
+                              {{ servicePackData?.unitsOfValidity }}</span
+                            >
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Start Date :</label>
+                            <span>{{ servicePackData?.startDate | date: "dd-MM-yyyy" }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">End Date :</label>
+                            <span>{{ servicePackData?.endDate | date: "dd-MM-yyyy" }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Pause Attempt :</label>
+                            <span>{{ servicePackData?.pauseTimeLimit }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Pause Days :</label>
+                            <span>{{ servicePackData?.pauseDaysLimit }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Inventory Replacement After Month :</label>
+                            <span>{{ servicePackData?.inventoryReplaceAfterYears }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Inventory Eligibility Paid Months :</label>
+                            <span>{{ servicePackData?.inventoryPaidMonths }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Inventory Replacement Count :</label>
+                            <span>{{ servicePackData?.inventoryCount }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl"
+                              >Shift location Allowed After Completing The Year :</label
+                            >
+                            <span>{{ servicePackData?.shiftLocationYears }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl"
+                              >Shift Location Allowed After Paid Months :</label
+                            >
+                            <span>{{ servicePackData?.shiftLocationMonths }}</span>
+                          </div>
+                          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                            <label class="datalbl">Shift Location Attempt Count :</label>
+                            <span>{{ servicePackData?.shiftLocationCount }}</span>
+                          </div>
+                          <ng-container *ngIf="servicePackData?.installmentType">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                              <label class="datalbl">Intallment Type:</label>
+                              <span>{{ servicePackData?.installmentType }}</span>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                              <label class="datalbl">Installment Details:</label>
+                              <span
+                                *ngIf="
+                                  servicePackData.installmentNo &&
+                                    servicePackData.totalInstallments;
+                                  else elseBlock
+                                "
+                                >{{ servicePackData?.totalInstallments || "-" }} out of
+                                {{ servicePackData?.installmentNo }}</span
+                              >
+                              <ng-template #elseBlock><span> - </span></ng-template>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                              <label class="datalbl">Installment Start Date:</label>
+                              <span>{{
+                                servicePackData?.installmentStartDate | date: "dd-MM-yyy"
+                              }}</span>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                              <label class="datalbl">Installment Next Date:</label>
+                              <span>{{
+                                servicePackData?.installmentNextDate | date: "dd-MM-yyy"
+                              }}</span>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                              <label class="datalbl">Previous Installment Date:</label>
+                              <span>{{
+                                servicePackData?.installmentEndDate | date: "dd-MM-yyy"
+                              }}</span>
+                            </div>
+                          </ng-container>
+                        </div>
+                        <ng-template #elseBlock>
+                          <div class="row msg-wrapper">
+                            {{ servicePackMsg }}
+                          </div>
+                        </ng-template>
+                      </p-card>
+                    </div>
+                  </div>
+                </p-tabPanel>
+              </p-tabView>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--TAT Detail Model -->
+<p-dialog
+  header="TAT Details"
+  [(visible)]="tatDetailsShowModel"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+  (onHide)="closeTATModel()"
+>
+  <div class="modal-body">
+    <div class="col-md-12 col-sm-12">
+      <div class="panel">
+        <div id="trcDataModel" class="panel-collapse collapse in">
+          <div class="panel-body table-responsive" *ngIf="tatDetailsData">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Name :</label>
+                    <span>{{ tatDetailsData.name }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Status :</label>
+                    <span *ngIf="tatDetailsData.status == 'Active'" class="badge badge-success">
+                      Active
+                    </span>
+                    <span
+                      *ngIf="
+                        tatDetailsData.status == 'Inactive' ||
+                        tatDetailsData.status == 'InActive' ||
+                        tatDetailsData.status == 'inactive'
+                      "
+                      class="badge badge-danger"
+                    >
+                      Inactive
+                    </span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">Response Time:</label>
+                    <span>{{ tatDetailsData.rtime }} {{ tatDetailsData.runit }}</span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">SLA Time P1 :</label>
+                    <span>{{ tatDetailsData.slaTimep1 }} {{ tatDetailsData.sunitp1 }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">SLA Time P2 :</label>
+                    <span>{{ tatDetailsData.slaTimep2 }} {{ tatDetailsData.sunitp2 }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 dataGroup">
+                    <label class="datalbl">SLA Time P3 :</label>
+                    <span>{{ tatDetailsData.slaTime3 }} {{ tatDetailsData.sunitp3 }}</span>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>TAT Mapping Detail</legend>
+              <div class="boxWhite">
+                <div class="row table-responsive">
+                  <div class="col-lg-12 col-md-12">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Order</th>
+                          <th>Level</th>
+                          <th>TAT time for P1</th>
+                          <th>TAT time for P2</th>
+                          <th>TAT time for P3</th>
+                          <th>Unit</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let tatData of tatDetailsData.tatMatrixMappings">
+                          <td>{{ tatData.orderNo }}</td>
+                          <td>{{ tatData.level }}</td>
+                          <td>{{ tatData.mtime1 }}</td>
+                          <td>{{ tatData.mtime2 }}</td>
+                          <td>{{ tatData.mtime3 }}</td>
+                          <td>{{ tatData.munit }}</td>
+                          <td>{{ tatData.action }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end">
+    <div class="addUpdateBtn">
+      <button class="btn btn-danger btn-sm" data-dismiss="modal" (click)="closeTATModel()">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>

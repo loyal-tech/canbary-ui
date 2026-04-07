@@ -1,0 +1,732 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataAcs"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchDataAcs" class="panel-collapse collapse in">
+        <div id="" class="panel-body" *ngIf="listView">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchCasName"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchAcs()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchAcs()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchAcs()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createAcs()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create ACS</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="listAcs()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search {{ title }}</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataAcs"
+            aria-expanded="false"
+            aria-controls="allDataAcs"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataAcs" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>UserName</th>
+                    <th>Url</th>
+                    <th>Created Date & Time</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let Acs of apiDataList
+                        | paginate
+                          : {
+                              id: 'acsListDataID',
+                              itemsPerPage: acsitemPerPage,
+                              currentPage: currentPageCasSlab,
+                              totalItems: acstotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <a
+                        href="javascript:void(0)"
+                        (click)="acsAllDetails(Acs)"
+                        style="color: #f7b206"
+                      >
+                        {{ Acs.name }}
+                      </a>
+                    </td>
+                    <td>{{ Acs.username }}</td>
+                    <td>{{ Acs.url }}</td>
+                    <td>{{ Acs.createdate }}</td>
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        (click)="editAcs(Acs.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonCas(Acs)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="acsListDataID"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCasList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isAcsEdit ? "Update" : "Create" }} {{ title }}</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="acsFormGroup">
+            <fieldset style="margin-top: 0px">
+              <legend>Basic Paramater</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <label>ACS Name *</label>
+                    <input
+                      id="name"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter ACS Name"
+                      formControlName="name"
+                      [ngClass]="{
+                        'is-invalid': submitted && acsFormGroup.controls.name.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && acsFormGroup.controls.name.errors"
+                    >
+                      ACS Name is required.
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <label>Endpoint Url *</label>
+                    <input
+                      id="name"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Url"
+                      formControlName="url"
+                      [ngClass]="{
+                        'is-invalid': submitted && acsFormGroup.controls.url.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && acsFormGroup.controls.url.errors"
+                    >
+                      Url is required.
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <label>User Name *</label>
+                    <div>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter User name"
+                        formControlName="username"
+                        [ngClass]="{
+                          'is-invalid': submitted && acsFormGroup.controls.username.errors
+                        }"
+                      />
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && acsFormGroup.controls.username.errors"
+                    >
+                      Username is required.
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <label>Password *</label>
+                    <div>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Password"
+                        formControlName="password"
+                        [ngClass]="{
+                          'is-invalid': submitted && acsFormGroup.controls.password.errors
+                        }"
+                      />
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && acsFormGroup.controls.password.errors"
+                    >
+                      Password is required.
+                    </div>
+                  </div>
+                </div>
+                <br />
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <label>Vendor *</label>
+                    <p-dropdown
+                      [options]="vendorListData"
+                      (onChange)="getVendorInfo($event)"
+                      optionValue="id"
+                      optionLabel="name"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select a Vendor"
+                      formControlName="vendorId"
+                      [ngClass]="{
+                        'is-invalid': submitted && acsFormGroup.controls.vendorId.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && acsFormGroup.controls.vendorId.errors"
+                    >
+                      Vendor is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Parameter Mapping List</legend>
+              <div class="boxWhite">
+                <div class="row" [formGroup]="acsUrlParameterMappingsfromgroup">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <div>
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Enter Parameter Name"
+                        name="paramName"
+                        id="paramName"
+                        formControlName="paramName"
+                        [ngClass]="{
+                          'is-invalid': submitted && acsFormGroup.controls.paramName.errors
+                        }"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && acsFormGroup.controls.paramName.errors"
+                      >
+                        <div class="error text-danger">Parameter Name is required.</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Enter Parameter Value"
+                      name="paramValue"
+                      id="paramValue"
+                      formControlName="paramValue"
+                      [ngClass]="{
+                        'is-invalid': submitted && acsFormGroup.controls.paramValue.errors
+                      }"
+                    />
+
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && acsFormGroup.controls.paramValue.errors"
+                    >
+                      <div class="error text-danger">Parameter Value is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-12">
+                    <button
+                      style="object-fit: cover; padding: 5px 8px"
+                      class="btn btn-primary"
+                      [disabled]="
+                        acsUrlParameterMappingsfromgroup.controls.paramName.untouched &&
+                        acsUrlParameterMappingsfromgroup.controls.paramValue.untouched
+                      "
+                      (click)="onAddUrlParameterMappingList()"
+                    >
+                      <i class="fa fa-plus-square" aria-hidden="true"></i>
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <table class="table coa-table" style="margin-top: 10px">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center">Param Name</th>
+                      <th style="text-align: center">Param Value</th>
+                      <th style="text-align: center">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let row of acsUrlParameterMappingsFromArray.controls;
+                        let index = index
+                      "
+                    >
+                      <td>
+                        <input
+                          class="form-control"
+                          type="text"
+                          placeholder="Enter API Method"
+                          name="apiMethod"
+                          id="apiMethod"
+                          [formControl]="row.get('paramName')"
+                          disabled
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          type="text"
+                          placeholder="Enter API Name"
+                          name="apiName"
+                          id="apiName"
+                          [formControl]="row.get('paramValue')"
+                          disabled
+                        />
+                      </td>
+                      <td style="text-align: center">
+                        <a
+                          *ngIf="acsUrlParameterMappingsFromArray.controls.length !== 1"
+                          id="deleteAtt"
+                          href="javascript:void(0)"
+                          (click)="deleteConfirmonUrlParameterMappingList(index)"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <pagination-controls
+                      id="parameterLISTID"
+                      maxSize="10"
+                      directionLinks="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedParameterMappingList($event)"
+                    ></pagination-controls>
+                  </div>
+                </div>
+                <br />
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>API Mapping List</legend>
+              <div class="boxWhite">
+                <div class="row" [formGroup]="acsParameterMappingsfromgroup">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <p-dropdown
+                      [options]="apiMethodList"
+                      optionValue="value"
+                      optionLabel="value"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select API Method *"
+                      formControlName="apiMethod"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && acsParameterMappingsfromgroup.controls.apiMethod.errors
+                      }"
+                    ></p-dropdown>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <p-dropdown
+                      [options]="apiNameList"
+                      optionValue="text"
+                      optionLabel="text"
+                      filter="true"
+                      filterBy="label"
+                      placeholder="Select API Name *"
+                      formControlName="apiName"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && acsParameterMappingsfromgroup.controls.apiName.errors
+                      }"
+                    ></p-dropdown>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Enter Endpoint *"
+                      name="paramValue"
+                      id="paramValue"
+                      formControlName="endpoint"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && acsParameterMappingsfromgroup.controls.endpoint.errors
+                      }"
+                    />
+                  </div>
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-12">
+                    <button
+                      style="object-fit: cover; padding: 5px 8px"
+                      class="btn btn-primary"
+                      [disabled]="
+                        acsParameterMappingsfromgroup.controls.endpoint.untouched &&
+                        acsParameterMappingsfromgroup.controls.apiMethod.untouched &&
+                        acsParameterMappingsfromgroup.controls.apiName.untouched
+                      "
+                      (click)="onAddParameterMappingList()"
+                    >
+                      <i class="fa fa-plus-square" aria-hidden="true"></i>
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <table class="table coa-table" style="margin-top: 10px">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center">API Method Name</th>
+                      <th style="text-align: center">API Name</th>
+                      <th style="text-align: center">EndPoint</th>
+                      <th style="text-align: center">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let row of acsParameterMappingsFromArray.controls
+                          | paginate
+                            : {
+                                id: 'parameterLISTID',
+                                itemsPerPage: parameterItemPerPage,
+                                currentPage: currentPageparameter,
+                                totalItems: parametertotalRecords
+                              };
+                        let index = index
+                      "
+                    >
+                      <td>
+                        <input
+                          class="form-control"
+                          type="text"
+                          placeholder="Enter API Method"
+                          name="apiMethod"
+                          id="apiMethod"
+                          [formControl]="row.get('apiMethod')"
+                          disabled
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          type="text"
+                          placeholder="Enter API Name"
+                          name="apiName"
+                          id="apiName"
+                          [formControl]="row.get('apiName')"
+                          disabled
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          type="text"
+                          placeholder="Enter endpoint"
+                          name="endpoint"
+                          id="endpoint"
+                          [formControl]="row.get('endpoint')"
+                          disabled
+                        />
+                      </td>
+                      <td style="text-align: center">
+                        <a
+                          *ngIf="acsParameterMappingsFromArray.controls.length !== 1"
+                          id="deleteAtt"
+                          href="javascript:void(0)"
+                          (click)="deleteConfirmonParameterMappingList(index)"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <pagination-controls
+                      id="parameterLISTID"
+                      maxSize="10"
+                      directionLinks="true"
+                      previousLabel=""
+                      nextLabel=""
+                      (pageChange)="pageChangedParameterMappingList($event)"
+                    ></pagination-controls>
+                  </div>
+                </div>
+                <br />
+              </div>
+            </fieldset>
+            <div class="addUpdateBtn" style="margin-top: 1.5rem">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                (click)="addEditCas('')"
+                *ngIf="!isAcsEdit"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add {{ title }}
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="isAcsEdit"
+                id="submit"
+                (click)="addEditCas(viewAcsListData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update {{ title }}
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Acs Details model -->
+
+<div class="row" *ngIf="acsALLDeatilsShow">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Tax Details"
+            (click)="listAcs()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">Acs Details</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#taxalldea"
+            aria-expanded="false"
+            aria-controls="Acsalldea"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="Acsalldea" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ acsAllData.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Username :</label>
+                  <span>{{ acsAllData.username }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Url :</label>
+                  <span>{{ acsAllData.url }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12 col-md-12 dataGroup">
+                  <label class="datalbl">Create Date :</label>
+                  <span>{{ acsAllData.createdate }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Param Mapping Details-->
+          <fieldset *ngIf="acsAllData.acsMasterUrlParamMappingList.length !== 0">
+            <legend>Parameter Mapping List</legend>
+            <div class="boxWhite">
+              <div class="row table-responsive">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Param Name</th>
+                        <th>Param Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of acsAllData.acsMasterUrlParamMappingList; index as i">
+                        <td>{{ data.paramName }}</td>
+                        <td>{{ data.paramValue }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- API Mapping List model -->
+          <fieldset *ngIf="acsAllData.acsMasterAPIMappings.length !== 0">
+            <legend>API Mapping List</legend>
+            <div class="boxWhite">
+              <div class="row table-responsive">
+                <div class="col-lg-12 col-md-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>API Method Name</th>
+                        <th>API Name</th>
+                        <th>EndPoint</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of acsAllData.acsMasterAPIMappings; index as i">
+                        <td>{{ data.apiMethod }}</td>
+                        <td>{{ data.apiName }}</td>
+                        <td>{{ data.endpoint }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,109 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">My Achievement</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#targetSearch"
+            aria-expanded="false"
+            aria-controls="targetSearch"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="targetSearch" class="panel-collapse collapse in"></div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div id="createKPI" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div>
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">KPI Name :</label>
+                    <span>{{ viewKPIDetailData?.name }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Start Date :</label>
+                    <span>{{ viewKPIDetailData?.startDate | date : "dd/MM/yyyy" }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">End Date :</label>
+                    <span>{{ viewKPIDetailData?.endDate | date : "dd/MM/yyyy" }}</span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                    <label class="datalbl">KPI Status :</label>
+                    <span *ngIf="viewKPIDetailData?.status == 'ACTIVE'" class="badge badge-success">
+                      {{ viewKPIDetailData?.status }}</span
+                    >
+                    <span
+                      *ngIf="viewKPIDetailData?.status == 'INACTIVE'"
+                      class="badge badge-danger"
+                    >
+                      {{ viewKPIDetailData?.status }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Additional Details</legend>
+              <div class="boxWhite">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Area</th>
+                      <th>No#</th>
+                      <th>Amount</th>
+                      <th>Amount %</th>
+                      <th>Achieved Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of myAchievementData">
+                      <td>{{ data.kpiSection }}</td>
+                      <td>-</td>
+                      <td>{{ data.amount }}</td>
+                      <td>{{ data.percentage }}</td>
+                      <td>
+                        <span *ngIf="data.achievedAmount != null">{{ data.achievedAmount }}</span>
+                        <span *ngIf="data.achievedAmount == null">0</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Total</strong></td>
+                      <td></td>
+                      <td>
+                        <strong>{{ totalVal }}</strong>
+                      </td>
+                      <td>
+                        <strong> {{ totalAmountPer }} </strong>
+                      </td>
+                      <td>
+                        <strong> {{ totalAchievedAmount }} </strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,237 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Authentication Audit Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#authAuditSearchPanel"
+            aria-expanded="false"
+            aria-controls="authAuditSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="authAuditSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchAuthRespForm">
+              <div class="row">
+                <div class="col-md-3">
+                  <label style="padding: 5px">Start date:</label>
+                  <p-calendar
+                    name="fromDate"
+                    dateFormat="dd/mm/yy"
+                    [showIcon]="true"
+                    [showButtonBar]="true"
+                    [hideOnDateTimeSelect]="true"
+                    placeholder="Enter Start Date"
+                    formControlName="fromDate"
+                    [style]="{ width: '100%' }"
+                    (keydown.enter)="searchAuthResp()"
+                  ></p-calendar>
+                </div>
+                <div class="col-md-3">
+                  <label style="padding: 5px">End date:</label>
+                  <p-calendar
+                    name="toDate"
+                    dateFormat="dd/mm/yy"
+                    [showIcon]="true"
+                    [showButtonBar]="true"
+                    [hideOnDateTimeSelect]="true"
+                    placeholder="Enter End Date"
+                    formControlName="toDate"
+                    [style]="{ width: '100%' }"
+                    (keydown.enter)="searchAuthResp()"
+                  ></p-calendar>
+                </div>
+                <div class="col-md-3">
+                  <label style="padding: 5px">User Name:</label>
+                  <input
+                    type="text"
+                    name="userName"
+                    class="form-control"
+                    placeholder="Enter User Name"
+                    formControlName="username"
+                    (keydown.enter)="searchAuthResp()"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label style="padding: 5px">Reply Message:</label>
+                  <input
+                    type="text"
+                    name="replymessage"
+                    class="form-control"
+                    placeholder="Enter Reply Message"
+                    formControlName="replymessage"
+                    (keydown.enter)="searchAuthResp()"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label style="padding: 5px">Packet Type:</label>
+                  <input
+                    type="text"
+                    name="packettype"
+                    class="form-control"
+                    placeholder="Enter Packet Type"
+                    formControlName="packettype"
+                    (keydown.enter)="searchAuthResp()"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label style="padding: 5px">Client IP:</label>
+                  <input
+                    type="text"
+                    name="clientip"
+                    class="form-control"
+                    placeholder="Enter Client IP"
+                    formControlName="clientip"
+                    (keydown.enter)="searchAuthResp()"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label style="padding: 5px">Client Group:</label>
+                  <input
+                    type="text"
+                    name="clientgroup"
+                    class="form-control"
+                    placeholder="Enter Client Group"
+                    formControlName="clientgroup"
+                    (keydown.enter)="searchAuthResp()"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <br />
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search Auth Response"
+                    data-toggle="tooltip"
+                    (click)="searchAuthResp()"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Authentication Audit</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#authAuditTablePanel"
+            aria-expanded="false"
+            aria-controls="authAuditTablePanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="authAuditTablePanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User Name</th>
+                <th>Reply Message</th>
+                <th>Packet Type</th>
+                <th>Client IP</th>
+                <th>Client Group</th>
+                <th>Event Time</th>
+                <th *ngIf="deleteAuthAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let group of this.filterdData
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ group.userName }}</td>
+                <td>{{ group.replyMessage }}</td>
+                <td>{{ group.packetType }}</td>
+                <td>{{ group.clientIp }}</td>
+                <td>{{ group.clientGroup }}</td>
+                <td>
+                  {{
+                    group.eventTime !== null ? (group.eventTime | date : "yyyy-MM-dd HH:mm:ss") : ""
+                  }}
+                </td>
+                <td *ngIf="deleteAuthAccess" class="btnAction">
+                  <a
+                    data-title="Delete"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="deleteConfirm(group.authresId)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_groupdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+</div>

@@ -1,0 +1,22 @@
+.checkbox-align {
+  padding-top: 19%;
+  padding-right: 10%;
+}
+
+.customm {
+  display: flex;
+  justify-content: center;
+  margin-right: 8px;
+  margin-top: 10px;
+}
+
+.checkbox-snmp {
+  padding-top: 2%;
+  padding-right: 10%;
+}
+
+.vlan-checkbox-align {
+  padding-top: 10%;
+  padding-right: 10%;
+  padding-left: 5%;
+}

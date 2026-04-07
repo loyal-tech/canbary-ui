@@ -1,0 +1,428 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} CommandSet</h3>
+      </div>
+      <div class="panel-body no-padding panel-udata">
+        <div class="pcol col-md-6" *ngIf="createAccess">
+          <div class="dbox">
+            <a (click)="createCommandset()" class="curson_pointer">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Create CommandSet</h5>
+              <!-- <p>Create Partner </p> -->
+            </a>
+          </div>
+        </div>
+        <div class="pcol col-md-6">
+          <div class="dbox">
+            <a (click)="this.clearSearch()" class="curson_pointer">
+              <img src="../../../assets/img/i01.png" style="width: 32px" />
+              <h5>Search CommandSet</h5>
+              <!-- <p>Search Partner </p> -->
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="this.listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">CommandSet</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listInwards"
+            aria-expanded="false"
+            aria-controls="listInwards"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataSector" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Command Type</th>
+                    <th>CommandSet Name</th>
+                    <th>Description</th>
+                    <th>Submitted Date</th>
+                    <th>Last Modified Date</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let Command of commandList
+                        | paginate
+                          : {
+                              id: 'casListDataID',
+                              itemsPerPage: deviceitemsPerPage,
+                              currentPage: currentPageDevice,
+                              totalItems: devicetotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <span
+                        class="HoverEffect"
+                        data-target="#IdIcCodeModal"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        data-keyboard="false"
+                        title="BU Details"
+                        (click)="IcCodeOpenModel(Command.id)"
+                        >{{ Command.commandType }}</span
+                      >
+                    </td>
+                    <td>{{ Command.commandSetName }}</td>
+                    <td>{{ Command.description }}</td>
+                    <td>{{ Command.submittedDate }}</td>
+                    <td>{{ Command.lastModifiedDate }}</td>
+
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        (click)="editCommandSet(Command)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonSector(Command)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="casListDataID"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCasList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="this.createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ this.editMode ? "Update" : "Create" }} CommandSet</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="deviceFormGroup">
+            <fieldset style="margin-top: 0px">
+              <legend>Basic Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Command Type*</label>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Command Type"
+                        formControlName="commandType"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>CommandSet Name*</label>
+                      <input
+                        id="commandSetName"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter commandSet Name"
+                        formControlName="commandSetName"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <label>Description*</label>
+                      <input
+                        id="description"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Description"
+                        formControlName="description"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <br />
+            <div class="form-check">
+              <label class="form-check-label" for="flexCheckDefault">
+                &nbsp; Allow any command that is not in the following list
+              </label>
+              &nbsp;
+              <input
+                id="flexCheckDefault"
+                class="form-check-input"
+                type="checkbox"
+                formControlName="anyCommandPermit"
+              />
+            </div>
+
+            <br />
+
+            <div formArrayName="tacacsCommands">
+              <div class="addUpdateBtn">
+                <button type="submit" class="btn btn-primary" id="submit" (click)="addCommand()">
+                  <i class="fa fa-plus-square"></i>
+                  Create Command
+                </button>
+              </div>
+              <br />
+              <table class="table" *ngIf="showFormArray">
+                <thead>
+                  <tr>
+                    <th>Command*</th>
+                    <th>Command Args</th>
+                    <th>Grant*</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container
+                    *ngFor="
+                      let commandGroup of deviceFormGroup.get('tacacsCommands').controls;
+                      let i = index
+                    "
+                  >
+                    <tr [formGroupName]="i">
+                      <td>
+                        <div *ngIf="!editing">
+                          {{ commandGroup.get("command").value }}
+                        </div>
+                        <div *ngIf="editing">
+                          <input
+                            id="command"
+                            class="form-control"
+                            placeholder="Enter Command Name"
+                            formControlName="command"
+                            [value]="commandGroup.get('command').value"
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div *ngIf="!editing">
+                          {{ commandGroup.get("commandArgs").value }}
+                        </div>
+                        <div *ngIf="editing">
+                          <input
+                            id="commandArgs"
+                            type="text"
+                            class="form-control"
+                            placeholder="Enter commandArgs"
+                            formControlName="commandArgs"
+                            [value]="commandGroup.get('commandArgs').value"
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div *ngIf="!editing">
+                          {{ commandGroup.get("grant").value }}
+                        </div>
+                        <div *ngIf="editing">
+                          <p-dropdown
+                            [options]="this.ipType"
+                            optionValue="label"
+                            formControlName="grant"
+                            filter="true"
+                            filterBy="name"
+                            placeholder="Select Permit"
+                          ></p-dropdown>
+                        </div>
+                      </td>
+                      <td>
+                        <a href="javascript:void(0)" (click)="editCommand(i)">
+                          <img src="assets/img/ioc01.jpg" /> </a
+                        >&nbsp;
+                        <a href="javascript:void(0)" (click)="removeCommand(i)">
+                          <img src="assets/img/ioc02.jpg" /> </a
+                        >&nbsp;
+                        <a href="javascript:void(0)" (click)="approveCommand(i)">
+                          <img src="assets/img/assign.jpg" />
+                        </a>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="addUpdateBtn">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        id="submit"
+        (click)="addEditCommandSet(deviceFormGroup.get('id').value)"
+      >
+        <i class="fa fa-check-circle"></i>
+        {{ editMode ? "Update" : "Add" }} {{ title }} CommandSet
+      </button>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="detailView">
+    <div class="panel squircle">
+      <div class="panel-heading">
+        <div style="display: flex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Driver Details"
+            (click)="ProductCategoryList()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 35px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ CommandList.commandType }}</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#driverDetail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="driverDetail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Id :&nbsp; </label>
+                  <span>{{ CommandList.id || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Command Type:&nbsp; </label>
+                  <span>{{ CommandList.commandType || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">CommandSet Name :&nbsp; </label>
+                  <span>{{ CommandList.commandSetName || "-" }}</span>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Description :&nbsp; </label>
+                  <span>{{ CommandList.description || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">anyCommandPermit :&nbsp; </label>
+                  <span>{{
+                    CommandList.anyCommandPermit
+                      ? "true"
+                      : CommandList.anyCommandPermit === false
+                      ? "false"
+                      : "-"
+                  }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Submitted Date : &nbsp;</label>
+                  <span>{{ CommandList.submittedDate || "-" }}</span>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">last Modified Date :&nbsp; </label>
+                  <span>{{ CommandList.lastModifiedDate || "-" }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Command Details</legend>
+            <div class="boxWhite">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Command</th>
+                    <th>Command Args</th>
+                    <th>Grant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let command of CommandList.tacacsCommands">
+                    <td>{{ command.command }}</td>
+                    <td>{{ command.commandArgs }}</td>
+                    <td>{{ command.grant }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

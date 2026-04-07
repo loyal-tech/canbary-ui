@@ -1,0 +1,1463 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Product Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchProduct"
+            aria-expanded="false"
+            aria-controls="searchProduct"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchProduct" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row" *ngIf="listview">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchProductName"
+                class="form-control"
+                placeholder="Enter Product Name"
+                (keydown.enter)="searchProduct()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchProduct()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchProduct()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="pcol col-md-6" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createProduct()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Product</h5>
+                <!-- <p>Create Partner </p> -->
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-6">
+            <div class="dbox">
+              <a (click)="productListView()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Product</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listview">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Product</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listProduct"
+            aria-expanded="false"
+            aria-controls="listProduct"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listProduct" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Warranty Time</th>
+                    <th>Warranty Time Unit</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let product of productListData
+                        | paginate
+                          : {
+                              id: 'stateListData',
+                              itemsPerPage: productListdataitemsPerPage,
+                              currentPage: currentPageProductListdata,
+                              totalItems: productListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td
+                      class="curson_pointer"
+                      (click)="getProductManagementDetails(product.id)"
+                      style="color: #f7b206"
+                    >
+                      {{ product.name }}
+                    </td>
+                    <td>{{ product.expiryTime }}</td>
+                    <td>{{ product.expiryTimeUnit }}</td>
+                    <td>{{ product.productCategory.type }}</td>
+                    <td *ngIf="product.status == 'ACTIVE'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="product.status == 'INACTIVE'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        title="Edit"
+                        (click)="editProduct(product.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        title="Delete"
+                        (click)="deleteConfirmProduct(product.id)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                      <button
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        id="download-button"
+                        (click)="downloadDoc(product.filename, product.id)"
+                        [disabled]="!product?.filename"
+                        title="Download Document"
+                      >
+                        <img class="icon" src="assets/img/pdf.png" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="stateListData"
+                  [maxSize]="5"
+                  [directionLinks]="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedProductList((currentPageProductListdata = $event))"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="productListdataitemsPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ this.editMode ? "Update" : "Create" }} Product</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createProduct"
+            aria-expanded="false"
+            aria-controls="createProduct"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createProduct" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div>
+            <form [formGroup]="productFormGroup">
+              <fieldset style="margin-top: 0px">
+                <legend>Basic Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Product Name*</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter Product Name"
+                          formControlName="name"
+                          [ngClass]="{
+                            'is-invalid': submitted && productFormGroup.controls.name.errors
+                          }"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productFormGroup.controls.name.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && productFormGroup.controls.name.errors.required"
+                          >
+                            Product Name is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Product Id</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter Product Id"
+                          formControlName="productId"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Ledger Id</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter Ledger Id"
+                          formControlName="navLedgerId"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Product Category *</label>
+                        <p-dropdown
+                          [options]="productCatagorys"
+                          optionValue="id"
+                          optionLabel="name"
+                          filter="true"
+                          id=""
+                          type="number"
+                          min="0"
+                          filterBy="name"
+                          placeholder="Select a product Type"
+                          formControlName="productCategory"
+                          [disabled]="editMode"
+                          (onChange)="productDeviceTypeEvent($event)"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && productFormGroup.controls.productCategory.errors
+                          }"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productFormGroup.controls.productCategory.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && productFormGroup.controls.productCategory.errors"
+                          >
+                            Product Type is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4" *ngIf="ifSpliterCASDropdownShow">
+                      <div class="form-group">
+                        <label>CAS *</label>
+                        <p-dropdown
+                          [options]="casePacakeges"
+                          optionValue="id"
+                          optionLabel="casname"
+                          filter="true"
+                          id=""
+                          type="number"
+                          min="0"
+                          filterBy="casname"
+                          placeholder="Select a product Type"
+                          formControlName="caseId"
+                          [disabled]="editMode"
+                          [ngClass]="{
+                            'is-invalid': submitted && productFormGroup.controls.caseId.errors
+                          }"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productFormGroup.controls.caseId.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && productFormGroup.controls.caseId.errors"
+                          >
+                            CAS is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4" *ngIf="ifSpliterInputShow">
+                      <div class="form-group">
+                        <label>In ports *</label>
+                        <div style="display: flex">
+                          <div style="width: 50%">
+                            <input
+                              id="totalInPorts"
+                              type="number"
+                              min="0"
+                              class="form-control"
+                              placeholder="Enter Total In Ports"
+                              formControlName="totalInPorts"
+                              (keyup)="onKeyTotalInPort($event)"
+                              [ngClass]="{
+                                'is-invalid':
+                                  submitted && productFormGroup.controls.totalInPorts.errors
+                              }"
+                            />
+                            <div
+                              class="errorWrap text-danger"
+                              *ngIf="submitted && productFormGroup.controls.totalInPorts.errors"
+                            >
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted &&
+                                  productFormGroup.controls.totalInPorts.errors.required
+                                "
+                              >
+                                Total In Ports is required.
+                              </div>
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted && productFormGroup.controls.totalInPorts.errors.pattern
+                                "
+                              >
+                                Only numeric charcter allowed.
+                              </div>
+                            </div>
+                          </div>
+                          <div style="width: 50%">
+                            <input
+                              id="availableInPorts"
+                              type="number"
+                              min="0"
+                              class="form-control"
+                              placeholder="Enter Available In Ports"
+                              formControlName="availableInPorts"
+                              [ngClass]="{
+                                'is-invalid':
+                                  submitted && productFormGroup.controls.availableInPorts.errors
+                              }"
+                              readonly
+                            />
+                            <div
+                              class="errorWrap text-danger"
+                              *ngIf="submitted && productFormGroup.controls.availableInPorts.errors"
+                            >
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted &&
+                                  productFormGroup.controls.availableInPorts.errors.required
+                                "
+                              >
+                                Available In ports is required.
+                              </div>
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted &&
+                                  productFormGroup.controls.availableInPorts.errors.pattern
+                                "
+                              >
+                                Only numeric charcter allowed.
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4" *ngIf="ifSpliterInputShow">
+                      <div class="form-group">
+                        <label>Out ports *</label>
+                        <div style="display: flex">
+                          <div style="width: 50%">
+                            <input
+                              id="totalOutPorts"
+                              type="number"
+                              min="0"
+                              class="form-control"
+                              placeholder="Enter Total Out Ports"
+                              formControlName="totalOutPorts"
+                              (keyup)="onKeyTotalOutPort($event)"
+                              [ngClass]="{
+                                'is-invalid':
+                                  submitted && productFormGroup.controls.totalOutPorts.errors
+                              }"
+                            />
+                            <div
+                              class="errorWrap text-danger"
+                              *ngIf="submitted && productFormGroup.controls.totalOutPorts.errors"
+                            >
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted &&
+                                  productFormGroup.controls.totalOutPorts.errors.required
+                                "
+                              >
+                                Total Out Ports is required.
+                              </div>
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted &&
+                                  productFormGroup.controls.totalOutPorts.errors.pattern
+                                "
+                              >
+                                Only numeric charcter allowed.
+                              </div>
+                            </div>
+                          </div>
+                          <div style="width: 50%">
+                            <input
+                              id="availableOutPorts"
+                              type="number"
+                              min="0"
+                              class="form-control"
+                              placeholder="Enter Available Out Ports"
+                              formControlName="availableOutPorts"
+                              [ngClass]="{
+                                'is-invalid':
+                                  submitted && productFormGroup.controls.availableOutPorts.errors
+                              }"
+                              readonly
+                            />
+                            <div
+                              class="errorWrap text-danger"
+                              *ngIf="
+                                submitted && productFormGroup.controls.availableOutPorts.errors
+                              "
+                            >
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted &&
+                                  productFormGroup.controls.availableOutPorts.errors.required
+                                "
+                              >
+                                Available Out ports is required.
+                              </div>
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted &&
+                                  productFormGroup.controls.availableOutPorts.errors.pattern
+                                "
+                              >
+                                Only numeric charcter allowed.
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group">
+                        <label>Manufacturer*</label>
+                        <p-dropdown
+                          [options]="allVendor"
+                          formControlName="vendorId"
+                          optionLabel="name"
+                          optionValue="id"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select Manufacturer"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productFormGroup.controls.vendorId.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && productFormGroup.controls.vendorId.errors.required"
+                          >
+                            Manufacturer is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                      <div class="form-group" style="padding-top: 25px">
+                        <label class="field-checkbox">
+                          Is OEM Consider:- &nbsp;
+                          <p-checkbox
+                            [disabled]="this.editMode"
+                            formControlName="hasOEMConsider"
+                            [binary]="true"
+                            name="binary"
+                          ></p-checkbox>
+                        </label>
+                        &nbsp;&nbsp;
+                        <label class="field-checkbox">
+                          Is Asset Consider:- &nbsp;
+                          <p-checkbox
+                            [disabled]="this.editMode"
+                            formControlName="hasAssetConsider"
+                            [binary]="true"
+                            name="binary"
+                          ></p-checkbox>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Warranty Time *</label>
+                        <input
+                          type="number"
+                          (keypress)="warrantyTimeValidation($event)"
+                          class="form-control"
+                          placeholder="Enter unit"
+                          formControlName="expiryTime"
+                          [ngClass]="{
+                            'is-invalid': submitted && productFormGroup.controls.expiryTime.errors
+                          }"
+                        />
+                        <div class="error text-danger" *ngIf="this.warrentyError">
+                          Warranty time must be greater than 0.
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productFormGroup.controls.expiryTime.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && productFormGroup.controls.expiryTime.errors.required
+                            "
+                          >
+                            Warranty Time is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Warranty Time Unit *</label>
+                        <p-dropdown
+                          [options]="timeUnitData"
+                          formControlName="expiryTimeUnit"
+                          optionLabel="text"
+                          optionValue="text"
+                          placeholder="Select Expiry Time Unit"
+                          filter="true"
+                          filterBy="text"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productFormGroup.controls.expiryTimeUnit.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && productFormGroup.controls.expiryTimeUnit.errors.required
+                            "
+                          >
+                            Warranty Time Unit is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Status*</label>
+                        <p-dropdown
+                          [options]="status"
+                          formControlName="status"
+                          optionLabel="label"
+                          optionValue="value"
+                          placeholder="Select status"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && productFormGroup.controls.status.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && productFormGroup.controls.status.errors.required"
+                          >
+                            Product Status is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <label>Select Attachment</label>
+                      <input
+                        (change)="onFileChangeUpload($event)"
+                        class="form-control"
+                        formControlName="file"
+                        type="file"
+                        id="txtSelectDocument"
+                        placeholder="Select Attachment"
+                        style="padding: 2px; width: 100%"
+                      />
+                      <div class="errorWrap text-danger">
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && productFormGroup.controls.file.errors?.required"
+                        >
+                          File is required.
+                        </div>
+                      </div>
+                      <div>
+                        <!-- <div class="error text-danger" *ngIf="!isValidFile">
+                          Invalid file type. Only PNG, JPG, JPEG, and PDF files are allowed.
+                        </div> -->
+                        <div
+                          *ngIf="existingFileName && !selectedFileUploadPreview?.length > 0"
+                          style="
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            padding-top: 4px;
+                            padding-bottom: 4px;
+                            font-size: 10px;
+                          "
+                        >
+                          Current File: {{ existingFileName }}
+                        </div>
+
+                        <!-- Show new file name if selected -->
+                        <div *ngFor="let file of selectedFileUploadPreview; let i = index">
+                          <div
+                            style="
+                              padding-left: 10px;
+                              padding-right: 10px;
+                              padding-top: 4px;
+                              padding-bottom: 4px;
+                              font-size: 10px;
+                            "
+                          >
+                            {{ file?.name }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <label>License Expiry Date *</label>
+                      <input
+                        (change)="onDateChanged($event)"
+                        id="dateOfBirth"
+                        type="date"
+                        formControlName="licenseDate"
+                        placeholder="DD/MM/YYYY"
+                        class="form-control"
+                        type="date"
+                        [min]="today"
+                      />
+                      <div class="errorWrap text-danger">
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && productFormGroup.controls.licenseDate.errors?.required
+                          "
+                        >
+                          License Expiry Date is required.
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-md-7">
+                            <label>Threshold Qty</label>
+                            <i
+                              class="fa fa-info-circle text-info"
+                              style="cursor: pointer; margin-left: 5px"
+                              title="If the Unit of Measurement (UOM) is Kilometer, please enter the Threshold Quantity in Meters."
+                            ></i>
+                            <input
+                              type="number"
+                              class="form-control"
+                              (keypress)="priceValidation($event)"
+                              placeholder="Enter Threshold Quantity"
+                              formControlName="thresholdQty"
+                              [ngClass]="{
+                                'is-invalid':
+                                  submitted && productFormGroup.controls.thresholdQty?.errors
+                              }"
+                            />
+                            <div class="error text-danger" *ngIf="this.thresholdQtyError">
+                              Threshold Qty must be greater than 0.
+                            </div>
+                          </div>
+
+                          <div class="col-md-5">
+                            <label> UOM </label>
+                            <div style="padding-top: 3px">
+                              {{ this.UOM }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row"> -->
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Description *</label>
+                        <textarea
+                          [ngClass]="{
+                            'is-invalid': submitted && productFormGroup.controls.description.errors
+                          }"
+                          class="form-control"
+                          formControlName="description"
+                          placeholder="Enter Description"
+                        ></textarea>
+                        <div
+                          *ngIf="submitted && productFormGroup.controls.description.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              submitted && productFormGroup.controls.description.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Description is required.
+                          </div>
+                          <div
+                            *ngIf="
+                              submitted && productFormGroup.controls.description.errors.pattern
+                            "
+                            class="error text-danger"
+                          >
+                            Maximum 255 charecter required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- <br />
+          <div class="field-checkbox">
+            Has MAC Address :-
+            <p-checkbox
+              formControlName="hasMac"
+              [binary]="true"
+              name="binary"
+              (onChange)="this.macAction()"
+            ></p-checkbox> -->
+              <!-- <label for="binary">Has Mac</label> -->
+              <!-- </div> -->
+              <!-- <label for="binary">Has Mac</label> -->
+              <!-- <div class="field-checkbox">
+            Has Serial Number :-
+            <p-checkbox
+              formControlName="hasSerial"
+              [binary]="true"
+              name="binary"
+              [readonly]="this.productFormGroup.controls.hasMac.value"
+            ></p-checkbox> -->
+              <!-- <label for="binary">Has Mac</label> -->
+              <!-- </div> -->
+              <!-- <label for="binary">Has Mac</label> -->
+
+              <!-- <div *ngIf="ifSpliterInputShow"> -->
+              <fieldset>
+                <legend>New Product Details</legend>
+                <div class="boxWhite">
+                 
+                  <div class="row">
+                      <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Actual Price</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          (keypress)="priceValidation($event)"
+                          placeholder="Enter Actual Price"
+                          formControlName="actualpricenewProduct"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && productFormGroup.controls.actualpricenewProduct.errors
+                          }"
+                        />
+                        <div class="error text-danger" *ngIf="this.actualpricenewProductError">
+                          Actual Price must be greater than 0.
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted && productFormGroup.controls.actualpricenewProduct.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              productFormGroup.controls.actualpricenewProduct.errors.required
+                            "
+                          >
+                            Actual Price required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>TAX</label>
+                        <p-dropdown
+                          [options]="taxs"
+                          formControlName="newProductTax"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select Tax"
+                          filter="true"
+                          filterBy="name"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Refund Amount (In Warranty)*</label>
+                        <input
+                          type="number"
+                          (keypress)="refundAmountValidation($event)"
+                          class="form-control"
+                          placeholder="Enter Refund Amount In Warranty"
+                          formControlName="newProductRefAmountInWarranty"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted &&
+                              productFormGroup.controls.newProductRefAmountInWarranty.errors
+                          }"
+                        />
+                        <div
+                          class="error text-danger"
+                          *ngIf="this.newProductRefAmountInWarrantyError"
+                        >
+                          Refund Amount (In Warranty) must be greater than 0.
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted &&
+                            productFormGroup.controls.newProductRefAmountInWarranty.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              productFormGroup.controls.newProductRefAmountInWarranty.errors
+                                .required
+                            "
+                          >
+                            Refund Amount In Warranty amount required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                   <div class="row">
+                      <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Refund Amount (Post Warranty)*</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          (keypress)="refundAmountValidation($event)"
+                          placeholder="Enter Refund Amount Post Warranty"
+                          formControlName="newProductRefAmountPostWarranty"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted &&
+                              productFormGroup.controls.newProductRefAmountPostWarranty.errors
+                          }"
+                        />
+                        <div
+                          class="error text-danger"
+                          *ngIf="this.newProductRefAmountPostWarrantyError"
+                        >
+                          Refund Amount (Post Warranty) must be greater than 0.
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted &&
+                            productFormGroup.controls.newProductRefAmountPostWarranty.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              productFormGroup.controls.newProductRefAmountPostWarranty.errors
+                                .required
+                            "
+                          >
+                            Refund Amount Post Warranty amount required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+              </fieldset>
+              <fieldset>
+                <legend>Refurbished Product Details</legend>
+                <div class="boxWhite">
+                
+                  <div class="row">
+                      <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Actual Price</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          (keypress)="priceValidation($event)"
+                          placeholder="Enter Actual Price"
+                          formControlName="actualpricerefurbishedProduct"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted &&
+                              productFormGroup.controls.actualpricerefurbishedProduct.errors
+                          }"
+                        />
+                        <div
+                          class="error text-danger"
+                          *ngIf="this.actualpricerefurbishedProductError"
+                        >
+                          Actual Price must be greater than 0.
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted &&
+                            productFormGroup.controls.actualpricerefurbishedProduct.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              productFormGroup.controls.actualpricerefurbishedProduct.errors
+                                .required
+                            "
+                          >
+                            Actual Price required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>TAX</label>
+                        <p-dropdown
+                          [options]="taxs"
+                          formControlName="refurburshiedProductTax"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select Tax"
+                          filter="true"
+                          filterBy="name"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Refund Amount (In Warranty)*</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          (keypress)="refundAmountValidation($event)"
+                          placeholder="Enter Refund Amount In Warranty"
+                          formControlName="refurburshiedProductRefAmountInWarranty"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted &&
+                              productFormGroup.controls.refurburshiedProductRefAmountInWarranty
+                                .errors
+                          }"
+                        />
+                        <div
+                          class="error text-danger"
+                          *ngIf="this.refurburshiedProductRefAmountInWarrantyError"
+                        >
+                          Refund Amount (In Warranty) must be greater than 0.
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted &&
+                            productFormGroup.controls.refurburshiedProductRefAmountInWarranty.errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              productFormGroup.controls.refurburshiedProductRefAmountInWarranty
+                                .errors.required
+                            "
+                          >
+                            Refund Amount In Warranty amount required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                      <div class="form-group">
+                        <label>Refund Amount (Post Warranty)*</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          (keypress)="refundAmountValidation($event)"
+                          placeholder="Enter Refund Amount Post Warranty"
+                          formControlName="refurburshiedProductRefAmountPostWarranty"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted &&
+                              productFormGroup.controls.refurburshiedProductRefAmountPostWarranty
+                                .errors
+                          }"
+                        />
+                        <div
+                          class="error text-danger"
+                          *ngIf="this.refurburshiedProductRefAmountPostWarrantyError"
+                        >
+                          Refund Amount (Post Warranty) must be greater than 0.
+                        </div>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="
+                            submitted &&
+                            productFormGroup.controls.refurburshiedProductRefAmountPostWarranty
+                              .errors
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              productFormGroup.controls.refurburshiedProductRefAmountPostWarranty
+                                .errors.required
+                            "
+                          >
+                            Refund Amount Post Warranty amount required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  
+                </div>
+              </fieldset>
+
+              <fieldset style="margin-top: 0px" *ngIf="showSpecification">
+                <legend>Inventory Specification Parameter Details</legend>
+                <div class="boxWhite">
+                  <form [formGroup]="specificationParametersDTO">
+                    <div class="row">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th style="padding-left: 24px">Parameter</th>
+                            <th>Mandatory</th>
+                            <th style="text-align: center">Default Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let parameter of specificationParametersDTOList.controls;
+                              let i = index
+                            "
+                          >
+                            <td class="param-name-cell" style="padding-left: 40px">
+                              {{ parameter.get("paramName").value }}
+                            </td>
+                            <td class="custom-checkbox-cell" style="padding-right: 312px">
+                              <p-checkbox
+                                class="big-checkbox customm"
+                                formControlName="isMandatory"
+                                [binary]="true"
+                                [readonly]="true"
+                                [formControl]="parameter.get('isMandatory')"
+                              ></p-checkbox>
+                            </td>
+                            <td
+                              *ngIf="!parameter.get('isMultiValueParam').value"
+                              class="param-value-cell"
+                            >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="defaultValue"
+                                [formControl]="parameter.get('defaultValue')"
+                              />
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  parameter.get('defaultValue').errors &&
+                                  parameter.get('defaultValue').errors?.maxlength
+                                "
+                              >
+                                Allowed maximum 40 characters only.
+                              </div>
+                            </td>
+                            <td *ngIf="parameter.get('isMultiValueParam').value">
+                              <p-dropdown
+                                [options]="parameter.get('paramValues').value"
+                                [formControl]="parameter.get('defaultValue')"
+                                optionLabel="label"
+                                optionValue="value"
+                                filter="true"
+                                filterBy="label"
+                                placeholder="Select Parameter"
+                              >
+                              </p-dropdown>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </form>
+                </div>
+              </fieldset>
+
+              <!-- <label>Charge</label>
+              <p-dropdown
+                [options]="charges"
+                formControlName="chargeId"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select charge"
+              ></p-dropdown>
+              <br /><br /> -->
+              <!-- <label>Refund Amount *</label>
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Enter Refund Amount"
+                formControlName="refundAmount"
+                [ngClass]="{
+                  'is-invalid': submitted && productFormGroup.controls.refundAmount.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && productFormGroup.controls.refundAmount.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && productFormGroup.controls.refundAmount.errors.required"
+                >
+                  Refund amount required.
+                </div>
+              </div> -->
+              <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submit"
+                  (click)="submit()"
+                  [disabled]="!productFormGroup.valid || !specificationParametersDTOList.valid"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  {{ editMode ? "Update" : "Add" }} Product
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="detailView">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Tax Details"
+            (click)="ProductManagementList()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ viewProductManagementDetails.name }} Product Management</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#outwardDetail"
+            aria-expanded="false"
+            aria-controls="taxalldea"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="outwardDetail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Product Name :</label>
+                  <span>{{ viewProductManagementDetails.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Product Id :</label>
+                  <span>{{ viewProductManagementDetails.productId }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Ledger Id :</label>
+                  <span>{{ viewProductManagementDetails.navLedgerId }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Product Category :</label>
+                  <span>{{ viewProductManagementDetails.productCategory.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Warranty Time :</label>
+                  <span>{{ viewProductManagementDetails.expiryTime }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Warranty Time Unit :</label>
+                  <span>{{ viewProductManagementDetails.expiryTimeUnit }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Manufacturer :</label>
+                  <span>{{ viewProductManagementDetails.vendorName }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span>{{ viewProductManagementDetails.status }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Has OEM Consider :</label>
+                  <span>{{ viewProductManagementDetails.hasOEMConsider }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Has Asset Consider :</label>
+                  <span>{{ viewProductManagementDetails.hasAssetConsider }}</span>
+                </div>
+                <!-- <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Threshold Qty :</label>
+                  <i
+                    class="fa fa-info-circle text-info"
+                    style="cursor: pointer; margin-left: 2px"
+                    title="If the Unit of Measurement (UOM) is Kilometer, the Threshold Quantity is displayed in Meters."
+                  ></i>
+                  <span style="margin-left: 10px">{{
+                    viewProductManagementDetails.thresholdQty
+                  }}</span>
+                </div> -->
+                <!-- <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">UOM :</label>
+                  <span>{{ viewProductManagementDetails.productCategory.unit }}</span>
+                </div> -->
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">File :</label>
+                  <span *ngIf="viewProductManagementDetails.filename">
+                    <a
+                      href="javascript:void(0)"
+                      style="color: blue"
+                      (click)="
+                        downloadDoc(
+                          viewProductManagementDetails.filename,
+                          viewProductManagementDetails.id
+                        )
+                      "
+                      >{{ viewProductManagementDetails.filename }}</a
+                    >
+                  </span>
+                  <span *ngIf="!viewProductManagementDetails.filename">-</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">license Expiry Date :</label>
+                  <span>{{ viewProductManagementDetails.licenseDate }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Description :</label>
+                  <span>{{ viewProductManagementDetails.description }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+      <div id="outwardDetail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>New Product Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Actual Price :</label>
+                  <span>{{ viewProductManagementDetails.actualpricenewProduct }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Tax :</label>
+                  <span>{{ viewProductManagementDetails.newProductTaxName }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Refund Amount (In Warranty) :</label>
+                  <span>{{ viewProductManagementDetails.newProductRefAmountInWarranty }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Refund Amount (Post Warranty) :</label>
+                  <span>{{ viewProductManagementDetails.newProductRefAmountPostWarranty }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+      <div id="outwardDetail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Refurbished Product Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Actual Price :</label>
+                  <span>{{ viewProductManagementDetails.actualpricerefurbishedProduct }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Tax :</label>
+                  <span>{{ viewProductManagementDetails.refurburshiedProductTaxName }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Refund Amount (In Warranty) :</label>
+                  <span>{{
+                    viewProductManagementDetails.refurburshiedProductRefAmountInWarranty
+                  }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Refund Amount (Post Warranty) :</label>
+                  <span>{{
+                    viewProductManagementDetails.refurburshiedProductRefAmountPostWarranty
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <!-- Specification Details -->
+      <div
+        id="outwardDetail"
+        class="panel-collapse collapse in"
+        *ngIf="viewProductManagementDetails.specificationParametersDTOList.length > 0"
+      >
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Inventory Specification Parameter Details</legend>
+            <div class="boxWhite">
+              <div
+                *ngFor="let spec of viewProductManagementDetails.specificationParametersDTOList"
+                class="row"
+              >
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Parameter :</label>
+                  <span>{{ spec.paramName }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl"> Mandatory :</label>
+                  <span>{{ spec.isMandatory }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Default Value :</label>
+                  <span>{{ spec.defaultValue }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,397 @@
+<div class="row">
+  <div class="col-md-6 left">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Email Configuration Parameters</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchEmail"
+            aria-expanded="false"
+            aria-controls="searchEmail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchEmail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>UserName</th>
+                <th>Host Server</th>
+                <th>Port No</th>
+                <th>ISP Name</th>
+                <th *ngIf="editAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let group of groupData
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ group.userName }}</td>
+                <td>{{ group.hostServer }}</td>
+                <td>{{ group.port }}</td>
+                <td>{{ group.mvnoName }}</td>
+                <td class="btnAction" *ngIf="editAccess">
+                  <!-- <button mat-fab color="primary" aria-label="Example icon button with a delete icon">
+                                                            <mat-icon>delete</mat-icon>
+                                                        </button> -->
+                  <a
+                    *ngIf="editAccess"
+                    (click)="editConfigById(group.emailConfigId, i)"
+                    class="curson_pointer"
+                    title="Edit"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <!-- <a data-toggle="modal" data-target="#myModal">
+                                        <i class="fa fa-trash"></i></a> -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="pagination_Dropdown">
+            <pagination-controls
+              id="listing_groupdata"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChanged($event)"
+            ></pagination-controls>
+            <!-- <div id="itemPerPageDropdown">
+              <p-dropdown
+                [options]="pageLimitOptions"
+                optionLabel="value"
+                optionValue="value"
+                (onChange)="TotalItemPerPage($event)"
+              ></p-dropdown>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-6 right">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Email Config</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#editEmail"
+            aria-expanded="false"
+            aria-controls="editEmail"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="editEmail" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+            Sorry you have not privilege to create operation!
+          </div>
+          <div *ngIf="createAccess || (editMode && editAccess)">
+            <form class="form-auth-small" [formGroup]="editForm">
+              <label>Username</label>
+              <input
+                type="text"
+                name="userName"
+                class="form-control"
+                placeholder="Enter Username"
+                formControlName="userName"
+                [ngClass]="{
+                  'is-invalid': submitted && editForm.controls.userName.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && editForm.controls.userName.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && editForm.controls.userName.errors.required"
+                >
+                  Username is required
+                </div>
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && editForm.controls.userName.errors['noSpace']"
+                >
+                  Username cannot contain spaces.
+                </div>
+              </div>
+              <br />
+              <label>Password</label>
+              <div class="form-control displayflex">
+                <div style="width: 95%">
+                  <input
+                    [type]="_passwordType"
+                    class="inputPassword"
+                    name="password"
+                    placeholder="Enter password"
+                    formControlName="password"
+                    [ngClass]="{
+                      'is-invalid': submitted && editForm.controls.password.errors
+                    }"
+                  />
+                </div>
+                <!-- <div style="width: 5%">
+                  <div *ngIf="showPassword">
+                    <i
+                      class="fa fa-eye"
+                      (click)="showPassword = false; _passwordType = 'password'"
+                    ></i>
+                  </div>
+                  <div *ngIf="!showPassword">
+                    <i
+                      class="fa fa-eye-slash"
+                      (click)="showPassword = true; _passwordType = 'text'"
+                    ></i>
+                  </div>
+                </div> -->
+              </div>
+
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && editForm.controls.password.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && editForm.controls.password.errors.required"
+                >
+                  Password is required
+                </div>
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && editForm.controls.password.errors['noSpace']"
+                >
+                  Password cannot contain spaces.
+                </div>
+              </div>
+              <!-- <br />
+            <label>Authentication</label>
+            <input type="text" name="authParam" class="form-control" placeholder="Enter Authentication"
+              formControlName="authParam" [ngClass]="{
+                'is-invalid': submitted && editForm.controls.authParam.errors
+              }" />
+            <div class="errorWrap text-danger" *ngIf="submitted && editForm.controls.authParam.errors">
+              <div class="error text-danger" *ngIf="submitted && editForm.controls.authParam.errors.required">
+                Authentication is required
+              </div>
+            </div> -->
+              <br />
+              <div>
+                <label>SMTP Authentication</label>
+                <br />
+                <p-dropdown
+                  [options]="smtpAuth"
+                  placeholder="Select SMTP Authentication Value"
+                  optionLabel="label"
+                  optionValue="value"
+                  formControlName="authValue"
+                  filter="true"
+                  filterBy="label"
+                  [ngClass]="{
+                    'is-invalid': submitted && editForm.controls.authValue.errors
+                  }"
+                ></p-dropdown>
+                <!-- <input type="text" name="authValue" class="form-control" placeholder="Enter Authentication Value"
+              formControlName="authValue" [ngClass]="{
+                'is-invalid': submitted && editForm.controls.authValue.errors
+              }" /> -->
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && editForm.controls.authValue.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && editForm.controls.authValue.errors.required"
+                  >
+                    SMTP Authentication Value is required
+                  </div>
+                </div>
+              </div>
+              <!-- <br />
+            <label>Starttls</label>
+            <input type="text" name="starttlsParam" class="form-control" placeholder="Enter Starttls"
+              formControlName="starttlsParam" [ngClass]="{
+                'is-invalid':
+                  submitted && editForm.controls.starttlsParam.errors
+              }" />
+            <div class="errorWrap text-danger" *ngIf="submitted && editForm.controls.starttlsParam.errors">
+              <div class="error text-danger" *ngIf="
+                  submitted && editForm.controls.starttlsParam.errors.required
+                ">
+                Starttls is required
+              </div>
+            </div> -->
+              <br />
+              <div>
+                <label>Authentication Type</label>
+                <br />
+                <p-dropdown
+                  [options]="authType"
+                  placeholder="Select Authentication Type"
+                  optionLabel="label"
+                  optionValue="value"
+                  formControlName="authType"
+                  filter="true"
+                  filterBy="label"
+                  [ngClass]="{
+                    'is-invalid': submitted && editForm.controls.authType.errors
+                  }"
+                ></p-dropdown>
+                <!-- <input type="text" name="starttlsValue" class="form-control" placeholder="Enter Starttls Value"
+              formControlName="starttlsValue" [ngClass]="{
+                'is-invalid':
+                  submitted && editForm.controls.starttlsValue.errors
+              }" /> -->
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && editForm.controls.authType.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && editForm.controls.authType.errors.required"
+                  >
+                    Authentication Type is required
+                  </div>
+                </div>
+              </div>
+              <br />
+              <!-- <label>Host Name</label>
+            <input type="text" name="hostParam" class="form-control" placeholder="Enter Host Name"
+              formControlName="hostParam" [ngClass]="{
+                'is-invalid': submitted && editForm.controls.hostParam.errors
+              }" />
+            <div class="errorWrap text-danger" *ngIf="submitted && editForm.controls.hostParam.errors">
+              <div class="error text-danger" *ngIf="submitted && editForm.controls.hostParam.errors.required">
+                Host Name is required
+              </div>
+            </div>
+            <br /> -->
+              <div>
+                <label>Host Server</label>
+                <br />
+                <input
+                  type="text"
+                  name="hostValue"
+                  class="form-control"
+                  placeholder="Enter Host Server"
+                  formControlName="hostValue"
+                  [ngClass]="{
+                    'is-invalid': submitted && editForm.controls.hostValue.errors
+                  }"
+                />
+                <!-- <p-dropdown [options]="hostServer" placeholder="Select Host Server" optionLabel="label"
+                optionValue="label" formControlName="hostValue" [ngClass]="{
+                'is-invalid': submitted && editForm.controls.hostValue.errors
+              }"></p-dropdown> -->
+                <!-- <input type="text" name="hostValue" class="form-control" placeholder="Enter Host Value"
+              formControlName="hostValue" [ngClass]="{
+                'is-invalid': submitted && editForm.controls.hostValue.errors
+              }" /> -->
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && editForm.controls.hostValue.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && editForm.controls.hostValue.errors.required"
+                  >
+                    Host Server is required
+                  </div>
+                </div>
+              </div>
+              <br />
+              <!-- <label>Port</label>
+            <input type="text" name="portParam" class="form-control" placeholder="Enter Port"
+              formControlName="portParam" [ngClass]="{
+                'is-invalid': submitted && editForm.controls.portParam.errors
+              }" />
+            <div class="errorWrap text-danger" *ngIf="submitted && editForm.controls.portParam.errors">
+              <div class="error text-danger" *ngIf="submitted && editForm.controls.portParam.errors.required">
+                Port is required
+              </div>
+            </div>
+            <br /> -->
+              <label>Port Number</label>
+              <br />
+              <input
+                type="text"
+                name="portValue"
+                class="form-control"
+                placeholder="Enter Port Number"
+                formControlName="portValue"
+                [ngClass]="{
+                  'is-invalid': submitted && editForm.controls.portValue.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && editForm.controls.portValue.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && editForm.controls.portValue.errors.required"
+                >
+                  Port Number is required
+                </div>
+              </div>
+              <br />
+              <div *ngIf="editMode == false" class="addUpdateBtn">
+                <button type="submit" class="btn btn-primary" (click)="addeditEmailConfig('')">
+                  <i class="fa fa-check-circle"></i>
+                  Add Email Config
+                </button>
+                <br />
+              </div>
+              <div *ngIf="editMode == true" class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="addeditEmailConfig('')"
+                  [disabled]="isEmailConfigEdit"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update Email Config
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <p-confirmDialog [style]="{ width: '50vw' }" key="positionDialog" [baseZIndex]="10000"></p-confirmDialog> -->
+    <!-- END Form Design -->
+  </div>
+</div>
+
+<!-- Javascript -->
+<!-- <script src="../../../assets/scripts/radius-group.js"></script> -->

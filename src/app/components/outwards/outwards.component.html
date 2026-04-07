@@ -1,0 +1,1323 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Outwards</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchOut"
+            aria-expanded="false"
+            aria-controls="searchOut"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="searchOut" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <!-- <input id="taxName" type="text" [(ngModel)]="searchOutward" class="form-control"
+                placeholder="Enter Outward Number" (keydown.enter)="searchOutwardData()" /> -->
+              <p-dropdown
+                (onChange)="selSearchOption($event)"
+                [(ngModel)]="searchOutwardOption"
+                [filter]="true"
+                [options]="searchOptionSelect"
+                filterBy="label"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select a Search Option"
+              ></p-dropdown>
+            </div>
+            <div
+              *ngIf="
+                searchOption != 'status' &&
+                searchOption != 'cafStatus' &&
+                searchOption != 'custtype' &&
+                searchOption != 'currentAssigneeName' &&
+                searchOption != 'cafCreatedDate' &&
+                searchOption != 'currentAssignedTeam'
+              "
+              class="col-lg-3 col-md-3 m-b-10"
+            >
+              <input
+                [(ngModel)]="searchOutward"
+                class="form-control"
+                id="username"
+                placeholder="Enter Search Detail"
+                type="text"
+                (keydown.enter)="searchOutwardData()"
+              />
+            </div>
+            <div
+              class="col-lg-3 col-md-3 m-b-10"
+              *ngIf="searchOption === 'status' || searchOption === 'cafStatus'"
+            >
+              <p-dropdown
+                [options]="commondropdownService.CustomerStatusValue"
+                optionValue="value"
+                optionLabel="text"
+                filter="true"
+                filterBy="text"
+                placeholder="Select a Status"
+                [(ngModel)]="searchOutward"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'custtype'">
+              <p-dropdown
+                [options]="commondropdownService.customerTypeSearchOption"
+                optionValue="value"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                placeholder="Select a Customer Type"
+                [(ngModel)]="searchOutward"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'currentAssigneeName'">
+              <p-dropdown
+                [options]="commondropdownService.activeStaffList"
+                optionValue="username"
+                optionLabel="username"
+                filter="true"
+                filterBy="username"
+                placeholder="Select a Assigned Staff"
+                [(ngModel)]="searchOutward"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-3 m-b-10" *ngIf="searchOption === 'currentAssignedTeam'">
+              <p-dropdown
+                [options]="commondropdownService.teamListData"
+                optionValue="name"
+                optionLabel="name"
+                filter="true"
+                filterBy="name"
+                placeholder="Select a Assigned Team"
+                [(ngModel)]="searchOutward"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                data-toggle="tooltip"
+                (click)="searchOutwardData()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="this.clearSearchOutward()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="pcol col-md-6" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="this.createOutward()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Outward</h5>
+                <!-- <p>Create Partner </p> -->
+              </a>
+            </div>
+          </div>
+          <div class="pcol col-md-6">
+            <div class="dbox">
+              <a (click)="this.clearSearchOutward()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Outward</h5>
+                <!-- <p>Search Partner </p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="this.listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Outwards</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#listOutShow"
+            aria-expanded="false"
+            aria-controls="listOutShow"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="listOutShow" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div>
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Outward Number</th>
+                      <th>Product Name</th>
+                      <th>Quantity</th>
+                      <th>InTransit Quantity</th>
+                      <th>Created By</th>
+                      <!-- <th>Outward Date</th> -->
+                      <th>Status</th>
+                      <th>Approval Status</th>
+                      <th
+                        *ngIf="
+                          deleteAccess || editAccess || addMacAddressAccess || showMacAddressAccess
+                        "
+                      >
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let outward of this.outwardListData
+                          | paginate
+                            : {
+                                id: 'outwardListData',
+                                itemsPerPage: productListdataitemsPerPage,
+                                currentPage: currentPageProductListdata,
+                                totalItems: productListdatatotalRecords
+                              };
+                        index as i
+                      "
+                    >
+                      <td
+                        class="curson_pointer"
+                        (click)="getOutwardDetails(outward.id)"
+                        style="color: #f7b206"
+                      >
+                        {{ outward.outwardNumber }}
+                      </td>
+                      <td>{{ outward.productId.name }}</td>
+                      <td>{{ outward.qty }}</td>
+                      <td>{{ outward.inTransitQty }}</td>
+                      <td>{{ outward.createdBy }}</td>
+                      <!-- <td>
+                        {{ outward.outwardDateTime | date : "dd-MM-yyy h:mm a " }}
+                      </td> -->
+                      <td *ngIf="outward.status == 'Active' || outward.status == 'ACTIVE'">
+                        <span class="badge badge-success">Active</span>
+                      </td>
+                      <td *ngIf="outward.status == 'INACTIVE'">
+                        <span class="badge badge-danger">Inactive</span>
+                      </td>
+                      <!-- <td *ngIf="outward.status == null">
+                        <span>-</span>
+                      </td> -->
+                      <td *ngIf="outward.approvalStatus == 'Pending'">
+                        <span class="badge badge-primary">Pending</span>
+                      </td>
+                      <td *ngIf="outward.approvalStatus == 'Approve'">
+                        <span class="badge badge-success">Approve</span>
+                      </td>
+                      <td *ngIf="outward.approvalStatus == 'Rejected'">
+                        <span class="badge badge-danger">Rejected</span>
+                      </td>
+                      <td
+                        class="btnAction"
+                        *ngIf="
+                          deleteAccess || editAccess || addMacAddressAccess || showMacAddressAccess
+                        "
+                      >
+                        <button
+                          *ngIf="editAccess"
+                          id="edit-button"
+                          class="approve-btn"
+                          type="button"
+                          href="javascript:void(0)"
+                          [disabled]="outward.approvalStatus != 'Pending'"
+                          (click)="this.editOutward(outward.id)"
+                          title="Edit"
+                        >
+                          <img src="assets/img/ioc01.jpg" />
+                        </button>
+                        <button
+                          *ngIf="deleteAccess"
+                          id="delete-button"
+                          href="javascript:void(0)"
+                          class="approve-btn"
+                          disabled
+                          (click)="this.deleteConfirmOutward(outward.id)"
+                          title="Delete"
+                        >
+                          <img src="assets/img/ioc02.jpg" />
+                        </button>
+                        <button
+                          *ngIf="addMacAddressAccess"
+                          data-target="#MACAssignModalOutward"
+                          data-title="Add MAC address"
+                          title="Add MAC address"
+                          data-toggle="modal"
+                          data-backdrop="static"
+                          data-keyboard="false"
+                          (click)="addMAC(outward)"
+                          [disabled]="
+                            outward.approvalStatus == 'Rejected' ||
+                            outward.approvalStatus == 'Approve' ||
+                            outward.status == 'INACTIVE'
+                          "
+                          class="approve-btn curson_pointer"
+                        >
+                          <img src="assets/img/icons-02.png" />
+                        </button>
+                        <button
+                          *ngIf="showMacAddressAccess"
+                          data-target="#MACShowModal"
+                          data-title="Show MAC address"
+                          title="Show MAC address"
+                          data-toggle="modal"
+                          data-backdrop="static"
+                          data-keyboard="false"
+                          (click)="showMac(outward)"
+                          [disabled]="outward.approvalStatus == 'Rejected'"
+                          class="approve-btn curson_pointer"
+                        >
+                          <img src="assets/img/E_Status_Y.png" />
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="pagination_Dropdown">
+                  <pagination-controls
+                    id="outwardListData"
+                    [maxSize]="10"
+                    [directionLinks]="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedProductList((currentPageProductListdata = $event))"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [(ngModel)]="productListdataitemsPerPage"
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="this.createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ this.editMode ? "Update" : "Create" }} Outwards</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#updateOutwards"
+            aria-expanded="false"
+            aria-controls="updateOutwards"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="updateOutwards" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div>
+            <form [formGroup]="this.outwardFormGroup">
+              <fieldset style="margin-top: 0px">
+                <legend>Basic Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" *ngIf="this.editMode">
+                      <div class="form-group">
+                        <label>Outward Number *</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Enter outward number"
+                          [readOnly]="this.editMode"
+                          formControlName="outwardNumber"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="col-lg-4 col-md-4 col-sm-6 col-xs-12"
+                      *ngIf="ifRedirectInventoryModule"
+                    >
+                      <div class="form-group">
+                        <label>Request Inventory Name</label>
+                        <input
+                          class="form-control"
+                          [readOnly]="this.editMode"
+                          formControlName="requestInventoryName"
+                          disabled
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Product*</label>
+                        <p-dropdown
+                          #ddlProduct
+                          [options]="this.products"
+                          formControlName="product"
+                          optionLabel="name"
+                          optionValue="id"
+                          placeholder="Select Product"
+                          (onChange)="getUnit($event, ddlProduct)"
+                          filter="true"
+                          filterBy="name"
+                          [disabled]="this.editMode || ifRedirectInventoryModule"
+                        >
+                        </p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && this.outwardFormGroup.controls.product.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && this.outwardFormGroup.controls.product.errors.required
+                            "
+                          >
+                            Product is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Source Type *</label>
+                      <p-dropdown
+                        [options]="sourceType"
+                        optionValue="label"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select Source Type"
+                        formControlName="sourceType"
+                        [disabled]="this.editMode || ifRedirectInventoryModule"
+                        [ngClass]="{
+                          'is-invalid': submitted && outwardFormGroup.controls.sourceType.errors
+                        }"
+                        (onChange)="
+                          this.getSources(this.outwardFormGroup.controls.sourceType.value)
+                        "
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && outwardFormGroup.controls.sourceType.errors"
+                      >
+                        <div class="error text-danger">Source Type is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div
+                      class="col-lg-4 col-md-4 col-sm-6 col-xs-12"
+                      *ngIf="!isSourceAStaffOrCustomer && !sourceTypeAsStaffFlag"
+                    >
+                      <div class="form-group">
+                        <label> Select Source *</label>
+                        <p-dropdown
+                          [options]="sources"
+                          formControlName="source"
+                          optionLabel="name"
+                          optionValue="id"
+                          filter="true"
+                          filterBy="name"
+                          placeholder="Select Source"
+                          [disabled]="this.editMode || ifRedirectInventoryModule"
+                          (onChange)="
+                            this.getAvailableQtyByProductAndSource(
+                              this.outwardFormGroup.controls.product.value,
+                              this.outwardFormGroup.controls.source.value,
+                              this.outwardFormGroup.controls.sourceType.value
+                            )
+                          "
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && this.outwardFormGroup.controls.source.errors"
+                        >
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted && this.outwardFormGroup.controls.source.errors.required
+                            "
+                          >
+                            Source is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" *ngIf="sourceTypeAsStaffFlag">
+                      <div class="form-group">
+                        <label> Select Source *</label>
+                        <p-dropdown
+                          [options]="sources"
+                          formControlName="source"
+                          optionLabel="username"
+                          optionValue="id"
+                          filter="true"
+                          filterBy="username"
+                          placeholder="Select Source"
+                          [disabled]="this.editMode || ifRedirectInventoryModule"
+                          (onChange)="
+                            this.getAvailableQtyByProductAndSource(
+                              this.outwardFormGroup.controls.product.value,
+                              this.outwardFormGroup.controls.source.value,
+                              this.outwardFormGroup.controls.sourceType.value
+                            )
+                          "
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && this.outwardFormGroup.controls.source.errors"
+                        >
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted && this.outwardFormGroup.controls.source.errors.required
+                            "
+                          >
+                            Source is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" *ngIf="!this.editMode">
+                      <div class="form-group">
+                        <label style="font-weight: bold">
+                          Available Quantity :- {{ this.availableQty }}
+                        </label>
+                        &nbsp;&nbsp;&nbsp;
+                      </div>
+                    </div>
+                  </div>
+                  <!-- </div> -->
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Destination Type *</label>
+                      <p-dropdown
+                        [options]="destinationType"
+                        optionValue="label"
+                        optionLabel="label"
+                        filter="true"
+                        [disabled]="this.editMode"
+                        filterBy="label"
+                        placeholder="Select Destination Type"
+                        formControlName="destinationType"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && outwardFormGroup.controls.destinationType.errors
+                        }"
+                        (onChange)="
+                          this.getDestinations(this.outwardFormGroup.controls.destinationType.value)
+                        "
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && outwardFormGroup.controls.destinationType.errors"
+                      >
+                        <div class="error text-danger">Destination Type is required.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Select Destination *</label>
+                      <p-dropdown
+                        *ngIf="!isDestAStaffOrCustomer"
+                        [options]="destinations"
+                        formControlName="destination"
+                        optionLabel="name"
+                        [disabled]="this.editMode"
+                        optionValue="id"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Select Destination"
+                      ></p-dropdown>
+
+                      <p-dropdown
+                        *ngIf="isDestAStaffOrCustomer"
+                        [options]="destinations"
+                        formControlName="destination"
+                        [disabled]="this.editMode"
+                        optionLabel="username"
+                        optionValue="id"
+                        filter="true"
+                        filterBy="username"
+                        placeholder="Select Destination"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && this.outwardFormGroup.controls.destination.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && this.outwardFormGroup.controls.destination.errors.required
+                          "
+                        >
+                          Please select destination.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Quantity Out {{ this.unit }} *</label>
+                        <input
+                          type="number"
+                          (keypress)="quantityOutValidation($event)"
+                          class="form-control"
+                          placeholder="Enter Quantity"
+                          formControlName="inTransitQty"
+                          ng-model="availableQty"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && this.outwardFormGroup.controls.inTransitQty.errors
+                          }"
+                          [readonly]="this.editMode"
+                        />
+                        <div class="error text-danger" *ngIf="this.showQtyError">
+                          {{ this.qtyErroMsg }}
+                        </div>
+                        <div
+                          *ngIf="
+                            submitted &&
+                            this.outwardFormGroup.controls.inTransitQty.errors &&
+                            !this.showQtyError
+                          "
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              this.outwardFormGroup.controls.inTransitQty.errors.required
+                            "
+                          >
+                            Quantity is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Outward Date*</label>
+                        <p-calendar
+                          formControlName="outwardDateTime"
+                          [showTime]="true"
+                          [showSeconds]="true"
+                          inputId="time"
+                          [numberOfMonths]="1"
+                          [disabled]="this.editMode"
+                        ></p-calendar>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && this.outwardFormGroup.controls.outwardDateTime.errors"
+                        >
+                          <div
+                            *ngIf="
+                              submitted &&
+                              this.outwardFormGroup.controls.qty.errors &&
+                              !this.showQtyError
+                            "
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="
+                                submitted && this.outwardFormGroup.controls.qty.errors.required
+                              "
+                            >
+                              Quantity is required.
+                            </div>
+                            <div
+                              class="error text-danger"
+                              *ngIf="submitted && this.outwardFormGroup.controls.qty.errors.min"
+                            >
+                              Please enter more then 0 quantity.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Status*</label>
+                        <p-dropdown
+                          [options]="status"
+                          formControlName="status"
+                          optionLabel="label"
+                          optionValue="value"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select status"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && this.outwardFormGroup.controls.status.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted && this.outwardFormGroup.controls.status.errors.required
+                            "
+                          >
+                            Outward status is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Description *</label>
+                      <textarea
+                        rows="3"
+                        class="form-control"
+                        name="desc"
+                        formControlName="description"
+                        placeholder="Enter Description"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <br />
+              <div class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  *ngIf="!this.editMode"
+                  [disabled]="disableButton || showQtyError || !outwardFormGroup.valid"
+                  id="submit"
+                  (click)="submit()"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Add Outward
+                </button>
+                <br />
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  *ngIf="this.editMode"
+                  [disabled]="showQtyError || !outwardFormGroup.valid"
+                  id="submit"
+                  (click)="submit()"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update Outward
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="detailView">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Tax Details"
+            (click)="outwardList()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">{{ viewOutwardDetails.outwardNumber }} Outwards</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#outwardDetail"
+            aria-expanded="false"
+            aria-controls="taxalldea"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="outwardDetail" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Product Name :</label>
+                  <span>{{ viewOutwardDetails.productId.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Request Inventory Name :</label>
+                  <span>{{ viewOutwardDetails.requestInventoryName || "-" }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Category Type :</label>
+                  <span>{{ viewOutwardDetails.categoryType }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Status :</label>
+                  <span>{{ viewOutwardDetails.status }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Destination Type :</label>
+                  <span>{{ viewOutwardDetails.destinationType }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Destination :</label>
+                  <span>{{ viewOutwardDetails.destination }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Transit Quantity :</label>
+                  <span>{{ viewOutwardDetails.inTransitQty }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Source Type :</label>
+                  <span>{{ viewOutwardDetails.sourceType }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Source :</label>
+                  <span>{{ viewOutwardDetails.source }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 dataGroup">
+                  <label class="datalbl">Quantity :</label>
+                  <span>{{ viewOutwardDetails.qty }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Outward Date :</label>
+                  <span>{{
+                    viewOutwardDetails.outwardDateTime | date: "dd-MM-yyyy HH:mm:ss"
+                  }}</span>
+                </div>
+                <div class="col-lg-4 col-md- dataGroup">
+                  <label class="datalbl">Remark :</label>
+                  <span>{{ viewOutwardDetails.description }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Outward MAC Mapping"
+  [(visible)]="MACAssignModalOutward"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="onclosed()"
+>
+  <div class="modal-body">
+    <p-table
+      #dt
+      [value]="this.inwardMacList"
+      [(selection)]="selectedInwardMACAddress"
+      dataKey="id"
+      styleClass="p-datatable-customers"
+      [rowHover]="true"
+      responsiveLayout="scroll"
+      [scrollable]="true"
+      scrollHeight="300px"
+      [filterDelay]="0"
+      [globalFilterFields]="['condition', 'id', 'serialNumber', 'macAddress']"
+    >
+      <ng-template pTemplate="caption">
+        <div class="row">
+          <div class="col-lg-3 col-md-3">
+            <p-dropdown
+              [options]="macOptionSelect"
+              optionValue="value"
+              optionLabel="label"
+              filter="true"
+              filterBy="label"
+              [(ngModel)]="searchOption"
+              (ngModelChange)="selMacSearchOption($event)"
+              placeholder="Select a search option"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'itemId'">
+            <input
+              id="namesearch"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              (keydown.enter)="searchAddMac()"
+              placeholder="Enter Item Id"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'mac'">
+            <input
+              id="mobilesearch"
+              (keydown.enter)="searchAddMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Mac"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'serialNumber'">
+            <input
+              id="leadSourcesearch"
+              (keydown.enter)="searchAddMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Serial Number"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'assetId '">
+            <input
+              id="serviceArea"
+              (keydown.enter)="searchAddMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Asset Id"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'itemType'">
+            <input
+              id="Lead Assigne Name"
+              (keydown.enter)="searchAddMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Item Type"
+            />
+          </div>
+          <div class="row">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="searchbtn"
+              (click)="searchAddMac()"
+              [disabled]="!searchMacDeatil"
+            >
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+            &nbsp;
+            <button type="button" class="btn btn-default" id="searchbtn" (click)="clearAddMac()">
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-lg-4">
+            <h5>Required Quantity: {{ inTransQty }}</h5>
+          </div>
+          <div class="col-md-4 col-lg-4">
+            <h5>Already Selected Quantity: {{ selectedItemsCount }}</h5>
+          </div>
+          <div class="col-md-4 col-lg-4">
+            <h5>Current Selected Quantity: {{ selectedCheckBoxes.length }}</h5>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10%">
+            <div>
+              <p-tableHeaderCheckbox
+                (click)="toggleSelectAll(inwardlength, selectedCheckBoxes.length)"
+              >
+              </p-tableHeaderCheckbox>
+            </div>
+          </th>
+          <th style="width: 30%">Item Id</th>
+          <th style="width: 30%" *ngIf="this.hasMac">MAC Address</th>
+          <th style="width: 30%" *ngIf="this.hasSerial">Serial Number*</th>
+          <th style="width: 30%">Asset Id</th>
+          <th style="width: 30%">Item Type</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+        <tr>
+          <td style="width: 5%">
+            <p-tableCheckbox
+              [value]="product"
+              *ngIf="inwardlength > rowIndex"
+              (click)="selectedRow(e.checked, inwardlength, rowIndex, selectedCheckBoxes.length)"
+              #e
+            ></p-tableCheckbox>
+            <div *ngFor="let item of items; let i = index">
+              <input
+                type="checkbox"
+                [checked]="selectedCheckBoxes.includes(i)"
+                (click)="selectedRow(e.checked, inwardlength, i, selectedCheckBoxes.length)"
+                #e
+              />
+              <!-- Other item details -->
+            </div>
+          </td>
+          <td style="width: 30%" (click)="InventoryDetails(product.id)">
+            <input name="itemId" class="form-control" [value]="product.id" readonly />
+          </td>
+          <td style="width: 30%" *ngIf="this.hasMac">
+            <input
+              type="text"
+              name="macAddress"
+              class="form-control"
+              [value]="product.macAddress"
+              [(ngModel)]="product.macAddress"
+            />
+          </td>
+          <td style="width: 30%" *ngIf="this.hasSerial">
+            <input
+              type="text"
+              name="serialNumber"
+              class="form-control"
+              [(ngModel)]="product.serialNumber"
+              [value]="product.serialNumber"
+            />
+          </td>
+          <td style="width: 30%">
+            {{ product.assetId || "-" }}
+          </td>
+          <td style="width: 30%">
+            {{ product.condition || "-" }}
+          </td>
+        </tr>
+      </ng-template>
+      <!-- <ng-template pTemplate="summary">
+        <p-paginator (onPageChange)="paginateOutwardMapping($event)" [first]="newFirstMac"
+          [rows]="outwardMappingMacListitemsPerPage" [totalRecords]="outwardMappingMacListdatatotalRecords"
+          [rowsPerPageOptions]="[5, 10, 20, 50, 100, 1000, 5000]"></p-paginator>
+      </ng-template> -->
+      <ng-template pTemplate="summary">
+        <div
+          class="flex items-center justify-center w-full overflow-auto flex-nowrap"
+          style="white-space: nowrap; display: flex; align-items: center; justify-content: center"
+        >
+          <p-paginator
+            (onPageChange)="paginateOutwardMapping($event)"
+            [first]="newFirstMac"
+            [rows]="outwardMappingMacListitemsPerPage"
+            [totalRecords]="outwardMappingMacListdatatotalRecords"
+          ></p-paginator>
+
+          <div class="flex items-center" style="display: inline-flex; margin-left: 10px">
+            <input
+              id="customRows"
+              type="number"
+              class="p-inputtext p-component"
+              [(ngModel)]="customRows"
+              (ngModelChange)="onCustomRowsChange($event)"
+              style="width: 50px"
+              min="1"
+              max="5000"
+            />
+          </div>
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        id="addAtt"
+        style="object-fit: cover; padding: 5px 8px"
+        class="btn btn-primary"
+        (click)="this.mapMACOutward()"
+      >
+        <i class="fa fa-check-circle"></i>
+        Save
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" (click)="onclosed()">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Outward MAC Mapping"
+  [(visible)]="MACShowModal"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeInventoryDetailModal()"
+>
+  <div class="modal-body">
+    <p-table
+      #dt1
+      [value]="this.inwardMacList"
+      dataKey="id"
+      styleClass="p-datatable-customers"
+      [rowHover]="true"
+      responsiveLayout="scroll"
+      [scrollable]="true"
+      scrollHeight="300px"
+      [filterDelay]="0"
+      [globalFilterFields]="['condition', 'id', 'serialNumber', 'macAddress']"
+    >
+      <ng-template pTemplate="caption">
+        <div class="row">
+          <div class="col-lg-3 col-md-3">
+            <p-dropdown
+              [options]="macOptionSelect"
+              optionValue="value"
+              optionLabel="label"
+              filter="true"
+              filterBy="label"
+              [(ngModel)]="searchOption"
+              (ngModelChange)="selMacSearchOption($event)"
+              placeholder="Select a search option"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'itemId'">
+            <input
+              id="namesearch"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              (keydown.enter)="searchMac()"
+              placeholder="Enter Item Id"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'mac'">
+            <input
+              id="mobilesearch"
+              (keydown.enter)="searchMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Mac"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'serialNumber'">
+            <input
+              id="leadSourcesearch"
+              (keydown.enter)="searchMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Serial Number"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'assetId '">
+            <input
+              id="serviceArea"
+              (keydown.enter)="searchMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Asset Id"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3" *ngIf="searchOption === 'itemType'">
+            <input
+              id="Lead Assigne Name"
+              (keydown.enter)="searchMac()"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchMacDeatil"
+              placeholder="Enter Item Type"
+            />
+          </div>
+          <div class="row">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="searchbtn"
+              (click)="searchMac()"
+              [disabled]="!searchMacDeatil"
+            >
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+            &nbsp;
+            <button type="button" class="btn btn-default" id="searchbtn" (click)="clearMac()">
+              <i class="fa fa-refresh"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 30%">Item Id</th>
+          <th style="width: 30%" *ngIf="this.hasMac">MAC Address</th>
+          <th style="width: 30%" *ngIf="this.hasSerial">Serial Number</th>
+          <th style="width: 30%">Asset Id</th>
+          <th style="width: 30%">Item Type</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+        <tr>
+          <td style="width: 30%" (click)="InventoryDetails(product.id)">
+            <input name="itemId" class="form-control" [value]="product.id" readonly />
+          </td>
+          <td style="width: 30%" *ngIf="this.hasMac">
+            <input
+              type="text"
+              name="mac"
+              class="form-control"
+              [value]="product.macAddress"
+              disabled
+            />
+          </td>
+          <td style="width: 30%" *ngIf="this.hasSerial">
+            <input
+              type="text"
+              name="mac"
+              class="form-control"
+              [value]="product.serialNumber"
+              disabled
+            />
+          </td>
+          <td style="width: 30%">
+            {{ product.assetId || "-" }}
+          </td>
+          <td style="width: 30%">
+            {{ product.condition || "-" }}
+          </td>
+          <!-- <td style="width: 10%">
+                  <a id="deleteMAC" (click)="deleteMACMapping(product)">
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td> -->
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <p-paginator
+          (onPageChange)="paginate($event)"
+          [first]="newFirst"
+          [rows]="outwardMappingListitemsPerPage"
+          [totalRecords]="outwardMappingListdatatotalRecords"
+          [rowsPerPageOptions]="[5, 10, 20, 50, 100, 1000, 5000]"
+        ></p-paginator>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" (click)="onclosed()">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Inventory Detail"
+  [(visible)]="inventoryDetailModal"
+  [style]="{ width: '75%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="false"
+>
+  <div id="inwardDetail" class="panel-collapse collapse in">
+    <div class="panel-body table-responsive">
+      <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+        <legend>Inventory Specification Parameter Details</legend>
+        <div class="boxWhite">
+          <div class="row table-responsive">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th id="parameter">Parameter</th>
+                    <th id="mandatory">Mandatory</th>
+                    <th id="value">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let param of inventorySpecificationDetails
+                        | paginate
+                          : {
+                              id: 'productDetailPageData',
+                              itemsPerPage: productDeatilItemPerPage,
+                              currentPage: productPageChargeDeatilList,
+                              totalItems: productDeatiltotalRecords
+                            };
+                      let i = index
+                    "
+                  >
+                    <td>{{ param.paramName }}</td>
+                    <td>{{ param.isMandatory }}</td>
+                    <td>
+                      {{ param.paramValue }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="addUpdateBtn">
+      <button
+        type="button"
+        (click)="closeInventoryDetailModal()"
+        class="btn btn-danger btn-sm"
+        data-dismiss="modal"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>

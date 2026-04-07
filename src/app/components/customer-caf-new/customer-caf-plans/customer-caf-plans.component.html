@@ -1,0 +1,407 @@
+<div class="row">
+  <app-quota-details-modal
+    *ngIf="visibleQuotaDetails"
+    [PlanQuota]="PlanQuota"
+    dialogId="quotaModalOpen"
+    (closeDialogg)="closeModel()"
+  ></app-quota-details-modal>
+
+  <div class="col-md-12 col-sm-12">
+    <div *ngIf="istrialplan == true" class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            (click)="customerDetailOpen(customerDetailData?.id)"
+            class="btn btn-secondary backbtn"
+            data-placement="bottom"
+            data-toggle="tooltip"
+            title="Go to Customer Details"
+            type="button"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerDetailData?.title }}
+            {{ customerDetailData?.firstname }}
+            {{ customerDetailData?.lastname }} Trial Plan
+          </h3>
+        </div>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="getTrailPlanList(customerId, '')">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            aria-controls="trailPresCustPlan"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#trailPresCustPlan"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-collapse collapse in" id="trailPresCustPlan">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Plan Group</th>
+                    <th>Validity</th>
+                    <th>Start Date</th>
+                    <th>Expiry Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let plan of TrailPlanList
+                        | paginate
+                          : {
+                              id: 'custTrailPlanListData',
+                              itemsPerPage: custTrailPlanItemPerPage,
+                              currentPage: currentTrailPlanListdata,
+                              totalItems: custTrailPlantotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ plan.planName }}</td>
+                    <td>{{ plan.planGroupName }}</td>
+                    <td>
+                      {{ plan.validity }}
+                    </td>
+                    <td>{{ plan.dbStartDate | date: "yyyy-MM-dd hh:mm a" }}</td>
+                    <td>
+                      {{ plan.dbExpiryDate | date: "yyyy-MM-dd hh:mm a" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  (pageChange)="pageCustTrailPlanListData($event)"
+                  directionLinks="true"
+                  id="custTrailPlanListData"
+                  maxSize="10"
+                  nextLabel=""
+                  previousLabel=""
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    (onChange)="TotalTrailPlanItemPerPage($event)"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Customer Details"
+            (click)="customerDetailOpen(customerDetailData?.id)"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerDetailData?.title }}
+            {{ customerDetailData?.custname }} Current Plan
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            class="btn refreshbtn"
+            type="reset"
+            (click)="getcustCurrentPlan(customerDetailData?.id, '')"
+          >
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#currentPlanCust"
+            aria-expanded="false"
+            aria-controls="currentPlanCust"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="currentPlanCust" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Validity</th>
+                    <th>Group</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let plan of custCurrentPlanList
+                        | paginate
+                          : {
+                              id: 'custCurrentPlanListData',
+                              itemsPerPage: customerCurrentPlanListdataitemsPerPage,
+                              currentPage: currentPagecustomerCurrentPlanListdata,
+                              totalItems: customerCurrentPlanListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ plan.planName }}</td>
+                    <td *ngIf="custType == 'Prepaid'">{{ plan.validity }}</td>
+                    <td *ngIf="custType != 'Prepaid'">N/A</td>
+                    <td>{{ plan.plangroup }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="custCurrentPlanListData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedcustomerCurrentPlanListData($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalCurrentPlanItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Customer Details"
+            (click)="customerDetailOpen(customerDetailData?.id)"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerDetailData?.title }}
+            {{ customerDetailData?.custname }} Future Plan
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            class="btn refreshbtn"
+            type="reset"
+            (click)="getcustFuturePlan(customerDetailData?.id, '')"
+          >
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#futurePlanCust"
+            aria-expanded="false"
+            aria-controls="futurePlanCust"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="futurePlanCust" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Validity</th>
+                    <th>Group</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let plan of custFuturePlanList
+                        | paginate
+                          : {
+                              id: 'custFuturePlanListData',
+                              itemsPerPage: customerFuturePlanListdataitemsPerPage,
+                              currentPage: currentPagecustomerFuturePlanListdata,
+                              totalItems: customerFuturePlanListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ plan.planName }}</td>
+                    <td *ngIf="custType == 'Prepaid'">{{ plan.validity }}</td>
+                    <td *ngIf="custType != 'Prepaid'">N/A</td>
+                    <td>{{ plan.plangroup }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="custFuturePlanListData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedcustFuturePlanListData($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalFuturePlanItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Customer Details"
+            (click)="customerDetailOpen(customerDetailData?.id)"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerDetailData?.title }}
+            {{ customerDetailData?.custname }} Expired Plan
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            class="btn refreshbtn"
+            type="reset"
+            (click)="getcustExpiredPlan(customerDetailData?.id, '')"
+          >
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#expirePlanCust"
+            aria-expanded="false"
+            aria-controls="expirePlanCust"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="expirePlanCust" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Validity</th>
+                    <th>Group</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let plan of custExpiredPlanList
+                        | paginate
+                          : {
+                              id: 'custExpiryPlanListData',
+                              itemsPerPage: customerExpiryPlanListdataitemsPerPage,
+                              currentPage: currentPagecustomerExpiryPlanListdata,
+                              totalItems: customerExpiryPlanListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ plan.planName }}</td>
+                    <td *ngIf="custType == 'Prepaid'">{{ plan.validity }}</td>
+                    <td *ngIf="custType != 'Prepaid'">N/A</td>
+                    <td>{{ plan.plangroup }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="custExpiryPlanListData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedcustomerExpiryPlanListData($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalExpiredPlanItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

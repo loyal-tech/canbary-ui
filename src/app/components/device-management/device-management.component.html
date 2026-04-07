@@ -1,0 +1,602 @@
+<!-- <p-confirmDialog [style]="{ width: '40vw' }" [baseZIndex]="10000"></p-confirmDialog>
+<div class="childComponent" pFocusTrap>
+    <ngx-spinner [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+        <p class="loading">Loading...</p>
+    </ngx-spinner>
+</div> -->
+
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Device Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#deviceSearchPanel"
+            aria-expanded="false"
+            aria-controls="deviceSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="deviceSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <div class="col-md-3" style="padding-right: 0%; text-align: right">
+              <label style="padding: 5px">Device Profile Name:</label>
+            </div>
+            <div class="col-md-5" style="padding-left: 0%">
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Enter Device Profile Name"
+                [(ngModel)]="searchDeviceName"
+                (keydown.enter)="searchDevice()"
+                [ngClass]="{
+                  'is-invalid': searchSubmitted && searchDeviceForm.controls.name.errors
+                }"
+              />
+            </div>
+            <div class="col-md-4" style="padding-left: 0%">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                title="Search Device Details"
+                data-toggle="tooltip"
+                (click)="searchDevice()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              &nbsp;
+              <button
+                type="reset"
+                class="btn btn-default"
+                title="Clear"
+                data-toggle="tooltip"
+                (click)="clearSearchForm()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="createDeviceManagement()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Device</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="DeviceListData()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Device</h5>
+              </a>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Device Profiles</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#deviceTablePanel"
+            aria-expanded="false"
+            aria-controls="deviceTablePanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="deviceTablePanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let device of deviceData
+                    | paginate
+                      : {
+                          id: 'listing_devicedata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td class="detailOnAnchorClick">
+                  <a
+                    (click)="getDeviceDetail(device.deviceId)"
+                    title="Click To See the Device Detail"
+                    data-toggle="modal"
+                    data-target="#deviceDetailModal"
+                  >
+                    {{ device.deviceProfileName }}
+                  </a>
+                </td>
+                <td>{{ device.type }}</td>
+                <td>{{ device.priority }}</td>
+                <td *ngIf="device.status == 'Active'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" checked [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      checked
+                      [disabled]="!editAccess"
+                      (click)="
+                        changeStatus(device.deviceProfileName, device.status, device.mvnoId, $event)
+                      "
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td *ngIf="device.status == 'Inactive'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      [disabled]="!editAccess"
+                      (click)="
+                        changeStatus(device.deviceProfileName, device.status, device.mvnoId, $event)
+                      "
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td *ngIf="editAccess || deleteAccess" class="btnAction">
+                  <a
+                    *ngIf="editAccess"
+                    type="button"
+                    class="curson_pointer"
+                    data-title="Edit"
+                    data-toggle="tooltip"
+                    (click)="editDeviceData(device.deviceId, i, device.mvnoId)"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    *ngIf="deleteAccess"
+                    type="button"
+                    class="curson_pointer"
+                    data-title="Delete"
+                    data-toggle="tooltip"
+                    (click)="deleteConfirm(device.deviceProfileName, device.mvnoId)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_devicedata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Device Profile</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#deviceFormPanel"
+            aria-expanded="false"
+            aria-controls="deviceFormPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+        Sorry you have not privilege to create operation!
+      </div>
+      <div class="panel-body" *ngIf="createAccess || (editMode && editAccess)">
+        <div
+          *ngIf="editAccess || createAccess"
+          id="deviceFormPanel"
+          class="panel-collapse collapse in"
+        >
+          <div class="panel-body">
+            <form class="form-auth-small" [formGroup]="deviceForm">
+              <!-- <div *ngIf="userId == superAdminId">
+                <label>Mvno Name</label>
+                <div>
+                  <p-dropdown
+                    [readonly]="editMode"
+                    [options]="mvnoData"
+                    placeholder="Select Mvno"
+                    optionLabel="name"
+                    optionValue="mvnoId"
+                    formControlName="mvnoName"
+                    (onChange)="getFilteredCOADMProfile($event.value)"
+                    [ngClass]="{
+                      'is-invalid': submitted && deviceForm.controls.mvnoName.errors
+                    }"
+                  ></p-dropdown>
+                </div>
+                <br />
+              </div> -->
+              <label>Device Profile Name *</label>
+              <input
+                type="text"
+                name="deviceProfileName"
+                class="form-control"
+                [readonly]="editMode"
+                placeholder="Enter Device Profile Name"
+                formControlName="deviceProfileName"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceForm.controls.deviceProfileName.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceForm.controls.deviceProfileName.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceForm.controls.deviceProfileName.errors.required"
+                >
+                  Please enter device name.
+                </div>
+              </div>
+              <br />
+              <label>Description</label>
+              <textarea
+                name="description"
+                class="form-control"
+                placeholder="Enter device profile description"
+                rows="3"
+                title=""
+                formControlName="description"
+              ></textarea>
+              <br />
+              <label>Check Item</label>
+              <input
+                type="text"
+                name="checkItem"
+                class="form-control"
+                placeholder="Enter checkItem value"
+                formControlName="checkItem"
+              />
+              <br />
+              <div>
+                <label>Radius Client</label>
+                <p-multiSelect
+                  [options]="clientList"
+                  filter="true"
+                  filterBy="clientIpAddress"
+                  formControlName="clientIds"
+                  optionLabel="clientIpAddress"
+                  optionValue="clientId"
+                  placeholder="Select radius client"
+                ></p-multiSelect>
+              </div>
+              <br />
+              <label>Priority *</label>
+              <input
+                type="number"
+                name="priority"
+                class="form-control"
+                placeholder="Enter priority value"
+                formControlName="priority"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceForm.controls.priority.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceForm.controls.priority.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceForm.controls.priority.errors.required"
+                >
+                  Please enter priority value.
+                </div>
+                <div
+                  class="error text-danger"
+                  *ngIf="
+                    submitted &&
+                    !deviceForm.controls.priority.errors.required &&
+                    deviceForm.controls.priority.invalid
+                  "
+                >
+                  Enter valid Priority number.
+                </div>
+              </div>
+              <br />
+              <div>
+                <label>Type *</label>
+                <p-dropdown
+                  [options]="deviceType"
+                  placeholder="Select device profile type"
+                  (onChange)="hideShowFields($event.value)"
+                  optionLabel="label"
+                  optionValue="label"
+                  formControlName="type"
+                  [ngClass]="{
+                    'is-invalid': submitted && deviceForm.controls.type.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && deviceForm.controls.type.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && deviceForm.controls.type.errors.required"
+                  >
+                    Please select device type.
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="this.deviceForm.controls.type.value == 'HTTP'">
+                <br />
+                <label>Login Url *</label>
+                <input
+                  type="text"
+                  name="loginurl"
+                  class="form-control"
+                  placeholder="Enter login url"
+                  formControlName="loginurl"
+                  [ngClass]="{
+                    'is-invalid': submitted && deviceForm.controls.loginurl.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && deviceForm.controls.loginurl.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && deviceForm.controls.loginurl.errors.required"
+                  >
+                    Please enter URL.
+                  </div>
+                </div>
+                <br />
+                <label>Logout Url *</label>
+                <input
+                  type="text"
+                  name="logouturl"
+                  class="form-control"
+                  placeholder="Enter logout url"
+                  formControlName="logouturl"
+                  [ngClass]="{
+                    'is-invalid': submitted && deviceForm.controls.logouturl.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && deviceForm.controls.logouturl.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && deviceForm.controls.logouturl.errors.required"
+                  >
+                    Please enter URL.
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="this.deviceForm.controls.type.value == 'COA'">
+                <br />
+                <label>Coa Profile *</label>
+                <p-dropdown
+                  [options]="this.filteredCoADMList"
+                  placeholder="Select Coa Profile"
+                  optionLabel="name"
+                  optionValue="name"
+                  formControlName="coaProfileName"
+                  [ngClass]="{
+                    'is-invalid': submitted && deviceForm.controls.coaProfileName.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && deviceForm.controls.coaProfileName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && deviceForm.controls.coaProfileName.errors.required"
+                  >
+                    Please select Coa Profile .
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div>
+                <label>Status *</label>
+                <p-dropdown
+                  [options]="status"
+                  placeholder="Select device profile status"
+                  optionLabel="label"
+                  optionValue="value"
+                  formControlName="status"
+                  [ngClass]="{
+                    'is-invalid': submitted && deviceForm.controls.status.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && deviceForm.controls.status.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && deviceForm.controls.status.errors.required"
+                  >
+                    Please select status.
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div class="addUpdateBtn">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  title="Submit Device Details"
+                  data-toggle="tooltip"
+                  (click)="addDeviceProfile()"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  {{ editMode ? "Update" : "Create" }} Device Profile
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="deviceDetailModal" role="dialog">
+    <div class="modal-dialog" style="width: 35%">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="panel-title">Device Profile Detail</h3>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row" id="viewDetail">
+              <div class="col-md-4">
+                <label for="status">Name :</label>
+              </div>
+              <div class="col-md-8">
+                <label for="statusValue">
+                  {{ deviceDetail.deviceProfileName }}
+                </label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-4">
+                <label for="noOfVoucher">Check Item :</label>
+              </div>
+              <div class="col-md-8">
+                <label for="noOfVoucherValue">{{ deviceDetail.checkItem }}</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <label for="planName">Priority :</label>
+              </div>
+              <div class="col-md-8">
+                <label for="planNameValue">{{ deviceDetail.priority }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-4">
+                <label for="preValue">Type :</label>
+              </div>
+              <div class="col-md-8">
+                <label for="preValuevalue">{{ deviceDetail.type }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-4">
+                <label for="length">COA DM Profile Id:</label>
+              </div>
+              <div class="col-md-8">
+                <label for="lengthValue">{{ deviceDetail.coaDmProfileId }}</label>
+              </div>
+            </div>
+            <div *ngIf="isHttpType">
+              <div class="row" id="viewDetail">
+                <div class="col-md-4">
+                  <label for="length">Login Url :</label>
+                </div>
+                <div class="col-md-8">
+                  <label for="lengthValue">{{ deviceDetail.loginurl }}</label>
+                </div>
+              </div>
+              <div class="row" id="viewDetail">
+                <div class="col-md-4">
+                  <label for="postValue">Logout Url :</label>
+                </div>
+                <div class="col-md-8">
+                  <label for="postValueValue">{{ deviceDetail.logouturl }}</label>
+                </div>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-4">
+                <label for="status">Status :</label>
+              </div>
+              <div class="col-md-8">
+                <label for="statusValue">{{ deviceDetail.status }}</label>
+              </div>
+            </div>
+            <div class="row" id="viewDetail">
+              <div class="col-md-4">
+                <label for="type">Description :</label>
+              </div>
+              <div class="col-md-8" style="overflow: auto; height: 50px">
+                <label for="typeValue">{{ deviceDetail.description }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

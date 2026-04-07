@@ -1,0 +1,962 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Charge Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#chargeSearch"
+            aria-expanded="false"
+            aria-controls="chargeSearch"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="chargeSearch" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="listView">
+          <div class="row">
+            <div class="col-lg-3 col-md-4">
+              <p-dropdown
+                [options]="searchOptionSelect"
+                optionValue="value"
+                optionLabel="label"
+                filter="true"
+                filterBy="label"
+                placeholder="Select a Search Option"
+                (onChange)="selchargeOption($event)"
+                [(ngModel)]="searchOption"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-4" *ngIf="isChargeName">
+              <input
+                type="text"
+                [(ngModel)]="chargeOptionname"
+                class="form-control"
+                placeholder="Enter Search Detail"
+                (keydown.enter)="searchCharge()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4" *ngIf="isChargeCatogorey">
+              <p-dropdown
+                [options]="chargeCategoryList"
+                optionValue="value"
+                optionLabel="text"
+                filter="true"
+                filterBy="text"
+                placeholder="Select Charge Category"
+                [(ngModel)]="chargeOptionname"
+                (keydown.enter)="searchCharge()"
+              ></p-dropdown>
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchinput" *ngIf="isChargeType">
+              <p-dropdown
+                [options]="chargeType"
+                optionValue="value"
+                optionLabel="text"
+                filter="true"
+                filterBy="text"
+                placeholder="Select Charge Type"
+                [(ngModel)]="chargeOptionname"
+                (keydown.enter)="searchCharge()"
+              ></p-dropdown>
+            </div>
+            <div
+              class="col-lg-3 col-md-4 marginTopSearchBtn"
+              *ngIf="isChargeName || isChargeCatogorey || isChargeType"
+            >
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchCharge()"
+                [disabled]="!searchOption"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchCharge()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createCharge()" class="curson_pointer" *ngIf="createAccess">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Charge</h5>
+                <!-- <p>Create Charge</p> -->
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="searchChargedata()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Charge</h5>
+                <!-- <p>Search Charge</p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Charge</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#chargelist"
+            aria-expanded="false"
+            aria-controls="chargelist"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="chargelist" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <!-- <th>Category</th> -->
+                    <th>Type</th>
+                    <!-- <th>Price</th> -->
+                    <th>Charge Amount</th>
+                    <th>Tax</th>
+                    <th>Total Charge Amount</th>
+                    <th>Status</th>
+                    <th>ISP Name</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let charge of chargeListData
+                        | paginate
+                          : {
+                              id: 'chargeListpageData',
+                              itemsPerPage: ChargeListdataitemsPerPage,
+                              currentPage: currentPageChargeListdata,
+                              totalItems: ChargeListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <a
+                        href="javascript:void(0)"
+                        style="color: #f7b206"
+                        (click)="openChargeDetail(charge.id)"
+                      >
+                        {{ charge.name }}
+                      </a>
+                    </td>
+                    <!-- <td>{{ charge.chargecategory }}</td> -->
+                    <td>
+                      <!-- {{ charge.chargetype }} -->
+                      <span *ngFor="let list of chargeTypeGetDataData; index as j">
+                        <span *ngIf="i === j">
+                          {{ list }}
+                        </span>
+                      </span>
+                    </td>
+                    <td>
+                      {{ charge.price + charge.taxamount | customCurrency: charge?.currency }}
+                    </td>
+                    <td>
+                      <span
+                        class="HoverEffect"
+                        data-target="#taxChargeModal"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        data-keyboard="false"
+                        title="Go To Tax List"
+                        style="color: #f7b206"
+                        (click)="openChargeTAxDetail(charge.taxid)"
+                      >
+                        {{ charge.taxName }}
+                      </span>
+                    </td>
+                    <td>
+                      {{ charge.price + charge.taxamount | customCurrency: charge?.currency }}
+                    </td>
+                    <!-- <td class="discInfo" title="{{charge.desc}}">{{ charge.desc }}</td> -->
+                    <td *ngIf="charge.status == 'ACTIVE' || charge.status == 'Active'">
+                      <span class="badge badge-success">Active</span>
+                    </td>
+                    <td *ngIf="charge.status == 'INACTIVE' || charge.status == 'Inactive'">
+                      <span class="badge badge-danger">Inactive</span>
+                    </td>
+                    <td>{{ charge.mvnoName }}</td>
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        *ngIf="editAccess"
+                        title="Edit"
+                        (click)="editCharge(charge.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        title="Delete"
+                        (click)="deleteConfirmonCharge(charge.id)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="chargeListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedChargeList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="showItemPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isChargeEdit ? "Update" : "Create" }} Charge</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createcharge"
+            aria-expanded="false"
+            aria-controls="createcharge"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createcharge" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="chargeGroupForm">
+            <!--    Charge Details    -->
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Charge Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Charge Name*</label>
+                    <input
+                      id="name"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Charge Name"
+                      formControlName="name"
+                      [ngClass]="{
+                        'is-invalid': submitted && chargeGroupForm.controls.name.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && chargeGroupForm.controls.name.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.name.errors.required"
+                      >
+                        Charge Name is required.
+                      </div>
+                      <div
+                        class="position"
+                        *ngIf="
+                          submitted && chargeGroupForm.controls.name.errors?.cannotContainSpace
+                        "
+                      >
+                        <p class="error">White space are not allowed.</p>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <div>
+                      <label>Charge Category*</label>
+                      <p-dropdown
+                        (onChange)="eventChargeCategory($event)"
+                        [options]="chargeCategoryList"
+                        optionValue="value"
+                        optionLabel="text"
+                        filter="true"
+                        filterBy="text"
+                        placeholder="Select Charge Category"
+                        formControlName="chargecategory"
+                        [ngClass]="{
+                          'is-invalid': submitted && chargeGroupForm.controls.chargecategory.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.chargecategory.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="
+                            submitted && chargeGroupForm.controls.chargecategory.errors.required
+                          "
+                        >
+                          Charge Category is required.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <div>
+                      <label>Charge Type*</label>
+                      <p-dropdown
+                        [options]="chargeType"
+                        optionValue="value"
+                        optionLabel="text"
+                        filter="true"
+                        filterBy="text"
+                        placeholder="Select a Charge Type"
+                        formControlName="chargetype"
+                        [disabled]="isChargeEdit"
+                        (onChange)="eventChargeType($event)"
+                        [ngClass]="{
+                          'is-invalid': submitted && chargeGroupForm.controls.chargetype.errors
+                        }"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.chargetype.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && chargeGroupForm.controls.chargetype.errors.required"
+                        >
+                          Charge Type is required.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <div>
+                      <label>Service*</label>
+
+                      <p-multiSelect
+                        id="roles"
+                        [options]="this.commondropdownService.planserviceData"
+                        placeholder="Select a service"
+                        formControlName="serviceid"
+                        optionLabel="name"
+                        optionValue="id"
+                        filter="true"
+                        filterBy="name"
+                        [ngClass]="{
+                          'is-invalid': submitted && chargeGroupForm.controls.serviceid.errors
+                        }"
+                      ></p-multiSelect>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.serviceid.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && chargeGroupForm.controls.serviceid.errors.required"
+                        >
+                          Service is required.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Status*</label>
+                    <div>
+                      <p-dropdown
+                        [options]="statusOptions"
+                        optionValue="label"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Status"
+                        formControlName="status"
+                        [ngClass]="{
+                          'is-invalid': submitted && chargeGroupForm.controls.status.errors
+                        }"
+                      ></p-dropdown>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && chargeGroupForm.controls.status.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.status.errors.required"
+                      >
+                        Status is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>Ledger ID</label>
+                    <input
+                      id="ledgerId"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Ledger ID"
+                      formControlName="ledgerId"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div
+                    class="col-lg-4 col-md-4 col-12"
+                    *ngIf="
+                      this.chargeGroupForm.value.chargetype == 'ADVANCE' ||
+                      this.chargeGroupForm.value.chargetype == 'RECURRING'
+                    "
+                  >
+                    <label>Royalty Payable*</label>
+                    <div>
+                      <p-dropdown
+                        [options]="royaltyPayableData"
+                        optionValue="value"
+                        optionLabel="label"
+                        filter="true"
+                        filterBy="label"
+                        placeholder="Select a Royalty Payable"
+                        formControlName="royalty_payable"
+                        [disabled]="isChargeEdit"
+                        [ngClass]="{
+                          'is-invalid': submitted && chargeGroupForm.controls.royalty_payable.errors
+                        }"
+                      ></p-dropdown>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && chargeGroupForm.controls.royalty_payable.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && chargeGroupForm.controls.royalty_payable.errors.required
+                        "
+                      >
+                        Royalty Payable is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Charge Description*</label>
+                    <textarea
+                      class="form-control"
+                      placeholder="Enter Charge Description"
+                      rows="3"
+                      formControlName="desc"
+                      name="desc"
+                      [ngClass]="{
+                        'is-invalid': submitted && chargeGroupForm.controls.desc.errors
+                      }"
+                    ></textarea>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && chargeGroupForm.controls.desc.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.desc.errors.required"
+                      >
+                        Charge Description is required.
+                      </div>
+
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.desc.errors.pattern"
+                      >
+                        Maximum 225 charecter required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>Group Ledger ID</label>
+                    <input
+                      id="pushableLedgerId"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Master Ledger ID"
+                      formControlName="pushableLedgerId"
+                    />
+                  </div>
+                  <div *ngIf="mvnoId === 1" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <label>{{ mvnoTitle }} List</label>
+                    <p-dropdown
+                      id="mvnoId"
+                      [disabled]="isChargeEdit"
+                      [options]="commondropdownService.mvnoList"
+                      filter="true"
+                      filterBy="name"
+                      formControlName="mvnoId"
+                      optionLabel="name"
+                      optionValue="id"
+                      placeholder="Select a mvno"
+                      (onChange)="mvnoChange($event)"
+                    ></p-dropdown>
+                    <div
+                      *ngIf="submitted && chargeGroupForm.controls.mvnoId.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div
+                        *ngIf="submitted && chargeGroupForm.controls.mvnoId.errors.required"
+                        class="error text-danger"
+                      >
+                        Mvno is required.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!--    Additional Details    -->
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Additional Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Currency*</label>
+                    <p-dropdown
+                      [options]="this.commondropdownService.currency"
+                      optionValue="value"
+                      optionLabel="displayName"
+                      filter="true"
+                      filterBy="displayName"
+                      placeholder="Select a Currency"
+                      formControlName="currency"
+                      [disabled]="isChargeEdit"
+                      [ngClass]="{
+                        'is-invalid': submitted && chargeGroupForm.controls.currency.errors
+                      }"
+                    ></p-dropdown>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && chargeGroupForm.controls.currency.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.currency.errors.required"
+                      >
+                        Currency is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Actual Price*</label>
+                    <input
+                      *ngIf="isChargeEdit"
+                      id="actualprice"
+                      type="number"
+                      min="1"
+                      class="form-control"
+                      placeholder="Enter Actual Price"
+                      formControlName="actualprice"
+                      readonly
+                    />
+
+                    <input
+                      *ngIf="!isChargeEdit"
+                      id="actualprice"
+                      type="number"
+                      min="1"
+                      step="any"
+                      class="form-control"
+                      placeholder="Enter Actual Price"
+                      formControlName="actualprice"
+                      (input)="onKey($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && chargeGroupForm.controls.actualprice.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && chargeGroupForm.controls.actualprice.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.actualprice.errors.required"
+                      >
+                        Actual Price is required.
+                      </div>
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.actualprice.errors.pattern"
+                      >
+                        Only numeric charcter allowed.
+                      </div>
+                    </div>
+
+                    <div class="error text-danger" *ngIf="chargeValueSentence">
+                      {{ chargeValueSentence }}
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>SAC Code</label>
+                    <input
+                      id="saccode"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter SAC Code"
+                      formControlName="saccode"
+                    />
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Tax*</label>
+                    <div>
+                      <p-dropdown
+                        [options]="taxListData"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Select a Tax"
+                        formControlName="taxid"
+                        (onChange)="taxRang($event)"
+                        [disabled]="isChargeEdit"
+                        [ngClass]="{
+                          'is-invalid': submitted && chargeGroupForm.controls.taxid.errors
+                        }"
+                      >
+                        <ng-template let-data pTemplate="item">
+                          <div class="item-drop1">
+                            <span class="item-value1">
+                              {{ data.name }}
+                              <span *ngFor="let row of data.tieredList">
+                                ( {{ row.name }} {{ row.rate }}%)</span
+                              >
+                            </span>
+                          </div>
+                        </ng-template>
+                      </p-dropdown>
+                    </div>
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && chargeGroupForm.controls.taxid.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && chargeGroupForm.controls.taxid.errors.required"
+                      >
+                        Tax is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="!isChargeEdit"
+                id="submit"
+                (click)="addEditCharge('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Charge
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="isChargeEdit"
+                id="submit"
+                (click)="addEditCharge(viewChargeListData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Charge
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="detailView">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Charge Details"
+            (click)="listCharge()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">Charge Detail</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDatacharge"
+            aria-expanded="false"
+            aria-controls="allDatacharge"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDatacharge" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ chargeDetailData.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Charge Category :</label>
+                  <span>{{ chargeDetailData.chargecategory }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Charge Type :</label>
+                  <span>{{ chargeTypeText }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Price :</label>
+
+                  <span>
+                    {{ chargeDetailData.price | customCurrency: chargeDetailData?.currency }}</span
+                  >
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Tax Name:</label>
+                  <span
+                    class="HoverEffect"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    title="Go To Tax List"
+                    style="color: #f7b206"
+                    (click)="openChargeTAxDetail(chargeDetailData.taxid)"
+                  >
+                    {{ chargeDetailData.taxName }}
+                  </span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">SAC code :</label>
+                  <span>{{ chargeDetailData.saccode }}</span>
+                </div>
+                <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                                                <label class="datalbl">Tax Amount : </label>
+                                                <span>{{chargeDetailData.taxamount}}</span>
+                                            </div> -->
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Service:</label>
+                  <span
+                    class="HoverEffect"
+                    (click)="openServiceModal()"
+                    data-toggle="modal"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    title="Go To service Area List"
+                  >
+                    Click here
+                  </span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Status :</label>
+                  <span>{{ chargeDetailData.status }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Ledger ID :</label>
+                  <span>{{ chargeDetailData.ledgerId }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div
+                  class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0"
+                  *ngIf="
+                    chargeDetailData.chargetype == 'ADVANCE' ||
+                    chargeDetailData.chargetype == 'RECURRING'
+                  "
+                >
+                  <label class="datalbl">Royalty Payable :</label>
+                  <span *ngIf="chargeDetailData.royalty_payable == true">Yes</span>
+                  <span *ngIf="chargeDetailData.royalty_payable == false">No</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Description :</label>
+                  <span>{{ chargeDetailData.desc }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- service area list -->
+<p-dialog
+  header="{{ chargeDetailData.name }} Service List"
+  [(visible)]="serviceListFlag"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModalOfService()"
+>
+  <!-- <div class="modal fade" id="servicesModal" role="dialog">
+    <div class="modal-dialog" style="width: 35%"> -->
+  <!-- Modal content-->
+  <!-- <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="panel-title">{{ chargeDetailData.name }} Service List</h3>
+        </div> -->
+  <div class="modal-body">
+    <div class="panel-body table-responsive" id="networkDeviceTabel">
+      <table class="table">
+        <tbody>
+          <tr>
+            <td><label class="networkLabel">Services :</label></td>
+            <td>
+              <span
+                style="word-break: break-all"
+                *ngFor="let serviceName of chargeDetailData.serviceNameList"
+              >
+                <span>
+                  {{ serviceName }},
+                  <br />
+                </span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</p-dialog>
+
+<!--taxChargeModal list -->
+<p-dialog
+  header="{{ chargeTaxData.name }} Tiered List"
+  [(visible)]="chargeTaxDetails"
+  [style]="{ width: '50%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeModal()"
+>
+  <!-- <div class="modal fade" id="taxChargeModal" role="dialog">
+    <div class="modal-dialog" style="width: 35%"> -->
+  <!-- Modal content-->
+  <!-- <div class="modal-content"> -->
+  <!-- <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="panel-title">{{ chargeTaxData.name }} Tiered List</h3>
+        </div> -->
+  <div class="modal-body">
+    <div class="panel-body table-responsive" id="networkDeviceTabel">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of chargeTaxData.tieredList">
+            <td>{{ data.name }}</td>
+            <td>{{ data.rate }} %</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div> -->
+  <!-- </div>
+    </div>
+  </div> -->
+</p-dialog>

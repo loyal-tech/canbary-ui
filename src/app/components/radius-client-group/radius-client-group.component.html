@@ -1,0 +1,2901 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Radius Group Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#clientSearchPanel"
+            aria-expanded="false"
+            aria-controls="clientSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="clientSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchGroupByNameForm">
+              <div class="row">
+                <div class="col-md-3" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px">Radius Group Name:</label>
+                </div>
+                <div class="col-md-5" style="padding-left: 0%">
+                  <input
+                    type="text"
+                    name="groupName"
+                    class="form-control"
+                    placeholder="Enter Group Name"
+                    formControlName="name"
+                    (keydown.enter)="searchGroupByName()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchGroupByNameForm.controls.name.errors
+                    }"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search Radius Group"
+                    data-toggle="tooltip"
+                    (click)="searchGroupByName()"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="showCreateForm()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Radius Group</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a href="javascript:void(0)" (click)="clearSearchForm()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Radius Group</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="this.showList">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Radius Groups</h3>
+        <div class="right">
+          <button class="btn refreshbtn" type="reset" (click)="reloadConfirm()">
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#clientTabelPanel"
+            aria-expanded="false"
+            aria-controls="clientTabelPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="clientTabelPanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>ISP Name</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let group of groupData
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>
+                  <a
+                    (click)="showRadiusClientGroupDetail(group.clientGroupId, group.mvnoId)"
+                    title="Click To See Radius Client Group Detail"
+                    style="color: #f7b206"
+                    class="curson_pointer"
+                  >
+                    {{ group.name }}
+                  </a>
+                </td>
+                <td *ngIf="group.cgStatus == 'Active'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" checked [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      checked
+                      [disabled]="!editAccess"
+                      (click)="changeStatusToInActive(group.clientGroupId, group.mvnoId, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td *ngIf="group.cgStatus == 'Inactive'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      [disabled]="!editAccess"
+                      (click)="changeStatusToActive(group.clientGroupId, group.mvnoId, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td>{{ group.mvnoName }}</td>
+                <td *ngIf="editAccess || deleteAccess" class="btnAction">
+                  <a
+                    *ngIf="editAccess"
+                    data-title="Edit"
+                    data-toggle="tootip"
+                    class="curson_pointer"
+                    (click)="editGroupById(group.clientGroupId, i, group.mvnoId)"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    *ngIf="deleteAccess"
+                    data-title="Delete"
+                    data-toggle="tootip"
+                    class="curson_pointer"
+                    (click)="deleteConfirm(group.clientGroupId, group.mvnoId, i)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                  <!-- <a data-toggle="modal" data-target="#myModal">
+                                                                        <i class="fa fa-trash"></i></a> -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_groupdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-12" *ngIf="this.showCreate">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Radius Group</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#clientFormPanel"
+            aria-expanded="false"
+            aria-controls="clientFormPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="clientFormPanel" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="editAccess || createAccess">
+          <form class="form-auth-small" [formGroup]="createGroupForm">
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Basic Details</legend>
+                  <div class="boxWhite">
+                    <div class="row">
+                      <!-- <div
+                        *ngIf="userId == superAdminId"
+                        class="col-lg-3 col-md-3 col-sm-6 col-xs-12"
+                      >
+                        <div>
+                          <label>Mvno Name *</label>
+                          <div>
+                            <p-dropdown
+                              #dd
+                              [options]="mvnoData"
+                              placeholder="Select mvno"
+                              optionLabel="name"
+                              optionValue="mvnoId"
+                              formControlName="mvnoName"
+                              [readonly]="editMode"
+                              [filter]="true"
+                              filterBy="name"
+                              [ngClass]="{
+                                'is-invalid': submitted && createGroupForm.controls.mvnoName.errors
+                              }"
+                            ></p-dropdown>
+                            <div
+                              class="errorWrap text-danger"
+                              *ngIf="submitted && createGroupForm.controls.mvnoName.errors"
+                            >
+                              <div
+                                class="error text-danger"
+                                *ngIf="
+                                  submitted && createGroupForm.controls.mvnoName.errors.required
+                                "
+                              >
+                                Please select MVNO name.
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div> -->
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Radius Group Name *</label>
+                        <input
+                          type="text"
+                          name="name"
+                          class="form-control"
+                          placeholder="Enter Group Name"
+                          formControlName="name"
+                          [ngClass]="{
+                            'is-invalid': submitted && createGroupForm.controls.name.errors
+                          }"
+                          [readonly]="editMode"
+                        />
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && createGroupForm.controls.name.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="submitted && createGroupForm.controls.name.errors.required"
+                          >
+                            Please enter group name.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div>
+                          <label style="display: block">Status *</label>
+                          <p-dropdown
+                            [options]="status"
+                            placeholder="Select Group Status"
+                            optionLabel="label"
+                            optionValue="label"
+                            formControlName="cgStatus"
+                            [filter]="true"
+                            filterBy="label"
+                            [ngClass]="{
+                              'is-invalid': submitted && createGroupForm.controls.cgStatus.errors
+                            }"
+                          ></p-dropdown>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && createGroupForm.controls.cgStatus.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="submitted && createGroupForm.controls.cgStatus.errors.required"
+                            >
+                              Please select status.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Enable InActive Profile</label>
+                        <p-dropdown
+                          [options]="this.list"
+                          placeholder="Enable InActive Profile"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          filterBy="label"
+                          formControlName="enableActiveProfileMapping"
+                          (onChange)="enableInactiveProfileMapping($event)"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Enable NewActive Profile</label>
+                        <p-dropdown
+                          [options]="this.list"
+                          placeholder="Enable NewActive Profile"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          filterBy="label"
+                          formControlName="enableNewactiveProfileMapping"
+                          (onChange)="enableNewactiveProfileMapping($event)"
+                        ></p-dropdown>
+                      </div>
+
+                      <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div>
+                          <label>CoA/DM *</label>
+                          <p-dropdown
+                            [options]="coA"
+                            placeholder="Select CoA/DM"
+                            optionLabel="label"
+                            optionValue="label"
+                            formControlName="coadm"
+                            [filter]="true"
+                            filterBy="label"
+                            (onChange)="hideField()"
+                            [ngClass]="{
+                              'is-invalid': submitted && createGroupForm.controls.coadm.errors
+                            }"
+                          ></p-dropdown>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="submitted && createGroupForm.controls.coadm.errors"
+                          >
+                            <div
+                              class="error text-danger"
+                              *ngIf="submitted && createGroupForm.controls.coadm.errors.required"
+                            >
+                              Please select profile type.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>CoA Profile *</label>
+                        <p-dropdown
+                          [options]="this.filterCoAProfileList"
+                          placeholder="Select CoA Profile"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="coaDMProfile"
+                          [ngClass]="{
+                            'is-invalid': submitted && createGroupForm.controls.coaDMProfile.errors
+                          }"
+                        ></p-dropdown>
+                      </div> -->
+                    </div>
+                    <br />
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Enable Unknown Profile</label>
+                        <p-dropdown
+                          [options]="this.list"
+                          placeholder="Enable Unknow Profile"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          filterBy="label"
+                          (onChange)="enableUnknownProfileMapping($event)"
+                          formControlName="enableUnknownProfileMapping"
+                        ></p-dropdown>
+                      </div>
+                      <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>DM Profile *</label>
+                        <p-dropdown
+                          [options]="this.filterDMProfileList"
+                          placeholder="Select DM Profile"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="dmprofile"
+                          [ngClass]="{
+                            'is-invalid': submitted && createGroupForm.controls.dmprofile.errors
+                          }"
+                        ></p-dropdown>
+                      </div> -->
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Enable Suspended Profile</label>
+                        <p-dropdown
+                          [options]="this.list"
+                          placeholder="Enable Suspended Profile"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          filterBy="label"
+                          formControlName="enableSuspendedProfileMapping"
+                          (onChange)="enableSuspendedProfileMapping($event)"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Permanent Disconnect Profile</label>
+                        <p-dropdown
+                          [options]="allPermanentDisconnectProfiles"
+                          placeholder="Enable Permanent Disconnect Profile"
+                          optionLabel="name"
+                          optionValue="coaDMProfileId"
+                          [filter]="true"
+                          filterBy="label"
+                          formControlName="permanentDisconnectProfileId"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Authentication Rejection Profile </label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="authenticationProfileDropdownList"
+                          placeholder="Select Authentication Profile"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          filterBy="label"
+                          formControlName="authenticationProfile"
+                          (onChange)="authenticationProfileChnage($event)"
+                        ></p-dropdown>
+                      </div>
+
+                      <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Customer User-Name Attribute *</label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="customerUserNameAttribute"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && createGroupForm.controls.customerMacAttribute.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              createGroupForm.controls.customerMacAttribute.errors.required
+                            "
+                          >
+                            Please enter customer User-Name attribute.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Customer User Name Regex</label>
+                        <input
+                          id="usernameIdentityRegex"
+                          class="form-control"
+                          placeholder="Enter Regex for User-Name"
+                          formControlName="usernameIdentityRegex"
+                        />
+                      </div> -->
+                    </div>
+                    <br />
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Customer MAC Attribute *</label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="customerMacAttribute"
+                        ></p-dropdown>
+                        <div
+                          class="errorWrap text-danger"
+                          *ngIf="submitted && createGroupForm.controls.customerMacAttribute.errors"
+                        >
+                          <div
+                            class="error text-danger"
+                            *ngIf="
+                              submitted &&
+                              createGroupForm.controls.customerMacAttribute.errors.required
+                            "
+                          >
+                            Please enter customer MAC attribute.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Cache Mapping Profile </label>
+                        <p-dropdown
+                          [ngModelOptions]="{ standalone: true }"
+                          appendTo="body"
+                          [options]="cacheMappingDropdownList"
+                          placeholder="Select Cache Mapping Profile"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          filterBy="label"
+                          [(ngModel)]="clearCache"
+                          (onChange)="clearCacheMappingsChnage($event)"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display: initial">
+                        <p-checkbox
+                          binary="true"
+                          class="vlan-checkbox-align"
+                          formControlName="vlanCheckRequired"
+                          name="vlanCheckRequired"
+                        ></p-checkbox>
+                        <label class="form-check-label" for="acceptTerms" style="margin-bottom: -8%"
+                          >VLAN Validation Required
+                        </label>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display: initial">
+                        <p-checkbox
+                          binary="true"
+                          class="vlan-checkbox-align"
+                          formControlName="checkConcurrency"
+                          name="checkConcurrency"
+                        ></p-checkbox>
+                        <label
+                          class="form-check-label"
+                          for="checkConcurrency"
+                          style="margin-bottom: -8%"
+                          >Check Concurrency
+                        </label>
+                      </div>
+
+                      <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>VLAN Attribute</label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Radius Group Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="vlanAttribute"
+                        ></p-dropdown>
+                      </div> -->
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display: initial">
+                        <p-checkbox
+                          binary="true"
+                          class="vlan-checkbox-align"
+                          formControlName="logoutOldSessionOnNew"
+                          name="logoutOldSessionOnNew"
+                        ></p-checkbox>
+                        <label
+                          class="form-check-label"
+                          for="logoutOldSessionOnNew"
+                          style="margin-bottom: -8%"
+                          >Logout Old Session On New
+                        </label>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display: initial">
+                        <p-checkbox
+                          binary="true"
+                          class="vlan-checkbox-align"
+                          formControlName="triggerCOADMOnMacRemove"
+                          name="triggerCOADMOnMacRemove"
+                        ></p-checkbox>
+                        <label
+                          class="form-check-label"
+                          for="triggerCOADMOnMacRemove"
+                          style="margin-bottom: -8%"
+                          >On MAC remove Trigger COA/DM
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Usage Details</legend>
+                  <div class="boxWhite">
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Start/Stop Attribute </label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Start/Stop Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="startStopAttributeValue"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Input Packet Attribute </label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Input Packet Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="inputPacketAttributeValue"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Output Packet Attribute </label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Output Packet Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="outputPacketAttributeValue"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Packet Type</label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="packetType"
+                          placeholder="Select Start/Stop Attribute"
+                          optionLabel="label"
+                          optionValue="label"
+                          [filter]="true"
+                          filterBy="label"
+                          formControlName="packetType"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <label>Dynamic Account Session Attribute</label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="dynamicAcctSessionAttribute"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display: initial">
+                        <p-checkbox
+                          binary="true"
+                          class="checkbox-align"
+                          formControlName="standardAttributeChecked"
+                          name="standardAttributeChecked"
+                        ></p-checkbox>
+                        <label class="form-check-label" for="acceptTerms" style="margin-bottom: -8%"
+                          >Standard Attribute
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <!-- <div class="row">
+              <div class="col-md-6">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Validate NAS Port Details</legend>
+                  <div class="boxWhite">
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label>Validate NAS Port</label>
+                        <p-dropdown
+                          [options]="this.list"
+                          placeholder="Select"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="validateNasAttribute"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label>Radius Attribute</label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Radius Group Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="validateNasAttributeValue"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="col-md-6">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Validate IP Address</legend>
+                  <div class="boxWhite">
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label>Validate IP</label>
+                        <p-dropdown
+                          [options]="this.list"
+                          placeholder="Select"
+                          optionLabel="label"
+                          optionValue="value"
+                          filterBy="name"
+                          formControlName="validateIpAttribute"
+                        ></p-dropdown>
+                      </div>
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label>Radius Attribute</label>
+                        <p-dropdown
+                          appendTo="body"
+                          [options]="dictionaryAttributeData.dictionaryAttributeList"
+                          placeholder="Select Radius Group Attribute"
+                          optionLabel="name"
+                          optionValue="name"
+                          [filter]="true"
+                          filterBy="name"
+                          formControlName="validateIpAttributeValue"
+                        ></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div> -->
+            <div class="row">
+              <form class="form-auth-small" [formGroup]="dynamicAttributesForm">
+                <div class="col-md-12">
+                  <fieldset style="margin-top: 1.5rem">
+                    <legend>Dynamic Validation Details</legend>
+                    <div class="boxWhite">
+                      <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                          <label>Customer Attributes</label>
+                          <p-dropdown
+                            [options]="customerAttributes"
+                            placeholder="Select"
+                            optionLabel="text"
+                            optionValue="value"
+                            [filter]="true"
+                            filterBy="name"
+                            formControlName="customerAttribute"
+                          ></p-dropdown>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                          <label>Radius Attribute</label>
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="dictionaryAttributeData.dictionaryAttributeList"
+                            placeholder="Select Radius Group Attribute"
+                            optionLabel="name"
+                            optionValue="name"
+                            [filter]="true"
+                            filterBy="name"
+                            formControlName="radiusAttribute"
+                          ></p-dropdown>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                          <p-checkbox
+                            binary="true"
+                            class="checkbox-align"
+                            name="isAbsenceAccepted"
+                            formControlName="isAbsenceAccepted"
+                          ></p-checkbox>
+                          <label
+                            class="form-check-label"
+                            for="acceptTerms"
+                            style="margin-bottom: -8%"
+                            >Accept in Absence
+                          </label>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                          <button
+                            id="addAtt"
+                            style="object-fit: cover; padding: 5px 8px; margin-top: 25px"
+                            class="btn btn-primary"
+                            (click)="addDynamicAttributes()"
+                          >
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                      <table class="table map-table" *ngIf="dynamicAttribute.length > 0">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 35%">Customer Attributes</th>
+                            <th style="text-align: center; width: 35%">Radius Attributes</th>
+                            <th style="text-align: center; width: 12%">Accept in Absence</th>
+                            <th style="text-align: center; width: 18%">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of dynamicAttribute.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="customerAttribute"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('customerAttribute')"
+                                readonly
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="radiusAttribute"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('radiusAttribute')"
+                                readonly
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <p-checkbox
+                                class="big-checkbox customm"
+                                [binary]="true"
+                                [readonly]="true"
+                                [formControl]="row.get('isAbsenceAccepted')"
+                              ></p-checkbox>
+                            </td>
+                            <td style="text-align: center">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="deleteDynamicAttributes(index)"
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </fieldset>
+                </div>
+              </form>
+            </div>
+
+            <div class="row">
+              <form class="form-auth-small" [formGroup]="vlanProfileForm">
+                <div class="col-md-12">
+                  <fieldset style="margin-top: 1.5rem">
+                    <legend>Vlan Profile</legend>
+                    <div class="boxWhite">
+                      <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                          <label>Vlan Attributes</label>
+                          <p-dropdown
+                            [options]="dictionaryAttributeData.dictionaryAttributeList"
+                            placeholder="Select"
+                            optionLabel="name"
+                            optionValue="name"
+                            [filter]="true"
+                            filterBy="name"
+                            formControlName="attribute"
+                          ></p-dropdown>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                          <label>Vlan Coloumn</label>
+                          <p-dropdown
+                            appendTo="body"
+                            [options]="vlanColoumnData"
+                            placeholder="Select Radius Group Attribute"
+                            optionLabel="name"
+                            optionValue="name"
+                            [filter]="true"
+                            filterBy="name"
+                            formControlName="coloumn"
+                          ></p-dropdown>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                          <button
+                            id="addAtt"
+                            style="object-fit: cover; padding: 5px 8px; margin-top: 25px"
+                            class="btn btn-primary"
+                            (click)="addVlanAttributes()"
+                          >
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                      <table class="table map-table" *ngIf="vlanAttributeValue.length > 0">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 35%">Vlan Attributes</th>
+                            <th style="text-align: center; width: 35%">Vlan Coloumn</th>
+                            <th style="text-align: center; width: 18%">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of vlanAttributeValue.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="customerAttribute"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('attribute')"
+                                readonly
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="radiusAttribute"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('coloumn')"
+                                readonly
+                              />
+                            </td>
+                            <td style="text-align: center">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="deleteVlanAttributes(index)"
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </fieldset>
+                </div>
+              </form>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Authentication Attribute Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="Createradius" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Check Item</th>
+                            <th style="text-align: center; width: 41%">Profile Attribute *</th>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="addAtt"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onAddAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of attribute.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkitem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkitem')"
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="attributeValue"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('attributeValue')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attributeValue').invalid
+                                }"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Profile Attribute is required.
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="
+                                  deleteConfirmAttribute(
+                                    index,
+                                    row.get('attributeId').value,
+                                    row.get('mvnoId')
+                                  )
+                                "
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <!-- Authentication Attribute Profile Mapping Details -->
+            <div class="row" *ngIf="createGroupForm.value.authenticationProfile == 'Enable'">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Authentication Attribute Profile Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="Createradius" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Check Item</th>
+                            <th style="text-align: center; width: 41%">Profile Attribute *</th>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="addAtt"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onAddAuthenticationProfileAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let row of authenticatioProfileAttribute.controls;
+                              let index = index
+                            "
+                          >
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkitem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkitem')"
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="attributeValue"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('attributeValue')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attributeValue').invalid
+                                }"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Profile Attribute is required.
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="
+                                  deleteAuthenticationProfileAttribute(
+                                    index,
+                                    row.get('attributeId').value,
+                                    row.get('mvnoId')
+                                  )
+                                "
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <!-- Cache Profile Mapping Details -->
+            <div class="row" *ngIf="clearCache == 'Enable'">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Cache Attribute Profile Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="Createradius" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: center; width: 41%">Attribute Value *</th>
+                            <th style="text-align: center; width: 41%">Criteria *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="addAtt"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onAddCacheMappingAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let row of cacheMappingProfileAttribute.controls;
+                              let index = index
+                            "
+                          >
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="attributeValue"
+                                class="form-control"
+                                placeholder="Enter Value"
+                                [formControl]="row.get('attributeValue')"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Enter attribute value
+                                </div>
+                              </div>
+                            </td>
+                            <td style="padding-left: 8px">
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="cacheCriteriaDropdownList"
+                                placeholder="Select criteria"
+                                optionLabel="label"
+                                optionValue="value"
+                                [formControl]="row.get('criteria')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('criteria').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('criteria').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('criteria').errors"
+                                >
+                                  Select criteria
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="deleteCacheProfileAttribute(index)"
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>COA/DM/SNMP Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="Createradius" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 25%">Check Item</th>
+                            <th style="text-align: center; width: 25%">CoA/DM/SNMP *</th>
+                            <th style="text-align: center; width: 25%">Coa Profie *</th>
+                            <th style="text-align: center; width: 25%">Dm Profile *</th>
+                            <th style="text-align: center; width: 25%">Priority *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="addAtt"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onAddCoaDmProfile()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of coadDmMapping.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkItem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkItem')"
+                              />
+                            </td>
+                            <td>
+                              <div>
+                                <p-dropdown
+                                  appendTo="body"
+                                  [options]="coA"
+                                  placeholder="Select CoA/DM/SNMP"
+                                  optionLabel="label"
+                                  optionValue="label"
+                                  [filter]="true"
+                                  filterBy="label"
+                                  [formControl]="row.get('coaDmSelection')"
+                                  (onChange)="hideFieldwithrow(row)"
+                                ></p-dropdown>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="this.filterCoAProfileList"
+                                placeholder="Select CoA Profile"
+                                optionLabel="name"
+                                optionValue="coaDMProfileId"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('coaProfileId')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('coaProfileId').errors
+                                }"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('coaProfileId').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('coaProfileId').errors"
+                                >
+                                  please select coa profile
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="this.filterDMProfileList"
+                                placeholder="Select DM Profile"
+                                optionLabel="name"
+                                optionValue="coaDMProfileId"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('dmProfileId')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('dmProfileId').errors
+                                }"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('dmProfileId').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('dmProfileId').errors"
+                                >
+                                  please select dm profile
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <input
+                                id="checkItem"
+                                type="number"
+                                (keypress)="priorityValidation($event)"
+                                class="form-control"
+                                placeholder="Enter Priority"
+                                [formControl]="row.get('priority')"
+                              />
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="deleteConfirmCoaDmProfile(index)"
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>CoA Attribute Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="Createradius" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Check Item</th>
+                            <th style="text-align: center; width: 41%">Profile Attribute *</th>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="addAtt"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onAddCOAAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of coaAttribute.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkitem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkitem')"
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="attributeValue"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('attributeValue')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attributeValue').invalid
+                                }"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Profile Attribute is required.
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="deleteConfirmCoAAttribute(index)"
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>InActive Profile Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="createInActiveProfileMapping" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Check Item</th>
+                            <th style="text-align: center; width: 41%">Profile Attribute *</th>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="createInActiveProfileMappingAttribute"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onInactiveAddAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of inActiveAttribute.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkitem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkitem')"
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="inactiveAttributeValue"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('attributeValue')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attributeValue').invalid
+                                }"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Profile Attribute is required.
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="
+                                  deleteConfirmInActiveAttribute(
+                                    index,
+                                    row.get('attributeId').value,
+                                    row.get('mvnoId')
+                                  )
+                                "
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>NewActive Profile Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="createNewActiveProfileMapping" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Check Item</th>
+                            <th style="text-align: center; width: 41%">Profile Attribute *</th>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="createNewActiveProfileMappingAttribute"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onNewactiveAddAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of newActiveAttribute.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkitem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkitem')"
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="newactiveAttributeValue"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('attributeValue')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attributeValue').invalid
+                                }"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Profile Attribute is required.
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="
+                                  deleteConfirmNewActiveAttribute(
+                                    index,
+                                    row.get('attributeId').value,
+                                    row.get('mvnoId')
+                                  )
+                                "
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Suspended Profile Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="createSuspendedProfileMapping" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Check Item</th>
+                            <th style="text-align: center; width: 41%">Profile Attribute *</th>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="createInActiveProfileMappingAttribute"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onSuspendedAddAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of suspendedAttribute.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkitem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkitem')"
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="suspendedAttributeValue"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('attributeValue')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attributeValue').invalid
+                                }"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Profile Attribute is required.
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="
+                                  deleteConfirmSuspendedAttribute(
+                                    index,
+                                    row.get('attributeId').value,
+                                    row.get('mvnoId')
+                                  )
+                                "
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset style="margin-top: 1.5rem">
+                  <legend>Unknown Profile Mapping Details</legend>
+                  <div class="boxWhite">
+                    <div id="Createradius" style="margin-top: 10px">
+                      <table class="table map-table">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center; width: 41%">Check Item</th>
+                            <th style="text-align: center; width: 41%">Profile Attribute *</th>
+                            <th style="text-align: center; width: 41%">Radius Attribute *</th>
+                            <th style="text-align: right; width: 18%; padding: 8px">
+                              <button
+                                id="addAtt"
+                                style="object-fit: cover; padding: 5px 8px"
+                                class="btn btn-primary"
+                                (click)="onUnknownAddAttribute()"
+                              >
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Add
+                              </button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of unknownAttribute.controls; let index = index">
+                            <td style="padding-left: 8px">
+                              <input
+                                id="checkitem"
+                                class="form-control"
+                                placeholder="Enter Check Item"
+                                [formControl]="row.get('checkitem')"
+                              />
+                            </td>
+                            <td style="padding-left: 8px">
+                              <input
+                                id="unknownAttributeValue"
+                                class="form-control"
+                                placeholder="Enter Profile Attribute"
+                                [formControl]="row.get('attributeValue')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attributeValue').invalid
+                                }"
+                              />
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attributeValue').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attributeValue').errors"
+                                >
+                                  Profile Attribute is required.
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p-dropdown
+                                appendTo="body"
+                                [options]="dictionaryAttributeData.dictionaryAttributeList"
+                                placeholder="Select Radius Group Attribute"
+                                optionLabel="name"
+                                optionValue="name"
+                                [filter]="true"
+                                filterBy="name"
+                                [formControl]="row.get('attribute')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && row.get('attribute').errors
+                                }"
+                                [required]="true"
+                              ></p-dropdown>
+                              <div
+                                class="errorWrap text-danger"
+                                *ngIf="submitted && row.get('attribute').errors"
+                              >
+                                <div
+                                  class="error text-danger"
+                                  *ngIf="submitted && row.get('attribute').errors"
+                                >
+                                  Select Radius Attribute.Or else delete the row
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right">
+                              <a
+                                id="deleteAtt"
+                                class="curson_pointer"
+                                (click)="
+                                  deleteConfirmUnknownAttribute(
+                                    index,
+                                    row.get('attributeId').value,
+                                    row.get('mvnoId')
+                                  )
+                                "
+                              >
+                                <img src="assets/img/ioc02.jpg" />
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                type="submit"
+                title="Submit Radius Group Details "
+                data-toggle="tooltip"
+                class="btn btn-primary"
+                (click)="addClientGroup()"
+              >
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update Group" : "Add Group" }}
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <p-confirmDialog
+      [style]="{ width: '50vw' }"
+      key="positionDialog"
+      [baseZIndex]="10000"
+    ></p-confirmDialog>
+    <!-- END Form Design -->
+  </div>
+</div>
+
+<p-dialog
+  header="Radius Client Group Detail"
+  [(visible)]="radiusClientDetailModal"
+  [baseZIndex]="10000"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closeDialogId()"
+>
+  <div class="modal-body">
+    <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+      <legend>Basic Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Radius Group Name :</label>
+            <span>
+              {{ radiusClientDetail?.name }}
+            </span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Status :</label>
+            <span>{{ radiusClientDetail?.cgStatus }}</span>
+          </div>
+
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Enable InActive Profile :</label>
+            <span>{{
+              radiusClientDetail?.inactiveProfileMappings?.length > 0 ? "true" : "false"
+            }}</span>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+          <label class="datalbl">Enable NewActive Profile :</label>
+          <span>{{
+            radiusClientDetail?.newactiveProfileMappings?.length > 0 ? "true" : "false"
+          }}</span>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Enable Unknown Profile :</label>
+            <span>{{
+              radiusClientDetail?.unknownProfileMappings?.length > 0 ? "true" : "false"
+            }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Enable Suspended Profile :</label>
+            <span>{{
+              radiusClientDetail?.suspendedProfileMappings?.length > 0 ? "true" : "false"
+            }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Permanent Disconnect Profile :</label>
+            <span>{{
+              permanentDisconnectProfileName === "" || permanentDisconnectProfileName === undefined
+                ? "-"
+                : permanentDisconnectProfileName
+            }}</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+            <label class="datalbl">Authentication Rejection Profile :</label>
+            <span>{{
+              radiusClientDetail?.authenticationProfile === null ||
+              radiusClientDetail?.authenticationProfile === undefined ||
+              radiusClientDetail?.authenticationProfile === ""
+                ? "-"
+                : radiusClientDetail?.authenticationProfile
+            }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+            <label class="datalbl">Customer MAC Attribute :</label>
+            <span>{{
+              radiusClientDetail?.customerMacAttribute === null ||
+              radiusClientDetail?.customerMacAttribute === undefined ||
+              radiusClientDetail?.customerMacAttribute === ""
+                ? "-"
+                : radiusClientDetail?.customerMacAttribute
+            }}</span>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+            <label class="datalbl">VLAN Validation Required :</label>
+            <span>{{ radiusClientDetail?.vlanCheckRequired }}</span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+      <legend>Usage Details</legend>
+      <div class="boxWhite">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Start/Stop Attribute :</label>
+            {{
+              radiusClientDetail?.startStopAttributeValue === null ||
+              radiusClientDetail?.startStopAttributeValue === undefined ||
+              radiusClientDetail?.startStopAttributeValue === ""
+                ? "-"
+                : radiusClientDetail?.startStopAttributeValue
+            }}
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Input Packet Attribute :</label>
+            {{
+              radiusClientDetail?.inputPacketAttributeValue === null ||
+              radiusClientDetail?.inputPacketAttributeValue === undefined ||
+              radiusClientDetail?.inputPacketAttributeValue === ""
+                ? "-"
+                : radiusClientDetail?.inputPacketAttributeValue
+            }}
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Output Packet Attribute :</label>
+            {{
+              radiusClientDetail?.outputPacketAttributeValue === null ||
+              radiusClientDetail?.outputPacketAttributeValue === undefined ||
+              radiusClientDetail?.outputPacketAttributeValue === ""
+                ? "-"
+                : radiusClientDetail?.outputPacketAttributeValue
+            }}
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Packet Type :</label>
+            {{
+              radiusClientDetail?.packetType === null ||
+              radiusClientDetail?.packetType === undefined ||
+              radiusClientDetail?.packetType === ""
+                ? "-"
+                : radiusClientDetail?.packetType
+            }}
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+            <label class="datalbl">Standard Attribute :</label>
+            {{ radiusClientDetail?.standardAttributeChecked }}
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.dynamicAttributeMappings?.length > 0"
+    >
+      <legend>Dynamic Validation Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive" style="margin-top: 1.5rem">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Customer Attributes</th>
+                  <th>Radius Attribute</th>
+                  <th>Accept in Absence</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let attr of radiusClientDetail?.dynamicAttributeMappings
+                      | paginate
+                        : {
+                            id: 'dynamicAttributeData',
+                            itemsPerPage: dynamicAttributeItemPerPage,
+                            currentPage: dynamicAttributeList,
+                            totalItems: dynamicAttributetotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      attr?.customerAttribute === null ||
+                      attr?.customerAttribute === undefined ||
+                      attr?.customerAttribute === ""
+                        ? "-"
+                        : attr?.customerAttribute
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      attr?.radiusAttribute === null ||
+                      attr?.radiusAttribute === undefined ||
+                      attr?.radiusAttribute === ""
+                        ? "-"
+                        : attr?.radiusAttribute
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      attr?.isAbsenceAccepted === null ||
+                      attr?.isAbsenceAccepted === undefined ||
+                      attr?.isAbsenceAccepted === ""
+                        ? "-"
+                        : attr?.isAbsenceAccepted
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="dynamicAttributeData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedDynamicAttList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.vlanProfileMapping?.length > 0"
+    >
+      <legend>Vlan Profile</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive" style="margin-top: 1.5rem">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Vlan Attributes</th>
+                  <th>Vlan Coloumn</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let attr of radiusClientDetail?.vlanProfileMapping
+                      | paginate
+                        : {
+                            id: 'vlanProfileData',
+                            itemsPerPage: vlanProfileItemPerPage,
+                            currentPage: currentPageVlanProfileList,
+                            totalItems: vlanProfiletotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      attr?.attribute === null ||
+                      attr?.attribute === undefined ||
+                      attr?.attribute === ""
+                        ? "-"
+                        : attr?.attribute
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      attr?.coloumn === null || attr?.coloumn === undefined || attr?.coloumn === ""
+                        ? "-"
+                        : attr?.coloumn
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="vlanProfileData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedVlanProfileList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.attribute?.length > 0"
+    >
+      <legend>Authentication Attribute Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>Profile Attribute</th>
+                  <th>Radius Attribute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let authAttr of radiusClientDetail?.attribute
+                      | paginate
+                        : {
+                            id: 'authenticateAttrData',
+                            itemsPerPage: authenticateAttrItemPerPage,
+                            currentPage: currentPageAuthenticateAttrList,
+                            totalItems: authenticateAttrtotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      authAttr?.checkitem === null ||
+                      authAttr?.checkitem === undefined ||
+                      authAttr?.checkitem === ""
+                        ? "-"
+                        : authAttr?.checkitem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      authAttr?.attributeValue === null ||
+                      authAttr?.attributeValue === undefined ||
+                      authAttr?.attributeValue === ""
+                        ? "-"
+                        : authAttr?.attributeValue
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      authAttr?.attribute === null ||
+                      authAttr?.attribute === undefined ||
+                      authAttr?.attribute === ""
+                        ? "-"
+                        : authAttr?.attribute
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="authenticateAttrData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedAuthenticateAttrList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.authenticatioProfileAttribute?.length > 0"
+    >
+      <legend>Authentication Attribute Profile Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>Profile Attribute</th>
+                  <th>Radius Attribute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let authAttr of radiusClientDetail?.authenticatioProfileAttribute
+                      | paginate
+                        : {
+                            id: 'authenticateAttrProfileData',
+                            itemsPerPage: authenticateAttrProfileItemPerPage,
+                            currentPage: currentPageAuthenticateAttrProfileList,
+                            totalItems: authenticateAttrProfiletotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      authAttr?.checkitem === null ||
+                      authAttr?.checkitem === undefined ||
+                      authAttr?.checkitem === ""
+                        ? "-"
+                        : authAttr?.checkitem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      authAttr?.attributeValue === null ||
+                      authAttr?.attributeValue === undefined ||
+                      authAttr?.attributeValue === ""
+                        ? "-"
+                        : authAttr?.attributeValue
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      authAttr?.attribute === null ||
+                      authAttr?.attribute === undefined ||
+                      authAttr?.attribute === ""
+                        ? "-"
+                        : authAttr?.attribute
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="authenticateAttrProfileData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedAuthenticateAttrProfileList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.coaDmProfileMappings?.length > 0"
+    >
+      <legend>COA/DM Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>CoA/DM</th>
+                  <th>Coa Profie</th>
+                  <th>Dm Profile</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let coaDm of radiusClientDetail?.coaDmProfileMappings
+                      | paginate
+                        : {
+                            id: 'coaDmpageData',
+                            itemsPerPage: coaDmItemPerPage,
+                            currentPage: currentPageCoaDmList,
+                            totalItems: coaDmtotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      coaDm?.checkItem === null ||
+                      coaDm?.checkItem === undefined ||
+                      coaDm?.checkItem === ""
+                        ? "-"
+                        : coaDm?.checkItem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      coaDm?.coaDmSelection === null ||
+                      coaDm?.coaDmSelection === undefined ||
+                      coaDm?.coaDmSelection === ""
+                        ? "-"
+                        : coaDm?.coaDmSelection
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      coaDm?.coaProfileId === null || coaDm?.coaProfileId === ""
+                        ? "-"
+                        : getCoaProfileData(coaDm?.coaProfileId)
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      coaDm?.dmProfileId === null || coaDm?.dmProfileId === ""
+                        ? "-"
+                        : getDmProfileData(coaDm?.dmProfileId)
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      coaDm?.priority === null ||
+                      coaDm?.priority === undefined ||
+                      coaDm?.priority === ""
+                        ? "-"
+                        : coaDm?.priority
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="coaDmpageData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedCoaDmDetailList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.coaAttribute?.length > 0"
+    >
+      <legend>CoA Attribute Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>Profile Attribute</th>
+                  <th>Radius Attribute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let coaAttr of radiusClientDetail?.coaAttribute
+                      | paginate
+                        : {
+                            id: 'coaDmProfilepageData',
+                            itemsPerPage: coaDmProfileItemPerPage,
+                            currentPage: currentPageCoaDmProfileList,
+                            totalItems: coaDmProfiletotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      coaAttr?.checkitem === null ||
+                      coaAttr?.checkitem === undefined ||
+                      coaAttr?.checkitem === ""
+                        ? "-"
+                        : coaAttr?.checkitem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      coaAttr?.attributeValue === null ||
+                      coaAttr?.attributeValue === undefined ||
+                      coaAttr?.attributeValue === ""
+                        ? "-"
+                        : coaAttr?.attributeValue
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      coaAttr?.attribute === null ||
+                      coaAttr?.attribute === undefined ||
+                      coaAttr?.attribute === ""
+                        ? "-"
+                        : coaAttr?.attribute
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="coaDmProfilepageData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedCoaDmProfileList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.inactiveProfileMappings?.length > 0"
+    >
+      <legend>InActive Profile Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>Profile Attribute</th>
+                  <th>Radius Attribute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let inActiveProfile of radiusClientDetail?.inactiveProfileMappings
+                      | paginate
+                        : {
+                            id: 'inActiveProfilepageData',
+                            itemsPerPage: custInActiveProfileItemPerPage,
+                            currentPage: currentPageInActiveProfileAddList,
+                            totalItems: inActiveProfileAddtotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      inActiveProfile?.checkitem === null ||
+                      inActiveProfile?.checkitem === undefined ||
+                      inActiveProfile?.checkitem === ""
+                        ? "-"
+                        : inActiveProfile?.checkitem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      inActiveProfile?.attributeValue === null ||
+                      inActiveProfile?.attributeValue === undefined ||
+                      inActiveProfile?.attributeValue === ""
+                        ? "-"
+                        : inActiveProfile?.attributeValue
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      inActiveProfile?.attribute === null ||
+                      inActiveProfile?.attribute === undefined ||
+                      inActiveProfile?.attribute === ""
+                        ? "-"
+                        : inActiveProfile?.attribute
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="inActiveProfilepageData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedinActiveProfileDetailList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.newactiveProfileMappings?.length > 0"
+    >
+      <legend>NewActive Profile Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>Profile Attribute</th>
+                  <th>Radius Attribute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let newActiveProfile of radiusClientDetail?.newactiveProfileMappings
+                      | paginate
+                        : {
+                            id: 'newActiveProfilepageData',
+                            itemsPerPage: custNewActiveProfileItemPerPage,
+                            currentPage: currentPageNewActiveProfileAddList,
+                            totalItems: newActiveProfileAddtotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      newActiveProfile?.checkitem === null ||
+                      newActiveProfile?.checkitem === undefined ||
+                      newActiveProfile?.checkitem === ""
+                        ? "-"
+                        : newActiveProfile?.checkitem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      newActiveProfile?.attributeValue === null ||
+                      newActiveProfile?.attributeValue === undefined ||
+                      newActiveProfile?.attributeValue === ""
+                        ? "-"
+                        : newActiveProfile?.attributeValue
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      newActiveProfile?.attribute === null ||
+                      newActiveProfile?.attribute === undefined ||
+                      newActiveProfile?.attribute === ""
+                        ? "-"
+                        : newActiveProfile?.attribute
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="newActiveProfilepageData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangednewActiveProfileDetailList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.suspendedProfileMappings?.length > 0"
+    >
+      <legend>Suspended Profile Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>Profile Attribute</th>
+                  <th>Radius Attribute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let suspendedProfile of radiusClientDetail?.suspendedProfileMappings
+                      | paginate
+                        : {
+                            id: 'SuspendedProfilepageData',
+                            itemsPerPage: suspendedProfileAddItemPerPage,
+                            currentPage: currentPageSuspendedProfileList,
+                            totalItems: suspendedProfiletotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      suspendedProfile?.checkitem === null ||
+                      suspendedProfile?.checkitem === undefined ||
+                      suspendedProfile?.checkitem === ""
+                        ? "-"
+                        : suspendedProfile?.checkitem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      suspendedProfile?.attributeValue === null ||
+                      suspendedProfile?.attributeValue === undefined ||
+                      suspendedProfile?.attributeValue === ""
+                        ? "-"
+                        : suspendedProfile?.attributeValue
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      suspendedProfile?.attribute === null ||
+                      suspendedProfile?.attribute === undefined ||
+                      suspendedProfile?.attribute === ""
+                        ? "-"
+                        : suspendedProfile?.attribute
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="SuspendedProfilepageData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedSuspendedProfileList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      style="margin-top: 0rem; margin-bottom: 2rem"
+      *ngIf="radiusClientDetail?.unknownProfileMappings?.length > 0"
+    >
+      <legend>Unknown Profile Mapping Details</legend>
+      <div class="boxWhite">
+        <div class="row table-responsive">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Check Item</th>
+                  <th>Profile Attribute</th>
+                  <th>Radius Attribute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let unknown of radiusClientDetail?.unknownProfileMappings
+                      | paginate
+                        : {
+                            id: 'unknownProfilepageData',
+                            itemsPerPage: unknownItemPerPage,
+                            currentPage: currentPageUnknownList,
+                            totalItems: unknowntotalRecords
+                          };
+                    index as i
+                  "
+                >
+                  <td>
+                    {{
+                      unknown?.checkitem === null ||
+                      unknown?.checkitem === undefined ||
+                      unknown?.checkitem === ""
+                        ? "-"
+                        : unknown?.checkitem
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      unknown?.attributeValue === null ||
+                      unknown?.attributeValue === undefined ||
+                      unknown?.attributeValue === ""
+                        ? "-"
+                        : unknown?.attributeValue
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      unknown?.attribute === null ||
+                      unknown?.attribute === undefined ||
+                      unknown?.attribute === ""
+                        ? "-"
+                        : unknown?.attribute
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+              id="unknownProfilepageData"
+              maxSize="10"
+              directionLinks="true"
+              previousLabel=""
+              nextLabel=""
+              (pageChange)="pageChangedUnknownDetailList($event)"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="closeDialogId()" class="btn btn-default" data-dismiss="modal">
+      Close
+    </button>
+  </div>
+</p-dialog>

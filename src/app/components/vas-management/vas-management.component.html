@@ -1,0 +1,1074 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">VAS Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchVAS"
+            aria-expanded="false"
+            aria-controls="searchVAS"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="searchVAS" class="panel-collapse collapse in">
+        <div class="panel-body" *ngIf="listView">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                type="text"
+                [(ngModel)]="searchVASName"
+                class="form-control"
+                placeholder="Enter VAS Name"
+                (keydown.enter)="searchVAS()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchVAS()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button type="reset" class="btn btn-default" id="searchbtn" (click)="clearVAS()">
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a (click)="createVAS()" class="curson_pointer" *ngIf="createAccess">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create VAS</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="searchVasdata()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search VAS</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">VAS</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#chargelist"
+            aria-expanded="false"
+            aria-controls="chargelist"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="chargelist" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Pause Days Limit</th>
+                    <th>Attempt</th>
+                    <th>VAS Amount</th>
+                    <th>ISP Name</th>
+                    <th *ngIf="deleteAccess || editAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let vas of vasListData
+                        | paginate
+                          : {
+                              id: 'vasListData',
+                              itemsPerPage: vasListdataitemsPerPage,
+                              currentPage: currentPageVasListdata,
+                              totalItems: vasListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>
+                      <span class="link-class" (click)="openVasDetails(vas)">
+                        {{ vas.name }}
+                      </span>
+                    </td>
+                    <td>
+                      {{ vas.pauseDaysLimit }}
+                    </td>
+                    <td>
+                      {{ vas.pauseTimeLimit }}
+                    </td>
+                    <td>
+                      {{
+                        vas?.chargeList[0]?.charge?.currency
+                          ? (vas?.vasAmount | customCurrency: vas?.chargeList[0]?.charge?.currency)
+                          : (vas?.vasAmount | customCurrency: currency)
+                      }}
+                    </td>
+                    <td>
+                      {{ vas?.mvnoName }}
+                    </td>
+
+                    <td class="btnAction" *ngIf="deleteAccess || editAccess">
+                      <a
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        *ngIf="editAccess"
+                        (click)="vasCharge(vas.id)"
+                        title="Edit"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        *ngIf="deleteAccess"
+                        (click)="deleteConfirmonCharge(vas.id)"
+                        title="Delete"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="vasListData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedChargeList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="showItemPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isVasEdit ? "Update" : "Create" }} VAS</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createcharge"
+            aria-expanded="false"
+            aria-controls="createcharge"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createcharge" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="vasGroupForm">
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>VAS Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>VAS Name*</label>
+                    <input
+                      id="name"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter VAS Name"
+                      formControlName="name"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.name.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.name.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && vasGroupForm.controls.name.errors.required"
+                      >
+                        VAS Name is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Pause Days Limit*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Days Limit"
+                      formControlName="pauseDaysLimit"
+                      min="0"
+                      (keydown)="preventNegative($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.pauseDaysLimit.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.pauseDaysLimit.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && vasGroupForm.controls.pauseDaysLimit.errors.required"
+                      >
+                        Pause Days Limit is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Pause Attempt*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Pause Attempt"
+                      formControlName="pauseTimeLimit"
+                      min="0"
+                      (keydown)="preventNegative($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.pauseTimeLimit.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.pauseTimeLimit.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && vasGroupForm.controls.pauseTimeLimit.errors.required"
+                      >
+                        Pause Attempt is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <div>
+                      <label>TAT*</label>
+                      <p-dropdown
+                        [ngClass]="{
+                          'is-invalid': submitted && vasGroupForm.controls.tatId.errors
+                        }"
+                        [options]="tatListData"
+                        optionValue="id"
+                        optionLabel="name"
+                        filter="true"
+                        filterBy="name"
+                        placeholder="Select a TAT"
+                        formControlName="tatId"
+                      ></p-dropdown>
+                      <div
+                        *ngIf="submitted && vasGroupForm.controls.tatId.errors"
+                        class="errorWrap text-danger"
+                      >
+                        <div
+                          *ngIf="submitted && vasGroupForm.controls.tatId.errors.required"
+                          class="error text-danger"
+                        >
+                          TAT is required.
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Validity *</label>
+                    <div style="display: flex">
+                      <div style="width: 60%">
+                        <input
+                          id="validity"
+                          [ngClass]="{
+                            'is-invalid': submitted && vasGroupForm.controls.validity.errors
+                          }"
+                          class="form-control"
+                          formControlName="validity"
+                          id="validity"
+                          min="1"
+                          (keydown)="preventNegative($event)"
+                          placeholder="Enter Validity"
+                          type="number"
+                        />
+                        <div
+                          *ngIf="submitted && vasGroupForm.controls.validity.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="submitted && vasGroupForm.controls.validity.errors.required"
+                            class="error text-danger"
+                          >
+                            Validity is required.
+                          </div>
+                          <div
+                            *ngIf="submitted && vasGroupForm.controls.validity.errors.pattern"
+                            class="error text-danger"
+                          >
+                            Only Numeric value are allowed.
+                          </div>
+                        </div>
+                      </div>
+                      <div style="width: 40%; height: 34px">
+                        <p-dropdown
+                          [ngClass]="{
+                            'is-invalid': submitted && vasGroupForm.controls.unitsOfValidity.errors
+                          }"
+                          [options]="validityUnit"
+                          filter="true"
+                          filterBy="label"
+                          formControlName="unitsOfValidity"
+                          optionLabel="label"
+                          optionValue="label"
+                          placeholder="Select Unit"
+                        ></p-dropdown>
+                        <div
+                          *ngIf="submitted && vasGroupForm.controls.unitsOfValidity.errors"
+                          class="errorWrap text-danger"
+                        >
+                          <div
+                            *ngIf="
+                              submitted && vasGroupForm.controls.unitsOfValidity.errors.required
+                            "
+                            class="error text-danger"
+                          >
+                            Unit is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12 checkbox-wrapper">
+                    <p-checkbox
+                      label="Is Default"
+                      binary="true"
+                      formControlName="isdefault"
+                      [disabled]="isVasEdit"
+                      inputId="update"
+                      labelStyleClass="font-weight:bold"
+                    ></p-checkbox>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Inventory Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Replace After Month*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Replace Month"
+                      formControlName="inventoryReplaceAfterYears"
+                      min="0"
+                      (keydown)="preventNegative($event)"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && vasGroupForm.controls.inventoryReplaceAfterYears.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.inventoryReplaceAfterYears.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted &&
+                          vasGroupForm.controls.inventoryReplaceAfterYears.errors.required
+                        "
+                      >
+                        Replace Month is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Eligiblity Paid Month*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Eligibility Paid Months"
+                      formControlName="inventoryPaidMonths"
+                      (keydown)="preventNegative($event)"
+                      min="0"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.inventoryPaidMonths.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.inventoryPaidMonths.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && vasGroupForm.controls.inventoryPaidMonths.errors.required
+                        "
+                      >
+                        Eligiblity Paid Months is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Inventory Replacement Count*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Inventory Replacement Count"
+                      formControlName="inventoryCount"
+                      min="0"
+                      (keydown)="preventNegative($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.inventoryCount.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.inventoryCount.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="submitted && vasGroupForm.controls.inventoryCount.errors.required"
+                      >
+                        Inventory Replacement Count is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+              <legend>Shift Location Details</legend>
+              <div class="boxWhite">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Eligibility Paid Month*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Eligibility Paid Months"
+                      formControlName="shiftLocationMonths"
+                      min="0"
+                      (keydown)="preventNegative($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.shiftLocationMonths.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.shiftLocationMonths.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && vasGroupForm.controls.shiftLocationMonths.errors.required
+                        "
+                      >
+                        Eligibility Paid Month is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Allowed in Year*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Allowed in Year"
+                      formControlName="shiftLocationYears"
+                      min="0"
+                      (keydown)="preventNegative($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.shiftLocationYears.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.shiftLocationYears.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && vasGroupForm.controls.shiftLocationYears.errors.required
+                        "
+                      >
+                        Allowed in Year is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-12">
+                    <label>Attempt Count*</label>
+                    <input
+                      id="name"
+                      type="number"
+                      class="form-control"
+                      placeholder="Enter Attempt Count"
+                      formControlName="shiftLocationCount"
+                      (keydown)="blockNegative($event)"
+                      min="0"
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.shiftLocationCount.errors
+                      }"
+                    />
+                    <div
+                      class="errorWrap text-danger"
+                      *ngIf="submitted && vasGroupForm.controls.shiftLocationCount.errors"
+                    >
+                      <div
+                        class="error text-danger"
+                        *ngIf="
+                          submitted && vasGroupForm.controls.shiftLocationCount.errors.required
+                        "
+                      >
+                        Attempt Count is Required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend id="charge">Charge Details</legend>
+              <div class="boxWhite">
+                <div [formGroup]="vasGroupForm" class="row">
+                  <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                    <label>VAS Price *</label>
+                    <input
+                      [ngClass]="{
+                        'is-invalid': submitted && vasGroupForm.controls.vasAmount.errors
+                      }"
+                      class="form-control"
+                      formControlName="vasAmount"
+                      id="vasAmount"
+                      min="1"
+                      placeholder="Enter VAS Price"
+                      type="number"
+                      readonly
+                    />
+                    <div
+                      *ngIf="submitted && vasGroupForm.controls.vasAmount.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div
+                        *ngIf="submitted && vasGroupForm.controls.vasAmount.errors.required"
+                        class="error text-danger"
+                      >
+                        VAS Price is required.
+                      </div>
+                    </div>
+                    <br />
+                  </div>
+                </div>
+                <div [formGroup]="chargefromgroup" class="row">
+                  <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                    <p-dropdown
+                      id="getoffer"
+                      (onChange)="getofferPrice($event)"
+                      [ngClass]="{
+                        'is-invalid': submitted && chargefromgroup.controls.chargeId.errors
+                      }"
+                      [options]="chargeType"
+                      filter="true"
+                      filterBy="name"
+                      formControlName="chargeId"
+                      optionLabel="name"
+                      optionValue="id"
+                      placeholder="Select Charge"
+                    ></p-dropdown>
+                    <div></div>
+                    <div
+                      *ngIf="chargeSubmitted && chargefromgroup.controls.chargeId.errors"
+                      class="errorWrap text-danger"
+                    >
+                      <div id="charge" class="error text-danger">Charge is required.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                    <button
+                      (click)="onAddChargeField()"
+                      class="btn btn-primary"
+                      id="addAtt"
+                      style="object-fit: cover; padding: 5px 8px"
+                    >
+                      <i aria-hidden="true" class="fa fa-plus-square"></i>
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <div class="scrollbarPlangroupMappingList" style="margin-top: 15px">
+                  <table class="table coa-table">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center" id="namecharg">Charge Name</th>
+                        <th style="text-align: center" id="currency">Currency</th>
+                        <th style="text-align: center" id="actual">Actual Price</th>
+                        <th style="text-align: center" id="charg">Charge Price</th>
+                        <th style="text-align: center" id="tax">Tax Amount</th>
+                        <th style="text-align: center" id="pricetax">Price(including tax)</th>
+                        <th style="text-align: right; padding: 8px">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let row of chargeFromArray.controls
+                            | paginate
+                              : {
+                                  id: 'chargeFromArrayData',
+                                  itemsPerPage: chargeitemsPerPage,
+                                  currentPage: currentPageCharge,
+                                  totalItems: chargetotalRecords
+                                };
+                          let index = index
+                        "
+                      >
+                        <td style="padding-left: 8px">
+                          <p-dropdown
+                            id="select"
+                            [disabled]="true"
+                            [formControl]="row.get('chargeId')"
+                            [options]="chargeType"
+                            filter="true"
+                            filterBy="name"
+                            optionLabel="name"
+                            optionValue="id"
+                            placeholder="Select a Charge"
+                          ></p-dropdown>
+                          <div></div>
+                        </td>
+                        <td>
+                          <input
+                            [formControl]="row.get('currency')"
+                            class="form-control"
+                            id="currency"
+                            min="0"
+                            name="currency"
+                            placeholder="Enter Currency"
+                            [readonly]="true"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            [formControl]="row.get('actualprice')"
+                            class="form-control"
+                            id="actualprice        "
+                            min="0"
+                            name="actualprice"
+                            placeholder="Enter Actual Price"
+                            type="number"
+                            [readonly]="true"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            [formControl]="row.get('chargeprice')"
+                            class="form-control"
+                            id="chargeprice"
+                            name="chargeprice"
+                            placeholder="Enter Charge Price"
+                            type="number"
+                            (keydown)="preventNegativeInput($event)"
+                            (input)="
+                              changeActualPrice(
+                                row.value.chargeprice,
+                                row.value.chargeId,
+                                index,
+                                row.value.actualprice,
+                                $event
+                              )
+                            "
+                          />
+                          <div
+                            class="error text-danger"
+                            *ngIf="row.get('chargeprice').hasError('max')"
+                          >
+                            Charge price can not be greater than actual price.
+                          </div>
+                        </td>
+
+                        <td>
+                          <input
+                            data-backdrop="static"
+                            data-keyboard="false"
+                            data-target="#taxDetailModal"
+                            data-toggle="modal"
+                            [formControl]="row.get('taxamount')"
+                            class="form-control"
+                            id="taxamount        "
+                            min="0"
+                            name="taxamount"
+                            placeholder="Enter Actual Price"
+                            readonly
+                            type="number"
+                          />
+                        </td>
+                        <td>
+                          <div
+                            style="
+                              box-shadow: 0px 1px 2px 0 rgb(0 0 0 / 22%);
+                              border-radius: 2px;
+                              border-color: #eaeaea;
+                              background-color: #eeeeee;
+                              display: block;
+                              width: 100%;
+                              height: 34px;
+                              padding: 6px 12px;
+                              font-size: 14px;
+                              line-height: 1.42857143;
+                              color: #555;
+                              background-image: none;
+                            "
+                          >
+                            <span *ngFor="let list of totalPriceData; index as j">
+                              <span *ngIf="index === j">{{ list | number: "1.2-2" }}</span>
+                            </span>
+                          </div>
+                        </td>
+
+                        <td style="text-align: right">
+                          <button
+                            (click)="deleteConfirmonChargeField(index, row?.get('chargeId')?.value)"
+                            id="deleteAtt"
+                            class="approve-btn"
+                            style="
+                              border: none;
+                              background: transparent;
+                              padding: 0;
+                              margin-right: 3px;
+                            "
+                            type="button"
+                          >
+                            <img src="assets/img/ioc02.jpg" />
+                          </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="chargeFromArray.controls.length !== 0">
+                        <td colspan="4" style="text-align: end">
+                          <b>Total Price(including tax) :</b>
+                        </td>
+                        <td colspan="2">{{ countTotalOfferPrice | number: "1.2-2" }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br />
+              </div>
+            </fieldset>
+
+            <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="!isVasEdit"
+                id="submit"
+                (click)="addEditVAS('')"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add VAS
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                *ngIf="isVasEdit"
+                id="submit"
+                (click)="addEditVAS(viewVASListData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update VAS
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="detailView">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Charge Details"
+            (click)="listVas()"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">VAS Detail</h3>
+        </div>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDatacharge"
+            aria-expanded="false"
+            aria-controls="allDatacharge"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDatacharge" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+            <legend>Basic Details</legend>
+            <div class="boxWhite">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Name :</label>
+                  <span>{{ chargeDetailData.name }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Charge Category :</label>
+                  <span>{{ chargeDetailData.chargecategory }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Charge Type :</label>
+                  <span>{{ chargeTypeText }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Price :</label>
+
+                  <span>
+                    {{ chargeDetailData.price | customCurrency: chargeDetailData?.currency }}</span
+                  >
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Tax Name:</label>
+                  <span
+                    class="HoverEffect"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    title="Go To Tax List"
+                    style="color: #f7b206"
+                    (click)="openChargeTAxDetail(chargeDetailData.taxid)"
+                  >
+                    {{ chargeDetailData.taxName }}
+                  </span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">SAC code :</label>
+                  <span>{{ chargeDetailData.saccode }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                  <label class="datalbl">Service:</label>
+                  <span
+                    class="HoverEffect"
+                    (click)="openServiceModal()"
+                    data-toggle="modal"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    title="Go To service Area List"
+                  >
+                    Click here
+                  </span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Status :</label>
+                  <span>{{ chargeDetailData.status }}</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Ledger ID :</label>
+                  <span>{{ chargeDetailData.ledgerId }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div
+                  class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0"
+                  *ngIf="
+                    chargeDetailData.chargetype == 'ADVANCE' ||
+                    chargeDetailData.chargetype == 'RECURRING'
+                  "
+                >
+                  <label class="datalbl">Royalty Payable :</label>
+                  <span *ngIf="chargeDetailData.royalty_payable == true">Yes</span>
+                  <span *ngIf="chargeDetailData.royalty_payable == false">No</span>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup m-0">
+                  <label class="datalbl">Description :</label>
+                  <span>{{ chargeDetailData.desc }}</span>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog
+  header="VAS Details"
+  [(visible)]="openVasDetailsByCust"
+  [baseZIndex]="10000"
+  [style]="{ width: '60%' }"
+  [modal]="true"
+  [responsive]="true"
+  [draggable]="false"
+  [closable]="true"
+  (onHide)="closedialog()"
+>
+  <div class="modal-body">
+    <div class="panel-collapse collapse in" id="precustDetails">
+      <div class="panel-body table-responsive">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="row">
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Vas Name :</label>
+                    <span>{{ vasPlan?.name }}</span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Vas Offer Price :</label>
+                    <span>{{ vasPlan?.vasAmount }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Pause Days Limit :</label>
+                    <span>{{ vasPlan?.pauseDaysLimit }}</span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Pause Time Limit :</label>
+                    <span>{{ vasPlan?.pauseTimeLimit }}</span>
+                  </div>
+
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Inventory Replace Years :</label>
+                    <span>{{ vasPlan?.inventoryReplaceAfterYears }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Inventory Paid Months :</label>
+                    <span>{{ vasPlan?.inventoryPaidMonths }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Inventory Count :</label>
+                    <span>{{ vasPlan?.inventoryCount }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl"
+                      >Shift location Allowed After Completing The Year :</label
+                    >
+                    <span>{{ vasPlan?.shiftLocationYears }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Shift Location Allowed After Paid Months :</label>
+                    <span>{{ vasPlan?.shiftLocationMonths }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Shift Location Count :</label>
+                    <span>{{ vasPlan?.shiftLocationCount }}</span>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dataGroup">
+                    <label class="datalbl">Validity :</label>
+                    <span>{{ vasPlan?.validity }} {{ vasPlan?.unitsOfValidity }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="vas-details-table">
+              <h5 class="section-title">VAS Charge Details</h5>
+
+              <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="table-header">
+                  <tr>
+                    <th>VAS Name</th>
+                    <th>Currency</th>
+                    <th>Charge Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of vasPlan?.chargeList">
+                    <td>{{ row.charge.name }}</td>
+                    <td>{{ row.charge.currency }}</td>
+                    <td>{{ row.chargePrice | number }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="closedialog()" class="btn btn-default" data-dismiss="modal">
+      Close
+    </button>
+  </div>
+</p-dialog>

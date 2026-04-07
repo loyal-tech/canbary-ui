@@ -1,0 +1,640 @@
+<div class="row" *ngIf="isShowMenu">
+  <div class="col-md-12">
+    <div class="panel mb-15">
+      <div class="panel-heading">
+        <h3 class="panel-title">Radius Profile Management</h3>
+        <div class="right">
+          <button
+            aria-controls="searchPreCust"
+            aria-expanded="false"
+            class="btn-toggle-collapse"
+            data-target="#searchPreCust"
+            data-toggle="collapse"
+            type="button"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-collapse collapse in" id="searchPreCust">
+        <div class="panel-body no-padding panel-udata">
+          <div [ngClass]="'col-md-6'" class="pcol" *ngIf="createAccess">
+            <div>
+              <a
+                [routerLink]="['/home/radiusProfile/create']"
+                class="curson_pointer"
+                href="javascript:void(0)"
+                class="dbox"
+              >
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Radius Profile</h5>
+              </a>
+              <div
+                *ngIf="isShowCreateView"
+                [ngClass]="{
+                  activeSubMenu: true
+                }"
+              ></div>
+            </div>
+          </div>
+          <div [ngClass]="'col-md-6'" class="pcol">
+            <div>
+              <a
+                [routerLink]="['/home/radiusProfile/list']"
+                class="curson_pointer"
+                href="javascript:void(0)"
+                class="dbox"
+              >
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Radius Profile</h5>
+              </a>
+              <div
+                [ngClass]="{
+                  activeSubMenu: true
+                }"
+                *ngIf="isShowListView"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Radius Profile Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#acctProfileSearchPanel"
+            aria-expanded="false"
+            aria-controls="acctProfileSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="acctProfileSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchProfileForm">
+              <div class="row">
+                <div class="col-md-3" style="padding-right: 0%; text-align: right">
+                  <label style="padding: 5px">Radius Profile Name:</label>
+                </div>
+                <div class="col-md-5" style="padding-left: 0%">
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Radius Profile Name"
+                    formControlName="name"
+                    (keydown.enter)="searchProfileByName()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchProfileForm.controls.name.errors
+                    }"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search Profile"
+                    data-toggle="tooltip"
+                    (click)="searchProfileByName()"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!-- <div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Radius Profiles</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#acctProfileTablePanel"
+            aria-expanded="false"
+            aria-controls="acctProfileTablePanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="acctProfileTablePanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let profile of profileData
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td class="detailOnAnchorClick">
+                  <a
+                    (click)="getRadiusProfileDetail(profile.radiusProfileId, profile.mvnoId)"
+                    title="Click To See Radius Profile Detail"
+                    data-toggle="modal"
+                    data-target="#profileDetailModal"
+                    class="curson_pointer"
+                  >
+                    {{ profile.name }}
+                  </a>
+                </td>
+                <td *ngIf="profile.status == 'Active'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" checked [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      checked
+                      [disabled]="!editAccess"
+                      (click)="changeStatus(profile.name, profile.status, profile.mvnoId, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td *ngIf="profile.status == 'Inactive'">
+                  <label class="switch">
+                    <input *ngIf="!modalToggle" type="checkbox" [disabled]="!editAccess" />
+                    <input
+                      *ngIf="modalToggle"
+                      type="checkbox"
+                      [disabled]="!editAccess"
+                      (click)="changeStatus(profile.name, profile.status, profile.mvnoId, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td *ngIf="editAccess || deleteAccess" class="btnAction">
+                  <a
+                    *ngIf="editAccess"
+                    type="button"
+                    data-title="Edit"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="editAcctProfileById(profile.radiusProfileId, i, profile.mvnoId)"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    *ngIf="deleteAccess"
+                    type="button"
+                    data-title="Delete"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="deleteConfirm(profile.radiusProfileId, profile.mvnoId, i)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_groupdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+<!-- <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Radius Profile</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#acctProfileFormPanel"
+            aria-expanded="false"
+            aria-controls="acctProfileFormPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+        Sorry you have not privilege to create operation!
+      </div>
+      <div
+        class="panel-body table-responsive"
+        *ngIf="createAccess || (editMode && editAccess)"
+      ></div>
+      <div
+        id="acctProfileFormPanel"
+        class="panel-collapse collapse in"
+        *ngIf="editAccess || createAccess"
+      >
+        <form class="form-auth-small" [formGroup]="acctProfileForm">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-12" *ngIf="loggedInUser == 'superadmin'">
+                <label>Mvno Name</label>
+                <p-dropdown
+                  (onChange)="getDetailsByMVNO($event.value)"
+                  [readonly]="editMode"
+                  [options]="mvnoData"
+                  placeholder="Select MVNO"
+                  optionLabel="name"
+                  optionValue="mvnoId"
+                  formControlName="mvnoName"
+                  [filter]="true"
+                  filterBy="name"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.status.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.mvnoName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.mvnoName.errors.required"
+                  >
+                    Please select MVNO.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Radius Profile Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  [readonly]="editMode"
+                  class="form-control"
+                  placeholder="Enter Acct Profile Name"
+                  formControlName="name"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.name.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.name.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.name.errors.required"
+                  >
+                    Please enter Account Profile Name .
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Request Type</label>
+                <p-dropdown
+                  [options]="type"
+                  placeholder="Select Request Type"
+                  optionLabel="text"
+                  optionValue="value"
+                  formControlName="requestType"
+                  [filter]="true"
+                  filterBy="label"
+                  (onChange)="onChangeofRequestType($event.value)"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.requestType.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.requestType.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.requestType.errors.required"
+                  >
+                    Pleased select Request type.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Authentication Mode</label>
+                <p-dropdown
+                  [options]="authenticationMode"
+                  [disabled]="editMode"
+                  placeholder="Select Authentication Mode"
+                  optionLabel="displayName"
+                  optionValue="value"
+                  formControlName="authenticationMode"
+                  [filter]="true"
+                  filterBy="value"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.authenticationMode.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.authenticationMode.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.authenticationMode.errors.required"
+                  >
+                    Please select Authentication Mode.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Status</label>
+                <p-dropdown
+                  [options]="status"
+                  placeholder="Select Account Profile Status"
+                  optionLabel="label"
+                  optionValue="label"
+                  formControlName="status"
+                  [filter]="true"
+                  filterBy="label"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.status.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.status.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.status.errors.required"
+                  >
+                    Please select status.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Check Item</label>
+                <input
+                  type="text"
+                  name="checkItem"
+                  class="form-control"
+                  placeholder="Enter Check Item"
+                  formControlName="checkItem"
+                />
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Account CDR Status</label>
+                <p-dropdown
+                  [options]="status1"
+                  placeholder="Select Account CDR Status"
+                  optionLabel="label"
+                  optionValue="label"
+                  formControlName="accountCdrStatus"
+                  [filter]="true"
+                  filterBy="label"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.accountCdrStatus.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.accountCdrStatus.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.accountCdrStatus.errors.required"
+                  >
+                    Please select Account CDR status.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Session Status</label>
+                <p-dropdown
+                  [options]="status1"
+                  placeholder="Select Session Status"
+                  optionLabel="label"
+                  optionValue="label"
+                  [filter]="true"
+                  filterBy="label"
+                  formControlName="sessionStatus"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.sessionStatus.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.sessionStatus.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.sessionStatus.errors.required"
+                  >
+                    Please select session status.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Mapping Master</label>
+                <p-dropdown
+                  [options]="filteredMappingList"
+                  placeholder="Select Mapping Master"
+                  optionLabel="name"
+                  optionValue="name"
+                  formControlName="mappingMaster"
+                  [filter]="true"
+                  filterBy="name"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.mappingMaster.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.mappingMaster.errors.required"
+                  >
+                    Please select Mapping master.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Priority</label>
+                <input
+                  type="text"
+                  name="priority"
+                  class="form-control"
+                  placeholder="Enter Priority"
+                  formControlName="priority"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.priority.errors
+                  }"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.priority.errors"
+                >
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Auth Audit</label>
+                <p-dropdown
+                  [options]="status1"
+                  placeholder="Select Auth Audit"
+                  optionLabel="label"
+                  optionValue="label"
+                  formControlName="authAudit"
+                  [filter]="true"
+                  filterBy="label"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.authAudit.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.authAudit.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.authAudit.errors.required"
+                  >
+                    Please select Authentication audit status.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Auto Provision MAC</label>
+                <p-dropdown
+                  [options]="status1"
+                  placeholder="Select Auto Provision MAC"
+                  optionLabel="label"
+                  optionValue="label"
+                  formControlName="autoProvisionMac"
+                  [filter]="true"
+                  filterBy="label"
+                  [ngClass]="{
+                    'is-invalid': submitted && acctProfileForm.controls.autoProvisionMac.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.autoProvisionMac.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.autoProvisionMac.errors.required"
+                  >
+                    Please Select Auto Provision MAC.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 myclass">
+                <label>Proxy Server</label>
+                <p-dropdown
+                  [options]="filteredProxyServerList"
+                  placeholder="Select Proxy Server"
+                  optionLabel="name"
+                  optionValue="name"
+                  formControlName="proxyServerName"
+                  [filter]="true"
+                  filterBy="name"
+                  [showClear]="true"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && acctProfileForm.controls.proxyServerName.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && acctProfileForm.controls.proxyServerName.errors.required"
+                  >
+                    Please select Accounting profile.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 myclass">
+                <label>Device Driver</label>
+                <p-dropdown
+                  [options]="deviceDriverList"
+                  placeholder="Select Device Driver"
+                  optionLabel="label"
+                  optionValue="value"
+                  formControlName="deviceDriverName"
+                  [filter]="true"
+                  filterBy="name"
+                  [showClear]="true"
+                ></p-dropdown>
+              </div>
+              <div class="addUpdateBtn myclass">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  title="Submit Radius Profile Details"
+                  (click)="addAcctProfile()"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  {{ editMode ? "Update Accounting Profile" : "Add Accounting Profile" }}
+                </button>
+                <br />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> -->
+<!-- </div> -->
+<router-outlet> </router-outlet>

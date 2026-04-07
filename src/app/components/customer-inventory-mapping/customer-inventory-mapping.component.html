@@ -1,0 +1,238 @@
+
+<p-dialog
+    header="Assign Inventory"
+    [(visible)]="assignInventory"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="true"
+    [draggable]="false"
+    (onHide)="closeAssignInventory()"
+  >
+
+<div class="modal-body">
+        <form [formGroup]="this.inventoryAssignForm">
+          <label>Product*</label>
+          <p-dropdown
+            [options]="this.products"
+            formControlName="productId"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select Product"
+            (onChange)="getUnit($event)"
+          ></p-dropdown>
+          <div
+            class="errorWrap text-danger"
+            *ngIf="submitted && this.inventoryAssignForm.controls.productId.errors"
+          >
+            <div
+              class="error text-danger"
+              *ngIf="submitted && this.inventoryAssignForm.controls.productId.errors.required"
+            >
+              Product is required.
+            </div>
+          </div>
+          <br />
+          <br />
+          <label>Select Outward</label>
+          <p-dropdown
+            [options]="this.outwardList"
+            formControlName="outwardId"
+            optionLabel="outwardNumber"
+            optionValue="id"
+            placeholder="Select outward"
+            (onChange)="this.getAvailableQty($event.value)"
+          ></p-dropdown>
+          <div
+            class="errorWrap text-danger"
+            *ngIf="submitted && this.inventoryAssignForm.controls.outwardId.errors"
+          >
+            <div
+              class="error text-danger"
+              *ngIf="submitted && this.inventoryAssignForm.controls.outwardId.errors.required"
+            >
+              Outward is required.
+            </div>
+          </div>
+          <br />
+          <p-table
+            *ngIf="this.macList.length > 0"
+            #dt
+            [value]="this.macList"
+            [rows]="5"
+            [paginator]="true"
+            [globalFilterFields]="['macAddress']"
+            responsiveLayout="scroll"
+            [(selection)]="selectedMACAddress"
+            [rowHover]="true"
+            dataKey="id"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [showCurrentPageReport]="true"
+          >
+            <ng-template pTemplate="caption">
+              <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">MAC Address</h5>
+                <span class="p-input-icon-left">
+                  <input
+                    class="form-control"
+                    pInputText
+                    type="text"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    placeholder="Search..."
+                  />
+                </span>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 10%">
+                  <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th *ngIf="this.productHasMac">MAC Address</th>
+                <th *ngIf="this.productHasSerial">Serial Number</th>
+                <th style="text-align: center">Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+              <tr>
+                <td style="width: 10%">
+                  <p-tableCheckbox
+                    [value]="product"
+                    *ngIf="product.customerId == null"
+                  ></p-tableCheckbox>
+                </td>
+                <td *ngIf="this.productHasMac">{{ product.macAddress }}</td>
+                <td *ngIf="this.productHasSerial">
+                  {{ product.serialNumber }}
+                </td>
+                <td style="text-align: center">
+                  <a
+                    id="delete-button"
+                    href="javascript:void(0)"
+                    (click)="deleteMACMapping(product)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </ng-template>
+            <!-- <ng-template pTemplate="summary right">
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <div class="flex align-items-center justify-content-between">
+              In total there are {{ products ? products.length : 0 }} products.
+            </div>
+          </ng-template> -->
+          </p-table>
+          <br />
+          <label style="font-weight: bold">Available Quantity :- {{ this.availableQty }}</label>
+          <br />
+          <br />
+          <label>Quantity in {{ this.unit }} *</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Enter Quantity"
+            formControlName="qty"
+            [ngClass]="{
+              'is-invalid': submitted && this.inventoryAssignForm.controls.qty.errors
+            }"
+          />
+          <div class="error text-danger" *ngIf="this.showQtyError">
+            Quantity must be greater than used quantity.
+          </div>
+          <div class="error text-danger" *ngIf="this.showQtySelectionError">
+            Quantity must be greater than selected MAC addresses.
+          </div>
+          <div
+            class="error text-danger"
+            *ngIf="submitted && this.inventoryAssignForm.controls.qty.errors.required"
+          >
+            Quantity is required.
+          </div>
+          <div
+            class="error text-danger"
+            *ngIf="submitted && this.inventoryAssignForm.controls.qty.errors.min"
+          >
+            Please enter more then 0 quantity.
+          </div>
+          <br />
+          <label>Outward Date*</label>
+          <p-calendar
+            formControlName="assignedDateTime"
+            [showTime]="true"
+            [showSeconds]="true"
+            inputId="time"
+            [numberOfMonths]="1"
+          ></p-calendar>
+          <div
+            class="errorWrap text-danger"
+            *ngIf="submitted && this.inventoryAssignForm.controls.assignedDateTime.errors"
+            `
+          >
+            <div
+              class="error text-danger"
+              *ngIf="
+                submitted && this.inventoryAssignForm.controls.assignedDateTime.errors.required
+              "
+            >
+              Outward Date is required.
+            </div>
+          </div>
+          <br />
+          <label>Status*</label>
+          <p-dropdown
+            [options]="this.status"
+            formControlName="status"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select status"
+          ></p-dropdown>
+          <div
+            class="errorWrap text-danger"
+            *ngIf="submitted && this.inventoryAssignForm.controls.status.errors"
+            `
+          >
+            <div
+              class="error text-danger"
+              *ngIf="submitted && this.inventoryAssignForm.controls.status.errors.required"
+            >
+              Outward status is required.
+            </div>
+          </div>
+          <br />
+          <br />
+          <div class="addUpdateBtn">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submit"
+              data-dismiss="modal"
+              (click)="this.assigneInventory()"
+              [disabled]="this.showQtyError"
+            >
+              <i class="fa fa-check-circle"></i>
+              Assign Inventory
+            </button>
+            <br />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end">
+        <div class="addUpdateBtn">
+          <button
+            class="btn btn-danger btn-sm"
+            #closebutton
+            data-dismiss="modal"
+            (click)="this.close()"
+          >
+            Close
+          </button>
+          <br />
+        </div>
+      </div>
+      </p-dialog>

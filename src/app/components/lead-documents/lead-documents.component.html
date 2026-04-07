@@ -1,0 +1,500 @@
+<div class="childComponent">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- User Data -->
+      <div class="panel top">
+        <div class="panel-heading">
+          <h3 class="panel-title">Lead Document Management</h3>
+          <div class="right">
+            <button type="button" class="btn-toggle-collapse">
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="openCustmerDocCreateMenu()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Lead Document</h5>
+                <!-- <p>Create Staff</p> -->
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a class="curson_pointer" (click)="openCustmerDocListMenu()">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Lead Document List</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END User Data -->
+    </div>
+  </div>
+  <div class="row" *ngIf="isCustmerDocList">
+    <div class="col-md-12">
+      <!-- Data Table -->
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="displayflex">
+            <button
+              type="button"
+              class="btn btn-secondary backbtn"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Go to Lead List"
+              (click)="listLead()"
+            >
+              <i
+                class="fa fa-arrow-circle-left"
+                style="color: #f7b206 !important; font-size: 28px"
+              ></i>
+            </button>
+            <h3 class="panel-title">Lead Management</h3>
+          </div>
+          <div class="right">
+            <button type="button" class="btn-toggle-collapse">
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Documents Type</th>
+                <th>Documents Sub Type</th>
+                <th>Document Number</th>
+                <th>Status</th>
+                <th>File Name</th>
+                <th>Remark</th>
+                <th>Document Mode</th>
+                <th *ngIf="editAccess || deleteAccess">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let custDocObj of custmerDocList
+                    | paginate
+                      : {
+                          id: 'listing_docListdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>{{ custDocObj.docType }}</td>
+                <td>{{ custDocObj.docSubType }}</td>
+                <td>
+                  <span *ngIf="custDocObj.documentNumber"> {{ custDocObj.documentNumber }} </span>
+                  <span *ngIf="!custDocObj.documentNumber">-</span>
+                </td>
+                <td>{{ custDocObj.docStatus }}</td>
+                <td *ngIf="custDocObj.filename">
+                  <a
+                    [ngClass]="{ 'disabled-link': !downloadDocAccess }"
+                    href="javascript:void(0)"
+                    style="color: blue"
+                    (click)="
+                      downloadDoc(custDocObj.filename, custDocObj.docId, custDocObj?.leadMaster?.id)
+                    "
+                  >
+                    <!-- disabled="downloadDocumentAccess" -->
+                    {{ custDocObj.filename }}
+                  </a>
+                </td>
+                <td *ngIf="!custDocObj.filename">-</td>
+                <td>
+                  <span *ngIf="custDocObj.remark">{{ custDocObj.remark }}</span>
+                  <span *ngIf="!custDocObj.remark">-</span>
+                </td>
+                <td>{{ custDocObj.mode }}</td>
+                <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                  <a
+                    *ngIf="editAccess"
+                    class="curson_pointer"
+                    type="button"
+                    (click)="editCustDocById(custDocObj.docId, i)"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    *ngIf="deleteAccess"
+                    class="curson_pointer"
+                    (click)="deleteConfirm(custDocObj)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                  <!-- <button *ngIf="custDocObj.mode !== 'Online'" class="approve-btn curson_pointer" [disabled]="custDocObj.docStatus == 'verified'" (click)="approvedCustDoc(custDocObj)" title="Approve" > <img src="assets/img/assign.jpg" /> </button> <button *ngIf="custDocObj.mode === 'Online'" class="approve-btn" title="Verify Document" (click)="verifyDocument(custDocObj)" [disabled]=" (custDocObj.docStatus == 'Verified' && custDocObj.mode === 'Online') || custDocObj.docStatus == 'verified' " > <img class="IconVerifyBtn" src="assets/img/verifyicon.svg" /> </button> -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div class="row">
+            <div
+              style="text-align: center"
+              class="col-lg-12 col-md-12"
+              *ngIf="custmerDocList?.length === 0 || custmerDocList == undefined"
+            >
+              No Records Found
+            </div>
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_docListdata"
+                maxSize="10"
+                directionLinks="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChangedDocList($event, 'listing_docListdata')"
+              >
+              </pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Data Table -->
+    </div>
+  </div>
+  <div class="row" *ngIf="isCustmerDocCreateOrEdit && createAccess">
+    <div class="col-md-12">
+      <!-- Form Design -->
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Lead Document</h3>
+          <div class="right">
+            <button type="button" class="btn-toggle-collapse">
+              <i class="fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+        <form class="form-auth-small" [formGroup]="insertLeadDocumentForm">
+          <div class="panel-body">
+            <div class="form-group row">
+              <div class="col-md-4 ml-15">
+                <label for="mode">Verification Mode *</label>
+                <p-dropdown
+                  [options]="VerificationModeValue"
+                  optionValue="value"
+                  optionLabel="value"
+                  filter="true"
+                  filterBy="value"
+                  placeholder="Select a Verification Mode"
+                  formControlName="mode"
+                  [disabled]="editMode"
+                  (onChange)="OnVerificationMode($event)"
+                  [ngClass]="{
+                    'is-invalid': submitted && insertLeadDocumentForm.controls.mode.errors
+                  }"
+                ></p-dropdown>
+                <!-- <ng-select [items]="VerificationModeValue" formControlName="mode" bindLabel="value" bindValue="value" placeholder="Select Verification Mode" (change)="OnVerificationMode($event)" [readonly]="editMode" ></ng-select> -->
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && insertLeadDocumentForm.controls.mode.errors"
+                >
+                  <div class="error text-danger">Verification Mode is required.</div>
+                </div>
+              </div>
+              <div class="col-md-4 ml-15">
+                <label for="docType">Document Type *</label>
+                <!-- <p-dropdown [options]="docTypeList" [filter]="true" filterBy="text" optionLabel="text" placeholder="Select a Document Type" formControlName="docType" [group]="true" (onChange)="onChangeDocTypeForLeadList($event, group)" [ngClass]="{ 'is-invalid': submitted && insertLeadDocumentForm.controls.docType.errors }" > <ng-template let-group pTemplate="group"> <span>{{ group.text }}</span> </ng-template> </p-dropdown> -->
+                <p-dropdown
+                  [options]="docTypeForLeadList"
+                  optionValue="value"
+                  optionLabel="text"
+                  filter="true"
+                  filterBy="text"
+                  placeholder="Select a Document Type"
+                  formControlName="docType"
+                  [disabled]="editMode"
+                  (onChange)="documentSubType($event)"
+                  [ngClass]="{
+                    'is-invalid': submitted && insertLeadDocumentForm.controls.docType.errors
+                  }"
+                ></p-dropdown>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && insertLeadDocumentForm.controls.docType.errors"
+                >
+                  <div class="error text-danger">Document Type is required.</div>
+                </div>
+              </div>
+              <div class="col-md-4 ml-15">
+                <label for="docSubType">Document Sub Type *</label>
+                <p-dropdown
+                  [options]="docSubTypeList"
+                  optionValue="text"
+                  optionLabel="text"
+                  filter="true"
+                  filterBy="text"
+                  placeholder="Select a Document SubType"
+                  formControlName="docSubType"
+                  (onChange)="OnDocumentType($event)"
+                  [ngClass]="{
+                    'is-invalid': submitted && insertLeadDocumentForm.controls.docSubType.errors
+                  }"
+                >
+                </p-dropdown>
+                <!-- <ng-select [items]="docSubTypeList" formControlName="docSubType" bindLabel="text" bindValue="text" placeholder="Select Document SubType" (change)="OnDocumentType($event)" ></ng-select> -->
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && insertLeadDocumentForm.controls.docSubType.errors"
+                >
+                  <div class="error text-danger">Document Sub Type is required.</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 ml-15" *ngIf="ifDocumentNumber && ifModeInput">
+                <label *ngIf="labelname == 'GST Number'" for="docStatus">{{ labelname }} *</label>
+                <label *ngIf="labelname !== 'GST Number'" for="docStatus"
+                  >{{ labelname }} Number *</label
+                >
+                <div *ngIf="labelname == 'Aadhar Card'">
+                  <input
+                    id="documentNumber"
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter Document No. "
+                    formControlName="documentNumber"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && insertLeadDocumentForm.controls.documentNumber.errors
+                    }"
+                  />
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && insertLeadDocumentForm.controls.documentNumber.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="
+                        submitted && insertLeadDocumentForm.controls.documentNumber.errors.minLength
+                      "
+                    >
+                      Please correct Aadhar number required.
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="labelname == 'PAN Card'">
+                  <input
+                    id="documentNumber"
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter Document No. "
+                    formControlName="documentNumber"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && insertLeadDocumentForm.controls.documentNumber.errors
+                    }"
+                  />
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && insertLeadDocumentForm.controls.documentNumber.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="
+                        submitted && insertLeadDocumentForm.controls.documentNumber.errors.minLength
+                      "
+                    >
+                      Please correct TIN/PAN number required.
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="labelname == 'GST Number'">
+                  <input
+                    id="documentNumber"
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter Document No. "
+                    formControlName="documentNumber"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && insertLeadDocumentForm.controls.documentNumber.errors
+                    }"
+                  />
+                  <div
+                    class="errorWrap text-danger"
+                    *ngIf="submitted && insertLeadDocumentForm.controls.documentNumber.errors"
+                  >
+                    <div
+                      class="error text-danger"
+                      *ngIf="
+                        submitted && insertLeadDocumentForm.controls.documentNumber.errors.minLength
+                      "
+                    >
+                      Please correct GST number required.
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && insertLeadDocumentForm.controls.documentNumber.errors"
+                >
+                  <div class="error text-danger">{{ labelname }} No is required.</div>
+                </div>
+              </div>
+              <div class="col-md-4 ml-15" *ngIf="!ifModeInput">
+                <label>Select Document *</label>
+                <input
+                  type="file"
+                  id="txtSelectDocument"
+                  class="form-control"
+                  formControlName="file"
+                  placeholder="Select Document"
+                  (change)="onFileChange($event)"
+                />
+                <div *ngFor="let file of selectedFilePreview; let i = index">
+                  <div
+                    (click)="keystoreFileClick()"
+                    style="
+                      padding-left: 10px;
+                      padding-right: 10px;
+                      padding-top: 4px;
+                      padding-bottom: 4px;
+                      font-size: 10px;
+                      cursor: pointer;
+                    "
+                  >
+                    {{ file?.name }}
+                  </div>
+                </div>
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && insertLeadDocumentForm.controls.file.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && insertLeadDocumentForm.controls.file.errors.required"
+                  >
+                    Document is required.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 ml-15">
+                <label>Start Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  placeholder="Enter Start Date"
+                  formControlName="startDate"
+                  (ngModelChange)="compareStartDates()"
+                  [ngClass]="{
+                    'is-invalid': submitted && insertLeadDocumentForm.controls.startDate.errors
+                  }"
+                  [min]="minDate | date: 'yyyy-MM-dd'"
+                  [max]="maxDate | date: 'yyyy-MM-dd'"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && insertLeadDocumentForm.controls.startDate.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && insertLeadDocumentForm.controls.startDate.errors.required"
+                  >
+                    Start Date is required.
+                  </div>
+                </div>
+                <div *ngIf="startDateError.isError" class="error text-danger">
+                  {{ startDateError.errorMessage }}
+                </div>
+              </div>
+              <div class="col-md-4 ml-15">
+                <label>End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  placeholder="Enter End Date"
+                  formControlName="endDate"
+                  (ngModelChange)="compareEndDates()"
+                  [ngClass]="{
+                    'is-invalid': submitted && insertLeadDocumentForm.controls.endDate.errors
+                  }"
+                  [min]="minDate | date: 'yyyy-MM-dd'"
+                  [max]="maxDate | date: 'yyyy-MM-dd'"
+                />
+                <div
+                  class="errorWrap text-danger"
+                  *ngIf="submitted && insertLeadDocumentForm.controls.endDate.errors"
+                >
+                  <div
+                    class="error text-danger"
+                    *ngIf="submitted && insertLeadDocumentForm.controls.endDate.errors.required"
+                  >
+                    End Date is required.
+                  </div>
+                </div>
+                <div *ngIf="endDateError.isError" class="error text-danger">
+                  {{ endDateError.errorMessage }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 ml-15">
+                <label for="docStatus">Document Status *</label>
+                <div *ngIf="!isEnableStatus">
+                  <p-dropdown
+                    [options]="documentStatusList"
+                    optionLabel="value"
+                    optionValue="value"
+                    formControlName="docStatus"
+                    filter="true"
+                    filterBy="value"
+                  ></p-dropdown>
+                </div>
+                <div *ngIf="isEnableStatus">
+                  <p-dropdown
+                    [options]="documentStatusList"
+                    optionLabel="value"
+                    optionValue="value"
+                    formControlName="docStatus"
+                    filter="true"
+                    filterBy="value"
+                  ></p-dropdown>
+                </div>
+                <!-- <div class="errorWrap text-danger"
+                  *ngIf=" submitted && insertLeadDocumentForm.controls.docStatus.errors ">
+                  <div class="error text-danger"> Document Status is required. </div>
+                </div> -->
+              </div>
+              <div class="col-md-4 ml-15">
+                <label>Remarks</label>
+                <textarea
+                  class="form-control"
+                  id="textarea"
+                  rows="3"
+                  placeholder="Enter Remarks"
+                  formControlName="remark"
+                ></textarea>
+              </div>
+            </div>
+            <div class="addUpdateBtn" style="margin-top: 1rem">
+              <button type="submit" class="btn btn-primary" (click)="addDocument()">
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update Document" : "Add Document" }}
+              </button>
+              <br />
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- END Form Design -->
+    </div>
+  </div>
+</div>

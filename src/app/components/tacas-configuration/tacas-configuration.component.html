@@ -1,0 +1,207 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ title }} Configuration Management</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Start/Stop Tacacs Daemon</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataSector"
+            aria-expanded="false"
+            aria-controls="allDataSector"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataSector" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <br />
+          <div class="row">
+            <div class="col-8">
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <div class="btn-group btn-group-sm">
+                <button
+                  *ngIf="startAccess"
+                  class="btn btn-outline-info"
+                  data-title="Start"
+                  data-toggle="tooltip"
+                  type="button"
+                  style="background-color: #f8b205 !important"
+                  (click)="onStartListeningPort()"
+                >
+                  <img
+                    width="25"
+                    height="25"
+                    srcset="https://img.icons8.com/ios-glyphs/30/000000/play--v1.png 2x"
+                    style="
+                      filter: invert(99%) sepia(39%) saturate(0%) brightness(113%) contrast(101%);
+                    "
+                  />
+                </button>
+              </div>
+              &nbsp;
+              <div class="btn-group btn-group-sm">
+                <button
+                  *ngIf="stopAccess"
+                  class="btn btn-outline-info"
+                  data-title="Stop"
+                  data-toggle="tooltip"
+                  type="button"
+                  style="background-color: #f8b205 !important"
+                  (click)="onStopListeningPort()"
+                >
+                  <img
+                    width="25"
+                    height="25"
+                    srcset="https://img.icons8.com/ios-glyphs/30/000000/stop--v1.png 2x"
+                    style="
+                      filter: invert(99%) sepia(39%) saturate(0%) brightness(113%) contrast(101%);
+                    "
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <br />
+          <div class="col-12">
+            <h3 class="panel-title">Current Status :</h3>
+            <br />
+            <input
+              class="form-control form-control-sm"
+              placeholder="Loading.."
+              [value]="listeningPortStatus"
+              type="text"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Global Settings</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataCountry"
+            aria-expanded="false"
+            aria-controls="createDataCountry"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataCountry" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Label</th>
+                    <th>Value*</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let Customer of customerList
+                        | paginate
+                          : {
+                              id: 'casListDataID',
+                              itemsPerPage: customeritemsPerPage,
+                              currentPage: currentPageCustomer,
+                              totalItems: customertotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ Customer.label }}</td>
+                    <td>
+                      <div *ngIf="!editing">
+                        {{ Customer.value }}
+                      </div>
+                      <div *ngIf="editing" style="width: 40%">
+                        <input
+                          type="text"
+                          pInputText
+                          [ngModel]="Customer.value || '0'"
+                          (ngModelChange)="Customer.value = $event"
+                          class="p-inputtext-md mycustomcss-p"
+                          placeholder="{{ Customer.value }}"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="casListDataID"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedCasList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div> -->
+              <div class="addUpdateBtn" *ngIf="editAccess">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="updatebtn"
+                  *ngIf="editing"
+                  (click)="onUpdate()"
+                >
+                  Update
+                </button>
+              </div>
+
+              <div class="addUpdateBtn">
+                <button
+                  *ngIf="!editing"
+                  type="button"
+                  class="btn btn-primary"
+                  id="updatebtn"
+                  [disabled]="listeningPortStatus === 'Active' || editing"
+                  (click)="edit()"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

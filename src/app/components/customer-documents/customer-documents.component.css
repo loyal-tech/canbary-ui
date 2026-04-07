@@ -1,0 +1,92 @@
+@import "~@ng-select/ng-select/themes/default.theme.css";
+.form-control.ng-select {
+  border: none;
+  padding: 0;
+}
+
+.ml-15 {
+  padding-top: 15px;
+}
+.error {
+  color: red;
+}
+
+.form-group {
+  padding-top: 5px;
+}
+
+.position {
+  position: absolute;
+}
+
+input.ng-invalid.ng-touched,
+ng-select.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border: 1px solid red;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.displayflex {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.backbtn {
+  box-shadow: none !important;
+  margin-right: 1.5rem;
+}
+
+.approve-btn {
+  box-shadow: none;
+  border: none;
+  padding: 0 0 0 0;
+  width: 30px;
+}
+
+.approve-btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.disabled-link {
+  color: gray;
+  pointer-events: none;
+  text-decoration: none;
+  cursor: not-allowed;
+}
+:host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  border: 1px solid;
+  padding: 10px;
+  box-shadow: 2px 2px #f7b206 !important;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav {
+  display: flex;
+  justify-content: space-between;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav li {
+  flex: 1 1 50%;
+  max-width: 50%;
+  text-align: center;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav .p-tabview-nav-link {
+  width: 100%;
+  justify-content: center;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #f7b206 !important;
+}

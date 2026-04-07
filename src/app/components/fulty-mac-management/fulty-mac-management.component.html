@@ -1,0 +1,264 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Faulty Mac Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#searchDataFultyMac"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <!-- <div id="searchDataFultyMac" class="panel-collapse collapse in">
+        <div id="" class="panel-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <input
+                id="taxName"
+                type="text"
+                [(ngModel)]="searchFultyMacName"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchFultyMac()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="searchbtn"
+                (click)="searchFultyMac()"
+              >
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchFultyMac()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Faulty Mac</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#allDataFultyMac"
+            aria-expanded="false"
+            aria-controls="allDataFultyMac"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="allDataFultyMac" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Mac Ip Address</th>
+                    <th>Last Connected</th>
+                    <th *ngIf="editAccess || deleteAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let fultyMac of fultyMacListData
+                        | paginate
+                          : {
+                              id: 'fultyMacListData',
+                              itemsPerPage: fultyMacitemsPerPage,
+                              currentPage: currentPageFultyMacSlab,
+                              totalItems: fultyMactotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ fultyMac.mackId }}</td>
+                    <td>{{ fultyMac.lastConnected | date: "dd-MM-yyyy hh:mm a" }}</td>
+                    <td class="btnAction" >
+                      <a
+                        id="edit-button"
+                        href="javascript:void(0)"
+                        type="button"
+                        *ngIf="editAccess"
+                        (click)="editFullyMac(fultyMac.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonFultyMac(fultyMac.id)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="row">
+                <div class="col-md-12" style="display: flex">
+                  <pagination-controls
+                    id="fultyMacListData"
+                    maxSize="10"
+                    directionLinks="true"
+                    previousLabel=""
+                    nextLabel=""
+                    (pageChange)="pageChangedFultyMacList($event)"
+                  ></pagination-controls>
+                  <div id="itemPerPageDropdown">
+                    <p-dropdown
+                      [options]="pageLimitOptions"
+                      optionLabel="value"
+                      optionValue="value"
+                      (onChange)="TotalItemPerPage($event)"
+                    ></p-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 right">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isFullyMacEdit ? "Update" : "Create" }} Faulty Mac</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createDataFultyMac"
+            aria-expanded="false"
+            aria-controls="createDataFultyMac"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="createDataFultyMac" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form [formGroup]="fultyMacFormGroup">
+            <div class="form-group">
+              <label>Select Action</label>
+              <p-dropdown
+                [disabled]="isFullyMacEdit"
+                [options]="selectOptionData"
+                optionValue="value"
+                optionLabel="label"
+                placeholder="Select Action"
+                [(ngModel)]="selectAction"
+                [ngModelOptions]="{ standalone: true }"
+                (onChange)="selectActionData($event)"
+              ></p-dropdown>
+            </div>
+            <div class="form-group" *ngIf="selectAction === 'single'">
+              <label>Mac Ip*</label>
+              <input
+                id="macIp"
+                type="text"
+                class="form-control"
+                placeholder="Enter Mac Ip"
+                formControlName="mackId"
+                maxLength="250"
+                [ngClass]="{ 'is-invalid': submitted && fultyMacFormGroup.controls.mackId.errors }"
+              />
+            </div>
+            <!-- -->
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && fultyMacFormGroup.controls.mackId.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && fultyMacFormGroup.controls.mackId.errors.required"
+              >
+                Faulty Mac is required.
+              </div>
+            </div>
+            <div class="form-group" *ngIf="selectAction === 'bulk'">
+              <label>Select File</label>
+              <input
+                (change)="onFileChangeUpload($event)"
+                class="form-control"
+                formControlName="file"
+                id="txtSelectDocument"
+                multiple="multiple"
+                placeholder="Select Attachment"
+                type="file"
+                accept=".XLSX,XLS"
+                [ngClass]="{ 'is-invalid': submitted && fultyMacFormGroup.controls.file.errors }"
+              />
+            </div>
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && fultyMacFormGroup.controls.file.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && fultyMacFormGroup.controls.file.errors.required"
+              >
+                File is required.
+              </div>
+            </div>
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                *ngIf="!isFullyMacEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                [disabled]="!createAccess"
+                (click)="selectAction === 'single' ? addEditFultyMac('') : uploadDocument()"
+              >
+                <i class="fa fa-check-circle"></i>
+                Add Faulty Mac
+              </button>
+              <button
+                *ngIf="isFullyMacEdit"
+                type="submit"
+                class="btn btn-primary"
+                id="submit"
+                [disabled]="!editAccess"
+                (click)="addEditFultyMac(viewFultyMacListData.id)"
+              >
+                <i class="fa fa-check-circle"></i>
+                Update Faulty Mac
+              </button>
+              <br />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

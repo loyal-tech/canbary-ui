@@ -1,0 +1,485 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Target Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#targetSearch"
+            aria-expanded="false"
+            aria-controls="targetSearch"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="targetSearch" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="row" *ngIf="listView">
+            <div class="col-lg-3 col-md-3">
+              <input
+                type="text"
+                [(ngModel)]="searchVal"
+                class="form-control"
+                placeholder="Global Search Filter"
+                (keydown.enter)="searchTarget()"
+              />
+            </div>
+            <div class="col-lg-3 col-md-4 marginTopSearchBtn">
+              <button type="button" class="btn btn-primary" id="searchbtn" (click)="searchTarget()">
+                <i class="fa fa-search"></i>
+                Search
+              </button>
+              <button
+                type="reset"
+                class="btn btn-default"
+                id="searchbtn"
+                (click)="clearSearchTarget()"
+              >
+                <i class="fa fa-refresh"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body no-padding panel-udata">
+          <div class="col-md-6 pcol" *ngIf="createAccess
+            <div class="dbox">
+              <a (click)="createTargetView()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Create Target</h5>
+                <!-- <p>Create Charge</p> -->
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 pcol">
+            <div class="dbox">
+              <a (click)="searchTargetView()" class="curson_pointer">
+                <img src="../../../assets/img/i01.png" style="width: 32px" />
+                <h5>Search Target</h5>
+                <!-- <p>Search Charge</p> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" *ngIf="listView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Target</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#chargelist"
+            aria-expanded="false"
+            aria-controls="chargelist"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="chargelist" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Staff</th>
+                    <th>Amount</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th *ngIf="editAccess || deleteAccess">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let target of targetListData
+                        | paginate
+                          : {
+                              id: 'targetListpageData',
+                              itemsPerPage: targetListdataitemsPerPage,
+                              currentPage: currentPageTargetListdata,
+                              totalItems: targetListdatatotalRecords
+                            };
+                      index as i
+                    "
+                  >
+                    <td>{{ target.staffName }}</td>
+                    <td>{{ target.amount }}</td>
+                    <td>{{ target.startDate | date : "dd/MM/yyyy" }}</td>
+                    <td>{{ target.endDate | date : "dd/MM/yyyy" }}</td>
+                    <td>
+                      <span *ngIf="target.status == 'ACTIVE'" class="badge badge-success">
+                        Active
+                      </span>
+                      <span *ngIf="target.status == 'INACTIVE'" class="badge badge-danger">
+                        Inactive
+                      </span>
+                    </td>
+                    <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                      <a
+                        *ngIf="editAccess"
+                        id="edit-button"
+                        type="button"
+                        href="javascript:void(0)"
+                        (click)="editTarget(target.id)"
+                      >
+                        <img src="assets/img/ioc01.jpg" />
+                      </a>
+                      <a
+                        *ngIf="deleteAccess"
+                        id="delete-button"
+                        href="javascript:void(0)"
+                        (click)="deleteConfirmonTarget(target)"
+                      >
+                        <img src="assets/img/ioc02.jpg" />
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination_Dropdown">
+                <pagination-controls
+                  id="targetListpageData"
+                  maxSize="10"
+                  directionLinks="true"
+                  previousLabel=""
+                  nextLabel=""
+                  (pageChange)="pageChangedTargetList($event)"
+                ></pagination-controls>
+                <div id="itemPerPageDropdown">
+                  <p-dropdown
+                    [(ngModel)]="showItemPerPage"
+                    [options]="pageLimitOptions"
+                    optionLabel="value"
+                    optionValue="value"
+                    (onChange)="TotalItemPerPage($event)"
+                  ></p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="createView">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ isTargetEdit ? "Update" : "Create" }} Target</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#createKPI"
+            aria-expanded="false"
+            aria-controls="createKPI"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="createKPI" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div>
+            <form [formGroup]="targetGroupForm">
+              <!--    Charge Details    -->
+              <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+                <legend>Basic Details</legend>
+                <div class="boxWhite">
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-12">
+                      <label>Amount*</label>
+                      <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Amount"
+                        formControlName="amount"
+                        (keyup)="setAllAmountFun()"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && targetGroupForm.controls.amount.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && targetGroupForm.controls.amount.errors?.required"
+                        >
+                          Amount is required.
+                        </div>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && targetGroupForm.controls.amount.errors?.pattern"
+                      >
+                        <div class="error text-danger">Only Numeric Value Allowed.</div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                      <label>Staff *</label>
+                      <p-dropdown
+                        [options]="parentStaffList"
+                        optionValue="id"
+                        optionLabel="firstname"
+                        filter="true"
+                        filterBy="firstname"
+                        placeholder="Select a Staff"
+                        formControlName="staffId"
+                        (onChange)="getChildStaff($event, true)"
+                      ></p-dropdown>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && targetGroupForm.controls.staffId.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && targetGroupForm.controls.staffId.errors.required"
+                        >
+                          Staff is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                      <label>Start Date*</label>
+                      <input
+                        id="startDate"
+                        type="date"
+                        formControlName="startDate"
+                        placeholder="DD/MM/YYYY"
+                        class="form-control"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && targetGroupForm.controls.startDate.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && targetGroupForm.controls.startDate.errors.required"
+                        >
+                          Start Date is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-12">
+                      <label>End Date*</label>
+                      <input
+                        id="endDate"
+                        type="date"
+                        formControlName="endDate"
+                        placeholder="DD/MM/YYYY"
+                        class="form-control"
+                      />
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && targetGroupForm.controls.endDate.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && targetGroupForm.controls.endDate.errors.required"
+                        >
+                          End Date is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <label>Target Status*</label>
+                      <div>
+                        <p-dropdown
+                          [options]="statusOptions"
+                          optionValue="val"
+                          optionLabel="label"
+                          filter="true"
+                          filterBy="label"
+                          placeholder="Select a Status"
+                          formControlName="status"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="errorWrap text-danger"
+                        *ngIf="submitted && targetGroupForm.controls.status.errors"
+                      >
+                        <div
+                          class="error text-danger"
+                          *ngIf="submitted && targetGroupForm.controls.status.errors.required"
+                        >
+                          KPI Status is required.
+                        </div>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!--    Additional Details    -->
+              <fieldset style="margin-top: 0rem; margin-bottom: 2rem">
+                <legend>Additional Details</legend>
+                <div class="boxWhite">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Staff</th>
+                        <th>Target %</th>
+                        <th>KPI</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let row of targetMappingFormArray.controls; let i = index">
+                        <td>
+                          <span>
+                            {{ childStaffList[i]?.firstname }}
+                          </span>
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control"
+                            (keyup)="setAmountFun(i)"
+                            [formControl]="row.get('targetPercentage')"
+                          />
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted &&
+                              targetMappingFormArray.controls[i].get('targetPercentage').errors
+                                ?.required
+                            "
+                          >
+                            <div class="error text-danger">Target is required.</div>
+                          </div>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted &&
+                              targetMappingFormArray.controls[i].get('targetPercentage').errors
+                                ?.pattern
+                            "
+                          >
+                            <div class="error text-danger">Only Numeric Value Allowed.</div>
+                          </div>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted &&
+                              targetMappingFormArray.controls[i].get('targetPercentage').errors?.min
+                            "
+                          >
+                            <div class="error text-danger">Minimum 0 value are allowed.</div>
+                          </div>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted &&
+                              targetMappingFormArray.controls[i].get('targetPercentage').errors?.max
+                            "
+                          >
+                            <div class="error text-danger">Maximum 100 value are allowed.</div>
+                          </div>
+                        </td>
+                        <td>
+                          <p-dropdown
+                            [options]="kpiManagementList"
+                            optionValue="id"
+                            optionLabel="name"
+                            filter="true"
+                            filterBy="name"
+                            placeholder="Select a KPI"
+                            [formControl]="row.get('kpiMasterId')"
+                          ></p-dropdown>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted &&
+                              targetMappingFormArray.controls[i].get('kpiMasterId').errors?.required
+                            "
+                          >
+                            <div class="error text-danger">KPI is required.</div>
+                          </div>
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control"
+                            [formControl]="row.get('targetValue')"
+                            readonly
+                          />
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted &&
+                              targetMappingFormArray.controls[i].get('targetValue').errors?.required
+                            "
+                          >
+                            <div class="error text-danger">Amount Percentage is required.</div>
+                          </div>
+                          <div
+                            class="errorWrap text-danger"
+                            *ngIf="
+                              submitted &&
+                              targetMappingFormArray.controls[i].get('targetValue').errors?.pattern
+                            "
+                          >
+                            <div class="error text-danger">Only Numeric Value Allowed.</div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </fieldset>
+
+              <div class="addUpdateBtn" style="margin: 3.5rem 0 2rem">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="addEditTarget('')"
+                  *ngIf="!isTargetEdit"
+                  id="submit"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Add Target
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="addEditTarget(viewTargetDetailData.id)"
+                  *ngIf="isTargetEdit"
+                  id="submit"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Update Target
+                </button>
+                <br />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

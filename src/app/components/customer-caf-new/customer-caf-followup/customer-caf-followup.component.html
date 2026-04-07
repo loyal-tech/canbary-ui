@@ -1,0 +1,547 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="'displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Customer Details"
+            (click)="customerDetailOpen(customerDetailData.id)"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerDetailData?.title }}
+            {{ customerDetailData?.custname }} Follow Up List
+          </h3>
+          <!--          <div class="panel-title">Follow Up List</div>-->
+        </div>
+        `
+        <div class="right">
+          <button
+            *ngIf="scheduleFollowUpAccess"
+            class="btn btn-primary statusbtn"
+            style="
+              padding: 12px;
+              margin-left: 5px;
+              background-color: #f7b206;
+              border: none;
+              outline: none;
+            "
+            (click)="scheduleFollowupPopupOpen()"
+          >
+            <i class="fa fa-calendar" style="font-size: 19px"></i>
+            &nbsp; Schedule Follow Up
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#chargeDetailsCust"
+            aria-expanded="false"
+            aria-controls="chargeDetailsCust"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>FollowUp Name</th>
+                  <th>FollowUp Date & Time</th>
+                  <th width="25%">Remarks</th>
+                  <th width="10%">Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container
+                  *ngFor="
+                    let followUpDetails of cafFollowupList
+                      | paginate
+                        : {
+                            id: 'cafFollowupItemsPerPage',
+                            itemsPerPage: cafFollowupItemsPerPage,
+                            currentPage: cafFollowupPage,
+                            totalItems: followupListTotalRecordsForUserAndTeam
+                          };
+                    index as i
+                  "
+                >
+                  <tr
+                    [ngStyle]="{
+                      'background-color': checkFollowUpDatetimeOutDate(followUpDetails)
+                        ? '#ffff0096'
+                        : ''
+                    }"
+                  >
+                    <td>{{ followUpDetails?.customersName }}</td>
+                    <td>{{ followUpDetails?.followUpName }}</td>
+                    <td>
+                      {{ followUpDetails?.followUpDatetime | date: "dd/MM/yyyy HH:mm:ss" }}
+                    </td>
+                    <td>{{ followUpDetails?.remarks }}</td>
+                    <td>
+                      <span
+                        *ngIf="
+                          followUpDetails?.status == 'Closed' || followUpDetails?.status == 'closed'
+                        "
+                        class="badge badge-info"
+                        >Closed</span
+                      >
+                      <span
+                        *ngIf="
+                          followUpDetails?.status == 'Pending' ||
+                          followUpDetails?.status == 'pending'
+                        "
+                        class="badge badge-danger"
+                        >Pending</span
+                      >
+                      <span
+                        *ngIf="
+                          followUpDetails?.status == 'ReSchedule' ||
+                          followUpDetails?.status == 'reschedule'
+                        "
+                        class="badge badge-info"
+                        >ReSchedule</span
+                      >
+                    </td>
+                    <td class="btnAction">
+                      <button
+                        *ngIf="rescheduleFollowUpAccess"
+                        [disabled]="
+                          followUpDetails?.status == 'Closed' || followUpDetails?.status == 'closed'
+                        "
+                        type="button"
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        title="Reschedule FollowUp"
+                        (click)="rescheduleFollowUp(followUpDetails)"
+                      >
+                        <img
+                          style="width: 25px; height: 25px"
+                          src="assets/img/D_Extend-Expiry-Date_Y.png"
+                        />
+                      </button>
+                      <button
+                        *ngIf="closeFollowUpAccess"
+                        [disabled]="
+                          followUpDetails?.status == 'Closed' || followUpDetails?.status == 'closed'
+                        "
+                        type="button"
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        title="Close FollowUp"
+                        (click)="closeFollowUp(followUpDetails)"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/reject.jpg" />
+                      </button>
+                      <button
+                        *ngIf="remarkFollowUpAccess"
+                        type="button"
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        title="Remark FollowUp"
+                        (click)="remarkFollowUp(followUpDetails)"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/icons-03.png" />
+                      </button>
+                      <button
+                        *ngIf="callFollowUpAccess"
+                        type="button"
+                        class="approve-btn"
+                        style="border: none; background: transparent; padding: 0; margin-right: 3px"
+                        title="Call"
+                        (click)="makeACall()"
+                      >
+                        <img style="width: 25px; height: 25px" src="assets/img/phone-icon.png" />
+                      </button>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+            <div style="display: flex">
+              <pagination-controls
+                (pageChange)="pageChangedCafFollowup($event)"
+                [directionLinks]="true"
+                id="cafFollowupItemsPerPage"
+                [maxSize]="10"
+                nextLabel=""
+                previousLabel=""
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  (onChange)="totalCafFollowupItems($event)"
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Follow up schedulling popup start -->
+<p-dialog
+  header="Schedule a followup"
+  [(visible)]="scheduleFollowup"
+  [modal]="true"
+  [style]="{ width: '700px' }"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="closeFolloupPopup()"
+>
+  <div class="modal-body">
+    <form [formGroup]="followupScheduleForm">
+      <label style="font-weight: bold"> Follow Up Name * </label>
+      <input
+        disabled
+        type="text"
+        class="form-control"
+        placeholder="Enter the follow up name"
+        formControlName="followUpName"
+        [ngClass]="{
+          'is-invalid': ifCafFollowupSubmited && followupScheduleForm.controls.followUpName.errors
+        }"
+      />
+      <div
+        class="error text-danger"
+        *ngIf="ifCafFollowupSubmited && followupScheduleForm.controls.followUpName.errors"
+      >
+        Name is required.
+      </div>
+      <br />
+      <label style="font-weight: bold">Follow Up Date & Time *</label>
+      <p-calendar
+        formControlName="followUpDatetime"
+        [showTime]="true"
+        [showSeconds]="true"
+        inputId="time"
+        [numberOfMonths]="3"
+        [minDate]="dateTime"
+        [ngClass]="{
+          'is-invalid':
+            ifCafFollowupSubmited && this.followupScheduleForm.controls.followUpDatetime.errors
+        }"
+      >
+      </p-calendar>
+      <div
+        class="error text-danger"
+        *ngIf="ifCafFollowupSubmited && followupScheduleForm.controls.followUpDatetime.errors"
+      >
+        Date & Time is required.
+      </div>
+      <br /><br />
+      <label style="font-weight: bold">Remarks *</label>
+      <textarea
+        type="text"
+        class="form-control"
+        placeholder="Enter the Remarks"
+        formControlName="remarks"
+        [ngClass]="{
+          'is-invalid': ifCafFollowupSubmited && this.followupScheduleForm.controls.remarks.errors
+        }"
+      >
+      </textarea>
+      <div
+        class="error text-danger"
+        *ngIf="ifCafFollowupSubmited && this.followupScheduleForm.controls.remarks.errors"
+      >
+        Remarks is required.
+      </div>
+      <!-- <br />
+                      <label style="font-weight: bold">Status*</label>
+                      <p-dropdown [options]="this.status" formControlName="status" optionLabel="label" optionValue="value"
+                          filter="true" filterBy="label" placeholder="Select follow up status">
+                      </p-dropdown>
+                      <div class="errorWrap text-danger" *ngIf="ifCafFollowupSubmited && followupScheduleForm.controls.status.errors">
+                          <div class="error text-danger" *ngIf="ifCafFollowupSubmited && followupScheduleForm.controls.status.errors.required">Status is required.
+                          </div>
+                     </div> -->
+      <br />
+      <div class="addUpdateBtn">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          id="submit"
+          (click)="saveCafFollowup()"
+          [disabled]="this.showQtyError"
+        >
+          <i class="fa fa-check-circle"></i>
+          Schedule
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end">
+    <div class="addUpdateBtn">
+      <button class="btn btn-danger btn-sm" data-dismiss="modal" (click)="closeFolloupPopup()">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- Follow up schedulling popup end -->
+
+<!-- remarkScheduleFollowup popup end start -->
+<p-dialog
+  header="Remarks Followup"
+  [(visible)]="remarkScheduleFollowup"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="closeRemarkPopup()"
+>
+  <div class="modal-body">
+    <form [formGroup]="remarkFollowupForm">
+      <label style="font-weight: bold">Remarks</label>
+      <textarea
+        type="text"
+        class="form-control"
+        placeholder="Enter the remark"
+        formControlName="remark"
+        [ngClass]="{
+          'is-invalid':
+            remarkFollowupFormsubmitted && this.remarkFollowupForm.controls.remark.errors
+        }"
+      >
+      </textarea>
+      <div
+        class="error text-danger"
+        *ngIf="remarkFollowupFormsubmitted && this.remarkFollowupForm.controls.remark.errors"
+      >
+        Remarks is required.
+      </div>
+      <br />
+      <div class="addUpdateBtn">
+        <button type="submit" class="btn btn-primary" id="submit" (click)="saveRemarkFollowUp()">
+          <i class="fa fa-check-circle"></i>
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-body">
+    <h3 class="panel-title">Remarks List</h3>
+    <hr />
+    <div [id]="tableWrapperRemarks">
+      <div [id]="scrollIdRemarks">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Remarks</th>
+              <th>Created On</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let remarkDetails of followUpRemarkList">
+              <td>{{ remarkDetails?.remark }}</td>
+              <td>{{ remarkDetails?.createdOn | date: "dd/MM/yyyy HH:mm:ss" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end">
+    <div class="addUpdateBtn">
+      <button class="btn btn-danger btn-sm" data-dismiss="modal" (click)="closeRemarkPopup()">
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- remarkScheduleFollowup popup end -->
+
+<!-- Follow up reschedulling popup start -->
+<p-dialog
+  header="ReSchedule a followup"
+  [(visible)]="reScheduleFollowup"
+  [modal]="true"
+  [style]="{ width: '800px' }"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="closeReFolloupPopup()"
+>
+  <div class="modal-body">
+    <form [formGroup]="reFollowupScheduleForm">
+      <label style="font-weight: bold">Current Follow Up Close Remarks *</label>
+      <textarea
+        type="text"
+        class="form-control"
+        placeholder="Enter the Remarks"
+        formControlName="remarksTemp"
+        [ngClass]="{
+          'is-invalid':
+            reFollowupFormsubmitted && this.reFollowupScheduleForm.controls.remarksTemp.errors
+        }"
+      >
+      </textarea>
+      <div
+        class="error text-danger"
+        *ngIf="reFollowupFormsubmitted && this.reFollowupScheduleForm.controls.remarksTemp.errors"
+      >
+        Remarks is required.
+      </div>
+      <br />
+      <label style="font-weight: bold"> ReSchedule Follow Up Name * </label>
+      <input
+        disabled
+        type="text"
+        class="form-control"
+        placeholder="Enter the follow up name"
+        formControlName="followUpName"
+        [ngClass]="{
+          'is-invalid':
+            reFollowupFormsubmitted && reFollowupScheduleForm.controls.followUpName.errors
+        }"
+      />
+      <div
+        class="error text-danger"
+        *ngIf="reFollowupFormsubmitted && reFollowupScheduleForm.controls.followUpName.errors"
+      >
+        ReSchedule ReSchedule Name is required.
+      </div>
+      <br />
+      <label style="font-weight: bold">ReSchedule Follow Up Date & Time *</label>
+      <p-calendar
+        formControlName="followUpDatetime"
+        [showTime]="true"
+        [showSeconds]="true"
+        inputId="time"
+        [numberOfMonths]="3"
+        [minDate]="dateTime"
+        [ngClass]="{
+          'is-invalid':
+            reFollowupFormsubmitted && this.reFollowupScheduleForm.controls.followUpDatetime.errors
+        }"
+      >
+      </p-calendar>
+      <div
+        class="error text-danger"
+        *ngIf="reFollowupFormsubmitted && reFollowupScheduleForm.controls.followUpDatetime.errors"
+      >
+        ReSchedule Date & Time is required.
+      </div>
+      <br /><br />
+      <label style="font-weight: bold">ReSchedule Remarks</label>
+      <!-- <textarea
+              type="text"
+              class="form-control"
+              placeholder="Enter the Remarks"
+              formControlName="remarks"
+            >
+            rescheduleRemarks
+            </textarea> -->
+      <p-dropdown
+        [options]="rescheduleFollowupRemarks"
+        placeholder="Select the specific remark"
+        formControlName="remarks"
+      >
+      </p-dropdown>
+      <br />
+      <div class="addUpdateBtn">
+        <br />
+        <button
+          type="submit"
+          class="btn btn-primary"
+          id="submit"
+          (click)="saveReFollowup()"
+          [disabled]="this.showQtyError"
+        >
+          <i class="fa fa-check-circle"></i>
+          ReSchedule
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end">
+    <div class="addUpdateBtn">
+      <button
+        class="btn btn-danger btn-sm"
+        type="button"
+        data-dismiss="modal"
+        (click)="closeReFolloupPopup()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- Follow up reschedulling popup end -->
+
+<!-- Follow up close popup start -->
+<p-dialog
+  header="Close Followup"
+  [(visible)]="closeFollowup"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="closeActionFolloupPopup()"
+>
+  <div class="modal-body">
+    <form [formGroup]="closeFollowupForm">
+      <label style="font-weight: bold">Remarks *</label>
+      <textarea
+        type="text"
+        class="form-control"
+        placeholder="Enter the Remarks"
+        formControlName="remarks"
+        [ngClass]="{
+          'is-invalid': closeFollowupFormsubmitted && this.closeFollowupForm.controls.remarks.errors
+        }"
+      >
+      </textarea>
+      <div
+        class="error text-danger"
+        *ngIf="closeFollowupFormsubmitted && this.closeFollowupForm.controls.remarks.errors"
+      >
+        Remarks is required.
+      </div>
+      <br />
+      <div class="addUpdateBtn">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          id="submit"
+          (click)="saveCloseFollowUp()"
+          [disabled]="this.showQtyError"
+        >
+          <i class="fa fa-check-circle"></i>
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end">
+    <div class="addUpdateBtn">
+      <button
+        class="btn btn-danger btn-sm"
+        data-dismiss="modal"
+        type="button"
+        (click)="closeActionFolloupPopup()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</p-dialog>
+<!-- Follow up close popup end -->

@@ -1,0 +1,352 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <div class="displayflex">
+          <button
+            type="button"
+            class="btn btn-secondary backbtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Go to Customer Details"
+            (click)="customerDetailOpen(customerDetailData?.id)"
+          >
+            <i
+              class="fa fa-arrow-circle-left"
+              style="color: #f7b206 !important; font-size: 28px"
+            ></i>
+          </button>
+          <h3 class="panel-title">
+            {{ customerDetailData?.title }}
+            {{ customerDetailData?.custname }} Discount List
+          </h3>
+        </div>
+        <div class="right">
+          <button
+            class="btn refreshbtn"
+            type="reset"
+            (click)="openCustorUpdateDiscount(this.customerDetailData?.id)"
+          >
+            <i class="fa fa-refresh"></i>
+          </button>
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#updateDisc"
+            aria-expanded="false"
+            aria-controls="updateDisc"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="updateDisc" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Select</th>
+                    <th>Connection No.</th>
+                    <th>Service</th>
+                    <th>Current Discount Type</th>
+                    <th>Current Discount (%)</th>
+                    <th>Current Discount Expiry Date</th>
+                    <th>New Discount Type</th>
+                    <th>New Discount (%)</th>
+                    <th>New Discount Expiry Date</th>
+                    <th>Remarks</th>
+                    <!-- <th>Status</th> -->
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of custCustDiscountList; index as i">
+                    <td>
+                      <input type="checkbox" [(ngModel)]="data.isSelected" />
+                    </td>
+                    <td>
+                      <input
+                        [(ngModel)]="data.connectionNo"
+                        [value]="data.connectionNo"
+                        class="form-control"
+                        id="connectionNo"
+                        name="connectionNo"
+                        placeholder="Enter Connection No."
+                        readonly
+                      />
+                    </td>
+                    <td>
+                      <input
+                        [(ngModel)]="data.serviceName"
+                        [value]="data.serviceName"
+                        class="form-control"
+                        id="serviceName"
+                        name="serviceName"
+                        placeholder="Enter Service Name"
+                        readonly
+                      />
+                    </td>
+                    <td>
+                      <p-dropdown
+                        [options]="chargeType"
+                        filter="true"
+                        filterBy="label"
+                        [(ngModel)]="data.discountType"
+                        optionLabel="label"
+                        optionValue="label"
+                        id="discountType"
+                        name="discountType"
+                        placeholder="Select a Discount Type"
+                        disabled
+                      ></p-dropdown>
+                    </td>
+                    <td>
+                      <input
+                        [(ngModel)]="data.discount"
+                        [value]="data.discount"
+                        class="form-control"
+                        id="discount"
+                        name="discount"
+                        placeholder="Enter Discount"
+                        readonly
+                      />
+                    </td>
+                    <td>
+                      <p-calendar
+                        *ngIf="data.discountType === 'Recurring'"
+                        [(ngModel)]="data.discountExpiryDate"
+                        [hideOnDateTimeSelect]="true"
+                        [showButtonBar]="true"
+                        [showIcon]="true"
+                        [style]="{ width: '100%' }"
+                        dateFormat="dd/mm/yy"
+                        [minDate]="dateTime"
+                        id="discountExpiryDate"
+                        name="discountExpiryDate"
+                        placeholder="Enter Discount Expiry Date"
+                        disabled
+                      ></p-calendar>
+                      <div *ngIf="data.discountType !== 'Recurring'">-</div>
+                    </td>
+                    <td>
+                      <p-dropdown
+                        [options]="chargeType"
+                        filter="true"
+                        filterBy="label"
+                        [(ngModel)]="data.newDiscountType"
+                        optionLabel="label"
+                        optionValue="label"
+                        id="newDiscountType"
+                        name="newDiscountType"
+                        (onChange)="onDiscountTypeChange(data)"
+                        placeholder="Select a Discount Type"
+                        [disabled]="
+                          !(data.nextTeamHierarchyMappingId === null && data.nextStaff === null)
+                        "
+                      ></p-dropdown>
+                    </td>
+                    <td>
+                      <input
+                        required
+                        #numberOne="ngModel"
+                        [(ngModel)]="data.newDiscount"
+                        [customMax]="maxDiscountValue"
+                        [value]="data.newDiscount"
+                        class="form-control"
+                        id="newDiscount"
+                        name="newDiscount"
+                        placeholder="Enter New Discount*"
+                        type="number"
+                        (change)="changeValue(data.newDiscount)"
+                        [disabled]="
+                          data.nextTeamHierarchyMappingId !== null ||
+                          (!data.isDiscountTypeChanged && data.newDiscountType === 'One-time') ||
+                          !(data.nextTeamHierarchyMappingId === null && data.nextStaff === null)
+                        "
+                      />
+                      <div *ngIf="numberOne.errors" [ngClass]="'error'">
+                        <div *ngIf="numberOne.errors.customMax" class="error text-danger">
+                          Maximum 99 Percentage allowed.
+                        </div>
+                      </div>
+                      <!-- <div
+                          *ngIf="isnewDiscount && data.status !== 'Pending'"
+                          class="error text-danger"
+                        >
+                          Discount required.
+                        </div> -->
+                    </td>
+                    <td>
+                      <p-calendar
+                        *ngIf="data.newDiscountType === 'Recurring'"
+                        [(ngModel)]="data.newDiscountExpiryDate"
+                        [hideOnDateTimeSelect]="true"
+                        [showButtonBar]="true"
+                        [showIcon]="true"
+                        [style]="{ width: '100%' }"
+                        dateFormat="dd/mm/yy"
+                        [minDate]="dateTime"
+                        id="newDiscountExpiryDate"
+                        name="newDiscountExpiryDate"
+                        placeholder="Enter Discount Expiry Date"
+                        [disabled]="
+                          !(data.nextTeamHierarchyMappingId === null && data.nextStaff === null)
+                        "
+                      ></p-calendar>
+                      <div *ngIf="data.newDiscountType !== 'Recurring'">-</div>
+                    </td>
+                    <td>
+                      <input
+                        required
+                        #remark="ngModel"
+                        maxLength="250"
+                        [(ngModel)]="data.remarks"
+                        [value]="data.remarks"
+                        class="form-control"
+                        id="remarks"
+                        name="remarks"
+                        placeholder="Enter Remarks"
+                        type="text"
+                      />
+                      <div *ngIf="remark.errors?.maxLength" class="error text-danger">
+                        Maximum 250 characters are allowed
+                      </div>
+                    </td>
+                    <!-- <td>{{ data.status }}</td> -->
+                    <td>
+                      <a
+                        *ngIf="discountAuditLogAccess"
+                        (click)="
+                          custDiscountWorkflowAuditopen(
+                            'custauditWorkflowModal',
+                            data.id,
+                            data.planId
+                          )
+                        "
+                        class="detailOnAnchorClick"
+                        title="Audit & Chang Discount Status Details"
+                      >
+                        <img
+                          height="32"
+                          src="assets/img/05_inventory-to-customer_Y.png"
+                          width="32"
+                        />
+                      </a>
+                      &nbsp;
+                      <button
+                        (click)="discountApporeved(data)"
+                        [disabled]="data.nextStaff === null || data.nextStaff !== userId"
+                        class="approve-btn"
+                        title="Approve"
+                        type="button"
+                      >
+                        <img src="assets/img/assign.jpg" />
+                      </button>
+                      <button
+                        (click)="discountRejected(data)"
+                        [disabled]="data.nextStaff === null || data.nextStaff !== userId"
+                        class="approve-btn"
+                        title="Reject"
+                        type="button"
+                      >
+                        <img src="assets/img/reject.jpg" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="addUpdateBtn" style="margin-top: 20px">
+            <button
+              *ngIf="updateDiscountcafAccess"
+              type="submit"
+              class="btn btn-primary"
+              data-title="Update Discount Details"
+              data-toggle="tooltip"
+              (click)="updateDiscount()"
+            >
+              <i class="fa fa-check-circle"></i>
+              Update Discount
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="{{ AppRjecHeader }} Discount"
+  [(visible)]="rejectApproveDiscountModal"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="closeRejectApproveCustomer()"
+>
+  <div class="modal-body">
+    <form [formGroup]="assignAppRejectDiscountForm">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <label>Remark*</label>
+          <textarea
+            class="form-control"
+            name="remark"
+            formControlName="remark"
+            [ngClass]="{
+              'is-invalid':
+                assignDiscounsubmitted && assignAppRejectDiscountForm.controls.remark.errors
+            }"
+          ></textarea>
+          <div
+            class="errorWrap text-danger"
+            *ngIf="assignDiscounsubmitted && assignAppRejectDiscountForm.controls.remark.errors"
+          >
+            <div
+              class="error text-danger"
+              *ngIf="
+                assignDiscounsubmitted &&
+                assignAppRejectDiscountForm.controls.remark.errors.required
+              "
+            >
+              Remark is required.
+            </div>
+          </div>
+          <br />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      id="submit"
+      (click)="assignCustDiscountApprove()"
+      [disabled]="!assignAppRejectDiscountForm.valid"
+    >
+      <i class="fa fa-times-circle"></i>
+      {{ AppRjecHeader }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-default"
+      data-dismiss="modal"
+      (click)="closeRejectApproveCustomer()"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<app-workflow-audit-details-modal
+  *ngIf="ifModelIsShow"
+  [auditcustid]="auditcustid"
+  dialogId="custauditWorkflowModal"
+  (closeParentCustt)="closeParentCustt()"
+></app-workflow-audit-details-modal>

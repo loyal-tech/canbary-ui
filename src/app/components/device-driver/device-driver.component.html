@@ -1,0 +1,415 @@
+<div class="row">
+  <div class="col-md-12">
+    <!-- User Data -->
+    <div class="panel top">
+      <div class="panel-heading">
+        <h3 class="panel-title">Driver Management</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#dbMappingSearchPanel"
+            aria-expanded="false"
+            aria-controls="dbMappingSearchPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="dbMappingSearchPanel" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="searchForm">
+            <form class="form-auth-small" [formGroup]="searchForm">
+              <div class="row">
+                <div class="col-12 col-sm-4 col-md-2" style="padding: 0%; text-align: right">
+                  <label style="padding: 5px">Device Driver Name:</label>
+                </div>
+                <div class="col-12 col-sm-6 col-md-2" style="padding-left: 0%">
+                  <input
+                    id="search-mappingmaster-name"
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter Device Driver Name"
+                    formControlName="name"
+                    (keydown.enter)="searchByName()"
+                    [ngClass]="{
+                      'is-invalid': searchSubmitted && searchForm.controls.name.errors
+                    }"
+                  />
+                </div>
+                <div class="col-md-4" style="padding-left: 0%">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    title="Search Device Driver Details"
+                    data-toggle="tooltip"
+                    (click)="searchByName()"
+                    id="search-button"
+                  >
+                    <i class="fa fa-search"></i>
+                    Search
+                  </button>
+                  &nbsp;
+                  <button
+                    type="reset"
+                    class="btn btn-default"
+                    title="Clear"
+                    data-toggle="tooltip"
+                    (click)="clearSearchForm()"
+                    id="search-clear"
+                  >
+                    <i class="fa fa-refresh"></i>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END User Data -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 left">
+    <!-- Data Table -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Device Drivers</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#dbMappingTablePanel"
+            aria-expanded="false"
+            aria-controls="dbMappingTablePanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div id="dbMappingTablePanel" class="panel-collapse collapse in">
+        <div class="panel-body table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let mappingMaster of deviceDriverData
+                    | paginate
+                      : {
+                          id: 'listing_groupdata',
+                          itemsPerPage: itemsPerPage,
+                          currentPage: currentPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+              >
+                <td>
+                  {{ mappingMaster.name }}
+                </td>
+                <td>{{ mappingMaster.address }}</td>
+
+                <td class="btnAction" *ngIf="editAccess || deleteAccess">
+                  <a
+                    *ngIf="editAccess"
+                    id="edit-button"
+                    type="button"
+                    data-title="Edit"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="editDeviceDriverById(mappingMaster.deviceDriverId, i)"
+                  >
+                    <img src="assets/img/ioc01.jpg" />
+                  </a>
+                  <a
+                    *ngIf="deleteAccess"
+                    id="delete-button"
+                    data-title="Delete"
+                    data-toggle="tooltip"
+                    class="curson_pointer"
+                    (click)="deleteConfirm(mappingMaster.deviceDriverId, i)"
+                  >
+                    <img src="assets/img/ioc02.jpg" />
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <!-- <div class="row">
+            <div class="col-md-12" style="display: flex">
+              <pagination-controls
+                id="listing_groupdata"
+                [maxSize]="10"
+                [directionLinks]="true"
+                previousLabel=""
+                nextLabel=""
+                (pageChange)="pageChanged($event)"
+              ></pagination-controls>
+              <div id="itemPerPageDropdown">
+                <p-dropdown
+                  [options]="pageLimitOptions"
+                  optionLabel="value"
+                  optionValue="value"
+                  (onChange)="TotalItemPerPage($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+    <!-- END Data Table -->
+  </div>
+
+  <div class="col-md-6 right">
+    <!-- Form Design -->
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ editMode ? "Update" : "Create" }} Device Driver</h3>
+        <div class="right">
+          <button
+            type="button"
+            class="btn-toggle-collapse"
+            data-toggle="collapse"
+            data-target="#dbMappingFormPanel"
+            aria-expanded="false"
+            aria-controls="dbMappingFormPanel"
+          >
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body table-responsive" *ngIf="!createAccess && !editMode">
+        Sorry you have not privilege to create operation!
+      </div>
+      <div
+        id="dbMappingFormPanel"
+        class="panel-collapse collapse in"
+        *ngIf="editAccess || createAccess"
+      >
+        <form class="form-auth-small" [formGroup]="deviceDriverForm">
+          <div class="panel-body">
+            <label>Device Driver Name</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              class="form-control"
+              placeholder="Enter Device Driver Name"
+              formControlName="name"
+              [ngClass]="{
+                'is-invalid': submitted && deviceDriverForm.controls.name.errors
+              }"
+            />
+            <div
+              class="errorWrap text-danger"
+              *ngIf="submitted && deviceDriverForm.controls.name.errors"
+            >
+              <div
+                class="error text-danger"
+                *ngIf="submitted && deviceDriverForm.controls.name.errors.required"
+              >
+                Please Enter Device Driver Name.
+              </div>
+            </div>
+            <br />
+            <div>
+              <label style="display: block">Address</label>
+              <input
+                id="address"
+                type="text"
+                name="address"
+                class="form-control"
+                placeholder="Enter Device Driver Address"
+                formControlName="address"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceDriverForm.controls.address.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceDriverForm.controls.address.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceDriverForm.controls.address.errors.required"
+                >
+                  Please Enter Device Driver Address.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label style="display: block">Username</label>
+              <input
+                id="userName"
+                type="text"
+                name="userName"
+                class="form-control"
+                placeholder="Enter Device Driver UserName"
+                formControlName="userName"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceDriverForm.controls.userName.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceDriverForm.controls.userName.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceDriverForm.controls.userName.errors.required"
+                >
+                  Please Enter Device Driver UserName.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label style="display: block">password</label>
+              <input
+                id="password"
+                type="text"
+                name="password"
+                class="form-control"
+                placeholder="Enter Device Driver Password"
+                formControlName="password"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceDriverForm.controls.password.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceDriverForm.controls.password.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceDriverForm.controls.password.errors.required"
+                >
+                  Please Enter Device Driver Password.
+                </div>
+              </div>
+            </div>
+            <br />
+             <div>
+              <label style="display: block">User DN</label>
+              <input
+                id="userDn"
+                type="text"
+                name="userdn"
+                class="form-control"
+                placeholder="Enter User DN "
+                formControlName="userDn"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceDriverForm.controls.userDn.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceDriverForm.controls.userDn.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceDriverForm.controls.userDn.errors.required"
+                >
+                  Please Enter Device Driver User DN.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label style="display: block">Username Attribute</label>
+              <input
+                id="userNameAttribute"
+                type="text"
+                name="userNameAttribute"
+                class="form-control"
+                placeholder="Enter Username Attribute"
+                formControlName="userNameAttribute"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceDriverForm.controls.userNameAttribute.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceDriverForm.controls.userNameAttribute.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceDriverForm.controls.userNameAttribute.errors.required"
+                >
+                  Please Enter Device Driver Username Attribute.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div>
+              <label style="display: block">Password Attribute</label>
+              <input
+                id="passwordAttribute"
+                type="text"
+                name="passwordAttribute"
+                class="form-control"
+                placeholder="Enter Password Attribute"
+                formControlName="passwordAttribute"
+                [ngClass]="{
+                  'is-invalid': submitted && deviceDriverForm.controls.userDn.errors
+                }"
+              />
+              <div
+                class="errorWrap text-danger"
+                *ngIf="submitted && deviceDriverForm.controls.passwordAttribute.errors"
+              >
+                <div
+                  class="error text-danger"
+                  *ngIf="submitted && deviceDriverForm.controls.passwordAttribute.errors.required"
+                >
+                  Please Enter Device Driver Password attribute.
+                </div>
+              </div>
+            </div>
+            <br />
+            <div class="addUpdateBtn">
+              <button
+                style="margin-right: 10px"
+                type="submit"
+                class="btn btn-primary"
+                title="Test Connection"
+                data-toggle="tooltip"
+                (click)="testDeviceDriverConnection()"
+              >
+                Test Connection
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                title="Submit DB Mapping Master Details"
+                data-toggle="tooltip"
+                (click)="addDeviceDriver()"
+              >
+                <i class="fa fa-check-circle"></i>
+                {{ editMode ? "Update Device Driver" : "Add Device Driver" }}
+              </button>
+              <br />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- END Form Design -->
+  </div>
+</div>
+<div class="row"></div>
