@@ -752,13 +752,13 @@ ul.list-justify > li span {
   border-color: #000;
 }
 .btn-primary {
-  background-color: #f7b206;
-  border-color: #f7b206;
+  background-color: #6700ce;
+  border-color: #6700ce;
 }
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: #f7a806;
-  border-color: #f7a806;
+  background-color: #6700ce;
+  border-color: #6700ce;
 }
 
 .btn-warning {
@@ -2575,7 +2575,7 @@ input:checked + .slider:before {
   opacity: 1;
 }
 
-.adoptlogo {
+.canbarylogo {
   padding: 15px;
   width: 150px !important;
   margin: 0 auto;

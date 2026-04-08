@@ -1,0 +1,142 @@
+/* Container & Box */
+/* .loginbg {
+    background-image: url("../../assets/img/background.png");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+} */
+
+.auth-box {
+    background: #fff;
+    width: 380px;
+    padding: 40px; /* Uniform padding */
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+/* Titles & Labels */
+.auth-title {
+    font-size: 24px;
+    font-weight: 800; /* Extra bold for "Login to your account" */
+    color: #000;
+    margin-bottom: 30px;
+}
+
+.control-label-new {
+    display: block !important;
+    text-align: left !important;
+    font-size: 12px !important; 
+    font-weight: 800 !important;
+    color: #282828 !important;
+    text-transform: uppercase !important;
+    margin-bottom: 12px !important;
+    letter-spacing: 1px; 
+}
+
+/* Input Styling */
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    border-bottom: 1.5px solid #eaeaea;
+    padding-bottom: 8px;
+    margin-bottom: 25px;
+}
+
+.input-icon {
+    color: #aaa;
+    margin-right: 15px;
+    font-size: 16px;
+}
+
+.form-control-new {
+    border: none !important;
+    outline: none !important;
+    width: 100% !important;
+    font-size: 12px !important;
+    background: transparent;
+}
+
+/* ALIGNMENT FIX: Forgot Password to the Right */
+.forgot-row {
+    display: flex;
+    justify-content: flex-end; 
+    width: 100%;
+    margin-top: -10px;
+    margin-bottom: 30px;
+}
+
+.forgot-row a {
+    font-size: 14px !important;
+    color: #666;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ALIGNMENT FIX: Login Button Center */
+.button-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-login-pill {
+    background: linear-gradient(to right, #0074D9, #001f3f);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 60px !important;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 116, 217, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 12px !important;
+}
+
+.btn-login-gradient { 
+    /* Change 1: Don't use 100% width, use a fixed width or large padding for the 'pill' look */
+    min-width: 180px; 
+    width: auto;
+    
+    /* Change 2: Increase padding for better 'breathing' room */
+    padding: 12px 40px; 
+    
+    border: none; 
+    border-radius: 50px; /* Perfect circular ends */
+    color: white; 
+    font-weight: 800; 
+    font-size: 16px; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer; 
+    margin-top: 20px;
+
+    /* Change 3: Slightly brighter gradient for a modern feel */
+    background: linear-gradient(to right, #0074D9, #2b0054); 
+    
+    box-shadow: 0 6px 20px rgba(0, 116, 217, 0.4); 
+    transition: all 0.3s ease;
+    
+    /* Alignment centering */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-login-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 116, 217, 0.5);
+    opacity: 0.9;
+}
+
+
+.error-msg { color: #dc3545; font-size: 0.85rem; margin-top: 0px; font-weight: 600; }

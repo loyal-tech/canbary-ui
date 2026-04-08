@@ -13,8 +13,8 @@ export const environment = {
   STATE_ID: window["env"]["STATE_ID"] || "2",
   PINCODE_ID: window["env"]["PINCODE_ID"] || "2",
   AREA_ID: window["env"]["AREA_ID"] || "2",
-  FOOTER: window["env"]["FOOTER"] || "Adopt Nettech",
-  TITLE: window["env"]["TITLE"] || "Adopt Converge BSS",
+  FOOTER: window["env"]["FOOTER"] || "Canbary Solution",
+  TITLE: window["env"]["TITLE"] || "Canbary BSS",
   LOGIN_CAPTCHA: window["env"]["LOGIN_CAPTCHA"] || "true",
   INDEPENDENT_AAA: window["env"]["INDEPENDENT_AAA"] || "false",
   GOOGLE_MAPS_API_KEY:

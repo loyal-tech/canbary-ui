@@ -21,8 +21,8 @@
   window["env"]["STATE_ID"] = "12";
   window["env"]["PINCODE_ID"] = "12";
   window["env"]["AREA_ID"] = "13";
-  window["env"]["FOOTER"] = "Adopt Nettech";
-  window["env"]["TITLE"] = "Adopt Converge BSS";
+  window["env"]["FOOTER"] = "Canbary Solution";
+  window["env"]["TITLE"] = "Canbary BSS";
   window["env"]["LOGIN_CAPTCHA"] = "false";
   window["env"]["INDEPENDENT_AAA"] = "true";
   window["env"]["NETCONF_CLIENT"] = "false";
